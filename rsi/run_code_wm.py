@@ -16,7 +16,7 @@ from .backends.llm.backend import LLMBackend, LLMConfig
 from .core.engine import Engine, EngineConfig
 from .core.types import Case, Version
 from .domains.code_wm.domain import (CodeWorldModelDomain, InputPredictionSuite, build_heldout,
-                                     load_cruxeval, load_lcb_execution)
+                                     load_cruxeval, load_lcb_execution, load_mbpp_heldout)
 from .meta.proposers import CODE_WM_COUPLING, FixedProgram, NumericSearch, SelfEdit
 
 
@@ -66,7 +66,9 @@ def main():
     program = domain.validate_program(merge(domain.default_program(), plan.get("program")))
     held = plan["heldout"]
     cache = Path(held["cache"])
-    if cache.exists():
+    if held.get("source") == "mbpp":
+        gate, audit = load_mbpp_heldout(held["paths"], domain, held.get("seed", 0))
+    elif cache.exists():
         rows = [Case(**json.loads(line)) for line in cache.open()]
         domain.register_heldout(rows)
         gate = [c for c in rows if c.split == "gate"]
@@ -89,7 +91,7 @@ def main():
         self_edit_log=getattr(proposer, "log", None)), indent=2, default=str))
     print(json.dumps({k: dict(initial=v["initial"], final=v["final"],
                               gain=v["paired"]["mean_gain"], ci=v["paired"]["ci95"])
-                      for k, v in report["tests"].items()}))
+                      for k, v in report.get("tests", {}).items()} or report["accepted_chain"]))
 
 
 if __name__ == "__main__":

@@ -169,13 +169,14 @@ def main(spec_path):
             obs, init_sha = [], []
             for env, ep in zip(envs, batch):
                 init = ep["init"]
-                env.reset()
+                # Re-seed per episode so an episode's outcome does not depend on how many
+                # episodes this env object ran before it (LIBERO's env RNG advances on reset).
+                seed = 0 if init["kind"] == "official" else init["seed"]
+                np.random.seed(seed)
+                env.seed(seed)
+                o = env.reset()
                 if init["kind"] == "official":
                     o = env.set_init_state(init_states[init["index"]])
-                else:
-                    np.random.seed(init["seed"])
-                    env.seed(init["seed"])
-                    o = env.reset()
                 init_sha.append(state_sha(env))
                 for _ in range(WAIT_STEPS):
                     o, _, _, _ = env.step(get_libero_dummy_action("openvla"))

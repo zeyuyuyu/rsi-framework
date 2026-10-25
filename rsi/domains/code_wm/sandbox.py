@@ -88,7 +88,10 @@ def _child(job, write_fd, cpu_seconds, memory_bytes):
             # Trusted benchmark code whose call is a full expression (LiveCodeBench).
             value = eval(compile(job["call"], "<call>", "eval"), scope)
             if kind == "run_call":
-                out = {"ok": True, "output": repr(value)}
+                text = repr(value)
+                round_trip, back = literal(text)
+                out = {"ok": True, "output": text,
+                       "round_trip": bool(round_trip and back == value)}
             else:
                 good, claimed = literal(job["answer"])
                 out = {"ok": True, "correct": bool(good and value == claimed),

@@ -1,5 +1,8 @@
 """Turning verified attempts into training items, and the feedback-removal control.
 
+``exclude_flag`` (optional) drops cases whose ``inputs[flag]`` is true before
+any rule applies, e.g. answers that are cheap to guess.
+
 Rules (chosen by the improvement program):
   * ``verified``     - keep verified attempts only, <= ``per_case`` per case,
                        hardest still-solvable cases first (ReST-EM / expert iteration);
@@ -34,6 +37,13 @@ def curate(cases, attempts, rule: dict, rng: random.Random):
     name = rule.get("rule", "verified")
     budget = int(rule.get("budget", 2000))
     lo, hi = rule.get("band", [0.0, 1.0])
+    flag = rule.get("exclude_flag")
+    if flag:
+        keep = [i for i, c in enumerate(cases)
+                if not (isinstance(c.inputs, dict) and c.inputs.get(flag))]
+        excluded = len(cases) - len(keep)
+        cases = [cases[i] for i in keep]
+        attempts = [attempts[i] for i in keep]
     rates = [sum(a.verified for a in tries) / len(tries) for tries in attempts]
     stats = dict(rule=name, cases=len(cases), attempts=sum(len(t) for t in attempts),
                  verified_attempts=sum(a.verified for t in attempts for a in t),
@@ -60,5 +70,6 @@ def curate(cases, attempts, rule: dict, rng: random.Random):
                 item_cases.append(cases[i].id)
     else:
         raise ValueError(f"unknown_curation_rule:{name}")
-    stats.update(items=len(items), item_cases=len(set(item_cases)))
+    stats.update(items=len(items), item_cases=len(set(item_cases)),
+                 excluded_by_flag=excluded if flag else 0)
     return items, item_cases, stats

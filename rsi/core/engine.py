@@ -45,6 +45,8 @@ class EngineConfig:
     min_gate_gain: float = 0.0
     wall_seconds: int = 14 * 24 * 3600
     test_all_accepted: bool = True
+    # Pilots (development decisions on the gate set) must not read test suites at all.
+    seal_tests: bool = False
 
 
 def _write(path: Path, data):
@@ -238,6 +240,14 @@ class Engine:
                                                     version=asdict(parent.version),
                                                     program=asdict(parent.program)))
             chain = [n for n in archive.nodes if n.accepted]
+            if cfg.seal_tests:
+                report = dict(status="complete_tests_sealed", config=asdict(cfg),
+                              retained=parent.node_id,
+                              accepted_chain=[dict(node=n.node_id, round=n.round, gate=n.gate,
+                                                   audit=n.audit) for n in chain],
+                              seconds=dict(self.seconds), elapsed=time.monotonic() - self.started)
+                _write(self.out / "report.json", report)
+                return report
             if not cfg.test_all_accepted:
                 chain = [root, parent] if parent is not root else [root]
             tests = {}

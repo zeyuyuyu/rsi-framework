@@ -27,7 +27,8 @@ DEFAULT_PROGRAM = {
     "curriculum": {"proposals": 6000, "max_cases": 3000, "shots": 3, "temperature": 1.0,
                    "instruction": P.PROPOSE_INSTRUCTION, "pool_growth": 500},
     "solver": {"samples": 8, "temperature": 0.8, "top_p": 0.95, "max_tokens": 1024},
-    "curation": {"rule": "verified", "budget": 2000, "per_case": 2, "band": [0.0, 1.0]},
+    "curation": {"rule": "verified", "budget": 2000, "per_case": 2, "band": [0.0, 1.0],
+                 "exclude_flag": "guessable"},
     "update": {"operator": "sft", "lr": 1e-4, "steps": 64, "batch": 32},
 }
 
@@ -37,10 +38,24 @@ EDIT_SPACE = {
     "curriculum.shots": (1, 6), "curriculum.temperature": (0.6, 1.3),
     "solver.samples": (2, 16), "solver.temperature": (0.4, 1.2),
     "curation.rule": ["verified", "mixed_groups"], "curation.budget": (20, 4000),
-    "curation.per_case": (1, 4),
+    "curation.per_case": (1, 4), "curation.exclude_flag": ["guessable", ""],
     "update.operator": ["sft", "grpo"], "update.lr": (1e-6, 3e-4), "update.steps": (2, 256),
     "update.batch": (4, 256),
 }
+
+
+def guessable(output_literal):
+    """Answers a model can hit by luck: booleans, None, small ints, empty containers."""
+    import ast
+    try:
+        v = ast.literal_eval(output_literal)
+    except Exception:
+        return False
+    if v is None or isinstance(v, bool):
+        return True
+    if isinstance(v, int) and -3 <= v <= 3:
+        return True
+    return isinstance(v, (str, list, tuple, dict, set)) and len(v) == 0
 
 
 def normalize(code):
@@ -226,8 +241,9 @@ class CodeWorldModelDomain:
         out = []
         for k, (code, args, output) in enumerate(cases):
             cid = f"r{round_index}-s{seed}-{k}"
-            out.append(Case(cid, cid, "train", dict(code=code, args=args), f"sandbox-exec:{cid}",
-                            output))
+            out.append(Case(cid, cid, "train",
+                            dict(code=code, args=args, guessable=guessable(output)),
+                            f"sandbox-exec:{cid}", output))
         return out
 
     def attempt(self, backend, generator, cases, program, seed):
@@ -344,3 +360,45 @@ def build_heldout(domain, backend, initial, program, count, seed):
                         f"sandbox-exec:{split}-{c.id}", c.label))
     domain.register_heldout(out)
     return [c for c in out if c.split == "gate"], [c for c in out if c.split == "audit"]
+
+
+def load_mbpp_heldout(parquet_paths, domain, seed=0, workers=48):
+    """Gate/audit from MBPP: real programming problems, executed on their first test call.
+
+    An external distribution (neither self-generated nor a test suite), so the gate
+    measures transfer instead of fit to the model's own curriculum. One case per MBPP
+    problem; near-duplicates of registered held-out programs (the test suites) dropped.
+    """
+    import ast
+    import hashlib
+    import pandas as pd
+    rows = []
+    for path in parquet_paths:
+        for _, r in pd.read_parquet(path).iterrows():
+            tests = list(r["test_list"])
+            if not tests:
+                continue
+            try:
+                node = ast.parse(tests[0]).body[0]
+                call = ast.get_source_segment(tests[0], node.test.left)
+            except Exception:
+                continue
+            if not isinstance(node, ast.Assert) or not call:
+                continue
+            rows.append((int(r["task_id"]), r["code"], call))
+    jobs = [dict(kind="run_call", code=code, call=call, prelude="from typing import *\n")
+            for _, code, call in rows]
+    first = execute_all(jobs, workers=workers)
+    second = execute_all(jobs, workers=workers)
+    cases = []
+    for (tid, code, call), a, b in zip(rows, first, second):
+        if not (a.get("ok") and a == b and a.get("round_trip")) or len(a["output"]) > 120:
+            continue
+        if domain.heldout.hit(code):
+            continue
+        h = int(hashlib.sha256(f"{seed}:{tid}".encode()).hexdigest(), 16)
+        split = "gate" if h % 2 == 0 else "audit"
+        cases.append(Case(f"{split}-mbpp{tid}", f"mbpp-{tid}", split, dict(code=code, call=call),
+                          f"mbpp@task{tid}:test0", a["output"]))
+    domain.register_heldout(cases)
+    return [c for c in cases if c.split == "gate"], [c for c in cases if c.split == "audit"]
