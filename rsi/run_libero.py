@@ -1,0 +1,73 @@
+"""Run the two-level RSI loop on a VLA policy in LIBERO from a frozen plan.
+
+    python -m rsi.run_libero --plan plan.json --out runs/<new-dir> [--baseline-only --replicates N]
+
+Plan keys: model_name, vla (VLAConfig fields), suite, tasks, heldout_per_task,
+test_inits_per_task, program (overrides), engine (EngineConfig fields),
+meta {proposer: fixed|numeric}.
+"""
+
+import argparse
+from dataclasses import asdict
+import json
+from pathlib import Path
+
+from .backends.openvla.backend import VLABackend, VLAConfig
+from .core.engine import Engine, EngineConfig
+from .core.types import Version
+from .domains.libero.domain import LiberoDomain
+from .meta.proposers import FixedProgram, NumericSearch
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--plan", required=True)
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--baseline-only", action="store_true")
+    parser.add_argument("--replicates", type=int, default=1)
+    args = parser.parse_args()
+    plan = json.loads(Path(args.plan).read_text())
+    out = Path(args.out)
+    if out.exists():
+        raise SystemExit("fresh_output_required")
+    vcfg = dict(plan["vla"])
+    for key in ("rollout_gpus", "train_gpus", "target_modules"):
+        if key in vcfg:
+            vcfg[key] = tuple(vcfg[key])
+    vcfg.setdefault("workdir", str(out) + ".work")
+    backend = VLABackend(VLAConfig(**vcfg))
+    domain = LiberoDomain(plan["suite"], plan["tasks"])
+    test = domain.official_test(plan.get("test_inits_per_task", 50))
+    initial = Version(f"base:{plan['model_name']}", vcfg["checkpoint"], None)
+    if args.baseline_only:
+        out.mkdir(parents=True)
+        scores = []
+        for rep in range(args.replicates):
+            records = domain.evaluate(backend, initial, test)
+            scores.append(sum(r.score for r in records) / len(records))
+            with (out / f"baseline-rep{rep}.jsonl").open("w") as s:
+                for r in records:
+                    s.write(json.dumps(asdict(r)) + "\n")
+        (out / "baseline.json").write_text(json.dumps(dict(model=plan["model_name"],
+                                                           test_success=scores), indent=2))
+        print(json.dumps(scores))
+        return
+    program = domain.default_program()
+    for section, values in (plan.get("program") or {}).items():
+        program[section].update(values)
+    gate, audit = domain.heldout(plan["heldout_per_task"])
+    kind = plan.get("meta", {}).get("proposer", "fixed")
+    proposer = FixedProgram() if kind == "fixed" else NumericSearch(
+        domain.edit_space, domain.validate_program, domain.coupling)
+    engine = Engine(domain, backend, initial, program, gate=gate, audit=audit,
+                    tests={"libero_official": (domain, test)}, out=out,
+                    config=EngineConfig(**plan.get("engine", {})), proposer=proposer)
+    report = engine.run()
+    (out / "backend-accounting.json").write_text(json.dumps(dict(
+        gpu_seconds=backend.gpu_seconds, admissions=backend.admissions), indent=2, default=str))
+    t = report["tests"]["libero_official"]
+    print(json.dumps(dict(initial=t["initial"], final=t["final"], paired=t["paired"])))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,18 @@
+[
+ {"code": "def f(words):\n    counts = {}\n    for w in words:\n        key = w[0]\n        counts[key] = counts.get(key, 0) + len(w)\n    return sorted(counts.items())", "args": "['apple', 'avocado', 'kiwi', 'banana', 'blue']"},
+ {"code": "def f(s, k):\n    out = []\n    for i in range(0, len(s), k):\n        chunk = s[i:i + k]\n        out.append(chunk[::-1] if i // k % 2 else chunk.upper())\n    return '-'.join(out)", "args": "'abcdefghij', 3"},
+ {"code": "def f(nums):\n    stack = []\n    for n in nums:\n        while stack and stack[-1] < n:\n            stack.pop()\n        stack.append(n)\n    return stack", "args": "[3, 1, 4, 1, 5, 9, 2, 6]"},
+ {"code": "def f(text):\n    vowels = 'aeiou'\n    result = ''\n    for ch in text:\n        if ch in vowels:\n            result += str(vowels.index(ch))\n        elif ch.isalpha():\n            result += ch\n    return result", "args": "'programming is fun'"},
+ {"code": "def f(d, keys):\n    total = 0\n    missing = []\n    for k in keys:\n        if k in d:\n            total += d[k] * len(k)\n        else:\n            missing.append(k)\n    return total, missing", "args": "{'ab': 2, 'c': 5, 'xyz': 1}, ['ab', 'q', 'xyz', 'c']"},
+ {"code": "def f(a, b):\n    merged = []\n    i = j = 0\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            merged.append(a[i]); i += 1\n        else:\n            merged.append(b[j]); j += 1\n    return merged + a[i:] + b[j:]", "args": "[1, 4, 9], [2, 3, 10, 11]"},
+ {"code": "def f(s):\n    parts = s.split(',')\n    parts = [p.strip() for p in parts if p.strip()]\n    parts.sort(key=lambda p: (len(p), p))\n    return parts[-2:] + parts[:1]", "args": "' pear, fig,banana , kiwi,,plum '"},
+ {"code": "def f(n):\n    seq = [n]\n    while n != 1 and len(seq) < 12:\n        n = n // 2 if n % 2 == 0 else 3 * n + 1\n        seq.append(n)\n    return seq[-3:], len(seq)", "args": "7"},
+ {"code": "def f(grid):\n    rows = len(grid)\n    cols = len(grid[0])\n    return [[grid[r][c] for r in range(rows - 1, -1, -1)] for c in range(cols)]", "args": "[[1, 2, 3], [4, 5, 6]]"},
+ {"code": "def f(text, ch):\n    idx = text.find(ch)\n    if idx == -1:\n        return text.title()\n    return text[idx + 1:] + text[:idx].swapcase()", "args": "'hello World', 'o'"},
+ {"code": "def f(items):\n    seen = set()\n    dupes = []\n    for x in items:\n        if x in seen and x not in dupes:\n            dupes.append(x)\n        seen.add(x)\n    return dupes, len(seen)", "args": "[5, 3, 5, 2, 3, 3, 8]"},
+ {"code": "def f(s):\n    res = []\n    count = 1\n    for i in range(1, len(s) + 1):\n        if i < len(s) and s[i] == s[i - 1]:\n            count += 1\n        else:\n            res.append(s[i - 1] + str(count))\n            count = 1\n    return ''.join(res)", "args": "'aaabccdddd'"},
+ {"code": "def f(nums, target):\n    pairs = []\n    for i, x in enumerate(nums):\n        for y in nums[i + 1:]:\n            if x + y == target:\n                pairs.append((min(x, y), max(x, y)))\n    return sorted(set(pairs))", "args": "[2, 7, 4, 5, 3, 6, 1], 8"},
+ {"code": "def f(word):\n    table = str.maketrans('abc', 'xyz')\n    w = word.translate(table)\n    return w.replace('z', 'zz').count('z') + len(set(w))", "args": "'cabbage'"},
+ {"code": "def f(lst):\n    lst = lst[:]\n    for i in range(len(lst) - 1):\n        if lst[i] > lst[i + 1]:\n            lst[i], lst[i + 1] = lst[i + 1], lst[i]\n    return lst", "args": "[5, 2, 8, 1, 9, 3]"},
+ {"code": "def f(text):\n    words = text.split()\n    acc = {}\n    for i, w in enumerate(words):\n        acc.setdefault(len(w), []).append(i)\n    return {k: v for k, v in acc.items() if len(v) > 1}", "args": "'to be or not to be that is'"}
+]
