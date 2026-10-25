@@ -166,6 +166,19 @@ class CurationTests(unittest.TestCase):
         self.assertTrue(all(abs(sum(v)) < 1e-9 for v in by.values()))
 
 
+class SandboxTrustTests(unittest.TestCase):
+    def test_benchmark_inputs_may_be_expressions_but_model_inputs_may_not(self):
+        from rsi.domains.code_wm.sandbox import execute
+        code = "def f(s):\n    return len(s)"
+        job = dict(kind="check_output", code=code, input="''.join(['A'] * 20)", answer="20")
+        self.assertTrue(execute(dict(job, trusted=True))["correct"])
+        self.assertFalse(execute(job).get("correct", False))
+        self.assertTrue(execute(dict(kind="check_output", code="def f():\n    return 5",
+                                     input="", answer="5"))["correct"])
+        # the model's answer is never evaluated as code, trusted input or not
+        self.assertFalse(execute(dict(job, trusted=True, answer="f('a' * 20)"))["correct"])
+
+
 class ProgramTests(unittest.TestCase):
     def test_code_wm_program_validation_and_search(self):
         d = CodeWorldModelDomain()

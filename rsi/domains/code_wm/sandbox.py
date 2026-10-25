@@ -51,6 +51,17 @@ def static_check(code):
     return None
 
 
+def _args(job):
+    """Positional arguments of a call. Benchmark inputs (trusted) may be expressions such
+    as ``dict(did=0)``; model-proposed inputs must be literals. Empty input = no args."""
+    text = job["input"].strip()
+    if not text:
+        return True, ()
+    if job.get("trusted"):
+        return True, eval(compile("(" + text + ",)", "<input>", "eval"), {"__builtins__": __builtins__})
+    return literal("(" + text + ",)")
+
+
 def _limits(cpu_seconds, memory_bytes):
     resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds + 1))
     resource.setrlimit(resource.RLIMIT_AS, (memory_bytes, memory_bytes))
@@ -68,8 +79,7 @@ def _child(job, write_fd, cpu_seconds, memory_bytes):
         f = scope.get("f")
         kind = job["kind"]
         if kind == "run":
-            # input is the literal argument list "a, b"; evaluated as a tuple of literals.
-            ok, args = literal("(" + job["input"] + ",)")
+            ok, args = _args(job)
             if not ok:
                 raise ValueError("input_not_literal")
             value = f(*args)
@@ -78,7 +88,7 @@ def _child(job, write_fd, cpu_seconds, memory_bytes):
             out = {"ok": True, "output": text,
                    "round_trip": bool(round_trip and back == value)}
         elif kind == "check_output":
-            ok, args = literal("(" + job["input"] + ",)")
+            ok, args = _args(job)
             good, claimed = literal(job["answer"])
             if not ok:
                 raise ValueError("input_not_literal")

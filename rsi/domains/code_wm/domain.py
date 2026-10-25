@@ -176,7 +176,8 @@ class CodeWorldModelDomain:
                 jobs.append(dict(kind="check_call", code=i["code"], call=i["call"], answer=ans,
                                  prelude="from typing import *\n"))
             else:
-                jobs.append(dict(kind="check_output", code=i["code"], input=i["args"], answer=ans))
+                jobs.append(dict(kind="check_output", code=i["code"], input=i["args"], answer=ans,
+                                 trusted=bool(i.get("trusted"))))
         results = iter(execute_all([j for j in jobs if j is not None], workers=self.workers))
         return [False if j is None else bool(next(results).get("correct")) for j in jobs]
 
@@ -326,7 +327,8 @@ class InputPredictionSuite:
 def load_cruxeval(path):
     rows = [json.loads(line) for line in open(path) if line.strip()]
     out_cases = [Case(f"cruxO-{r['id']}", f"cruxeval-{r['id']}", "test",
-                      dict(code=r["code"], args=r["input"]), f"cruxeval@test:{r['id']}", r["output"])
+                      dict(code=r["code"], args=r["input"], trusted=True),
+                      f"cruxeval@test:{r['id']}", r["output"])
                  for r in rows]
     in_cases = [Case(f"cruxI-{r['id']}", f"cruxeval-{r['id']}", "test",
                      dict(code=r["code"], args=r["input"]), f"cruxeval@test:{r['id']}", r["output"])
