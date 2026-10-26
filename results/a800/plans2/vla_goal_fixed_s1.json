@@ -1,0 +1,37 @@
+{
+  "model_name": "openvla-7b-libero-goal",
+  "vla": {
+    "checkpoint": "/data1/work/zeyuwang/vla_demo/ckpts/openvla-7b-finetuned-libero-goal",
+    "python": "/data0/home/zeyuwang/miniconda3/envs/openvla/bin/python",
+    "openvla_root": "/data1/work/zeyuwang/vla_demo/openvla",
+    "rollout_gpus": [
+      7
+    ],
+    "train_gpus": [
+      7
+    ],
+    "greedy_procs_per_gpu": 4
+  },
+  "suite": "libero_goal",
+  "tasks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "heldout_per_task": 10,
+  "test_inits_per_task": 50,
+  "engine": {
+    "rounds": 3,
+    "seed": 1
+  },
+  "meta": {
+    "proposer": "fixed"
+  }
+}

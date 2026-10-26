@@ -1,0 +1,78 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 17936,
+        "cases": 2242,
+        "excluded_by_flag": 651,
+        "item_cases": 1000,
+        "items": 8000,
+        "mixed_cases": 1135,
+        "rule": "mixed_groups",
+        "solved_cases": 1849,
+        "verified_attempts": 10740
+      },
+      "gate": 0.5723981900452488,
+      "node": "r04c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2893,
+        "finished_rate": 0.9936484618043553,
+        "generator": "b5af7bdf08ba14cc30bbbed4b8778e0d884c5e44466b168e093aff71fcfc7e68",
+        "mean_lines": 6.297614932595921,
+        "mixed_fraction": 0.5395782924300034,
+        "novelty_vs_history": 0.9075,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 126,
+            "forbidden_name": 59,
+            "forbidden_node": 37,
+            "near_duplicate_heldout": 14,
+            "nondeterministic": 1,
+            "not_single_function_f": 2,
+            "output_degenerate": 27,
+            "output_not_literal": 1,
+            "parse": 179,
+            "runtime_AttributeError": 16,
+            "runtime_BadOutput": 1,
+            "runtime_IndexError": 34,
+            "runtime_KeyError": 5,
+            "runtime_MemoryError": 2,
+            "runtime_NameError": 8,
+            "runtime_NoOutput": 22,
+            "runtime_RuntimeError": 6,
+            "runtime_SyntaxError": 1,
+            "runtime_Timeout": 12,
+            "runtime_TypeError": 70,
+            "runtime_UnboundLocalError": 1,
+            "runtime_ValueError": 8,
+            "runtime_ZeroDivisionError": 9,
+            "size": 1151,
+            "syntax": 4
+          },
+          "requested": 6000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 107,
+          "heldout_leak": 0
+        },
+        "rollout_id": "a0a6aef21962",
+        "unsolved_fraction": 0.1614241272035949,
+        "verified_rate": 0.5920756999654339
+      }
+    }
+  ],
+  "parent": "r04c0",
+  "round": 4,
+  "seconds": {
+    "attempt": 2101.327885636827,
+    "audit_eval": 383.78610805701464,
+    "gate_eval": 387.42292668367736,
+    "propose": 479.51415476202965,
+    "train": 6056.524700357113
+  }
+}
