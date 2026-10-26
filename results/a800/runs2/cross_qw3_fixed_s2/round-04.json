@@ -1,0 +1,73 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 18880,
+        "cases": 2360,
+        "excluded_by_flag": 290,
+        "item_cases": 437,
+        "items": 3496,
+        "mixed_cases": 437,
+        "rule": "mixed_groups",
+        "solved_cases": 2301,
+        "verified_attempts": 17087
+      },
+      "gate": 0.8597285067873304,
+      "node": "r04c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2650,
+        "finished_rate": 0.9893396226415094,
+        "generator": "c9727b5145dfbfe113b411689d63b763fc6ac70ec9dd26dbfdbee5ccefb7059d",
+        "mean_lines": 6.884905660377359,
+        "mixed_fraction": 0.17622641509433962,
+        "novelty_vs_history": 0.745,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 568,
+            "forbidden_name": 29,
+            "forbidden_node": 11,
+            "near_duplicate_heldout": 12,
+            "output_degenerate": 3,
+            "output_not_literal": 3,
+            "parse": 80,
+            "runtime_AttributeError": 2,
+            "runtime_IndexError": 23,
+            "runtime_KeyError": 4,
+            "runtime_MemoryError": 4,
+            "runtime_NameError": 4,
+            "runtime_RuntimeError": 11,
+            "runtime_SystemError": 17,
+            "runtime_Timeout": 9,
+            "runtime_TypeError": 42,
+            "runtime_ValueError": 5,
+            "runtime_ZeroDivisionError": 4,
+            "size": 564,
+            "syntax": 5
+          },
+          "requested": 6000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 350,
+          "heldout_leak": 0
+        },
+        "rollout_id": "08fb77a95a5c",
+        "unsolved_fraction": 0.02339622641509434,
+        "verified_rate": 0.91
+      }
+    }
+  ],
+  "parent": "r04c0",
+  "round": 4,
+  "seconds": {
+    "attempt": 9076.52530736872,
+    "audit_eval": 596.5886592792813,
+    "gate_eval": 779.4140775983687,
+    "propose": 956.6374048658181,
+    "train": 20638.29853627016
+  }
+}

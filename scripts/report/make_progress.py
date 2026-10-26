@@ -135,10 +135,13 @@ tables.append("## 图 2 数据：8 轮实验各轮相对初始的提升（CRUXEv
                         for arm in ("fixed", "nonrec") for k, s in enumerate(per_seed[arm])))
 
 # ---------- figure 3: cross-model, fixed program, 4 rounds ----------
+# every planned fixed-program run; those without a report yet are skipped
 RUNS = [("Qwen2.5-Coder-1.5B", 1, "main_q15_fixed_s1"), ("Qwen2.5-Coder-1.5B", 2, "bj_q15_fixed_s2"),
         ("Qwen2.5-Coder-1.5B", 3, "main_q15_fixed_s3"), ("Qwen2.5-Coder-7B", 1, "cross_q7b_fixed_s1"),
-        ("Qwen2.5-Coder-7B", 2, "bj_q7b_fixed_s2"), ("Granite-3.3-8B", 1, "bj_g8b_fixed_s1"),
-        ("Granite-3.3-8B", 2, "bj_g8b_fixed_s2"), ("Qwen3-8B", 1, "cross_qw3_fixed_s1")]
+        ("Qwen2.5-Coder-7B", 2, "bj_q7b_fixed_s2"), ("Qwen2.5-Coder-7B", 3, "cross_q7b_fixed_s3"),
+        ("Granite-3.3-8B", 1, "bj_g8b_fixed_s1"), ("Granite-3.3-8B", 2, "bj_g8b_fixed_s2"),
+        ("Granite-3.3-8B", 3, "bj_g8b_fixed_s3"), ("Qwen3-8B", 1, "cross_qw3_fixed_s1"),
+        ("Qwen3-8B", 2, "cross_qw3_fixed_s2"), ("Qwen3-8B", 3, "cross_qw3_fixed_s3")]
 SUITES = [("cruxeval_o", "CRUXEval-O（主考试）"), ("cruxeval_i", "CRUXEval-I（迁移）"), ("lcb_exec", "LiveCodeBench-exec")]
 runs = [(m, s, r, report(r)) for m, s, r in RUNS if (ROOT / "a800/runs2" / r / "report.json").exists()
         or (ROOT / "baidu" / r / "report.json").exists()]
@@ -161,7 +164,7 @@ for ax, (suite, title) in zip(axes, SUITES):
     ax.set_xlabel("相对初始的提升（分）")
 axes[0].set_yticks(ys)
 axes[0].set_yticklabels([f"{m} 种子{s}" for m, s, _, _ in runs], color=INK)
-fig.suptitle("固定学法 4 轮的跨模型结果：1.5B 和 7B 有提升（7B 主要在 LCB），Granite 不稳定，Qwen3 一轮都未被接受",
+fig.suptitle("固定学法 4 轮的跨模型结果：1.5B、7B、Qwen3 各有种子在某门考试上显著提升，Granite 两个种子都未达显著",
              x=0.01, ha="left", fontsize=12.5, color=INK)
 fig.text(0.01, -0.02, "实心点 = 95% 置信区间不含 0；空心点 = 不显著。Qwen3 种子1 四轮都被门控拒绝，最终模型即初始模型（提升为 0）。",
          fontsize=9.5, color=INK2)
