@@ -1,0 +1,46 @@
+{
+  "node": "r04c0",
+  "program": {
+    "author": "self",
+    "id": "3e62c1bae1803ba6",
+    "note": "{\"curriculum.instruction\": \"Below are short Python functions, each followed by an assertion with a concre...\", \"curriculum.max_cases\": 3000}",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 1000,
+        "exclude_flag": "guessable",
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "instruction": "Below are short Python functions, each followed by an assertion with a concrete input. Write one NEW function in exactly the same format. Requirements: the function is named f, is 3 to 15 lines long, uses only built-in types and operations (strings, lists, dicts, sets, tuples, integers, booleans), has no imports, does no printing, file access or randomness, and always terminates quickly. Make it different from the examples and non-trivial: predicting its output for the given input should require carefully tracing loops, conditionals, indexing, or string/list/dict methods. Additionally, the function should handle more complex cases that involve multiple steps and nested structures.",
+        "max_cases": 3000,
+        "pool_growth": 500,
+        "proposals": 6000,
+        "shots": 3,
+        "temperature": 1.0
+      },
+      "solver": {
+        "max_tokens": 1024,
+        "samples": 8,
+        "temperature": 0.8,
+        "top_p": 0.95
+      },
+      "update": {
+        "batch": 128,
+        "lr": 2e-05,
+        "operator": "grpo",
+        "steps": 64
+      }
+    },
+    "parent_id": "f0ad0bbd42211c40"
+  },
+  "version": {
+    "id": "b239dcfe0cdd43c516bc3d5fbb867f8b3fe08879a6cf69bd9d086a19989e43d2",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/bj_q15_full_s2/ckpt-r04c0",
+    "parent_id": "d4697c24b4c2dac6037070cd41da4130befc7dff3c280b06c886834d3ef31c38"
+  }
+}

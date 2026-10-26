@@ -64,6 +64,37 @@ if [ "$($PY -c 'import peft; print(peft.__version__)' 2>/dev/null)" != "0.13.2" 
 fi
 $PY -c 'import torch, transformers, vllm, peft, pandas, pyarrow; print("versions torch", torch.__version__, "transformers", transformers.__version__, "vllm", vllm.__version__, "peft", peft.__version__, "pandas", pandas.__version__, "pyarrow", pyarrow.__version__)' 2>&1 | grep -v Warning | tail -1
 
+# Per-problem test scores of a run (pairing across arms needs them; the BOS copy is not readable from outside)
+# and the independent re-scorer's agreement with the engine's scores.
+emit_tests() {
+  $PY - "$1" <<'EOF'
+import glob, hashlib, json, os, sys
+for p in sorted(glob.glob(os.path.join(sys.argv[1], "test-*-*.jsonl"))):
+    recs = [json.loads(l) for l in open(p) if l.strip()]
+    ids = hashlib.sha256(json.dumps([r["id"] for r in recs]).encode()).hexdigest()[:16]
+    print("TESTBITS", os.path.basename(p), len(recs), ids, "".join("1" if r["score"] >= 0.5 else "0" for r in recs))
+EOF
+  if ls "$1"/test-*-*.jsonl >/dev/null 2>&1; then
+    local crux lcb
+    crux=$($PY -c 'import json; print(json.load(open("/tmp/plan.json"))["data"]["cruxeval"])')
+    lcb=$($PY -c 'import json; print(json.load(open("/tmp/plan.json"))["data"]["lcb"])')
+    ( cd /tmp/src && PYTHONPATH=/tmp/src timeout 3600 $PY -m rsi.audit.rescore_code_wm "$1" "$crux" "$lcb" 2>&1 | tail -40 | sed 's/^/RESCORE /' )
+  fi
+}
+
+# EXPORT_RUNS="bj_a bj_b": print tests.txt of finished runs on PFS and exit (no model, no GPU work)
+if [ -n "${EXPORT_RUNS:-}" ]; then
+  stage "3 source (export)"; CUR=src
+  rm -rf /tmp/src && mkdir -p /tmp/src && tar -xzf "$BOS/src/rsi_src.tar.gz" -C /tmp/src || die "src extract failed"
+  for r in $EXPORT_RUNS; do
+    [ -d "$PFS/runs/$r" ] || { log "no run dir $r"; continue; }
+    echo "===== RSI_RESULT_BEGIN name=$r run=$r rc=0 export t+$(el)s ====="
+    echo "----- FILE tests.txt -----"; emit_tests "$PFS/runs/$r"
+    echo "===== RSI_RESULT_END name=$r rc=0 ====="
+  done
+  echo "RSI_JOB_DONE name=$NAME rc=0"; exit 0
+fi
+
 stage "2 model"; CUR=model
 model_ok() { [ -f "$DONE" ] && [ -f "$MDIR/config.json" ] && ls "$MDIR"/*.safetensors >/dev/null 2>&1; }
 mkdir -p "$PFS/models"
@@ -256,6 +287,7 @@ for line in open(sys.argv[1]):
         curation_items=(n.get("curation") or {}).get("items"))))
 EOF
 fi
+echo "----- FILE tests.txt -----"; emit_tests "$RUN"
 if [ $RC -ne 0 ]; then
   echo "----- latest worker logs (failure context) -----"
   for d in $(ls -td "$RUN.work"/*/ 2>/dev/null | head -2); do
