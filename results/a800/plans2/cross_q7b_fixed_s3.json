@@ -1,0 +1,51 @@
+{
+  "model_name": "qcoder7b",
+  "llm": {
+    "base_path": "/data0/home/zeyuwang/.cache/huggingface/hub/models--Qwen--Qwen2.5-Coder-7B-Instruct/snapshots/c03e6d358207e414f1eca0bb1891e29f1db0e242/",
+    "python": "/data0/home/zeyuwang/miniconda3/envs/vllm/bin/python",
+    "pythonpath": "/data0/home/zeyuwang/rsi/src2:/data0/home/zeyuwang/rsi/pylib",
+    "sample_gpus": [
+      0,
+      1
+    ],
+    "train_gpus": [
+      0
+    ]
+  },
+  "data": {
+    "cruxeval": "/data0/home/zeyuwang/rsi/data/cruxeval-org__cruxeval/test.jsonl",
+    "lcb": "/data0/home/zeyuwang/rsi/data/livecodebench__execution-v2/data/test-00000-of-00001.parquet"
+  },
+  "heldout": {
+    "cache": "/data0/home/zeyuwang/rsi/runs2/heldout/qcoder1.5b.jsonl",
+    "count": 800,
+    "seed": 12345,
+    "source": "mbpp",
+    "paths": [
+      "/data0/home/zeyuwang/rsi/data/google-research-datasets__mbpp/full/train-00000-of-00001.parquet",
+      "/data0/home/zeyuwang/rsi/data/google-research-datasets__mbpp/full/validation-00000-of-00001.parquet",
+      "/data0/home/zeyuwang/rsi/data/google-research-datasets__mbpp/full/test-00000-of-00001.parquet"
+    ]
+  },
+  "program": {
+    "curation": {
+      "rule": "mixed_groups",
+      "budget": 1000,
+      "exclude_flag": "guessable"
+    },
+    "update": {
+      "operator": "grpo",
+      "lr": 2e-05,
+      "steps": 64,
+      "batch": 128
+    }
+  },
+  "engine": {
+    "rounds": 4,
+    "seed": 3,
+    "candidates_per_round": 1
+  },
+  "meta": {
+    "proposer": "fixed"
+  }
+}
