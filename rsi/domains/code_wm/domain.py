@@ -34,12 +34,12 @@ DEFAULT_PROGRAM = {
 
 # Declared edit space for the meta level: (min, max) for numbers, choices for categoricals.
 EDIT_SPACE = {
-    "curriculum.proposals": (100, 12000), "curriculum.max_cases": (50, 4000),
+    "curriculum.proposals": (100, 30000), "curriculum.max_cases": (50, 15000),
     "curriculum.shots": (1, 6), "curriculum.temperature": (0.6, 1.3),
     "solver.samples": (2, 16), "solver.temperature": (0.4, 1.2),
-    "curation.rule": ["verified", "mixed_groups"], "curation.budget": (20, 4000),
+    "curation.rule": ["verified", "mixed_groups"], "curation.budget": (20, 6000),
     "curation.per_case": (1, 4), "curation.exclude_flag": ["guessable", ""],
-    "update.operator": ["sft", "grpo"], "update.lr": (1e-6, 3e-4), "update.steps": (2, 256),
+    "update.operator": ["sft", "grpo"], "update.lr": (1e-6, 3e-4), "update.steps": (2, 512),
     "update.batch": (4, 256),
 }
 
