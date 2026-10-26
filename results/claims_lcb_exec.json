@@ -78,6 +78,12 @@
       "final": "r04c0",
       "initial": 29.23,
       "final_score": 27.35
+    },
+    "shuffled_s3": {
+      "run": "results/a800/runs2/main_q15_shuffled_s3",
+      "final": "r01c0",
+      "initial": 30.9,
+      "final_score": 27.14
     }
   },
   "claims": [
@@ -146,20 +152,22 @@
       "claim": "C1 shuffled: final - initial",
       "seeds": [
         1,
-        2
+        2,
+        3
       ],
       "per_seed_points": {
         "1": -1.46,
-        "2": -1.88
+        "2": -1.88,
+        "3": -3.76
       },
-      "mean_points": -1.67,
+      "mean_points": -2.37,
       "ci95_points": [
-        -4.28,
-        0.94
+        -4.73,
+        -0.0
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": true
     },
     {
       "claim": "C1 onebig: final - initial",
@@ -186,20 +194,22 @@
       "claim": "C2 fixed - shuffled",
       "seeds": [
         1,
-        2
+        2,
+        3
       ],
       "per_seed_points": {
         "1": 0.0,
-        "2": 0.21
+        "2": 0.21,
+        "3": 2.51
       },
-      "mean_points": 0.1,
+      "mean_points": 0.9,
       "ci95_points": [
-        -2.82,
-        3.13
+        -1.6,
+        3.48
       ],
       "bar_points": 1.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": true
     },
     {
       "claim": "C3 fixed - nonrec",
