@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+*.env
+.env*
+secrets*
+
+# Run outputs: keep small records only (checkpoints, merged weights, raw attempts stay on the servers)
+runs/
+results/**/ckpt-*/*.safetensors
+results/**/merged/
+results/**/*.work/
+results/**/round-*-attempts-*.jsonl
+results/**/round-*-cases-*.jsonl
+*.npz
+*.safetensors
+*.parquet
+*.tgz
+*.tar.gz
