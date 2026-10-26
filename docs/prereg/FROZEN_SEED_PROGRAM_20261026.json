@@ -1,0 +1,23 @@
+{
+  "decided": "2026-10-26",
+  "rule": "best MBPP gate after 2 rounds on the development model (Qwen2.5-Coder-1.5B, seed 0); tests sealed",
+  "pilot_gate": {
+    "initial": 0.5226,
+    "sft_guess_filter": [0.5475, "round 2 rejected at 0.5317"],
+    "grpo_guess_filter": [0.5430, 0.5566],
+    "sft_no_filter": "failed at GPU admission (no data)"
+  },
+  "frozen_program_overrides": {
+    "curation": {"rule": "mixed_groups", "budget": 1000, "exclude_flag": "guessable"},
+    "update": {"operator": "grpo", "lr": 2e-05, "steps": 64, "batch": 128}
+  },
+  "arms": {
+    "full": {"engine": {"candidates_per_round": 2}, "meta": {"proposer": "self_edit"}},
+    "fixed": {"engine": {"candidates_per_round": 1}, "meta": {"proposer": "fixed"}},
+    "nonrec": {"engine": {"recursive": false}, "meta": {"proposer": "fixed"}},
+    "shuffled": {"engine": {"feedback": "shuffled"}, "meta": {"proposer": "fixed"}}
+  },
+  "rounds": 4,
+  "seeds": [1, 2, 3],
+  "gate": "MBPP 489 / audit 472"
+}

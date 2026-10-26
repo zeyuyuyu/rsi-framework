@@ -222,8 +222,8 @@ class Engine:
                 accepted = (best is not None and
                             self.sign * best.gate >= self.sign * parent.gate + cfg.min_gate_gain)
                 if accepted:
-                    best.accepted = True
                     best.audit, _ = self._score(best.version, self.audit, "audit_eval")
+                    archive.mark_accepted(best)
                     with (self.out / "accepted.jsonl").open("a") as s:
                         s.write(json.dumps(dict(round=r, node=best.node_id, gate=best.gate,
                                                 audit=best.audit, program=best.program.id,

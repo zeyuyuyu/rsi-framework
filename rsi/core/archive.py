@@ -40,6 +40,13 @@ class Archive:
             stream.write(json.dumps(asdict(node), sort_keys=True, default=str) + "\n")
         return node
 
+    def mark_accepted(self, node: Node) -> None:
+        """Acceptance is decided after the node is recorded; append it as an event."""
+        node.accepted = True
+        with self.path.open("a") as stream:
+            stream.write(json.dumps(dict(event="accepted", node_id=node.node_id,
+                                         audit=node.audit, gate=node.gate)) + "\n")
+
     def get(self, node_id):
         return next(n for n in self.nodes if n.node_id == node_id)
 

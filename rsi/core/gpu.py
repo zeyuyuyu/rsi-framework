@@ -20,17 +20,25 @@ def gpu_memory_used():
     return {int(i): int(m) for i, m in (line.split(",") for line in out.strip().splitlines())}
 
 
-def admit(gpus, max_used_mib=2000, gap=30.0):
+def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=1800, poll=60.0):
+    """Two readings ``gap`` apart must both show every GPU idle. A busy GPU is waited
+    for (re-checked every ``poll`` seconds) up to ``wait_seconds``, then refused."""
     gpus = [int(g) for g in gpus]
-    first = gpu_memory_used()
-    time.sleep(gap)
-    second = gpu_memory_used()
-    busy = [g for g in gpus if g not in first or first[g] > max_used_mib
-            or second.get(g, 10**9) > max_used_mib]
-    if busy:
-        raise RuntimeError(f"gpu_admission_refused:{busy}")
-    return dict(first={g: first[g] for g in gpus}, second={g: second[g] for g in gpus},
-                gap_seconds=gap, admitted_at=time.time())
+    deadline = time.time() + wait_seconds
+    waited = 0.0
+    while True:
+        first = gpu_memory_used()
+        time.sleep(gap)
+        second = gpu_memory_used()
+        busy = [g for g in gpus if g not in first or first[g] > max_used_mib
+                or second.get(g, 10**9) > max_used_mib]
+        if not busy:
+            return dict(first={g: first[g] for g in gpus}, second={g: second[g] for g in gpus},
+                        gap_seconds=gap, waited_seconds=waited, admitted_at=time.time())
+        if time.time() + poll > deadline:
+            raise RuntimeError(f"gpu_admission_refused:{busy}")
+        time.sleep(poll)
+        waited += poll + gap
 
 
 def supervised(argv, *, gpus, timeout, log_path, env=None):
