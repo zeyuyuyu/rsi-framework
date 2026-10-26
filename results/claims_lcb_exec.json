@@ -1,0 +1,178 @@
+{
+  "suite": "lcb_exec",
+  "runs": {
+    "fixed_s1": {
+      "run": "results/a800/runs2/main_q15_fixed_s1",
+      "final": "r04c0",
+      "initial": 30.9,
+      "final_score": 29.44
+    },
+    "fixed_s2": {
+      "run": "results/baidu/bj_q15_fixed_s2",
+      "final": "r04c0",
+      "initial": 28.81,
+      "final_score": 27.56
+    },
+    "full_s2": {
+      "run": "results/baidu/bj_q15_full_s2",
+      "final": "r04c0",
+      "initial": 29.02,
+      "final_score": 30.06
+    },
+    "nonrec_s1": {
+      "run": "results/a800/runs2/main_q15_nonrec_s1_r2",
+      "final": "r04c0",
+      "initial": 30.9,
+      "final_score": 28.39
+    },
+    "nonrec_s2": {
+      "run": "results/baidu/bj_q15_nonrec_s2",
+      "final": "r04c0",
+      "initial": 28.81,
+      "final_score": 27.14
+    },
+    "shuffled_s1": {
+      "run": "results/a800/runs2/main_q15_shuffled_s1",
+      "final": "r01c0",
+      "initial": 30.9,
+      "final_score": 29.44
+    },
+    "shuffled_s2": {
+      "run": "results/baidu/bj_q15_shuffled_s2",
+      "final": "r04c0",
+      "initial": 29.23,
+      "final_score": 27.35
+    }
+  },
+  "claims": [
+    {
+      "claim": "C1 full: final - initial",
+      "seeds": [
+        2
+      ],
+      "per_seed_points": {
+        "2": 1.04
+      },
+      "mean_points": 1.04,
+      "ci95_points": [
+        -3.13,
+        5.22
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C1 fixed: final - initial",
+      "seeds": [
+        1,
+        2
+      ],
+      "per_seed_points": {
+        "1": -1.46,
+        "2": -1.25
+      },
+      "mean_points": -1.36,
+      "ci95_points": [
+        -4.59,
+        1.98
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C1 nonrec: final - initial",
+      "seeds": [
+        1,
+        2
+      ],
+      "per_seed_points": {
+        "1": -2.51,
+        "2": -1.67
+      },
+      "mean_points": -2.09,
+      "ci95_points": [
+        -5.43,
+        1.25
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C1 shuffled: final - initial",
+      "seeds": [
+        1,
+        2
+      ],
+      "per_seed_points": {
+        "1": -1.46,
+        "2": -1.88
+      },
+      "mean_points": -1.67,
+      "ci95_points": [
+        -4.28,
+        0.94
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C2 fixed - shuffled",
+      "seeds": [
+        1,
+        2
+      ],
+      "per_seed_points": {
+        "1": 0.0,
+        "2": 0.21
+      },
+      "mean_points": 0.1,
+      "ci95_points": [
+        -2.82,
+        3.13
+      ],
+      "bar_points": 1.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C3 fixed - nonrec",
+      "seeds": [
+        1,
+        2
+      ],
+      "per_seed_points": {
+        "1": 1.04,
+        "2": 0.42
+      },
+      "mean_points": 0.73,
+      "ci95_points": [
+        -1.88,
+        3.34
+      ],
+      "bar_points": 1.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C4 full - fixed",
+      "seeds": [
+        2
+      ],
+      "per_seed_points": {
+        "2": 2.51
+      },
+      "mean_points": 2.51,
+      "ci95_points": [
+        -1.25,
+        6.26
+      ],
+      "bar_points": 1.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    }
+  ]
+}

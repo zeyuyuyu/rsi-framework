@@ -1,0 +1,482 @@
+{
+  "gpu_seconds": {
+    "sample": 6785.896564483643,
+    "train": 5928.452163696289
+  },
+  "admissions": [
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792981900.7585046
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792981973.711189
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792982048.568133
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792982171.9666407
+    },
+    {
+      "first": {
+        "2": 1
+      },
+      "second": {
+        "2": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792982752.5327904
+    },
+    {
+      "first": {
+        "2": 4,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792984301.6104143
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792984376.1294196
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792984455.0117326
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792984570.3872218
+    },
+    {
+      "first": {
+        "2": 1
+      },
+      "second": {
+        "2": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792985096.535249
+    },
+    {
+      "first": {
+        "2": 4,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792986606.8192124
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792986682.7517262
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792986758.2733696
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792986873.2281349
+    },
+    {
+      "first": {
+        "2": 1
+      },
+      "second": {
+        "2": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792987371.574218
+    },
+    {
+      "first": {
+        "2": 4,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792988859.264956
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792988939.8765051
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792989014.6592493
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792989130.5105324
+    },
+    {
+      "first": {
+        "2": 1
+      },
+      "second": {
+        "2": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792989614.512162
+    },
+    {
+      "first": {
+        "2": 4,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991116.8161867
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991191.6211307
+    },
+    {
+      "first": {
+        "2": 4,
+        "4": 4
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991270.252662
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991352.2057126
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991434.1636598
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991515.5562067
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991597.0282984
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991680.3590775
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991759.1381073
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991838.0159743
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991917.3644838
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792991998.3696377
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792992080.8208938
+    },
+    {
+      "first": {
+        "2": 424,
+        "4": 4
+      },
+      "second": {
+        "2": 4,
+        "4": 4
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792992157.6880531
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792992234.2065163
+    },
+    {
+      "first": {
+        "2": 4,
+        "4": 4
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792992310.8968744
+    },
+    {
+      "first": {
+        "2": 1,
+        "4": 1
+      },
+      "second": {
+        "2": 1,
+        "4": 1
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1792992387.446044
+    }
+  ],
+  "self_edit_log": null
+}
