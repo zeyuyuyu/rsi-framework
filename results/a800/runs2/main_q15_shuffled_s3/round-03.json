@@ -1,0 +1,77 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 18168,
+        "cases": 2271,
+        "excluded_by_flag": 641,
+        "item_cases": 1000,
+        "items": 8000,
+        "mixed_cases": 1342,
+        "rule": "mixed_groups",
+        "solved_cases": 1789,
+        "verified_attempts": 9070
+      },
+      "gate": 0.504524886877828,
+      "node": "r03c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2912,
+        "finished_rate": 0.9825721153846154,
+        "generator": "49c36f9f2604698b626113f70999357aebfe7a856b1ea184140373f98343e1bb",
+        "mean_lines": 6.353021978021978,
+        "mixed_fraction": 0.625,
+        "novelty_vs_history": 0.9175,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 121,
+            "forbidden_attribute": 1,
+            "forbidden_name": 63,
+            "forbidden_node": 32,
+            "near_duplicate_heldout": 12,
+            "nondeterministic": 1,
+            "not_single_function_f": 5,
+            "output_degenerate": 22,
+            "output_not_literal": 2,
+            "parse": 156,
+            "runtime_AttributeError": 8,
+            "runtime_IndexError": 38,
+            "runtime_KeyError": 2,
+            "runtime_MemoryError": 1,
+            "runtime_NameError": 16,
+            "runtime_NoOutput": 15,
+            "runtime_RuntimeError": 2,
+            "runtime_Timeout": 14,
+            "runtime_TypeError": 56,
+            "runtime_UnboundLocalError": 6,
+            "runtime_ValueError": 5,
+            "runtime_ZeroDivisionError": 7,
+            "size": 1177,
+            "syntax": 4
+          },
+          "requested": 6000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 88,
+          "heldout_leak": 0
+        },
+        "rollout_id": "5d42337d6ee8",
+        "unsolved_fraction": 0.18921703296703296,
+        "verified_rate": 0.5023179945054945
+      }
+    }
+  ],
+  "parent": "r01c0",
+  "round": 3,
+  "seconds": {
+    "attempt": 1664.1011810521595,
+    "audit_eval": 152.3191484240815,
+    "gate_eval": 299.2004684507847,
+    "propose": 365.0466812560335,
+    "train": 4594.375363801373
+  }
+}
