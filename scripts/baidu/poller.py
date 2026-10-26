@@ -18,7 +18,6 @@ import aihc_job  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOGS = os.path.join(HERE, "logs")
 os.makedirs(LOGS, exist_ok=True)
-EXPECTED = ["zw-rsi-full-s1", "zw-rsi-full-s2", "zw-rsi-fixed-s2", "zw-rsi-nonrec-s2", "zw-rsi-shuffled-s2"]
 TERMINAL = {"Succeeded", "Failed", "ManualTermination", "Stopped", "Terminated", "Deleted", "Completed"}
 INTERVAL = int(os.environ.get("POLL_INTERVAL", "600"))
 MAX_AGE = 5 * 24 * 3600
@@ -101,10 +100,7 @@ while True:
     with open(os.path.join(HERE, "status.tsv"), "w") as f:
         for row in table:
             f.write("\t".join(str(x) for x in row) + "\n")
-    done = all(n in latest and latest[n] in saved for n in EXPECTED)
-    if done:
-        say("all expected arms terminal; poller exiting")
-        break
+    # jobs submitted later are picked up from jobs.tsv on the next pass, so keep polling until MAX_AGE
     if time.time() - t0 > MAX_AGE:
         say("max age reached; poller exiting")
         break

@@ -17,11 +17,22 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_ROOT_USER_ACTION=ignore PIP_BREAK_SYS
 PY=/usr/bin/python3; [ -x "$PY" ] || PY=$(command -v python3)
 PFS=/mnt/pfs/shitianyu-rsi
 BOS=/mnt/bos/shitianyu-rsi
-MODEL_ID=Qwen/Qwen2.5-Coder-1.5B-Instruct
-MDIR=$PFS/models/Qwen2.5-Coder-1.5B-Instruct
+# MODEL_ID (modelscope / HF id) and A800_SHA (weights digest on the A800, see weights_sha) may come from the job env
+MODEL_ID=${MODEL_ID:-Qwen/Qwen2.5-Coder-1.5B-Instruct}
+MNAME=${MODEL_ID##*/}
+MDIR=$PFS/models/$MNAME
 DONE=$MDIR/.download_done
-LOCK=$PFS/models/.Qwen2.5-Coder-1.5B-Instruct.lock
-A800_SHA=c1b9b30e907950516ba3c646bdf570d8084c25a6410a0cdca80cf04b11bc13a8   # model.safetensors on the A800 (HF 2e1fd39)
+LOCK=$PFS/models/.$MNAME.lock
+if [ "$MODEL_ID" = Qwen/Qwen2.5-Coder-1.5B-Instruct ]; then
+  A800_SHA=${A800_SHA:-c1b9b30e907950516ba3c646bdf570d8084c25a6410a0cdca80cf04b11bc13a8}   # model.safetensors on the A800 (HF 2e1fd39)
+else
+  A800_SHA=${A800_SHA:-unknown}
+fi
+# one file: its sha256; sharded: sha256 of the sorted "name sha256" lines of every shard
+weights_sha() {
+  ( cd "$1" && if [ -f model.safetensors ]; then sha256sum model.safetensors | cut -d' ' -f1
+    else for f in $(ls *.safetensors | sort); do echo "$f $(sha256sum "$f" | cut -d' ' -f1)"; done | sha256sum | cut -d' ' -f1; fi )
+}
 TUNA=https://pypi.tuna.tsinghua.edu.cn/simple
 NAME=${NAME:?NAME required}
 PLAN=${PLAN:?PLAN required}
@@ -67,9 +78,13 @@ while ! model_ok; do
       if timeout 5400 modelscope download --model "$MODEL_ID" --local_dir "$MDIR" > /tmp/ms_dl.txt 2>&1 \
          && [ -f "$MDIR/config.json" ] && ls "$MDIR"/*.safetensors >/dev/null 2>&1; then ok=yes; break; fi
       log "download attempt $attempt failed:"; tail -5 /tmp/ms_dl.txt
+      # fallback: HF mirror
+      if HF_ENDPOINT=https://hf-mirror.com timeout 5400 $PY -c "import sys; from huggingface_hub import snapshot_download; snapshot_download(sys.argv[1], local_dir=sys.argv[2], allow_patterns=['*.json', '*.safetensors', '*.txt', '*.model', '*.py', '*.jinja'])" "$MODEL_ID" "$MDIR" > /tmp/hf_dl.txt 2>&1 \
+         && [ -f "$MDIR/config.json" ] && ls "$MDIR"/*.safetensors >/dev/null 2>&1; then ok=yes; break; fi
+      log "hf-mirror attempt $attempt failed:"; tail -5 /tmp/hf_dl.txt
     done
     if [ "$ok" = yes ]; then
-      (cd "$MDIR" && sha256sum model.safetensors | cut -d' ' -f1 > .sha256)
+      weights_sha "$MDIR" > "$MDIR/.sha256"
       date -u +%FT%TZ > "$DONE"
       log "download done: $(du -sh "$MDIR" | cut -f1)"
       rm -rf "$LOCK"

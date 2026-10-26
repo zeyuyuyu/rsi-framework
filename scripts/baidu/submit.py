@@ -1,4 +1,7 @@
-"""Create one AIHC job for an RSI arm. usage: submit.py <arm>   (arm: full_s1 | full_s2 | fixed_s2 | nonrec_s2 | shuffled_s2)
+"""Create one AIHC job for an RSI arm.
+usage: submit.py <arm> [model_id a800_sha]
+  arm: e.g. full_s1 (plan bj_q15_<arm>.json, Qwen2.5-Coder-1.5B) or g8b_fixed_s1 with a model id
+       (plan bj_<arm>.json; the job downloads the model to PFS and checks its digest against the A800's)
 Appends name<TAB>jobId to jobs.tsv next to this file (the poller reads it)."""
 import datetime, json, os, sys
 sys.path.insert(0, "/home/zeyu/rsi/tools/baidu")
@@ -6,7 +9,11 @@ import aihc_job
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 arm = sys.argv[1]
+model = sys.argv[2:4]
+plan = f"bj_{arm}" if model else f"bj_q15_{arm}"
 name = "zw-rsi-" + arm.replace("_", "-")
+extra = [{"name": "MODEL_ID", "value": model[0]}, {"name": "A800_SHA", "value": model[1]},
+         {"name": "RUN_TIMEOUT_S", "value": "97200"}] if model else []
 body = {
     "name": name,
     "jobType": "PyTorchJob",
@@ -21,10 +28,10 @@ body = {
             {"name": "sharedMemory", "quantity": 16},
         ],
         "envs": [
-            {"name": "PLAN", "value": f"shitianyu-rsi/plans/bj_q15_{arm}.json"},
-            {"name": "NAME", "value": f"bj_q15_{arm}"},
+            {"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"},
+            {"name": "NAME", "value": plan},
             {"name": "PREFLIGHT", "value": "1"},
-        ],
+        ] + extra,
         "enableRDMA": False,
     },
     "priority": "normal",
