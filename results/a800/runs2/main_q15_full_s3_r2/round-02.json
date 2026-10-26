@@ -1,0 +1,138 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "search",
+      "curation": {
+        "attempts": 18416,
+        "cases": 2302,
+        "excluded_by_flag": 664,
+        "item_cases": 1307,
+        "items": 10456,
+        "mixed_cases": 1307,
+        "rule": "mixed_groups",
+        "solved_cases": 1798,
+        "verified_attempts": 9404
+      },
+      "gate": 0.5520361990950227,
+      "node": "r02c0",
+      "program": "47de1d599eb57508",
+      "signal": {
+        "cases": 2966,
+        "finished_rate": 0.9926668914362778,
+        "generator": "07942c7666985c0f406c9a03e855d9a8941b1ccf76d448a54b5ba29b0f9333cc",
+        "mean_lines": 6.427511800404585,
+        "mixed_fraction": 0.6072151045178692,
+        "novelty_vs_history": 0.9425,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 85,
+            "forbidden_name": 52,
+            "forbidden_node": 42,
+            "near_duplicate_heldout": 15,
+            "not_single_function_f": 10,
+            "output_degenerate": 33,
+            "output_not_literal": 3,
+            "parse": 202,
+            "runtime_AttributeError": 7,
+            "runtime_IndexError": 56,
+            "runtime_KeyError": 3,
+            "runtime_MemoryError": 3,
+            "runtime_NameError": 17,
+            "runtime_NoOutput": 19,
+            "runtime_RuntimeError": 1,
+            "runtime_Timeout": 16,
+            "runtime_TypeError": 91,
+            "runtime_UnboundLocalError": 3,
+            "runtime_ValueError": 16,
+            "runtime_ZeroDivisionError": 6,
+            "size": 1208,
+            "syntax": 6
+          },
+          "requested": 6000,
+          "round": 2
+        },
+        "rejected": {
+          "duplicate": 34,
+          "heldout_leak": 0
+        },
+        "rollout_id": "a9ed1bc519ca",
+        "unsolved_fraction": 0.19554956169925827,
+        "verified_rate": 0.512854012137559
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 17992,
+        "cases": 2249,
+        "excluded_by_flag": 632,
+        "item_cases": 1285,
+        "items": 10280,
+        "mixed_cases": 1285,
+        "rule": "mixed_groups",
+        "solved_cases": 1842,
+        "verified_attempts": 9994
+      },
+      "gate": 0.5542986425339367,
+      "node": "r02c1",
+      "program": "78ccb9049f06e2b8",
+      "signal": {
+        "cases": 2881,
+        "finished_rate": 0.9931013536966331,
+        "generator": "07942c7666985c0f406c9a03e855d9a8941b1ccf76d448a54b5ba29b0f9333cc",
+        "mean_lines": 6.296077750780979,
+        "mixed_fraction": 0.597709128774731,
+        "novelty_vs_history": 0.875,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 115,
+            "forbidden_name": 60,
+            "forbidden_node": 35,
+            "near_duplicate_heldout": 6,
+            "nondeterministic": 1,
+            "not_single_function_f": 8,
+            "output_degenerate": 27,
+            "output_not_literal": 7,
+            "parse": 137,
+            "runtime_AttributeError": 4,
+            "runtime_IndexError": 34,
+            "runtime_KeyError": 5,
+            "runtime_MemoryError": 1,
+            "runtime_NameError": 17,
+            "runtime_NoOutput": 23,
+            "runtime_RuntimeError": 2,
+            "runtime_Timeout": 15,
+            "runtime_TypeError": 71,
+            "runtime_UnboundLocalError": 4,
+            "runtime_ValueError": 10,
+            "runtime_ZeroDivisionError": 7,
+            "size": 1196,
+            "syntax": 7
+          },
+          "requested": 6000,
+          "round": 2
+        },
+        "rejected": {
+          "duplicate": 119,
+          "heldout_leak": 0
+        },
+        "rollout_id": "41c61307282c",
+        "unsolved_fraction": 0.17077403679278028,
+        "verified_rate": 0.5499392572023603
+      }
+    }
+  ],
+  "parent": "r02c1",
+  "round": 2,
+  "seconds": {
+    "attempt": 1551.5116121640895,
+    "audit_eval": 233.9025079952553,
+    "gate_eval": 5443.896375691984,
+    "meta": 131.8197789050173,
+    "propose": 355.456686595222,
+    "train": 9782.475628704065
+  }
+}

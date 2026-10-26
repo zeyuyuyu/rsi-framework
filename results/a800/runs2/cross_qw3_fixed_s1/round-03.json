@@ -1,0 +1,72 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 19648,
+        "cases": 2456,
+        "excluded_by_flag": 236,
+        "item_cases": 626,
+        "items": 5008,
+        "mixed_cases": 626,
+        "rule": "mixed_groups",
+        "solved_cases": 2331,
+        "verified_attempts": 16730
+      },
+      "gate": 0.830316742081448,
+      "node": "r03c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2692,
+        "finished_rate": 0.9889023031203567,
+        "generator": "base:qwen3_8b",
+        "mean_lines": 6.9803120356612185,
+        "mixed_fraction": 0.2436849925705795,
+        "novelty_vs_history": 0.78,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 740,
+            "forbidden_name": 22,
+            "forbidden_node": 8,
+            "near_duplicate_heldout": 13,
+            "output_degenerate": 3,
+            "output_not_literal": 1,
+            "parse": 55,
+            "runtime_IndexError": 27,
+            "runtime_KeyError": 6,
+            "runtime_MemoryError": 6,
+            "runtime_NameError": 1,
+            "runtime_RuntimeError": 8,
+            "runtime_SystemError": 21,
+            "runtime_Timeout": 11,
+            "runtime_TypeError": 53,
+            "runtime_ValueError": 6,
+            "runtime_ZeroDivisionError": 3,
+            "size": 595,
+            "syntax": 8
+          },
+          "requested": 6000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 308,
+          "heldout_leak": 0
+        },
+        "rollout_id": "f03d97f85685",
+        "unsolved_fraction": 0.04791976225854384,
+        "verified_rate": 0.8596303863298663
+      }
+    }
+  ],
+  "parent": "n0",
+  "round": 3,
+  "seconds": {
+    "attempt": 6594.043507836061,
+    "audit_eval": 116.23009772296064,
+    "gate_eval": 533.009582697181,
+    "propose": 660.0762335609179,
+    "train": 15658.895097244997
+  }
+}
