@@ -23,13 +23,11 @@ import subprocess
 import sys
 import time
 
+from .core.gpu import gpu_status, occupied
+
 
 def free_gpus(exclude, threshold=2000):
-    out = subprocess.run(["nvidia-smi", "--query-gpu=index,memory.used",
-                          "--format=csv,noheader,nounits"],
-                         capture_output=True, text=True, timeout=60).stdout
-    used = {int(i): int(m) for i, m in (l.split(",") for l in out.strip().splitlines())}
-    return [g for g, m in sorted(used.items()) if m < threshold and g not in exclude]
+    return [g for g, st in sorted(gpu_status().items()) if not occupied(st, threshold) and g not in exclude]
 
 
 def set_field(plan, dotted, value):

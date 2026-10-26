@@ -13,26 +13,35 @@ import subprocess
 import time
 
 
-def gpu_memory_used():
+def gpu_status():
+    """{index: (memory used MiB, utilization %)}."""
     out = subprocess.run(
-        ["nvidia-smi", "--query-gpu=index,memory.used", "--format=csv,noheader,nounits"],
+        ["nvidia-smi", "--query-gpu=index,memory.used,utilization.gpu", "--format=csv,noheader,nounits"],
         capture_output=True, text=True, timeout=60, check=True).stdout
-    return {int(i): int(m) for i, m in (line.split(",") for line in out.strip().splitlines())}
+    return {int(i): (int(m), int(u)) for i, m, u in (line.split(",") for line in out.strip().splitlines())}
+
+
+def occupied(status, max_used_mib=2000, idle_context_mib=10240, idle_util=5):
+    """A GPU is taken by someone else's work if it holds more than ``max_used_mib``, unless that memory is an
+    idle context (under ``idle_context_mib`` at under ``idle_util``% utilization): such contexts, e.g. a CI
+    job parked on every GPU for hours, cost their owner nothing if we share the device."""
+    used, util = status
+    return used > max_used_mib and not (used <= idle_context_mib and util <= idle_util)
 
 
 def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=4 * 3600, poll=60.0):
-    """Two readings ``gap`` apart must both show every GPU idle. A busy GPU is waited
+    """Two readings ``gap`` apart must both show every GPU free (see ``occupied``). A busy GPU is waited
     for (re-checked every ``poll`` seconds) up to ``wait_seconds``, then refused. The wait is long because
     on a shared box another user can take a GPU between our sample and train steps; failing loses the run."""
     gpus = [int(g) for g in gpus]
     deadline = time.time() + wait_seconds
     waited = 0.0
     while True:
-        first = gpu_memory_used()
+        first = gpu_status()
         time.sleep(gap)
-        second = gpu_memory_used()
-        busy = [g for g in gpus if g not in first or first[g] > max_used_mib
-                or second.get(g, 10**9) > max_used_mib]
+        second = gpu_status()
+        busy = [g for g in gpus if g not in first or g not in second
+                or occupied(first[g], max_used_mib) or occupied(second[g], max_used_mib)]
         if not busy:
             return dict(first={g: first[g] for g in gpus}, second={g: second[g] for g in gpus},
                         gap_seconds=gap, waited_seconds=waited, admitted_at=time.time())

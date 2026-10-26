@@ -10,6 +10,7 @@ import unittest
 from rsi.core.archive import Archive, Node, program_diff
 from rsi.core.curation import curate, shuffle_feedback
 from rsi.core.engine import Engine, EngineConfig
+from rsi.core.gpu import occupied
 from rsi.core.types import Attempt, Case, EvalRecord, Program, Receipt, Version
 from rsi.domains.code_wm.domain import CodeWorldModelDomain
 from rsi.meta.proposers import CODE_WM_COUPLING, FixedProgram, NumericSearch
@@ -189,6 +190,14 @@ class PathologicalTextTests(unittest.TestCase):
         self.assertIsNone(P.parse_proposal("def f(x):\n    return x\nassert f(" + deep + ") == ??"))
         self.assertIsNotNone(static_check("def f(x):\n    return " + deep))
         self.assertEqual(P.parse_output_answer("[ANSWER]\nassert f(1) == [1, [2]]\n[/ANSWER]"), "[1, [2]]")
+
+
+class GpuAdmissionTests(unittest.TestCase):
+    def test_idle_foreign_context_does_not_block_but_busy_work_does(self):
+        self.assertFalse(occupied((845, 0)))       # nothing there
+        self.assertFalse(occupied((7425, 0)))      # parked CI context, idle
+        self.assertTrue(occupied((8753, 94)))      # another user's running job
+        self.assertTrue(occupied((12000, 0)))      # too large to share even if idle
 
 
 class ProgramTests(unittest.TestCase):
