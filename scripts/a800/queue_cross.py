@@ -1,6 +1,6 @@
 """A800: cross-model code-WM RSI arms (frozen seed program; only the model and arm keys change).
 usage: queue_cross.py <order>:<tag>_<arm>_s<seed>[:<ngpus>] ...   e.g. 30:g8b_full_s1  32:qw3_fixed_s1:1
-(ngpus defaults to 2: sampling on both, training on the first)
+(ngpus defaults to 1: a 2-GPU code job leaves its second GPU idle while it trains)
 tags: q7b (Qwen2.5-Coder-7B-Instruct), g8b (granite-3.3-8b-instruct), qw3 (Qwen3-8B, vLLM 0.11 env)."""
 import glob, json, sys
 H = "/data0/home/zeyuwang"
@@ -27,7 +27,7 @@ for spec in sys.argv[1:]:
     run = f"cross_{name}"
     path = f"{H}/rsi/plans2/{run}.json"
     json.dump(p, open(path, "w"), indent=2)
-    job = dict(name=run, ngpus=int(ng[0]) if ng else 2, module="rsi.run_code_wm", plan=path, out=f"{H}/rsi/runs2/{run}",
+    job = dict(name=run, ngpus=int(ng[0]) if ng else 1, module="rsi.run_code_wm", plan=path, out=f"{H}/rsi/runs2/{run}",
                gpu_fields={"llm.sample_gpus": "all", "llm.train_gpus": "first"}, args=[],
                python=py, pythonpath=pp, cwd=f"{H}/rsi/src2")
     json.dump(job, open(f"{Q}/pending/{int(order):02d}_{run}.json", "w"), indent=1)
