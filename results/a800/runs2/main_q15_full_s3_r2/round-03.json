@@ -1,0 +1,136 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 17600,
+        "cases": 2200,
+        "excluded_by_flag": 683,
+        "item_cases": 1139,
+        "items": 9112,
+        "mixed_cases": 1139,
+        "rule": "mixed_groups",
+        "solved_cases": 1819,
+        "verified_attempts": 10415
+      },
+      "gate": 0.5859728506787331,
+      "node": "r03c0",
+      "program": "78ccb9049f06e2b8",
+      "signal": {
+        "cases": 2883,
+        "finished_rate": 0.9954474505723205,
+        "generator": "5be9371e2a1c985e50f9a682c7605b3cd0a57138c2ad8b658967201fa52cdf0c",
+        "mean_lines": 6.2715920915712795,
+        "mixed_fraction": 0.5532431494970517,
+        "novelty_vs_history": 0.855,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 140,
+            "forbidden_name": 68,
+            "forbidden_node": 29,
+            "near_duplicate_heldout": 17,
+            "not_single_function_f": 4,
+            "output_degenerate": 23,
+            "parse": 257,
+            "runtime_AttributeError": 14,
+            "runtime_IndexError": 33,
+            "runtime_KeyError": 2,
+            "runtime_MemoryError": 3,
+            "runtime_NameError": 20,
+            "runtime_NoOutput": 18,
+            "runtime_RuntimeError": 3,
+            "runtime_Timeout": 12,
+            "runtime_TypeError": 67,
+            "runtime_UnboundLocalError": 7,
+            "runtime_ValueError": 14,
+            "runtime_ZeroDivisionError": 5,
+            "size": 1220,
+            "syntax": 2
+          },
+          "requested": 6000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 117,
+          "heldout_leak": 0
+        },
+        "rollout_id": "32c82682e94e",
+        "unsolved_fraction": 0.15851543531044052,
+        "verified_rate": 0.591874783211932
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 24064,
+        "cases": 3008,
+        "excluded_by_flag": 860,
+        "item_cases": 1500,
+        "items": 12000,
+        "mixed_cases": 1540,
+        "rule": "mixed_groups",
+        "solved_cases": 2522,
+        "verified_attempts": 14648
+      },
+      "gate": 0.583710407239819,
+      "node": "r03c1",
+      "program": "fa3225d98cc721af",
+      "signal": {
+        "cases": 3868,
+        "finished_rate": 0.9955726473629782,
+        "generator": "5be9371e2a1c985e50f9a682c7605b3cd0a57138c2ad8b658967201fa52cdf0c",
+        "mean_lines": 6.208376421923474,
+        "mixed_fraction": 0.5442088934850051,
+        "novelty_vs_history": 0.8625,
+        "proposal": {
+          "admitted": 4103,
+          "rejected": {
+            "dup_in_round": 165,
+            "forbidden_name": 69,
+            "forbidden_node": 27,
+            "near_duplicate_heldout": 13,
+            "nondeterministic": 1,
+            "not_single_function_f": 4,
+            "output_degenerate": 27,
+            "output_not_literal": 1,
+            "parse": 249,
+            "runtime_AttributeError": 11,
+            "runtime_IndexError": 23,
+            "runtime_KeyError": 2,
+            "runtime_NameError": 10,
+            "runtime_NoOutput": 19,
+            "runtime_RuntimeError": 5,
+            "runtime_Timeout": 10,
+            "runtime_TypeError": 57,
+            "runtime_UnboundLocalError": 3,
+            "runtime_ValueError": 8,
+            "runtime_ZeroDivisionError": 6,
+            "size": 1183,
+            "syntax": 4
+          },
+          "requested": 6000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 235,
+          "heldout_leak": 0
+        },
+        "rollout_id": "1396e52efc7f",
+        "unsolved_fraction": 0.1468459152016546,
+        "verified_rate": 0.608195449844881
+      }
+    }
+  ],
+  "parent": "r03c0",
+  "round": 3,
+  "seconds": {
+    "attempt": 2657.9436907100026,
+    "audit_eval": 314.36209551035427,
+    "gate_eval": 5601.844863062957,
+    "meta": 196.72346928319894,
+    "propose": 591.3897100919858,
+    "train": 15081.064030330162
+  }
+}

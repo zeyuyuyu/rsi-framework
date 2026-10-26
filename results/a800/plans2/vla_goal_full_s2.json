@@ -10,7 +10,8 @@
     "train_gpus": [
       7
     ],
-    "greedy_procs_per_gpu": 4
+    "greedy_procs_per_gpu": 4,
+    "sample_procs_per_gpu": 3
   },
   "suite": "libero_goal",
   "tasks": [
