@@ -1,0 +1,78 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 20032,
+        "cases": 2504,
+        "excluded_by_flag": 496,
+        "item_cases": 1000,
+        "items": 8000,
+        "mixed_cases": 1345,
+        "rule": "mixed_groups",
+        "solved_cases": 1671,
+        "verified_attempts": 7578
+      },
+      "gate": 0.5497737556561086,
+      "node": "r01c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 3000,
+        "finished_rate": 0.9762916666666667,
+        "generator": "base:qcoder1.5b",
+        "mean_lines": 6.557333333333333,
+        "mixed_fraction": 0.5723333333333334,
+        "novelty_vs_history": 1.0,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 42,
+            "forbidden_attribute": 1,
+            "forbidden_name": 74,
+            "forbidden_node": 59,
+            "near_duplicate_heldout": 10,
+            "nondeterministic": 1,
+            "not_single_function_f": 5,
+            "output_degenerate": 41,
+            "output_not_literal": 5,
+            "parse": 407,
+            "runtime_AssertionError": 3,
+            "runtime_AttributeError": 16,
+            "runtime_IndexError": 56,
+            "runtime_KeyError": 10,
+            "runtime_MemoryError": 12,
+            "runtime_NameError": 32,
+            "runtime_NoOutput": 16,
+            "runtime_RuntimeError": 5,
+            "runtime_Timeout": 26,
+            "runtime_TypeError": 104,
+            "runtime_UnboundLocalError": 3,
+            "runtime_ValueError": 30,
+            "runtime_ZeroDivisionError": 9,
+            "size": 1285,
+            "syntax": 6
+          },
+          "requested": 6000,
+          "round": 1
+        },
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "bf1b4bdfa3eb",
+        "unsolved_fraction": 0.30766666666666664,
+        "verified_rate": 0.38604166666666667
+      }
+    }
+  ],
+  "parent": "r01c0",
+  "round": 1,
+  "seconds": {
+    "attempt": 580.0712751850951,
+    "audit_eval": 152.91509764199145,
+    "gate_eval": 156.03077582200058,
+    "propose": 126.77071822597645,
+    "train": 1555.583962050965
+  }
+}

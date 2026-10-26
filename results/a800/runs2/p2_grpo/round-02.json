@@ -1,0 +1,77 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 19200,
+        "cases": 2400,
+        "excluded_by_flag": 556,
+        "item_cases": 1000,
+        "items": 8000,
+        "mixed_cases": 1339,
+        "rule": "mixed_groups",
+        "solved_cases": 1886,
+        "verified_attempts": 9874
+      },
+      "gate": 0.5565610859728507,
+      "node": "r02c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2956,
+        "finished_rate": 0.9831698240866035,
+        "generator": "ba632cabf44d5914312eeedbb714d7992362a249c14e7487e7133588a3cbd610",
+        "mean_lines": 6.2442489851150205,
+        "mixed_fraction": 0.5872801082543978,
+        "novelty_vs_history": 0.96,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 76,
+            "forbidden_attribute": 1,
+            "forbidden_name": 63,
+            "forbidden_node": 25,
+            "near_duplicate_heldout": 9,
+            "nondeterministic": 3,
+            "not_single_function_f": 3,
+            "output_degenerate": 24,
+            "output_not_literal": 2,
+            "parse": 189,
+            "runtime_AttributeError": 9,
+            "runtime_IndexError": 46,
+            "runtime_KeyError": 6,
+            "runtime_MemoryError": 3,
+            "runtime_NameError": 17,
+            "runtime_NoOutput": 25,
+            "runtime_RuntimeError": 5,
+            "runtime_Timeout": 21,
+            "runtime_TypeError": 75,
+            "runtime_UnboundLocalError": 3,
+            "runtime_ValueError": 11,
+            "runtime_ZeroDivisionError": 6,
+            "size": 1206,
+            "syntax": 3
+          },
+          "requested": 6000,
+          "round": 2
+        },
+        "rejected": {
+          "duplicate": 44,
+          "heldout_leak": 0
+        },
+        "rollout_id": "445e2e4c49e1",
+        "unsolved_fraction": 0.19959404600811909,
+        "verified_rate": 0.5140815290933695
+      }
+    }
+  ],
+  "parent": "r02c0",
+  "round": 2,
+  "seconds": {
+    "attempt": 1091.8056007770356,
+    "audit_eval": 225.1723395010922,
+    "gate_eval": 228.13457288290374,
+    "propose": 234.67683731997386,
+    "train": 3065.268757736776
+  }
+}

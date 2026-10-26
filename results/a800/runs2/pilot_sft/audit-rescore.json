@@ -1,0 +1,62 @@
+{
+  "test-cruxeval_i-n0.jsonl": {
+    "n": 800,
+    "recorded": 0.4575,
+    "rescored": 0.455,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_i-r01c0.jsonl": {
+    "n": 800,
+    "recorded": 0.44875,
+    "rescored": 0.44625,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_o-n0.jsonl": {
+    "n": 800,
+    "recorded": 0.37,
+    "rescored": 0.3775,
+    "agreement": 0.9925,
+    "disagreements": [
+      "cruxO-sample_135",
+      "cruxO-sample_152",
+      "cruxO-sample_344",
+      "cruxO-sample_364",
+      "cruxO-sample_378",
+      "cruxO-sample_720"
+    ]
+  },
+  "test-cruxeval_o-r01c0.jsonl": {
+    "n": 800,
+    "recorded": 0.38625,
+    "rescored": 0.39125,
+    "agreement": 0.995,
+    "disagreements": [
+      "cruxO-sample_135",
+      "cruxO-sample_152",
+      "cruxO-sample_522",
+      "cruxO-sample_748"
+    ]
+  },
+  "test-lcb_exec-n0.jsonl": {
+    "n": 479,
+    "recorded": 0.3089770354906054,
+    "rescored": 0.3089770354906054,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r01c0.jsonl": {
+    "n": 479,
+    "recorded": 0.27348643006263046,
+    "rescored": 0.27348643006263046,
+    "agreement": 1.0,
+    "disagreements": []
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "model": "qcoder1.5b",
+  "scores": {
+    "cruxeval_o": 0.37,
+    "cruxeval_i": 0.4575,
+    "lcb_exec": 0.3089770354906054
+  },
+  "architecture": [
+    "Qwen2ForCausalLM"
+  ]
+}

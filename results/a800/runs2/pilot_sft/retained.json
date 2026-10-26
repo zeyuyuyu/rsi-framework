@@ -1,0 +1,45 @@
+{
+  "node": "r01c0",
+  "program": {
+    "author": "seed",
+    "id": "5f25bb58c6dac1d0",
+    "note": "",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 2000,
+        "per_case": 2,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "instruction": "Below are short Python functions, each followed by an assertion with a concrete input. Write one NEW function in exactly the same format. Requirements: the function is named f, is 3 to 15 lines long, uses only built-in types and operations (strings, lists, dicts, sets, tuples, integers, booleans), has no imports, does no printing, file access or randomness, and always terminates quickly. Make it different from the examples and non-trivial: predicting its output for the given input should require carefully tracing loops, conditionals, indexing, or string/list/dict methods.",
+        "max_cases": 3000,
+        "pool_growth": 500,
+        "proposals": 6000,
+        "shots": 3,
+        "temperature": 1.0
+      },
+      "solver": {
+        "max_tokens": 1024,
+        "samples": 8,
+        "temperature": 0.8,
+        "top_p": 0.95
+      },
+      "update": {
+        "batch": 32,
+        "lr": 0.0001,
+        "operator": "sft",
+        "steps": 64
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "94585a1f43dd5aeb5722aa5d4f4db01ca8e7d513774dd49d5ccf1021c2855517",
+    "location": "/home/zeyuwang/rsi/runs2/pilot_sft/ckpt-r01c0",
+    "parent_id": "base:qcoder1.5b"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "run": "/home/zeyuwang/rsi/runs2/p2_grpo",
+  "final_node": "r02c0",
+  "results": {
+    "cruxeval_o": {
+      "initial": 0.3725,
+      "final": 0.38625,
+      "paired": {
+        "n": 800,
+        "mean_gain": 0.01375,
+        "ci95": [
+          -0.01,
+          0.0375
+        ],
+        "ci_excludes_zero": false,
+        "mcnemar_p": 0.3048851907022759,
+        "flipped_to_correct": 53,
+        "flipped_to_wrong": 42
+      }
+    },
+    "cruxeval_i": {
+      "initial": 0.46,
+      "final": 0.46,
+      "paired": {
+        "n": 800,
+        "mean_gain": 0.0,
+        "ci95": [
+          -0.0225,
+          0.0225
+        ],
+        "ci_excludes_zero": false,
+        "mcnemar_p": 1.0,
+        "flipped_to_correct": 44,
+        "flipped_to_wrong": 44
+      }
+    },
+    "lcb_exec": {
+      "initial": 0.302713987473904,
+      "final": 0.3068893528183716,
+      "paired": {
+        "n": 479,
+        "mean_gain": 0.0041753653444676405,
+        "ci95": [
+          -0.029227557411273485,
+          0.03966597077244259
+        ],
+        "ci_excludes_zero": false,
+        "mcnemar_p": 0.9049745264594623,
+        "flipped_to_correct": 36,
+        "flipped_to_wrong": 34
+      }
+    }
+  }
+}
