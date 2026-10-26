@@ -5,7 +5,9 @@ runs (tests.txt TESTBITS lines). For each run it takes the initial version (n0) 
 version (last accepted node; report.json or accepted.jsonl). Id lists are checked by digest, so problems
 pair one-to-one across runs and platforms.
 
-    python -m rsi.audit.compare_arms results/ [--suite cruxeval_o] [--json out.json]
+    python -m rsi.audit.compare_arms results/ [--suite cruxeval_o] [--study long8] [--json out.json]
+
+--study long8 reads the 8-round runs of Addendum 3 (bj_q15_long8<arm>_s<seed>) instead of the main study.
 
 C1  final - initial of `full` (and of `fixed`), per-problem, seed-averaged
 C2  fixed - shuffled, C3 fixed - nonrec, C4 full - fixed, C5 fixed - onebig: final vs final at the same seed
@@ -20,7 +22,7 @@ import re
 
 from ..core.stats import paired_bootstrap
 
-ARM = re.compile(r"(?:main|bj)_q15_(fixed|nonrec|shuffled|full|onebig)_s(\d+)(?:_r\d+)?$")
+ARM = re.compile(r"(?:main|bj)_q15_(long8)?(fixed|nonrec|shuffled|full|onebig)_s(\d+)(?:_r\d+)?$")
 
 
 def _digest(ids):
@@ -56,18 +58,18 @@ def load_scores(run, suite):
     return out
 
 
-def collect(root, suite):
+def collect(root, suite, study=""):
     runs = {}
     for run in sorted(p for p in Path(root).glob("*/runs2/*") if p.is_dir()) + \
                sorted(p for p in Path(root).glob("baidu/*") if p.is_dir()):
         m = ARM.match(run.name)
-        if not m:
+        if not m or (m.group(1) or "") != study:
             continue
         scores = load_scores(run, suite)
         final = _final_node(run)
         if "n0" not in scores or final not in scores:
             continue
-        arm, seed = m.group(1), int(m.group(2))
+        arm, seed = m.group(2), int(m.group(3))
         if (arm, seed) in runs and not run.name.endswith(tuple(f"_r{i}" for i in range(2, 9))):
             continue   # a numbered rerun replaces a failed first attempt, never the reverse
         runs[(arm, seed)] = dict(run=str(run), final=final, initial=scores["n0"], final_scores=scores[final])
@@ -97,13 +99,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("root")
     ap.add_argument("--suite", default="cruxeval_o")
+    ap.add_argument("--study", default="")
     ap.add_argument("--json")
     args = ap.parse_args()
-    runs = collect(args.root, args.suite)
+    runs = collect(args.root, args.suite, args.study)
     digests = {r["initial"][0] for r in runs.values()} | {r["final_scores"][0] for r in runs.values()}
     if len(digests) != 1:
         raise SystemExit(f"problem id lists differ across runs: {sorted(digests)}")
-    out = dict(suite=args.suite, runs={f"{a}_s{s}": dict(run=r["run"], final=r["final"],
+    out = dict(suite=args.suite, study=args.study or "main", runs={f"{a}_s{s}": dict(run=r["run"], final=r["final"],
                                                         initial=round(100 * sum(r["initial"][1]) / len(r["initial"][1]), 2),
                                                         final_score=round(100 * sum(r["final_scores"][1]) / len(r["final_scores"][1]), 2))
                                        for (a, s), r in sorted(runs.items())}, claims=[])

@@ -1,0 +1,87 @@
+{
+  "suite": "cruxeval_i",
+  "study": "long8",
+  "runs": {
+    "fixed_s1": {
+      "run": "results/baidu/bj_q15_long8fixed_s1",
+      "final": "r07c0",
+      "initial": 44.62,
+      "final_score": 46.5
+    },
+    "fixed_s2": {
+      "run": "results/baidu/bj_q15_long8fixed_s2",
+      "final": "r08c0",
+      "initial": 44.75,
+      "final_score": 47.88
+    },
+    "fixed_s3": {
+      "run": "results/baidu/bj_q15_long8fixed_s3",
+      "final": "r08c0",
+      "initial": 44.62,
+      "final_score": 46.5
+    },
+    "nonrec_s1": {
+      "run": "results/baidu/bj_q15_long8nonrec_s1",
+      "final": "r05c0",
+      "initial": 44.75,
+      "final_score": 47.62
+    }
+  },
+  "claims": [
+    {
+      "claim": "C1 fixed: final - initial",
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "per_seed_points": {
+        "1": 1.88,
+        "2": 3.12,
+        "3": 1.88
+      },
+      "mean_points": 2.29,
+      "ci95_points": [
+        -0.04,
+        4.58
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": true
+    },
+    {
+      "claim": "C1 nonrec: final - initial",
+      "seeds": [
+        1
+      ],
+      "per_seed_points": {
+        "1": 2.88
+      },
+      "mean_points": 2.88,
+      "ci95_points": [
+        0.12,
+        5.75
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": true,
+      "final": false
+    },
+    {
+      "claim": "C3 fixed - nonrec",
+      "seeds": [
+        1
+      ],
+      "per_seed_points": {
+        "1": -1.12
+      },
+      "mean_points": -1.12,
+      "ci95_points": [
+        -3.75,
+        1.62
+      ],
+      "bar_points": 1.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    }
+  ]
+}
