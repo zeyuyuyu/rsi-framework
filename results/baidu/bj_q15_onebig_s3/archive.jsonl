@@ -1,0 +1,3 @@
+{"node_id": "n0", "round": 0, "parent_node": null, "gate": 0.5248868778280543, "audit": 0.48722986247544203, "program": "37974497187f0784", "author": "seed", "note": "", "train_items": null, "loss_first": null, "loss_last": null, "train_seconds": 0, "verified_rate": null, "curation_items": null}
+{"node_id": "r01c0", "round": 1, "parent_node": "n0", "gate": 0.5723981900452488, "audit": null, "program": "37974497187f0784", "author": "seed", "note": "", "train_items": 32000, "loss_first": -0.06264888669829816, "loss_last": 0.035617819041362964, "train_seconds": 3104, "verified_rate": 0.38659375, "curation_items": 32000}
+{"event": "accepted", "node_id": "r01c0", "audit": 0.5127701375245579, "gate": 0.5723981900452488}

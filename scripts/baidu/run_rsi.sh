@@ -98,6 +98,11 @@ fi
 stage "2 model"; CUR=model
 model_ok() { [ -f "$DONE" ] && [ -f "$MDIR/config.json" ] && ls "$MDIR"/*.safetensors >/dev/null 2>&1; }
 mkdir -p "$PFS/models"
+# DOWNLOAD_ONLY=1 (CPU-only job): fetch the model to PFS and exit, so GPU jobs never sit on a card while
+# downloading. It owns the download: a lock left by a stopped GPU job is taken over at once.
+if [ "${DOWNLOAD_ONLY:-0}" = 1 ] && [ -d "$LOCK" ] && ! model_ok; then
+  log "download-only: taking over lock ($(cat "$LOCK/owner" 2>/dev/null))"; mv "$LOCK" "$LOCK.stale.$$"
+fi
 WAITED=0
 while ! model_ok; do
   if mkdir "$LOCK" 2>/dev/null; then
@@ -106,7 +111,7 @@ while ! model_ok; do
     mkdir -p "$MDIR"
     ok=no
     for attempt in 1 2 3; do
-      if timeout 5400 modelscope download --model "$MODEL_ID" --local_dir "$MDIR" > /tmp/ms_dl.txt 2>&1 \
+      if timeout "${MS_TIMEOUT:-5400}" modelscope download --model "$MODEL_ID" --local_dir "$MDIR" > /tmp/ms_dl.txt 2>&1 \
          && [ -f "$MDIR/config.json" ] && ls "$MDIR"/*.safetensors >/dev/null 2>&1; then ok=yes; break; fi
       log "download attempt $attempt failed:"; tail -5 /tmp/ms_dl.txt
       # fallback: HF mirror
@@ -135,6 +140,7 @@ done
 ls -la "$MDIR"
 MSHA=$(cat "$MDIR/.sha256" 2>/dev/null)
 if [ "$MSHA" = "$A800_SHA" ]; then echo "MODEL_SHA_MATCH_A800 $MSHA"; else echo "MODEL_SHA_MISMATCH_A800 baidu=$MSHA a800=$A800_SHA"; fi
+if [ "${DOWNLOAD_ONLY:-0}" = 1 ]; then echo "RSI_JOB_DONE name=$NAME rc=0 download-only"; exit 0; fi
 
 stage "3 source"; CUR=src
 SRC_TGZ=$BOS/src/rsi_src.tar.gz

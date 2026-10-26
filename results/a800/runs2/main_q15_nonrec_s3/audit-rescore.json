@@ -1,0 +1,124 @@
+{
+  "test-cruxeval_i-n0.jsonl": {
+    "n": 800,
+    "recorded": 0.4575,
+    "rescored": 0.455,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_i-r01c0.jsonl": {
+    "n": 800,
+    "recorded": 0.455,
+    "rescored": 0.45375,
+    "agreement": 0.99875,
+    "disagreements": [
+      "cruxI-sample_215"
+    ]
+  },
+  "test-cruxeval_i-r02c0.jsonl": {
+    "n": 800,
+    "recorded": 0.4475,
+    "rescored": 0.445,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_i-r03c0.jsonl": {
+    "n": 800,
+    "recorded": 0.46,
+    "rescored": 0.4575,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_i-r04c0.jsonl": {
+    "n": 800,
+    "recorded": 0.475,
+    "rescored": 0.47375,
+    "agreement": 0.99875,
+    "disagreements": [
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_o-n0.jsonl": {
+    "n": 800,
+    "recorded": 0.3775,
+    "rescored": 0.3775,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_o-r01c0.jsonl": {
+    "n": 800,
+    "recorded": 0.39875,
+    "rescored": 0.39875,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_o-r02c0.jsonl": {
+    "n": 800,
+    "recorded": 0.41125,
+    "rescored": 0.41125,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_o-r03c0.jsonl": {
+    "n": 800,
+    "recorded": 0.415,
+    "rescored": 0.41625,
+    "agreement": 0.99875,
+    "disagreements": [
+      "cruxO-sample_452"
+    ]
+  },
+  "test-cruxeval_o-r04c0.jsonl": {
+    "n": 800,
+    "recorded": 0.41625,
+    "rescored": 0.4175,
+    "agreement": 0.99875,
+    "disagreements": [
+      "cruxO-sample_452"
+    ]
+  },
+  "test-lcb_exec-n0.jsonl": {
+    "n": 479,
+    "recorded": 0.3089770354906054,
+    "rescored": 0.3089770354906054,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r01c0.jsonl": {
+    "n": 479,
+    "recorded": 0.2797494780793319,
+    "rescored": 0.2797494780793319,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r02c0.jsonl": {
+    "n": 479,
+    "recorded": 0.29436325678496866,
+    "rescored": 0.29436325678496866,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r03c0.jsonl": {
+    "n": 479,
+    "recorded": 0.3173277661795407,
+    "rescored": 0.3173277661795407,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r04c0.jsonl": {
+    "n": 479,
+    "recorded": 0.2839248434237996,
+    "rescored": 0.2839248434237996,
+    "agreement": 1.0,
+    "disagreements": []
+  }
+}

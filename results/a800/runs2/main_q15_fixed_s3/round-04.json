@@ -1,0 +1,74 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 18024,
+        "cases": 2253,
+        "excluded_by_flag": 639,
+        "item_cases": 1000,
+        "items": 8000,
+        "mixed_cases": 1279,
+        "rule": "mixed_groups",
+        "solved_cases": 1855,
+        "verified_attempts": 10246
+      },
+      "gate": 0.5769230769230769,
+      "node": "r04c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2892,
+        "finished_rate": 0.9918741355463347,
+        "generator": "2e753c2e55971951efecca00f377990623fbb8c7d93955c83655d64a4f9cea98",
+        "mean_lines": 6.286998616874135,
+        "mixed_fraction": 0.6009681881051175,
+        "novelty_vs_history": 0.8725,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 105,
+            "forbidden_name": 77,
+            "forbidden_node": 41,
+            "near_duplicate_heldout": 6,
+            "nondeterministic": 1,
+            "not_single_function_f": 7,
+            "output_degenerate": 33,
+            "output_not_literal": 1,
+            "parse": 308,
+            "runtime_AttributeError": 10,
+            "runtime_IndexError": 41,
+            "runtime_KeyError": 4,
+            "runtime_NameError": 13,
+            "runtime_NoOutput": 19,
+            "runtime_RuntimeError": 6,
+            "runtime_Timeout": 19,
+            "runtime_TypeError": 55,
+            "runtime_ValueError": 8,
+            "runtime_ZeroDivisionError": 4,
+            "size": 1129,
+            "syntax": 2
+          },
+          "requested": 6000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 108,
+          "heldout_leak": 0
+        },
+        "rollout_id": "8c4070247f0e",
+        "unsolved_fraction": 0.16113416320885202,
+        "verified_rate": 0.5643153526970954
+      }
+    }
+  ],
+  "parent": "r02c0",
+  "round": 4,
+  "seconds": {
+    "attempt": 2190.964692026144,
+    "audit_eval": 228.39447793806903,
+    "gate_eval": 383.6465342461597,
+    "propose": 493.35719451634213,
+    "train": 6049.896531004924
+  }
+}
