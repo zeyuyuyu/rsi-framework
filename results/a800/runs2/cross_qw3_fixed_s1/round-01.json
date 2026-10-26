@@ -1,0 +1,74 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 21712,
+        "cases": 2714,
+        "excluded_by_flag": 286,
+        "item_cases": 808,
+        "items": 6464,
+        "mixed_cases": 808,
+        "rule": "mixed_groups",
+        "solved_cases": 2544,
+        "verified_attempts": 17805
+      },
+      "gate": 0.8190045248868778,
+      "node": "r01c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 3000,
+        "finished_rate": 0.980375,
+        "generator": "base:qwen3_8b",
+        "mean_lines": 7.45,
+        "mixed_fraction": 0.286,
+        "novelty_vs_history": 1.0,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 194,
+            "forbidden_name": 41,
+            "forbidden_node": 14,
+            "near_duplicate_heldout": 9,
+            "nondeterministic": 3,
+            "output_degenerate": 10,
+            "output_not_literal": 4,
+            "parse": 60,
+            "runtime_AttributeError": 3,
+            "runtime_IndexError": 38,
+            "runtime_KeyError": 17,
+            "runtime_MemoryError": 10,
+            "runtime_NameError": 1,
+            "runtime_RuntimeError": 4,
+            "runtime_SystemError": 16,
+            "runtime_Timeout": 24,
+            "runtime_TypeError": 54,
+            "runtime_ValueError": 9,
+            "runtime_ZeroDivisionError": 2,
+            "size": 562,
+            "syntax": 2
+          },
+          "requested": 6000,
+          "round": 1
+        },
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "451dc84382b4",
+        "unsolved_fraction": 0.057666666666666665,
+        "verified_rate": 0.8307916666666667
+      }
+    }
+  ],
+  "parent": "n0",
+  "round": 1,
+  "seconds": {
+    "attempt": 2576.3492175601423,
+    "audit_eval": 116.23009772296064,
+    "gate_eval": 249.09170806896873,
+    "propose": 203.30697557190433,
+    "train": 5714.041279338067
+  }
+}
