@@ -1,6 +1,7 @@
 """Run the two-level RSI loop on a VLA policy in LIBERO from a frozen plan.
 
     python -m rsi.run_libero --plan plan.json --out runs/<new-dir> [--baseline-only --replicates N]
+                                                                  [--heldout-eval receipt.json]
 
 Plan keys: model_name, vla (VLAConfig fields), suite, tasks, heldout_per_task,
 test_inits_per_task, program (overrides), engine (EngineConfig fields),
@@ -25,6 +26,9 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--baseline-only", action="store_true")
     parser.add_argument("--replicates", type=int, default=1)
+    # gate + audit only (never the test suite) for a version given by its training receipt, e.g. a
+    # pilot candidate whose in-run evaluation failed
+    parser.add_argument("--heldout-eval", metavar="RECEIPT")
     args = parser.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     out = Path(args.out)
@@ -50,6 +54,20 @@ def main():
                     s.write(json.dumps(asdict(r)) + "\n")
         (out / "baseline.json").write_text(json.dumps(dict(model=plan["model_name"],
                                                            test_success=scores), indent=2))
+        print(json.dumps(scores))
+        return
+    if args.heldout_eval:
+        version = Version(**json.loads(Path(args.heldout_eval).read_text())["version"])
+        gate, audit = domain.heldout(plan["heldout_per_task"])
+        out.mkdir(parents=True)
+        scores = {}
+        for split, cases in (("gate", gate), ("audit", audit)):
+            records = domain.evaluate(backend, version, cases)
+            scores[split] = sum(r.score for r in records) / len(records)
+            with (out / f"{split}-{version.id[:12]}.jsonl").open("w") as s:
+                for r in records:
+                    s.write(json.dumps(asdict(r)) + "\n")
+        (out / "heldout_eval.json").write_text(json.dumps(dict(version=asdict(version), **scores), indent=2))
         print(json.dumps(scores))
         return
     program = domain.default_program()
