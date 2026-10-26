@@ -1,0 +1,96 @@
+{
+  "test-cruxeval_i-n0.jsonl": {
+    "n": 800,
+    "recorded": 0.4575,
+    "rescored": 0.455,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_i-r01c1.jsonl": {
+    "n": 800,
+    "recorded": 0.455,
+    "rescored": 0.4525,
+    "agreement": 0.9975,
+    "disagreements": [
+      "cruxI-sample_215",
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_i-r02c1.jsonl": {
+    "n": 800,
+    "recorded": 0.445,
+    "rescored": 0.445,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_i-r03c0.jsonl": {
+    "n": 800,
+    "recorded": 0.445,
+    "rescored": 0.44375,
+    "agreement": 0.99875,
+    "disagreements": [
+      "cruxI-sample_698"
+    ]
+  },
+  "test-cruxeval_o-n0.jsonl": {
+    "n": 800,
+    "recorded": 0.3775,
+    "rescored": 0.3775,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_o-r01c1.jsonl": {
+    "n": 800,
+    "recorded": 0.39125,
+    "rescored": 0.39125,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_o-r02c1.jsonl": {
+    "n": 800,
+    "recorded": 0.40375,
+    "rescored": 0.40375,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-cruxeval_o-r03c0.jsonl": {
+    "n": 800,
+    "recorded": 0.43125,
+    "rescored": 0.4325,
+    "agreement": 0.99875,
+    "disagreements": [
+      "cruxO-sample_452"
+    ]
+  },
+  "test-lcb_exec-n0.jsonl": {
+    "n": 479,
+    "recorded": 0.3089770354906054,
+    "rescored": 0.3089770354906054,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r01c1.jsonl": {
+    "n": 479,
+    "recorded": 0.32150313152400833,
+    "rescored": 0.32150313152400833,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r02c1.jsonl": {
+    "n": 479,
+    "recorded": 0.2881002087682672,
+    "rescored": 0.2881002087682672,
+    "agreement": 1.0,
+    "disagreements": []
+  },
+  "test-lcb_exec-r03c0.jsonl": {
+    "n": 479,
+    "recorded": 0.2964509394572025,
+    "rescored": 0.2964509394572025,
+    "agreement": 1.0,
+    "disagreements": []
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.8388998035363457,
+      "author": "seed",
+      "gate": 0.8461538461538461,
+      "node": "n0",
+      "program": "deb463acc37c2f27",
+      "round": 0
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "true",
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 4,
+    "seal_tests": false,
+    "seed": 1,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 31012.554961388,
+  "retained": "n0",
+  "seconds": {
+    "attempt": 8396.88307915721,
+    "audit_eval": 116.23009772296064,
+    "gate_eval": 675.5850758331362,
+    "propose": 890.8701130808331,
+    "test_eval": 371.1242067737039,
+    "train": 20552.47775800503
+  },
+  "status": "complete",
+  "tests": {
+    "cruxeval_i": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.6825
+        }
+      ],
+      "final": 0.6825,
+      "initial": 0.6825,
+      "paired": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 0,
+        "flipped_to_wrong": 0,
+        "mcnemar_p": 1.0,
+        "mean_gain": 0.0,
+        "n": 800
+      }
+    },
+    "cruxeval_o": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.76375
+        }
+      ],
+      "final": 0.76375,
+      "initial": 0.76375,
+      "paired": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 0,
+        "flipped_to_wrong": 0,
+        "mcnemar_p": 1.0,
+        "mean_gain": 0.0,
+        "n": 800
+      }
+    },
+    "lcb_exec": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.7870563674321504
+        }
+      ],
+      "final": 0.7870563674321504,
+      "initial": 0.7870563674321504,
+      "paired": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 0,
+        "flipped_to_wrong": 0,
+        "mcnemar_p": 1.0,
+        "mean_gain": 0.0,
+        "n": 479
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 {
   "suite": "cruxeval_i",
+  "study": "main",
   "runs": {
     "fixed_s1": {
       "run": "results/a800/runs2/main_q15_fixed_s1",
@@ -30,6 +31,12 @@
       "final": "r04c0",
       "initial": 44.75,
       "final_score": 47.0
+    },
+    "full_s3": {
+      "run": "results/a800/runs2/main_q15_full_s3_r2",
+      "final": "r03c0",
+      "initial": 45.75,
+      "final_score": 44.5
     },
     "nonrec_s1": {
       "run": "results/a800/runs2/main_q15_nonrec_s1_r2",
@@ -91,20 +98,22 @@
       "claim": "C1 full: final - initial",
       "seeds": [
         1,
-        2
+        2,
+        3
       ],
       "per_seed_points": {
         "1": 1.0,
-        "2": 2.25
+        "2": 2.25,
+        "3": -1.25
       },
-      "mean_points": 1.62,
+      "mean_points": 0.67,
       "ci95_points": [
-        -0.69,
-        3.94
+        -1.42,
+        2.75
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": true
     },
     {
       "claim": "C1 fixed: final - initial",
@@ -236,20 +245,22 @@
       "claim": "C4 full - fixed",
       "seeds": [
         1,
-        2
+        2,
+        3
       ],
       "per_seed_points": {
         "1": -1.38,
-        "2": 0.25
+        "2": 0.25,
+        "3": -1.38
       },
-      "mean_points": -0.56,
+      "mean_points": -0.83,
       "ci95_points": [
-        -2.31,
-        1.25
+        -2.33,
+        0.62
       ],
       "bar_points": 1.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": true
     },
     {
       "claim": "C5 fixed - onebig",

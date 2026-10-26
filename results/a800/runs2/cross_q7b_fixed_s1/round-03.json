@@ -1,0 +1,72 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 16872,
+        "cases": 2109,
+        "excluded_by_flag": 707,
+        "item_cases": 737,
+        "items": 5896,
+        "mixed_cases": 737,
+        "rule": "mixed_groups",
+        "solved_cases": 1976,
+        "verified_attempts": 13368
+      },
+      "gate": 0.7692307692307693,
+      "node": "r03c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2816,
+        "finished_rate": 0.9911665482954546,
+        "generator": "3132165ed3c48759fe55963c51e4cc04cefe99122572844a47c79025b7cd1a74",
+        "mean_lines": 6.332386363636363,
+        "mixed_fraction": 0.34375,
+        "novelty_vs_history": 0.8825,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 242,
+            "forbidden_name": 44,
+            "forbidden_node": 1,
+            "near_duplicate_heldout": 3,
+            "not_single_function_f": 1,
+            "output_degenerate": 7,
+            "output_not_literal": 2,
+            "parse": 162,
+            "runtime_IndexError": 20,
+            "runtime_MemoryError": 1,
+            "runtime_NameError": 4,
+            "runtime_NoOutput": 17,
+            "runtime_RuntimeError": 1,
+            "runtime_Timeout": 5,
+            "runtime_TypeError": 24,
+            "runtime_ValueError": 2,
+            "runtime_ZeroDivisionError": 5,
+            "size": 2043,
+            "syntax": 1
+          },
+          "requested": 6000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 184,
+          "heldout_leak": 0
+        },
+        "rollout_id": "613e31cb71aa",
+        "unsolved_fraction": 0.05078125,
+        "verified_rate": 0.8134765625
+      }
+    }
+  ],
+  "parent": "r03c0",
+  "round": 3,
+  "seconds": {
+    "attempt": 5498.49992103898,
+    "audit_eval": 362.68092546099797,
+    "gate_eval": 5513.020245035877,
+    "propose": 1001.5821203761734,
+    "train": 13991.96068046987
+  }
+}
