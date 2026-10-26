@@ -47,10 +47,11 @@ class VLABackend:
 
     def _env(self):
         # Thread caps: each worker otherwise starts one thread per core (128 here); a dozen rollout
-        # workers then oversubscribe the CPU and sampled rollouts ran ~3x slower than when alone.
+        # workers then oversubscribe the CPU (load 310 on 128 cores; sampled rollouts 150-240 episodes/h
+        # instead of ~900/h). Rollouts are simulator- and GPU-bound, so 4 threads per worker is plenty.
         env = {"PYTHONNOUSERSITE": "1", "MUJOCO_GL": "egl", "TOKENIZERS_PARALLELISM": "false",
                "TF_CPP_MIN_LOG_LEVEL": "3", "http_proxy": "", "https_proxy": "",
-               "OMP_NUM_THREADS": "8", "MKL_NUM_THREADS": "8", "OPENBLAS_NUM_THREADS": "8"}
+               "OMP_NUM_THREADS": "4", "MKL_NUM_THREADS": "4", "OPENBLAS_NUM_THREADS": "4"}
         env.update(self.config.env)
         return env
 
