@@ -27,6 +27,7 @@ class VLAConfig:
     train_gpus: tuple = (0,)
     n_envs: int = 8                    # batched envs per process for sampled episodes
     greedy_procs_per_gpu: int = 4      # unbatched processes per GPU for greedy episodes
+    sample_procs_per_gpu: int = 1      # batched (n_envs) processes per GPU for sampled episodes
     lora_rank: int = 32
     lora_alpha: int = 16
     target_modules: tuple = ("q_proj", "k_proj", "v_proj", "o_proj")
@@ -97,7 +98,7 @@ class VLABackend:
         greedy = [ep for ep in episodes if ep["mode"] == "greedy"]
         sampled = [ep for ep in episodes if ep["mode"] != "greedy"]
         self._phase(call, "g", adapter, suite, greedy, max_steps, 1, cfg.greedy_procs_per_gpu)
-        self._phase(call, "s", adapter, suite, sampled, max_steps, cfg.n_envs, 1)
+        self._phase(call, "s", adapter, suite, sampled, max_steps, cfg.n_envs, cfg.sample_procs_per_gpu)
         rows = {}
         for path in (call / "episodes").glob("results-*.jsonl"):
             for line in path.open():
