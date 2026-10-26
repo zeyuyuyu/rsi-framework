@@ -179,6 +179,18 @@ class SandboxTrustTests(unittest.TestCase):
         self.assertFalse(execute(dict(job, trusted=True, answer="f('a' * 20)"))["correct"])
 
 
+class PathologicalTextTests(unittest.TestCase):
+    def test_deeply_nested_model_text_is_rejected_not_crashing(self):
+        from rsi.domains.code_wm import prompts as P
+        from rsi.domains.code_wm.sandbox import static_check
+        deep = "[" * 20000 + "]" * 20000
+        self.assertIsNone(P.parse_output_answer("[ANSWER]\nassert f(1) == " + deep + "\n[/ANSWER]"))
+        self.assertIsNone(P.parse_input_answer("[ANSWER]\nassert f(" + deep + ") == 1\n[/ANSWER]"))
+        self.assertIsNone(P.parse_proposal("def f(x):\n    return x\nassert f(" + deep + ") == ??"))
+        self.assertIsNotNone(static_check("def f(x):\n    return " + deep))
+        self.assertEqual(P.parse_output_answer("[ANSWER]\nassert f(1) == [1, [2]]\n[/ANSWER]"), "[1, [2]]")
+
+
 class ProgramTests(unittest.TestCase):
     def test_code_wm_program_validation_and_search(self):
         d = CodeWorldModelDomain()

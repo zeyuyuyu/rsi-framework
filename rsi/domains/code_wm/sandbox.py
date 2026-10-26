@@ -32,9 +32,11 @@ def literal(text):
 
 def static_check(code):
     """Admission filter for model-proposed programs (not for trusted benchmarks)."""
+    if len(code) > 4000 or sum(code.count(c) for c in "([{") > 400:
+        return "too_large_or_deep"
     try:
         tree = ast.parse(code)
-    except SyntaxError:
+    except (SyntaxError, MemoryError, RecursionError, ValueError, OverflowError):
         return "syntax"
     functions = [n for n in tree.body if isinstance(n, ast.FunctionDef)]
     if len(tree.body) != 1 or len(functions) != 1 or functions[0].name != "f":

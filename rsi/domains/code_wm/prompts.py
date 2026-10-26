@@ -84,6 +84,20 @@ def example_block(code, args):
     return f"[PYTHON]\n{code}\nassert f({args}) == ??\n[/PYTHON]\n"
 
 
+PARSE_ERRORS = (SyntaxError, MemoryError, RecursionError, ValueError, OverflowError)
+
+
+def safe_parse(source, max_len=4000, max_brackets=200):
+    """ast.parse for model-written text; pathological inputs (huge, deeply nested) return None
+    instead of exhausting the parser's memory in the engine process."""
+    if len(source) > max_len or sum(source.count(c) for c in "([{") > max_brackets:
+        return None
+    try:
+        return ast.parse(source)
+    except PARSE_ERRORS:
+        return None
+
+
 def _answer_section(text):
     if "[ANSWER]" not in text:
         return None
@@ -97,9 +111,8 @@ def _assert_compare(section):
         return None, None
     line = next((l.strip() for l in section.splitlines() if l.strip().startswith("assert")),
                 section.strip())
-    try:
-        tree = ast.parse(line)
-    except SyntaxError:
+    tree = safe_parse(line)
+    if tree is None:
         return None, line
     node = tree.body[0] if tree.body else None
     if (isinstance(node, ast.Assert) and isinstance(node.test, ast.Compare)
@@ -113,7 +126,7 @@ def parse_output_answer(text):
     compare, line = _assert_compare(_answer_section(text))
     if compare is not None:
         return ast.get_source_segment(line, compare.comparators[0])
-    if line and "==" in line:
+    if line and "==" in line and len(line) <= 4000:
         return line.split("==", 1)[1].strip()
     return None
 
@@ -139,9 +152,10 @@ def parse_proposal(text):
     if not last.endswith("== ??"):
         return None
     call = last[len("assert "):-len("== ??")].strip()
+    tree = safe_parse(call)
     try:
-        node = ast.parse(call).body[0].value
-    except (SyntaxError, IndexError, AttributeError):
+        node = tree.body[0].value
+    except (IndexError, AttributeError):
         return None
     if not isinstance(node, ast.Call) or node.keywords or not node.args:
         return None
