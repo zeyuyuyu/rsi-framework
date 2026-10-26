@@ -20,9 +20,10 @@ def gpu_memory_used():
     return {int(i): int(m) for i, m in (line.split(",") for line in out.strip().splitlines())}
 
 
-def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=1800, poll=60.0):
+def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=4 * 3600, poll=60.0):
     """Two readings ``gap`` apart must both show every GPU idle. A busy GPU is waited
-    for (re-checked every ``poll`` seconds) up to ``wait_seconds``, then refused."""
+    for (re-checked every ``poll`` seconds) up to ``wait_seconds``, then refused. The wait is long because
+    on a shared box another user can take a GPU between our sample and train steps; failing loses the run."""
     gpus = [int(g) for g in gpus]
     deadline = time.time() + wait_seconds
     waited = 0.0
