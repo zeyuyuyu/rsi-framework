@@ -1,0 +1,40 @@
+{
+  "suite": "cruxeval_o",
+  "study": "main",
+  "model": "qw3",
+  "runs": {
+    "fixed_s1": {
+      "run": "results/a800/runs2/cross_qw3_fixed_s1",
+      "final": "n0",
+      "initial": 76.38,
+      "final_score": 76.38
+    },
+    "fixed_s2": {
+      "run": "results/a800/runs2/cross_qw3_fixed_s2",
+      "final": "r04c0",
+      "initial": 76.5,
+      "final_score": 78.12
+    }
+  },
+  "claims": [
+    {
+      "claim": "C1 fixed: final - initial",
+      "seeds": [
+        1,
+        2
+      ],
+      "per_seed_points": {
+        "1": 0.0,
+        "2": 1.62
+      },
+      "mean_points": 0.81,
+      "ci95_points": [
+        -0.31,
+        1.94
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    }
+  ]
+}

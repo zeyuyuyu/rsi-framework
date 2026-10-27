@@ -1,0 +1,48 @@
+{
+  "suite": "cruxeval_i",
+  "study": "main",
+  "model": "q7b",
+  "runs": {
+    "fixed_s1": {
+      "run": "results/a800/runs2/cross_q7b_fixed_s1",
+      "final": "r03c0",
+      "initial": 64.12,
+      "final_score": 65.62
+    },
+    "fixed_s2": {
+      "run": "results/baidu/bj_q7b_fixed_s2",
+      "final": "r02c0",
+      "initial": 63.0,
+      "final_score": 65.5
+    },
+    "fixed_s3": {
+      "run": "results/a800/runs2/cross_q7b_fixed_s3",
+      "final": "r04c0",
+      "initial": 64.12,
+      "final_score": 66.0
+    }
+  },
+  "claims": [
+    {
+      "claim": "C1 fixed: final - initial",
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "per_seed_points": {
+        "1": 1.5,
+        "2": 2.5,
+        "3": 1.88
+      },
+      "mean_points": 1.96,
+      "ci95_points": [
+        0.17,
+        3.79
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": true
+    }
+  ]
+}

@@ -8,6 +8,7 @@ pair one-to-one across runs and platforms.
     python -m rsi.audit.compare_arms results/ [--suite cruxeval_o] [--study long8] [--json out.json]
 
 --study long8 reads the 8-round runs of Addendum 3 (bj_q15_long8<arm>_s<seed>) instead of the main study.
+--model q7b|g8b|qw3 reads the cross-model runs (cross_<model>_<arm>_s<seed> on the A800, bj_<model>_... on Baidu).
 
 C1  final - initial of `full` (and of `fixed`), per-problem, seed-averaged
 C2  fixed - shuffled, C3 fixed - nonrec, C4 full - fixed, C5 fixed - onebig: final vs final at the same seed
@@ -22,7 +23,8 @@ import re
 
 from ..core.stats import paired_bootstrap
 
-ARM = re.compile(r"(?:main|bj)_q15_(long8)?(fixed|nonrec|shuffled|full|onebig)_s(\d+)(?:_r\d+)?$")
+def arm_pattern(model="q15"):
+    return re.compile(rf"(?:main|bj|cross)_{model}_(long8)?(fixed|nonrec|shuffled|full|onebig)_s(\d+)(?:_r\d+)?$")
 
 
 def _digest(ids):
@@ -58,11 +60,11 @@ def load_scores(run, suite):
     return out
 
 
-def collect(root, suite, study=""):
-    runs = {}
+def collect(root, suite, study="", model="q15"):
+    runs, pattern = {}, arm_pattern(model)
     for run in sorted(p for p in Path(root).glob("*/runs2/*") if p.is_dir()) + \
                sorted(p for p in Path(root).glob("baidu/*") if p.is_dir()):
-        m = ARM.match(run.name)
+        m = pattern.match(run.name)
         if not m or (m.group(1) or "") != study:
             continue
         scores = load_scores(run, suite)
@@ -100,13 +102,14 @@ def main():
     ap.add_argument("root")
     ap.add_argument("--suite", default="cruxeval_o")
     ap.add_argument("--study", default="")
+    ap.add_argument("--model", default="q15")
     ap.add_argument("--json")
     args = ap.parse_args()
-    runs = collect(args.root, args.suite, args.study)
+    runs = collect(args.root, args.suite, args.study, args.model)
     digests = {r["initial"][0] for r in runs.values()} | {r["final_scores"][0] for r in runs.values()}
     if len(digests) != 1:
         raise SystemExit(f"problem id lists differ across runs: {sorted(digests)}")
-    out = dict(suite=args.suite, study=args.study or "main", runs={f"{a}_s{s}": dict(run=r["run"], final=r["final"],
+    out = dict(suite=args.suite, study=args.study or "main", model=args.model, runs={f"{a}_s{s}": dict(run=r["run"], final=r["final"],
                                                         initial=round(100 * sum(r["initial"][1]) / len(r["initial"][1]), 2),
                                                         final_score=round(100 * sum(r["final_scores"][1]) / len(r["final_scores"][1]), 2))
                                        for (a, s), r in sorted(runs.items())}, claims=[])

@@ -164,8 +164,16 @@ for ax, (suite, title) in zip(axes, SUITES):
     ax.set_xlabel("相对初始的提升（分）")
 axes[0].set_yticks(ys)
 axes[0].set_yticklabels([f"{m} 种子{s}" for m, s, _, _ in runs], color=INK)
-fig.suptitle("固定学法 4 轮的跨模型结果：1.5B、7B、Qwen3 各有种子在某门考试上显著提升，Granite 两个种子都未达显著",
-             x=0.01, ha="left", fontsize=12.5, color=INK)
+SHORT = {"Qwen2.5-Coder-1.5B": "1.5B", "Qwen2.5-Coder-7B": "7B", "Granite-3.3-8B": "Granite", "Qwen3-8B": "Qwen3"}
+sig_models, quiet = [], {}
+for model, seed, run, rep in runs:
+    hit = any(rep["tests"][k]["paired"]["ci95"][0] > 0 for k, _ in SUITES)
+    if hit and SHORT[model] not in sig_models:
+        sig_models.append(SHORT[model])
+    quiet.setdefault(SHORT[model], []).append(not hit)
+quiet = [f"{m} {len(v)} 个种子都未达显著" for m, v in quiet.items() if all(v)]
+fig.suptitle("固定学法 4 轮的跨模型结果：" + "、".join(sig_models) + " 各有种子在某门考试上显著提升" +
+             ("，" + "，".join(quiet) if quiet else ""), x=0.01, ha="left", fontsize=12.5, color=INK)
 fig.text(0.01, -0.02, "实心点 = 95% 置信区间不含 0；空心点 = 不显著。Qwen3 种子1 四轮都被门控拒绝，最终模型即初始模型（提升为 0）。",
          fontsize=9.5, color=INK2)
 fig.tight_layout()
@@ -177,6 +185,23 @@ tables.append("## 图 3 数据：固定学法 4 轮，各模型各种子（相�
                   f"{100 * rep['tests'][k]['paired']['mean_gain']:+.2f} [{100 * rep['tests'][k]['paired']['ci95'][0]:+.2f}, "
                   f"{100 * rep['tests'][k]['paired']['ci95'][1]:+.2f}]" for k, _ in SUITES) + " |"
                         for m, s, r, rep in runs))
+pooled = []
+for tag, model in (("q7b", "Qwen2.5-Coder-7B"), ("g8b", "Granite-3.3-8B"), ("qw3", "Qwen3-8B")):
+    cells, seeds, final = [], [], True
+    for k, _ in SUITES:
+        path = ROOT / f"claims_{tag}_{k}.json"
+        c = claims(path.name).get("C1 fixed: final - initial") if path.exists() else None
+        if c is None:
+            cells.append("—")
+            continue
+        seeds, final = c["seeds"], final and c["final"]
+        cells.append(f"{c['mean_points']:+.2f} [{c['ci95_points'][0]:+.2f}, {c['ci95_points'][1]:+.2f}]" +
+                     (" 达标" if c["mean_and_ci_pass"] else ""))
+    pooled.append(f"| {model} | {','.join(map(str, seeds))} | " + " | ".join(cells) + f" | {'全部种子' if final else '中期'} |")
+tables.append("## 跨模型合并：固定学法，种子平均的逐题配对差（分；括号内 95% bootstrap CI；达标 = 均值 ≥ 2 且下限 > 0）\n\n"
+              "由 `python -m rsi.audit.compare_arms results --model <q7b|g8b|qw3> --suite <suite>` 生成。\n\n"
+              "| 模型 | 种子 | CRUXEval-O | CRUXEval-I | LCB-exec | 状态 |\n| --- | --- | --- | --- | --- | --- |\n" +
+              "\n".join(pooled))
 
 # ---------- baselines (initial models, greedy pass@1) ----------
 BASES = [("Qwen2.5-Coder-1.5B", "main_q15_fixed_s1"), ("Granite-3.3-8B", "base_granite8b"),

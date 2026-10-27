@@ -1,0 +1,48 @@
+{
+  "suite": "lcb_exec",
+  "study": "main",
+  "model": "q7b",
+  "runs": {
+    "fixed_s1": {
+      "run": "results/a800/runs2/cross_q7b_fixed_s1",
+      "final": "r03c0",
+      "initial": 54.28,
+      "final_score": 58.87
+    },
+    "fixed_s2": {
+      "run": "results/baidu/bj_q7b_fixed_s2",
+      "final": "r02c0",
+      "initial": 54.28,
+      "final_score": 59.5
+    },
+    "fixed_s3": {
+      "run": "results/a800/runs2/cross_q7b_fixed_s3",
+      "final": "r04c0",
+      "initial": 54.28,
+      "final_score": 61.8
+    }
+  },
+  "claims": [
+    {
+      "claim": "C1 fixed: final - initial",
+      "seeds": [
+        1,
+        2,
+        3
+      ],
+      "per_seed_points": {
+        "1": 4.59,
+        "2": 5.22,
+        "3": 7.52
+      },
+      "mean_points": 5.78,
+      "ci95_points": [
+        3.41,
+        8.21
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": true,
+      "final": true
+    }
+  ]
+}
