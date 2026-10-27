@@ -1,0 +1,55 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 1280,
+        "cases": 160,
+        "excluded_by_flag": 0,
+        "item_cases": 87,
+        "items": 696,
+        "mixed_cases": 87,
+        "rule": "mixed_groups",
+        "solved_cases": 160,
+        "verified_attempts": 1053
+      },
+      "gate": 0.76,
+      "node": "r02c0",
+      "program": "d8ef109beeef0eb6",
+      "signal": {
+        "cases": 160,
+        "generator": "base:openvla-7b-libero-goal",
+        "mixed_fraction": 0.54375,
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "a8f7ec60fdff",
+        "task_rates": {
+          "0": 0.6875,
+          "1": 0.9765625,
+          "2": 0.859375,
+          "3": 0.53125,
+          "4": 0.9765625,
+          "5": 0.6953125,
+          "6": 0.8125,
+          "7": 1.0,
+          "8": 0.96875,
+          "9": 0.71875
+        },
+        "unsolved_fraction": 0.0,
+        "verified_rate": 0.82265625
+      }
+    }
+  ],
+  "parent": "n0",
+  "round": 2,
+  "seconds": {
+    "attempt": 11771.603652368998,
+    "audit_eval": 1050.8070075218566,
+    "gate_eval": 3398.568386229221,
+    "propose": 0.0017721550539135933,
+    "train": 10497.756750307977
+  }
+}
