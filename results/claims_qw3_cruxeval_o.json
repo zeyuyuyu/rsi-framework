@@ -14,6 +14,12 @@
       "final": "r04c0",
       "initial": 76.5,
       "final_score": 78.12
+    },
+    "fixed_s3": {
+      "run": "results/a800/runs2/cross_qw3_fixed_s3",
+      "final": "n0",
+      "initial": 76.38,
+      "final_score": 76.38
     }
   },
   "claims": [
@@ -21,20 +27,22 @@
       "claim": "C1 fixed: final - initial",
       "seeds": [
         1,
-        2
+        2,
+        3
       ],
       "per_seed_points": {
         "1": 0.0,
-        "2": 1.62
+        "2": 1.62,
+        "3": 0.0
       },
-      "mean_points": 0.81,
+      "mean_points": 0.54,
       "ci95_points": [
-        -0.31,
-        1.94
+        -0.21,
+        1.29
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": true
     }
   ]
 }

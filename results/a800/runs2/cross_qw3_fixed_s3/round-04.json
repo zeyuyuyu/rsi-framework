@@ -1,0 +1,72 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 19296,
+        "cases": 2412,
+        "excluded_by_flag": 186,
+        "item_cases": 578,
+        "items": 4624,
+        "mixed_cases": 578,
+        "rule": "mixed_groups",
+        "solved_cases": 2297,
+        "verified_attempts": 16506
+      },
+      "gate": 0.834841628959276,
+      "node": "r04c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2598,
+        "finished_rate": 0.9904734411085451,
+        "generator": "base:qwen3_8b",
+        "mean_lines": 6.908006158583526,
+        "mixed_fraction": 0.23094688221709006,
+        "novelty_vs_history": 0.7175,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 769,
+            "forbidden_name": 32,
+            "forbidden_node": 6,
+            "near_duplicate_heldout": 15,
+            "output_degenerate": 6,
+            "parse": 39,
+            "runtime_AttributeError": 2,
+            "runtime_IndexError": 36,
+            "runtime_KeyError": 7,
+            "runtime_MemoryError": 1,
+            "runtime_NameError": 2,
+            "runtime_RuntimeError": 4,
+            "runtime_SystemError": 8,
+            "runtime_Timeout": 12,
+            "runtime_TypeError": 38,
+            "runtime_ValueError": 2,
+            "runtime_ZeroDivisionError": 2,
+            "size": 483,
+            "syntax": 4
+          },
+          "requested": 6000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 402,
+          "heldout_leak": 0
+        },
+        "rollout_id": "b6e44938feb2",
+        "unsolved_fraction": 0.04503464203233257,
+        "verified_rate": 0.862490377213241
+      }
+    }
+  ],
+  "parent": "n0",
+  "round": 4,
+  "seconds": {
+    "attempt": 8443.348358270945,
+    "audit_eval": 106.22827232792042,
+    "gate_eval": 667.3611155499239,
+    "propose": 902.2205894482322,
+    "train": 20215.875054306816
+  }
+}
