@@ -139,6 +139,52 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(rep["tests"]["c"]["final"], 0.5)
         self.assertNotEqual(rep["tests"]["t"]["final"], 0.5)
 
+    def test_resume_after_a_kill_matches_the_uninterrupted_run(self):
+        class Killed(ToyBackend):
+            calls, kill_at = 0, None
+
+            def train(self, parent, items, output, update, seed):
+                self.calls += 1
+                if self.calls == self.kill_at:
+                    output.mkdir()                       # a half-written checkpoint
+                    raise RuntimeError("job wall time")
+                return super().train(parent, items, output, update, seed)
+
+        def make(name, backend):
+            domain = ToyDomain()
+            return Engine(domain, backend, Version("init", "/b"), domain.default_program(),
+                          gate=heldout("gate", 20), audit=heldout("audit", 20),
+                          tests={"t": (domain, heldout("test", 40))}, out=self.tmp / name,
+                          config=EngineConfig(rounds=3), proposer=FixedProgram())
+
+        whole = make("whole", ToyBackend()).run()
+        backend = Killed()
+        backend.kill_at = 3
+        with self.assertRaises(RuntimeError):
+            make("killed", backend).run()
+        self.assertTrue((self.tmp / "killed" / "ckpt-r03c0").exists())
+        backend.kill_at = None
+        resumed = make("killed", backend).run(resume=True)
+        self.assertEqual(resumed["retained"], whole["retained"])
+        self.assertEqual([(n["node"], n["gate"]) for n in resumed["accepted_chain"]],
+                         [(n["node"], n["gate"]) for n in whole["accepted_chain"]])
+        self.assertEqual(resumed["tests"]["t"]["final"], whole["tests"]["t"]["final"])
+        aside = sorted(p.name for p in (self.tmp / "killed" / "resume-03").iterdir())
+        self.assertIn("ckpt-r03c0", aside)
+        self.assertIn("failure.json", aside)
+        record = json.loads((self.tmp / "killed" / "resume.json").read_text())
+        self.assertEqual(record["completed_rounds"], 2)
+        with open(self.tmp / "killed" / "accepted.jsonl") as stream:
+            self.assertEqual([json.loads(l)["round"] for l in stream], [1, 2, 3])
+
+    def test_resume_refuses_a_different_plan(self):
+        e, _ = self.engine("plan", rounds=1)
+        e.run()
+        (self.tmp / "plan" / "report.json").unlink()
+        e2, _ = self.engine("plan", rounds=2)
+        with self.assertRaises(ValueError):
+            e2.run(resume=True)
+
     def test_regression_is_rejected(self):
         e, _ = self.engine("rej", rounds=2, min_gate_gain=10.0)
         rep = e.run()

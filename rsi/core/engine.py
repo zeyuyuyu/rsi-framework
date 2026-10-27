@@ -28,11 +28,12 @@ import json
 import os
 from pathlib import Path
 import random
+import re
 import time
 
 from .archive import Archive, Node
 from .curation import curate, shuffle_feedback
-from .types import Program, Version, canonical, digest
+from .types import Case, Program, Version, canonical, digest
 
 
 @dataclass(frozen=True)
@@ -136,9 +137,82 @@ class Engine:
         return result
 
     # ------------------------------------------------------------------- run
-    def run(self):
+    def _restore(self, archive, versions):
+        """Continue a run stopped between or inside rounds (e.g. a job wall-time kill). Completed
+        rounds (round-NN.json written) are kept; whatever an unfinished round left behind is moved
+        to resume-NN/, and the loop state is rebuilt from the files. Two things cannot be replayed
+        and are recorded in resume.json: the meta proposer's random stream is re-seeded from
+        (seed, completed rounds), and training cases of a candidate that curated no items were
+        never written, so they do not enter the duplicate filter."""
+        if (self.out / "report.json").exists():
+            raise ValueError("run_already_complete")
+        done = 0
+        while (self.out / f"round-{done + 1:02d}.json").exists():
+            done += 1
+        aside, k = self.out / f"resume-{done + 1:02d}", 1
+        while aside.exists():
+            k += 1
+            aside = self.out / f"resume-{done + 1:02d}-{k}"
+        aside.mkdir()
+        moved = []
+        for path in sorted(self.out.iterdir()):
+            name = path.name
+            m = re.match(r"(?:round-|ckpt-r)(\d{2})", name)
+            if (m and int(m.group(1)) > done) or name in ("failure.json", "retained.json") \
+                    or name.startswith("test-"):
+                path.rename(aside / name)
+                moved.append(name)
+        log = self.out / "archive.jsonl"
+        rows = [json.loads(l) for l in log.read_text().splitlines() if l.strip()] if log.exists() else []
+        kept, events = {}, []
+        for row in rows:
+            if row.get("event") == "accepted":
+                events.append(row)
+            elif row["round"] <= done:
+                kept[row["node_id"]] = Node(**dict(row, version=Version(**row["version"]),
+                                                   program=Program(**row["program"])))
+        for event in events:
+            if event["node_id"] in kept:
+                node = kept[event["node_id"]]
+                node.accepted, node.audit, node.gate = True, event["audit"], event["gate"]
+        for name in ("archive.jsonl", "accepted.jsonl"):
+            if (self.out / name).exists():
+                (self.out / name).rename(aside / name)
+                moved.append(name)
+        for node in kept.values():
+            archive.add(node)
+            if node.accepted and node.node_id != "n0":
+                archive.mark_accepted(node)
+                with (self.out / "accepted.jsonl").open("a") as s:
+                    s.write(json.dumps(dict(round=node.round, node=node.node_id, gate=node.gate,
+                                            audit=node.audit, program=node.program.id,
+                                            author=node.program.author)) + "\n")
+            versions.add(node.version.id)
+        root = kept.get("n0")
+        if root is None:
+            gate0, _ = self._score(self.initial, self.gate, "gate_eval")
+            audit0, _ = self._score(self.initial, self.audit, "audit_eval")
+            root = archive.add(Node("n0", 0, self.initial, self.seed_program, None,
+                                    gate=gate0, audit=audit0, accepted=True))
+        accepted = [n for n in kept.values() if n.accepted]
+        parent = max(accepted, key=lambda n: n.round) if accepted else root
+        for path in sorted(self.out.glob("round-*-cases-*.jsonl")):
+            for line in path.read_text().splitlines():
+                if line.strip():
+                    self._seen_train.add(self.domain.leakage_key(Case(**json.loads(line))))
+        if done:
+            self.seconds = dict(json.loads((self.out / f"round-{done:02d}.json").read_text())["seconds"])
+        self.rng = random.Random(self.config.seed * 1_000_003 + done)
+        record = dict(at=time.time(), completed_rounds=done, parent=parent.node_id, set_aside=moved,
+                      seen_train=len(self._seen_train), meta_rng=f"reseeded seed*1000003+{done}")
+        with (self.out / "resume.json").open("a") as s:
+            s.write(json.dumps(record) + "\n")
+        return root, parent, done
+
+    def run(self, resume=False):
         cfg = self.config
-        self.out.mkdir(parents=True, exist_ok=False)
+        if not resume:
+            self.out.mkdir(parents=True, exist_ok=False)
         self.started = time.monotonic()
         heldout = {}
         for split, cases in (("gate", self.gate), ("audit", self.audit)):
@@ -157,17 +231,25 @@ class Engine:
                     gate_ids=[c.id for c in self.gate], audit_ids=[c.id for c in self.audit],
                     tests={n: [c.id for c in cs] for n, (_, cs) in self.tests.items()},
                     test_role="read once after the last round; never decides anything")
-        _write(self.out / "plan.json", plan)
+        if resume:
+            stored = json.loads((self.out / "plan.json").read_text())
+            if stored != json.loads(json.dumps(plan, sort_keys=True, default=str)):
+                raise ValueError("resume_plan_mismatch")
+        else:
+            _write(self.out / "plan.json", plan)
         archive = Archive(self.out / "archive.jsonl")
         self._seen_train = set()
         versions = {self.initial.id}
         try:
-            gate0, _ = self._score(self.initial, self.gate, "gate_eval")
-            audit0, _ = self._score(self.initial, self.audit, "audit_eval")
-            root = archive.add(Node("n0", 0, self.initial, self.seed_program, None,
-                                    gate=gate0, audit=audit0, accepted=True))
-            parent = root
-            for r in range(1, cfg.rounds + 1):
+            if resume:
+                root, parent, done = self._restore(archive, versions)
+            else:
+                gate0, _ = self._score(self.initial, self.gate, "gate_eval")
+                audit0, _ = self._score(self.initial, self.audit, "audit_eval")
+                root = archive.add(Node("n0", 0, self.initial, self.seed_program, None,
+                                        gate=gate0, audit=audit0, accepted=True))
+                parent, done = root, 0
+            for r in range(done + 1, cfg.rounds + 1):
                 self._clock()
                 seed = cfg.seed * 1000 + r
                 programs = [parent.program]

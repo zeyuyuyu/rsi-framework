@@ -12,8 +12,14 @@ arm = sys.argv[1]
 model = sys.argv[2:4]
 plan = f"bj_{arm}" if model else f"bj_q15_{arm}"
 name = "zw-rsi-" + arm.replace("_", "-")
+# RESUME_RUN=<run dir under /mnt/pfs/shitianyu-rsi/runs> continues a run the wall time cut off
+resume = os.environ.get("RESUME_RUN", "")
+if resume:
+    name += "-resume"
 extra = [{"name": "MODEL_ID", "value": model[0]}, {"name": "A800_SHA", "value": model[1]},
          {"name": "RUN_TIMEOUT_S", "value": "97200"}] if model else []
+if resume:
+    extra.append({"name": "RESUME_RUN", "value": resume})
 body = {
     "name": name,
     "jobType": "PyTorchJob",

@@ -32,10 +32,14 @@ def main():
     parser.add_argument("--plan", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument("--baseline-only", action="store_true")
+    # continue an interrupted run in place (Engine.run(resume=True); the stored plan must match)
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     out = Path(args.out)
-    if out.exists():
+    if args.resume and not (out / "plan.json").exists():
+        raise SystemExit("resume_needs_an_existing_run")
+    if out.exists() and not args.resume:
         raise SystemExit("fresh_output_required")
     llm = dict(plan["llm"])
     for key in ("sample_gpus", "train_gpus", "target_modules"):
@@ -85,7 +89,7 @@ def main():
                 "self_edit": SelfEdit(domain.edit_space, domain.validate_program, search)}[kind]
     engine = Engine(domain, backend, initial, program, gate=gate, audit=audit, tests=tests,
                     out=out, config=EngineConfig(**plan.get("engine", {})), proposer=proposer)
-    report = engine.run()
+    report = engine.run(resume=args.resume)
     (out / "backend-accounting.json").write_text(json.dumps(dict(
         gpu_seconds=backend.gpu_seconds, admissions=backend.admissions,
         self_edit_log=getattr(proposer, "log", None)), indent=2, default=str))

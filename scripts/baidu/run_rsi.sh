@@ -5,6 +5,7 @@
 #      NAME  run name -> /mnt/pfs/shitianyu-rsi/runs/$NAME (+ small files copied to /mnt/bos/shitianyu-rsi/runs/$NAME)
 #      PREFLIGHT (default 1): 2-step LoRA train x2 + vLLM serve of the merged result before the main run
 #      RUN_TIMEOUT_S (default 86400)
+#      RESUME_RUN    (optional) run dir under $PFS/runs to continue instead of starting fresh
 # Stage the script to local disk first, so re-uploading it to BOS never affects a running job.
 if [ -z "${RSI_STAGED:-}" ]; then
   cp -f "$0" /tmp/run_rsi.sh && RSI_STAGED=1 exec bash /tmp/run_rsi.sh "$@"
@@ -199,6 +200,13 @@ fi
 stage "5 main run"; CUR=main
 RUN=$PFS/runs/$NAME
 [ -e "$RUN" ] && RUN=$PFS/runs/$NAME-$(date -u +%Y%m%dT%H%M%SZ)
+RESUME_FLAG=""
+if [ -n "${RESUME_RUN:-}" ]; then   # continue a run the job wall time cut off (Engine resume)
+  RUN=$PFS/runs/$RESUME_RUN
+  [ -f "$RUN/plan.json" ] && [ ! -f "$RUN/report.json" ] || die "resume target $RUN missing or already complete"
+  RESUME_FLAG="--resume"
+  log "resuming $RUN (rounds done: $(ls $RUN | grep -cE '^round-[0-9]+\.json$'))"
+fi
 RNAME=$(basename "$RUN")
 mkdir -p "$PFS/runs"
 log "out=$RUN  workdir=$RUN.work"
@@ -243,7 +251,7 @@ heartbeat() {
 }
 heartbeat &
 HB=$!
-( cd /tmp/src && PYTHONPATH=/tmp/src timeout -k 120 "${RUN_TIMEOUT_S:-86400}" $PY -m rsi.run_code_wm --plan /tmp/plan.json --out "$RUN" ) > /tmp/main.log 2>&1 &
+( cd /tmp/src && PYTHONPATH=/tmp/src timeout -k 120 "${RUN_TIMEOUT_S:-86400}" $PY -m rsi.run_code_wm --plan /tmp/plan.json --out "$RUN" $RESUME_FLAG ) > /tmp/main.log 2>&1 &
 MAIN=$!
 tail -n +1 -f /tmp/main.log --pid=$MAIN &
 TAILP=$!
