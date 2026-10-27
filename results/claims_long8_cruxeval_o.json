@@ -1,6 +1,7 @@
 {
   "suite": "cruxeval_o",
   "study": "long8",
+  "model": "q15",
   "runs": {
     "fixed_s1": {
       "run": "results/baidu/bj_q15_long8fixed_s1",

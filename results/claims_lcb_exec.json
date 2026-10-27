@@ -1,6 +1,7 @@
 {
   "suite": "lcb_exec",
   "study": "main",
+  "model": "q15",
   "runs": {
     "fixed_s1": {
       "run": "results/a800/runs2/main_q15_fixed_s1",
