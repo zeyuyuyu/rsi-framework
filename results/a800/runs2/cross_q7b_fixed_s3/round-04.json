@@ -1,0 +1,72 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 16848,
+        "cases": 2106,
+        "excluded_by_flag": 697,
+        "item_cases": 652,
+        "items": 5216,
+        "mixed_cases": 652,
+        "rule": "mixed_groups",
+        "solved_cases": 1986,
+        "verified_attempts": 13873
+      },
+      "gate": 0.7805429864253394,
+      "node": "r04c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2803,
+        "finished_rate": 0.9925972172672137,
+        "generator": "03df4e04d4b62d58f386aab02811d9980f77fb1755549d95b68fb95b0bf6e0b1",
+        "mean_lines": 6.418123439172315,
+        "mixed_fraction": 0.30859793078844094,
+        "novelty_vs_history": 0.8525,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 185,
+            "forbidden_name": 56,
+            "forbidden_node": 5,
+            "near_duplicate_heldout": 1,
+            "not_single_function_f": 6,
+            "output_degenerate": 7,
+            "parse": 249,
+            "runtime_AttributeError": 1,
+            "runtime_IndexError": 15,
+            "runtime_NameError": 1,
+            "runtime_NoOutput": 12,
+            "runtime_RuntimeError": 1,
+            "runtime_StopIteration": 1,
+            "runtime_Timeout": 9,
+            "runtime_TypeError": 16,
+            "runtime_ValueError": 6,
+            "runtime_ZeroDivisionError": 8,
+            "size": 1938,
+            "syntax": 5
+          },
+          "requested": 6000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 197,
+          "heldout_leak": 0
+        },
+        "rollout_id": "5097baaf2aa5",
+        "unsolved_fraction": 0.04637887977167321,
+        "verified_rate": 0.837272565108812
+      }
+    }
+  ],
+  "parent": "r04c0",
+  "round": 4,
+  "seconds": {
+    "attempt": 8429.898125858279,
+    "audit_eval": 720.2426314167678,
+    "gate_eval": 645.9400727658067,
+    "propose": 1263.3459951109253,
+    "train": 18151.498940116027
+  }
+}

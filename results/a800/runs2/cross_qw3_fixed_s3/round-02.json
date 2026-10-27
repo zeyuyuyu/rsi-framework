@@ -1,0 +1,73 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 21408,
+        "cases": 2676,
+        "excluded_by_flag": 211,
+        "item_cases": 726,
+        "items": 5808,
+        "mixed_cases": 726,
+        "rule": "mixed_groups",
+        "solved_cases": 2534,
+        "verified_attempts": 17965
+      },
+      "gate": 0.8416289592760181,
+      "node": "r02c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2887,
+        "finished_rate": 0.9887859369587807,
+        "generator": "base:qwen3_8b",
+        "mean_lines": 7.106338759958434,
+        "mixed_fraction": 0.26082438517492207,
+        "novelty_vs_history": 0.8425,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 690,
+            "forbidden_name": 26,
+            "forbidden_node": 2,
+            "near_duplicate_heldout": 11,
+            "output_degenerate": 4,
+            "output_not_literal": 1,
+            "parse": 46,
+            "runtime_AttributeError": 1,
+            "runtime_IndexError": 24,
+            "runtime_KeyError": 13,
+            "runtime_MemoryError": 5,
+            "runtime_NameError": 1,
+            "runtime_RuntimeError": 5,
+            "runtime_SystemError": 20,
+            "runtime_Timeout": 12,
+            "runtime_TypeError": 32,
+            "runtime_ValueError": 1,
+            "runtime_ZeroDivisionError": 4,
+            "size": 531,
+            "syntax": 3
+          },
+          "requested": 6000,
+          "round": 2
+        },
+        "rejected": {
+          "duplicate": 113,
+          "heldout_leak": 0
+        },
+        "rollout_id": "4090212d6808",
+        "unsolved_fraction": 0.04987876688604087,
+        "verified_rate": 0.8474627641149982
+      }
+    }
+  ],
+  "parent": "n0",
+  "round": 2,
+  "seconds": {
+    "attempt": 4660.958876016084,
+    "audit_eval": 106.22827232792042,
+    "gate_eval": 383.4403880289756,
+    "propose": 427.6290471481625,
+    "train": 10584.019540001871
+  }
+}
