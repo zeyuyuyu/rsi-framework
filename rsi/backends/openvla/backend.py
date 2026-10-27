@@ -9,10 +9,9 @@ Update operators (``bc``, ``grpo``) come from the improvement program.
 from dataclasses import asdict, dataclass, field
 import json
 from pathlib import Path
-import re
 import time
 
-from ...core.gpu import admit, supervised, supervised_parallel
+from ...core.gpu import admit, oom_failed_logs, supervised, supervised_parallel
 from ...core.types import Receipt, Version
 
 HERE = Path(__file__).resolve().parent
@@ -104,10 +103,8 @@ class VLABackend:
             try:
                 return self._phase(call, tag, *args)
             except RuntimeError as exc:
-                logs = re.findall(r"'([^']+)'", str(exc)) if str(exc).startswith("parallel_worker_failed") else []
-                oom = bool(logs) and all("CUDA out of memory" in Path(log).read_text(errors="replace")[-20000:]
-                                         for log in logs)
-                if not oom or attempt == self.config.oom_retries:
+                logs = oom_failed_logs(exc)
+                if not logs or attempt == self.config.oom_retries:
                     raise
                 aside = call / f"discarded-{tag}{attempt}"
                 aside.mkdir()

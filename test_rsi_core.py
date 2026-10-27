@@ -12,6 +12,7 @@ from rsi.core.curation import curate, shuffle_feedback
 from rsi.core.engine import Engine, EngineConfig
 from rsi.core.gpu import occupied
 import rsi.backends.openvla.backend as vla_backend
+import rsi.backends.llm.backend as llm_backend
 from rsi.core.types import Attempt, Case, EvalRecord, Program, Receipt, Version
 from rsi.domains.code_wm.domain import CodeWorldModelDomain
 from rsi.meta.proposers import CODE_WM_COUPLING, FixedProgram, NumericSearch
@@ -309,6 +310,38 @@ class VLAPhaseRetryTests(unittest.TestCase):
             finally:
                 vla_backend.admit = original
             self.assertEqual(attempts, [0, 1, 2])
+
+
+class LLMSampleRetryTests(unittest.TestCase):
+    def test_oom_sampling_call_is_rerun_with_fresh_outputs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            (tmp / "base").mkdir()
+            backend = llm_backend.LLMBackend(llm_backend.LLMConfig(
+                base_path=str(tmp / "base"), python="py", workdir=str(tmp / "work")))
+            attempts = []
+
+            def fake_parallel(jobs, timeout):
+                argv, gpus, log, env = jobs[0]
+                out = Path(argv[argv.index("--out") + 1])
+                attempts.append(len(attempts))
+                if len(attempts) == 1:
+                    out.write_text(json.dumps(dict(index=0, texts=["stale"])) + "\n")
+                    log.write_text("torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.74 GiB")
+                    raise RuntimeError(f"parallel_worker_failed:['{log}']")
+                out.write_text("".join(json.dumps(dict(index=i, texts=[f"ok{i}"])) + "\n" for i in range(2)))
+
+            originals = llm_backend.supervised_parallel, llm_backend.admit
+            llm_backend.supervised_parallel = fake_parallel
+            llm_backend.admit = lambda gpus, gap: {}
+            try:
+                texts = backend.sample(Version("base", str(tmp / "base")), [dict(prompt="a", n=1), dict(prompt="b", n=1)])
+            finally:
+                llm_backend.supervised_parallel, llm_backend.admit = originals
+            self.assertEqual(texts, [["ok0"], ["ok1"]])
+            self.assertEqual(attempts, [0, 1])
+            call = next((tmp / "work").iterdir())
+            self.assertEqual(sorted(p.name for p in (call / "discarded-0").iterdir()), ["log-0.txt", "out-0.jsonl"])
 
 
 class ProgramTests(unittest.TestCase):

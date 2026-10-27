@@ -8,6 +8,8 @@ trusted to honour an in-process budget.
 """
 
 import os
+from pathlib import Path
+import re
 import signal
 import subprocess
 import time
@@ -66,6 +68,17 @@ def supervised(argv, *, gpus, timeout, log_path, env=None):
             raise TimeoutError(f"worker_timeout:{argv[:3]}")
     if code != 0:
         raise RuntimeError(f"worker_failed:{code}:{log_path}")
+
+
+def oom_failed_logs(exc):
+    """Log paths of a parallel_worker_failed error when every failed worker ran out of GPU memory
+    (another job took memory on our GPU after admission); None for any other failure."""
+    text = str(exc)
+    if not text.startswith("parallel_worker_failed"):
+        return None
+    logs = re.findall(r"'([^']+)'", text)
+    tail = lambda log: Path(log).read_text(errors="replace")[-50000:]
+    return logs if logs and all("CUDA out of memory" in tail(log) for log in logs) else None
 
 
 def supervised_parallel(jobs, *, timeout):

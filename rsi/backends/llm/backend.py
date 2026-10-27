@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 import time
 
-from ...core.gpu import admit, supervised, supervised_parallel
+from ...core.gpu import admit, oom_failed_logs, supervised, supervised_parallel
 from ...core.types import Receipt, Version
 
 
@@ -33,6 +33,7 @@ class LLMConfig:
     max_seq_len: int = 2048
     max_model_len: int = 4096
     gpu_memory_utilization: float = 0.85
+    oom_retries: int = 2               # rerun a sampling call whose workers ran out of GPU memory
     sample_timeout: int = 6 * 3600
     train_timeout: int = 10 * 3600
     admission_gap: float = 30.0
@@ -96,7 +97,24 @@ class LLMBackend:
                     "--gpu-memory-utilization", str(cfg.gpu_memory_utilization),
                     "--tensor-parallel", str(tp)]
             jobs.append((argv, gpus, call / f"log-{shard}.txt", self._env()))
-        supervised_parallel(jobs, timeout=cfg.sample_timeout)
+        # Another job can take memory on our GPU after admission (10-28: three processes took 4.6 GB on
+        # GPU 6 and vLLM's sampler ran out of memory mid-run). Such a call is rerun after a fresh
+        # admission; the failed attempt's outputs and logs are moved aside first.
+        for attempt in range(cfg.oom_retries + 1):
+            try:
+                supervised_parallel(jobs, timeout=cfg.sample_timeout)
+                break
+            except RuntimeError as exc:
+                logs = oom_failed_logs(exc)
+                if not logs or attempt == cfg.oom_retries:
+                    raise
+                aside = call / f"discarded-{attempt}"
+                aside.mkdir()
+                for path in list(call.glob("out-*.jsonl")) + [Path(log) for log in logs]:
+                    if path.exists():
+                        path.rename(aside / path.name)
+                self.admissions.append(dict(admit(all_gpus, gap=cfg.admission_gap),
+                                            retry_of=attempt, failed_logs=logs))
         self._account("sample", all_gpus, started)
         results = [None] * len(requests)
         for shard in range(len(jobs)):
