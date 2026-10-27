@@ -37,12 +37,21 @@ def extract(log, block, out):
 
 
 def main(logs, out):
+    # A run cut off by the wall time and later resumed has two blocks under one name (the partial one,
+    # then the complete one from the -resume job). Blocks that carry report.json are written last, so the
+    # complete run's files always win whatever order the logs sort in.
+    blocks = []
     for log in sorted(logs.glob("zw-rsi-*.log")):
         if log.name.endswith((".running.log", ".watch.log")):
             continue
-        lines = [PREFIX.sub("", ln.rstrip("\n")) for ln in log.open(errors="replace")]
+        with log.open(errors="replace") as stream:
+            lines = [PREFIX.sub("", ln.rstrip("\n")) for ln in stream]
         for begin in (i for i, ln in enumerate(lines) if "RSI_RESULT_BEGIN" in ln):
-            extract(log, lines[begin:], out)
+            end = next((i for i in range(begin, len(lines)) if "RSI_RESULT_END" in lines[i]), len(lines))
+            complete = any(ln.startswith("----- FILE report.json") for ln in lines[begin:end])
+            blocks.append((complete, log, lines[begin:]))
+    for complete, log, block in sorted(blocks, key=lambda b: b[0]):
+        extract(log, block, out)
 
 
 if __name__ == "__main__":
