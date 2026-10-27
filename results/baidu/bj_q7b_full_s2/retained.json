@@ -1,0 +1,46 @@
+{
+  "node": "r04c0",
+  "program": {
+    "author": "self",
+    "id": "06dc057e593cfb4f",
+    "note": "{\"curation.budget\": 1200, \"curriculum.instruction\": \"Below are short Python functions, each followed by an assertion with a concre...\", \"curriculum.max_cases\": 4000, \"curriculum.pool_growth\": 600, \"curriculum.proposals\": 7000, \"curriculum.shots\": 4, \"curriculum.temperature\": 1.1, \"solver.samples\": 10, \"solver.temperature\": 0.9, \"solver.top_p\": 0.9, \"update.batch\": 160, \"update.lr\": 1.5e-05, \"update.steps\": 72}",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 1200,
+        "exclude_flag": "guessable",
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "instruction": "Below are short Python functions, each followed by an assertion with a concrete input. Write one NEW function in exactly the same format. Requirements: the function is named f, is 4 to 16 lines long, uses only built-in types and operations (strings, lists, dicts, sets, tuples, integers, booleans), has no imports, does no printing, file access or randomness, and always terminates quickly. Make it different from the examples and non-trivial: predicting its output for the given input should require carefully tracing loops, conditionals, indexing, or string/list/dict methods. The function should include at least one use of list comprehension or dictionary comprehension to demonstrate complexity.",
+        "max_cases": 4000,
+        "pool_growth": 600,
+        "proposals": 7000,
+        "shots": 4,
+        "temperature": 1.1
+      },
+      "solver": {
+        "max_tokens": 1024,
+        "samples": 10,
+        "temperature": 0.9,
+        "top_p": 0.9
+      },
+      "update": {
+        "batch": 160,
+        "lr": 1.5e-05,
+        "operator": "grpo",
+        "steps": 72
+      }
+    },
+    "parent_id": "deb463acc37c2f27"
+  },
+  "version": {
+    "id": "42ec0fff76b635ad613d10ab528437c06fa8669597c1b1272a86375c795ba9fa",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/bj_q7b_full_s2/ckpt-r04c0",
+    "parent_id": "27e5b492f9651688bda38cc965b0127747e764e082ddc686a7a545a9ab923db2"
+  }
+}

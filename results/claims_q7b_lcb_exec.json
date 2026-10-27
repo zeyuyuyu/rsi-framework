@@ -26,21 +26,29 @@
       "final": "r02c0",
       "initial": 54.07,
       "final_score": 58.66
+    },
+    "full_s2": {
+      "run": "results/baidu/bj_q7b_full_s2",
+      "final": "r04c0",
+      "initial": 54.07,
+      "final_score": 63.47
     }
   },
   "claims": [
     {
       "claim": "C1 full: final - initial",
       "seeds": [
-        1
+        1,
+        2
       ],
       "per_seed_points": {
-        "1": 4.59
+        "1": 4.59,
+        "2": 9.39
       },
-      "mean_points": 4.59,
+      "mean_points": 6.99,
       "ci95_points": [
-        1.25,
-        7.93
+        4.07,
+        9.92
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": true,
@@ -70,15 +78,17 @@
     {
       "claim": "C4 full - fixed",
       "seeds": [
-        1
+        1,
+        2
       ],
       "per_seed_points": {
-        "1": -0.21
+        "1": -0.21,
+        "2": 3.97
       },
-      "mean_points": -0.21,
+      "mean_points": 1.88,
       "ci95_points": [
-        -3.55,
-        3.13
+        -0.42,
+        4.18
       ],
       "bar_points": 1.0,
       "mean_and_ci_pass": false,

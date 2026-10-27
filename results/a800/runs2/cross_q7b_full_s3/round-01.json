@@ -1,0 +1,133 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 19504,
+        "cases": 2438,
+        "excluded_by_flag": 562,
+        "item_cases": 1000,
+        "items": 8000,
+        "mixed_cases": 1129,
+        "rule": "mixed_groups",
+        "solved_cases": 2106,
+        "verified_attempts": 12783
+      },
+      "gate": 0.753393665158371,
+      "node": "r01c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 3000,
+        "finished_rate": 0.97575,
+        "generator": "base:qcoder7b",
+        "mean_lines": 6.600333333333333,
+        "mixed_fraction": 0.46066666666666667,
+        "novelty_vs_history": 1.0,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 62,
+            "forbidden_name": 108,
+            "forbidden_node": 12,
+            "near_duplicate_heldout": 4,
+            "not_single_function_f": 3,
+            "output_degenerate": 17,
+            "parse": 340,
+            "runtime_AttributeError": 3,
+            "runtime_IndexError": 39,
+            "runtime_KeyError": 9,
+            "runtime_MemoryError": 6,
+            "runtime_NameError": 15,
+            "runtime_NoOutput": 20,
+            "runtime_RuntimeError": 1,
+            "runtime_Timeout": 11,
+            "runtime_TypeError": 51,
+            "runtime_ValueError": 21,
+            "runtime_ZeroDivisionError": 5,
+            "size": 1406,
+            "syntax": 3
+          },
+          "requested": 6000,
+          "round": 1
+        },
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "25fbaa5aaeb5",
+        "unsolved_fraction": 0.11733333333333333,
+        "verified_rate": 0.6815
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 32520,
+        "cases": 3252,
+        "excluded_by_flag": 1112,
+        "item_cases": 1200,
+        "items": 12000,
+        "mixed_cases": 1488,
+        "rule": "mixed_groups",
+        "solved_cases": 3014,
+        "verified_attempts": 24230
+      },
+      "gate": 0.751131221719457,
+      "node": "r01c1",
+      "program": "fcd91bb80eaefbe7",
+      "signal": {
+        "cases": 4364,
+        "finished_rate": 0.9852658111824014,
+        "generator": "base:qcoder7b",
+        "mean_lines": 6.608157653528872,
+        "mixed_fraction": 0.4562328139321723,
+        "novelty_vs_history": 0.9225,
+        "proposal": {
+          "admitted": 4500,
+          "rejected": {
+            "dup_in_round": 263,
+            "forbidden_name": 82,
+            "forbidden_node": 6,
+            "near_duplicate_heldout": 5,
+            "not_single_function_f": 3,
+            "output_degenerate": 9,
+            "parse": 234,
+            "runtime_AttributeError": 6,
+            "runtime_IndexError": 28,
+            "runtime_KeyError": 2,
+            "runtime_MemoryError": 1,
+            "runtime_NameError": 8,
+            "runtime_NoOutput": 20,
+            "runtime_RuntimeError": 1,
+            "runtime_Timeout": 12,
+            "runtime_TypeError": 39,
+            "runtime_ValueError": 4,
+            "runtime_ZeroDivisionError": 7,
+            "size": 2199,
+            "syntax": 9
+          },
+          "requested": 7500,
+          "round": 1
+        },
+        "rejected": {
+          "duplicate": 136,
+          "heldout_leak": 0
+        },
+        "rollout_id": "ec8d7dd9761a",
+        "unsolved_fraction": 0.05820348304307974,
+        "verified_rate": 0.7648258478460176
+      }
+    }
+  ],
+  "parent": "r01c0",
+  "round": 1,
+  "seconds": {
+    "attempt": 5362.1815964630805,
+    "audit_eval": 330.6946689232718,
+    "gate_eval": 337.95519594522193,
+    "meta": 68.76817545387894,
+    "propose": 637.9167366379406,
+    "train": 10219.883490386885
+  }
+}

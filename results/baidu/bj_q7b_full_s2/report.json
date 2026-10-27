@@ -1,0 +1,198 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.7288801571709234,
+      "author": "seed",
+      "gate": 0.7420814479638009,
+      "node": "n0",
+      "program": "deb463acc37c2f27",
+      "round": 0
+    },
+    {
+      "audit": 0.730844793713163,
+      "author": "seed",
+      "gate": 0.746606334841629,
+      "node": "r01c0",
+      "program": "deb463acc37c2f27",
+      "round": 1
+    },
+    {
+      "audit": 0.7406679764243614,
+      "author": "self",
+      "gate": 0.7737556561085973,
+      "node": "r02c1",
+      "program": "06dc057e593cfb4f",
+      "round": 2
+    },
+    {
+      "audit": 0.756385068762279,
+      "author": "self",
+      "gate": 0.7782805429864253,
+      "node": "r03c0",
+      "program": "06dc057e593cfb4f",
+      "round": 3
+    },
+    {
+      "audit": 0.7819253438113949,
+      "author": "self",
+      "gate": 0.7828054298642534,
+      "node": "r04c0",
+      "program": "06dc057e593cfb4f",
+      "round": 4
+    }
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 4,
+    "seal_tests": false,
+    "seed": 2,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 54175.75194360601,
+  "retained": "r04c0",
+  "seconds": {
+    "attempt": 16500.503744607966,
+    "audit_eval": 480.18164412799524,
+    "gate_eval": 1022.7035242720158,
+    "meta": 296.7396128720138,
+    "propose": 1618.0961421101238,
+    "test_eval": 1481.294188877975,
+    "train": 32411.451965023065
+  },
+  "status": "complete",
+  "tests": {
+    "cruxeval_i": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.63
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.64875
+        },
+        {
+          "node": "r02c1",
+          "round": 2,
+          "score": 0.65625
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.65
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.64
+        }
+      ],
+      "final": 0.64,
+      "initial": 0.63,
+      "paired": {
+        "ci95": [
+          -0.01625,
+          0.035
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 60,
+        "flipped_to_wrong": 52,
+        "mcnemar_p": 0.5085131799736614,
+        "mean_gain": 0.01,
+        "n": 800
+      }
+    },
+    "cruxeval_o": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.67
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.67125
+        },
+        {
+          "node": "r02c1",
+          "round": 2,
+          "score": 0.685
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.675
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.6875
+        }
+      ],
+      "final": 0.6875,
+      "initial": 0.67,
+      "paired": {
+        "ci95": [
+          -0.00375,
+          0.03875
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 46,
+        "flipped_to_wrong": 32,
+        "mcnemar_p": 0.14053828626952244,
+        "mean_gain": 0.0175,
+        "n": 800
+      }
+    },
+    "lcb_exec": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.5407098121085595
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.5845511482254697
+        },
+        {
+          "node": "r02c1",
+          "round": 2,
+          "score": 0.5824634655532359
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.605427974947808
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.6346555323590815
+        }
+      ],
+      "final": 0.6346555323590815,
+      "initial": 0.5407098121085595,
+      "paired": {
+        "ci95": [
+          0.060542797494780795,
+          0.12943632567849686
+        ],
+        "ci_excludes_zero": true,
+        "flipped_to_correct": 59,
+        "flipped_to_wrong": 14,
+        "mcnemar_p": 1.0136448982171495e-07,
+        "mean_gain": 0.09394572025052192,
+        "n": 479
+      }
+    }
+  }
+}
