@@ -9,6 +9,7 @@ Update operators (``bc``, ``grpo``) come from the improvement program.
 from dataclasses import asdict, dataclass, field
 import json
 from pathlib import Path
+import re
 import time
 
 from ...core.gpu import admit, supervised, supervised_parallel
@@ -35,6 +36,7 @@ class VLAConfig:
     rollout_timeout: int = 12 * 3600
     train_timeout: int = 10 * 3600
     admission_gap: float = 30.0
+    oom_retries: int = 2               # re-admit and rerun a phase whose worker ran out of GPU memory
     env: dict = field(default_factory=dict)
 
 
@@ -90,6 +92,32 @@ class VLABackend:
             self.gpu_seconds["rollout"] = self.gpu_seconds.get("rollout", 0.0) + \
                 len(cfg.rollout_gpus) * (time.time() - started)
 
+    def _phase_retrying(self, call, tag, *args):
+        """Admission is checked before the rollout, but on a shared box another job can still take a GPU
+        while a phase is running (10-27: a vLLM server started on GPU 0 mid-phase and every worker there
+        ran out of memory, losing a run in its last round). A phase whose failed workers ran out of GPU
+        memory is rerun after a fresh admission. The failed attempt's files are moved aside first, so
+        each episode's row and trajectory come from one attempt."""
+        episodes_dir = call / "episodes"
+        for attempt in range(self.config.oom_retries + 1):
+            before = set(episodes_dir.iterdir()) if episodes_dir.exists() else set()
+            try:
+                return self._phase(call, tag, *args)
+            except RuntimeError as exc:
+                logs = re.findall(r"'([^']+)'", str(exc)) if str(exc).startswith("parallel_worker_failed") else []
+                oom = bool(logs) and all("CUDA out of memory" in Path(log).read_text(errors="replace")[-20000:]
+                                         for log in logs)
+                if not oom or attempt == self.config.oom_retries:
+                    raise
+                aside = call / f"discarded-{tag}{attempt}"
+                aside.mkdir()
+                for path in set(episodes_dir.iterdir()) - before:
+                    path.rename(aside / path.name)
+                for log in logs:
+                    Path(log).rename(aside / Path(log).name)
+                self.admissions.append(dict(admit(self.config.rollout_gpus, gap=self.config.admission_gap),
+                                            retry_of=f"{tag}{attempt}", failed_logs=logs))
+
     def rollout(self, version: Version, suite, episodes, max_steps=None):
         """Greedy episodes run unbatched (one env per process, several processes per GPU),
         which reproduces OpenVLA's batch-1 numerics exactly; batched generation flips
@@ -101,8 +129,8 @@ class VLABackend:
         self.admissions.append(admit(cfg.rollout_gpus, gap=cfg.admission_gap))
         greedy = [ep for ep in episodes if ep["mode"] == "greedy"]
         sampled = [ep for ep in episodes if ep["mode"] != "greedy"]
-        self._phase(call, "g", adapter, suite, greedy, max_steps, 1, cfg.greedy_procs_per_gpu)
-        self._phase(call, "s", adapter, suite, sampled, max_steps, cfg.n_envs, cfg.sample_procs_per_gpu)
+        self._phase_retrying(call, "g", adapter, suite, greedy, max_steps, 1, cfg.greedy_procs_per_gpu)
+        self._phase_retrying(call, "s", adapter, suite, sampled, max_steps, cfg.n_envs, cfg.sample_procs_per_gpu)
         rows = {}
         for path in (call / "episodes").glob("results-*.jsonl"):
             for line in path.open():

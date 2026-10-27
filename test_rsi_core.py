@@ -11,6 +11,7 @@ from rsi.core.archive import Archive, Node, program_diff
 from rsi.core.curation import curate, shuffle_feedback
 from rsi.core.engine import Engine, EngineConfig
 from rsi.core.gpu import occupied
+import rsi.backends.openvla.backend as vla_backend
 from rsi.core.types import Attempt, Case, EvalRecord, Program, Receipt, Version
 from rsi.domains.code_wm.domain import CodeWorldModelDomain
 from rsi.meta.proposers import CODE_WM_COUPLING, FixedProgram, NumericSearch
@@ -198,6 +199,70 @@ class GpuAdmissionTests(unittest.TestCase):
         self.assertFalse(occupied((7425, 0)))      # parked CI context, idle
         self.assertTrue(occupied((8753, 94)))      # another user's running job
         self.assertTrue(occupied((12000, 0)))      # too large to share even if idle
+
+
+class VLAPhaseRetryTests(unittest.TestCase):
+    def _backend(self, tmp):
+        cfg = vla_backend.VLAConfig(checkpoint="ck", python="py", openvla_root="root", workdir=tmp)
+        backend = vla_backend.VLABackend(cfg)
+        call = backend._call_dir("rollout")
+        return backend, call
+
+    def _fake_phase(self, call, failures):
+        attempts = []
+
+        def phase(call_, tag, *args):
+            n = len(attempts)
+            attempts.append(n)
+            eps = call / "episodes"
+            eps.mkdir(exist_ok=True)
+            (eps / f"results-{100 + n}.jsonl").write_text(json.dumps({"id": "e1", "attempt": n}) + "\n")
+            (eps / "e1.npz").write_text(f"attempt {n}")
+            if n < len(failures):
+                log = call / f"log-{tag}0.txt"
+                log.write_text(failures[n])
+                raise RuntimeError(f"parallel_worker_failed:['{log}']")
+        return phase, attempts
+
+    def test_oom_phase_is_rerun_and_failed_attempt_set_aside(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            backend, call = self._backend(tmp)
+            phase, attempts = self._fake_phase(call, ["torch.cuda.OutOfMemoryError: CUDA out of memory. Tried"])
+            backend._phase = phase
+            original, vla_backend.admit = vla_backend.admit, lambda gpus, gap: {"ok": True}
+            try:
+                backend._phase_retrying(call, "g")
+            finally:
+                vla_backend.admit = original
+            self.assertEqual(attempts, [0, 1])
+            kept = sorted(p.name for p in (call / "episodes").iterdir())
+            self.assertEqual(kept, ["e1.npz", "results-101.jsonl"])
+            self.assertEqual((call / "episodes" / "e1.npz").read_text(), "attempt 1")
+            self.assertEqual(sorted(p.name for p in (call / "discarded-g0").iterdir()),
+                             ["e1.npz", "log-g0.txt", "results-100.jsonl"])
+            self.assertEqual(backend.admissions[-1]["retry_of"], "g0")
+
+    def test_non_oom_failure_is_not_retried(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            backend, call = self._backend(tmp)
+            phase, attempts = self._fake_phase(call, ["ValueError: bad spec"])
+            backend._phase = phase
+            with self.assertRaises(RuntimeError):
+                backend._phase_retrying(call, "s")
+            self.assertEqual(attempts, [0])
+
+    def test_gives_up_after_configured_retries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            backend, call = self._backend(tmp)
+            phase, attempts = self._fake_phase(call, ["CUDA out of memory"] * 3)
+            backend._phase = phase
+            original, vla_backend.admit = vla_backend.admit, lambda gpus, gap: {}
+            try:
+                with self.assertRaises(RuntimeError):
+                    backend._phase_retrying(call, "s")
+            finally:
+                vla_backend.admit = original
+            self.assertEqual(attempts, [0, 1, 2])
 
 
 class ProgramTests(unittest.TestCase):
