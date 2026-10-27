@@ -1,0 +1,134 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 16552,
+        "cases": 2069,
+        "excluded_by_flag": 729,
+        "item_cases": 782,
+        "items": 6256,
+        "mixed_cases": 782,
+        "rule": "mixed_groups",
+        "solved_cases": 1924,
+        "verified_attempts": 13044
+      },
+      "gate": 0.7737556561085973,
+      "node": "r02c0",
+      "program": "deb463acc37c2f27",
+      "signal": {
+        "cases": 2798,
+        "finished_rate": 0.993120085775554,
+        "generator": "c8094a77ad90ae029e365ad9fecd8aa9717e3ea3cea476efec812fed567f4e33",
+        "mean_lines": 6.342030021443889,
+        "mixed_fraction": 0.38027162258756253,
+        "novelty_vs_history": 0.865,
+        "proposal": {
+          "admitted": 3000,
+          "rejected": {
+            "dup_in_round": 259,
+            "forbidden_name": 43,
+            "forbidden_node": 4,
+            "near_duplicate_heldout": 2,
+            "not_single_function_f": 1,
+            "output_degenerate": 4,
+            "parse": 188,
+            "runtime_AttributeError": 4,
+            "runtime_IndexError": 20,
+            "runtime_MemoryError": 1,
+            "runtime_NameError": 3,
+            "runtime_NoOutput": 10,
+            "runtime_RuntimeError": 1,
+            "runtime_Timeout": 13,
+            "runtime_TypeError": 21,
+            "runtime_ValueError": 2,
+            "runtime_ZeroDivisionError": 3,
+            "size": 2048,
+            "syntax": 1
+          },
+          "requested": 6000,
+          "round": 2
+        },
+        "rejected": {
+          "duplicate": 202,
+          "heldout_leak": 0
+        },
+        "rollout_id": "5a7ebdc3e1da",
+        "unsolved_fraction": 0.057183702644746245,
+        "verified_rate": 0.801331308077198
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 30170,
+        "cases": 3017,
+        "excluded_by_flag": 1143,
+        "item_cases": 1200,
+        "items": 12000,
+        "mixed_cases": 1219,
+        "rule": "mixed_groups",
+        "solved_cases": 2838,
+        "verified_attempts": 23875
+      },
+      "gate": 0.7624434389140271,
+      "node": "r02c1",
+      "program": "a9c276eb9019c0ba",
+      "signal": {
+        "cases": 4160,
+        "finished_rate": 0.990048076923077,
+        "generator": "c8094a77ad90ae029e365ad9fecd8aa9717e3ea3cea476efec812fed567f4e33",
+        "mean_lines": 6.439423076923077,
+        "mixed_fraction": 0.4043269230769231,
+        "novelty_vs_history": 0.8425,
+        "proposal": {
+          "admitted": 4500,
+          "rejected": {
+            "dup_in_round": 352,
+            "forbidden_name": 88,
+            "forbidden_node": 8,
+            "near_duplicate_heldout": 3,
+            "not_single_function_f": 3,
+            "output_degenerate": 8,
+            "output_not_literal": 1,
+            "parse": 224,
+            "runtime_AttributeError": 6,
+            "runtime_IndexError": 37,
+            "runtime_KeyError": 8,
+            "runtime_MemoryError": 4,
+            "runtime_NameError": 8,
+            "runtime_NoOutput": 34,
+            "runtime_RuntimeError": 1,
+            "runtime_Timeout": 15,
+            "runtime_TypeError": 29,
+            "runtime_UnboundLocalError": 1,
+            "runtime_ValueError": 12,
+            "runtime_ZeroDivisionError": 12,
+            "size": 2733,
+            "syntax": 2
+          },
+          "requested": 9000,
+          "round": 2
+        },
+        "rejected": {
+          "duplicate": 340,
+          "heldout_leak": 0
+        },
+        "rollout_id": "f8609260f94e",
+        "unsolved_fraction": 0.047115384615384615,
+        "verified_rate": 0.8073317307692369
+      }
+    }
+  ],
+  "parent": "r02c0",
+  "round": 2,
+  "seconds": {
+    "attempt": 10243.153165361146,
+    "audit_eval": 453.28051051148213,
+    "gate_eval": 751.3176721942145,
+    "meta": 137.0649298389908,
+    "propose": 1430.6140954678413,
+    "train": 19823.878946826095
+  }
+}
