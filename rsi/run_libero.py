@@ -2,6 +2,7 @@
 
     python -m rsi.run_libero --plan plan.json --out runs/<new-dir> [--baseline-only --replicates N]
                                                                   [--heldout-eval receipt.json]
+                                                                  [--test-eval runs/<ended-run> --replicates N]
 
 Plan keys: model_name, vla (VLAConfig fields), suite, tasks, heldout_per_task,
 test_inits_per_task, program (overrides), engine (EngineConfig fields),
@@ -29,6 +30,9 @@ def main():
     # gate + audit only (never the test suite) for a version given by its training receipt, e.g. a
     # pilot candidate whose in-run evaluation failed
     parser.add_argument("--heldout-eval", metavar="RECEIPT")
+    # further test replicates of an ended run's retained version (VLA addendum 2: single 500-episode
+    # evaluations of one model differ by up to 3.6 points, so a final is averaged over replicates)
+    parser.add_argument("--test-eval", metavar="RUN_DIR")
     args = parser.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     out = Path(args.out)
@@ -68,6 +72,24 @@ def main():
                 for r in records:
                     s.write(json.dumps(asdict(r)) + "\n")
         (out / "heldout_eval.json").write_text(json.dumps(dict(version=asdict(version), **scores), indent=2))
+        print(json.dumps(scores))
+        return
+    if args.test_eval:
+        run = Path(args.test_eval)
+        report = json.loads((run / "report.json").read_text())   # written only when the run has ended
+        node = report["retained"]
+        version = initial if node == "n0" else \
+            Version(**json.loads((run / f"ckpt-{node}" / "receipt.json").read_text())["version"])
+        out.mkdir(parents=True)
+        scores = []
+        for rep in range(1, args.replicates + 1):    # rep 0 is the run's own test
+            records = domain.evaluate(backend, version, test)
+            scores.append(sum(r.score for r in records) / len(records))
+            with (out / f"test-libero_official-{node}-rep{rep}.jsonl").open("w") as s:
+                for r in records:
+                    s.write(json.dumps(asdict(r)) + "\n")
+        (out / "test_eval.json").write_text(json.dumps(dict(run=str(run), node=node, version=asdict(version),
+                                                            test_success=scores), indent=2))
         print(json.dumps(scores))
         return
     program = domain.default_program()
