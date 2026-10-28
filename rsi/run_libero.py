@@ -3,6 +3,7 @@
     python -m rsi.run_libero --plan plan.json --out runs/<new-dir> [--baseline-only --replicates N]
                                                                   [--heldout-eval receipt.json]
                                                                   [--test-eval runs/<ended-run> --replicates N]
+                                                                  [--resume]   (continue runs/<dir> in place)
 
 Plan keys: model_name, vla (VLAConfig fields), suite, tasks, heldout_per_task,
 test_inits_per_task, program (overrides), engine (EngineConfig fields),
@@ -33,10 +34,14 @@ def main():
     # further test replicates of an ended run's retained version (VLA addendum 2: single 500-episode
     # evaluations of one model differ by up to 3.6 points, so a final is averaged over replicates)
     parser.add_argument("--test-eval", metavar="RUN_DIR")
+    # continue an interrupted run in place (Engine.run(resume=True); the stored plan must match)
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     out = Path(args.out)
-    if out.exists():
+    if args.resume and not (out / "plan.json").exists():
+        raise SystemExit("resume_needs_an_existing_run")
+    if out.exists() and not args.resume:
         raise SystemExit("fresh_output_required")
     vcfg = dict(plan["vla"])
     for key in ("rollout_gpus", "train_gpus", "target_modules"):
@@ -102,7 +107,7 @@ def main():
     engine = Engine(domain, backend, initial, program, gate=gate, audit=audit,
                     tests={"libero_official": (domain, test)}, out=out,
                     config=EngineConfig(**plan.get("engine", {})), proposer=proposer)
-    report = engine.run()
+    report = engine.run(resume=args.resume)
     (out / "backend-accounting.json").write_text(json.dumps(dict(
         gpu_seconds=backend.gpu_seconds, admissions=backend.admissions), indent=2, default=str))
     t = report["tests"]["libero_official"]
