@@ -21,7 +21,7 @@ from aihc_probe import creds  # noqa: E402
 
 HOST = os.environ.get("BOS_HOST", "bj.bcebos.com")
 ALLOWED_PREFIX = ("bos-research-team", "shitianyu-rsi/")
-TIMEOUT = 120
+TIMEOUT = int(os.environ.get("BOS_TIMEOUT", "120"))
 
 
 def _enc(s, keep_slash=False):
