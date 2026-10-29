@@ -333,6 +333,86 @@ class VLAPhaseRetryTests(unittest.TestCase):
             self.assertEqual(attempts, [0, 1, 2])
 
 
+class OFTTests(unittest.TestCase):
+    """Pure parts of the OpenVLA-OFT backend (no model, no simulator)."""
+
+    def test_decode_chunk_bins_unnormalises_q99_and_keeps_action_order(self):
+        import numpy as np
+        from rsi.backends.openvla_oft.rollout_worker import decode_chunk
+        bins = np.linspace(-1, 1, 256)
+        centres = (bins[:-1] + bins[1:]) / 2
+        q01, q99 = np.array([-1.0, 0, 0, 0, 0, -2, 0]), np.array([1.0, 2, 2, 2, 2, 2, 1])
+        stats = {"q01": q01.tolist(), "q99": q99.tolist(), "mask": [True] * 6 + [False]}
+        tokens = np.full((2, 56), 31999)            # lowest bin everywhere
+        tokens[1, 7:14] = 31744                     # highest bin: second action of the second chunk
+        tokens[1, 14] = 31872                       # a middle bin
+        tokens[1, 15] = 32005                       # beyond the action ids: clipped to the lowest bin
+        a = decode_chunk(tokens, centres, 32000, stats)
+        self.assertEqual(a.shape, (2, 8, 7))
+        unnorm = lambda n: 0.5 * (n + 1) * (q99 - q01 + 1e-8) + q01
+        low = np.where(stats["mask"], unnorm(centres[0]), centres[0])
+        np.testing.assert_allclose(a[0], np.tile(low, (8, 1)), rtol=0, atol=1e-12)
+        np.testing.assert_allclose(a[1, 1, :6], unnorm(centres[254])[:6], rtol=0, atol=1e-12)
+        self.assertEqual(a[1, 1, 6], centres[254])  # gripper stays normalised (mask False)
+        self.assertAlmostEqual(a[1, 2, 0], unnorm(centres[127])[0], places=12)
+        self.assertAlmostEqual(a[1, 2, 1], unnorm(centres[0])[1], places=12)
+        np.testing.assert_allclose(a[1, 0], low, rtol=0, atol=1e-12)
+
+    def test_chunks_run_until_success_or_the_step_budget(self):
+        from rsi.backends.openvla_oft.rollout_worker import MAX_STEPS, run_chunk
+
+        def env(done_at):
+            calls = []
+
+            def step(action):
+                calls.append(action)
+                return len(calls), 0.0, len(calls) == done_at, {}
+            return step, calls
+        step, calls = env(done_at=3)
+        self.assertEqual(run_chunk(step, list(range(8)), 0, MAX_STEPS), (3, 3, True))
+        self.assertEqual(calls, [0, 1, 2])
+        step, _ = env(done_at=None)
+        self.assertEqual(run_chunk(step, list(range(8)), 0, MAX_STEPS), (8, 8, False))
+        step, calls = env(done_at=None)
+        self.assertEqual(run_chunk(step, list(range(8)), MAX_STEPS - 3, MAX_STEPS), (3, 3, False))
+        step, _ = env(done_at=None)
+        steps, chunks = 0, 0
+        while steps < MAX_STEPS:
+            _, k, ok = run_chunk(step, list(range(8)), steps, MAX_STEPS)
+            steps, chunks = steps + k, chunks + 1
+        self.assertEqual((steps, chunks, MAX_STEPS), (512, 64, 512))
+
+    def test_training_counts_only_tokens_of_executed_actions(self):
+        from rsi.backends.openvla_oft.train_worker import token_mask
+        m = token_mask([8, 3, 1])
+        self.assertEqual(m.shape, (3, 56))
+        self.assertTrue(m[0].all())
+        self.assertEqual(m[1].tolist(), [True] * 21 + [False] * 35)
+        self.assertEqual(int(m[2].sum()), 7)
+
+    def test_plan_model_family_selects_backend_and_its_workers(self):
+        from rsi.backends.openvla_oft.backend import OFTBackend
+        from rsi.run_libero import make_backend
+        with tempfile.TemporaryDirectory() as tmp:
+            base = dict(checkpoint="ck", python="py", openvla_root="root", workdir=tmp)
+            self.assertIs(type(make_backend(base)), vla_backend.VLABackend)
+            oft = make_backend(dict(base, model_family="oft"))
+            self.assertIs(type(oft), OFTBackend)
+            with self.assertRaises(SystemExit):
+                make_backend(dict(base, model_family="pi0"))
+            jobs = []
+            original = vla_backend.supervised_parallel
+            vla_backend.supervised_parallel = lambda js, timeout: jobs.extend(js)
+            try:
+                call = oft._call_dir("rollout")
+                oft._phase(call, "g", None, "libero_10",
+                           [dict(id="e", task_id=0, mode="greedy", temperature=0.0)], None, 1, 1)
+            finally:
+                vla_backend.supervised_parallel = original
+            self.assertEqual(Path(jobs[0][0][1]).parent.name, "openvla_oft")
+            self.assertEqual(json.loads((call / "spec-g0.json").read_text())["openvla_root"], "root")
+
+
 class LLMSampleRetryTests(unittest.TestCase):
     def test_oom_sampling_call_is_rerun_with_fresh_outputs(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -1,14 +1,15 @@
-"""Create a 1-GPU AIHC job that runs scripts/baidu/probe_libero.sh (uploaded to BOS jobs/). usage: submit_probe.py"""
+"""Create a 1-GPU AIHC job that runs a probe script uploaded to BOS jobs/. usage: submit_probe.py [script] [suffix]"""
 import datetime, json, os, sys
 sys.path.insert(0, "/home/zeyu/rsi/tools/baidu")
 import aihc_job
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-name = "zw-rsi-probe-libero"
+script = sys.argv[1] if len(sys.argv) > 1 else "probe_libero.sh"
+name = "zw-rsi-probe-" + (sys.argv[2] if len(sys.argv) > 2 else "libero")
 body = {
     "name": name,
     "jobType": "PyTorchJob",
-    "command": "timeout -k 60 5400 bash /mnt/bos/shitianyu-rsi/jobs/probe_libero.sh",
+    "command": f"timeout -k 60 5400 bash /mnt/bos/shitianyu-rsi/jobs/{script}",
     "jobSpec": {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,

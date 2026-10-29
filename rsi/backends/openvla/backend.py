@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 class VLAConfig:
     checkpoint: str
     python: str
-    openvla_root: str
+    openvla_root: str                  # model code the workers import (openvla repo; SimpleVLA-RL for OFT)
     workdir: str
     rollout_gpus: tuple = (0,)
     train_gpus: tuple = (0,)
@@ -41,6 +41,8 @@ class VLAConfig:
 
 
 class VLABackend:
+    worker_dir = HERE                  # rollout_worker.py and train_worker.py; subclasses swap the model
+
     def __init__(self, config: VLAConfig):
         self.config = config
         self.workdir = Path(config.workdir)
@@ -84,7 +86,7 @@ class VLABackend:
                         max_steps=max_steps, n_envs=n_envs, openvla_root=cfg.openvla_root,
                         out_dir=str(call / "episodes"), episodes=shard)
             (call / f"spec-{tag}{k}.json").write_text(json.dumps(spec))
-            jobs.append(([cfg.python, str(HERE / "rollout_worker.py"),
+            jobs.append(([cfg.python, str(self.worker_dir / "rollout_worker.py"),
                           str(call / f"spec-{tag}{k}.json")],
                          (gpu,), call / f"log-{tag}{k}.txt", self._env()))
         if jobs:
@@ -159,7 +161,7 @@ class VLABackend:
         (call / "train_spec.json").write_text(json.dumps(spec))
         self.admissions.append(admit(cfg.train_gpus, gap=cfg.admission_gap))
         started = time.time()
-        supervised([cfg.python, str(HERE / "train_worker.py"), str(call / "train_spec.json")],
+        supervised([cfg.python, str(self.worker_dir / "train_worker.py"), str(call / "train_spec.json")],
                    gpus=cfg.train_gpus[:1], timeout=cfg.train_timeout,
                    log_path=call / "log.txt", env=self._env())
         self.gpu_seconds["train"] = self.gpu_seconds.get("train", 0.0) + (time.time() - started)

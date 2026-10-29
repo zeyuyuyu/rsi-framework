@@ -5,7 +5,8 @@
                                                                   [--test-eval runs/<ended-run> --replicates N]
                                                                   [--resume]   (continue runs/<dir> in place)
 
-Plan keys: model_name, vla (VLAConfig fields), suite, tasks, heldout_per_task,
+Plan keys: model_name, vla (VLAConfig fields + model_family: openvla | oft, default openvla),
+suite, tasks, heldout_per_task,
 test_inits_per_task, program (overrides), engine (EngineConfig fields),
 meta {proposer: fixed|numeric}.
 """
@@ -17,10 +18,22 @@ from pathlib import Path
 
 from .core.gpu import stop_workers_on_sigterm
 from .backends.openvla.backend import VLABackend, VLAConfig
+from .backends.openvla_oft.backend import OFTBackend
 from .core.engine import Engine, EngineConfig
 from .core.types import Version
 from .domains.libero.domain import LiberoDomain
 from .meta.proposers import FixedProgram, NumericSearch
+
+BACKENDS = {"openvla": VLABackend, "oft": OFTBackend}
+
+
+def make_backend(vcfg):
+    """The plan's ``vla`` section (tuples already converted) -> backend for its model family."""
+    vcfg = dict(vcfg)
+    family = vcfg.pop("model_family", "openvla")
+    if family not in BACKENDS:
+        raise SystemExit(f"unknown_model_family:{family}")
+    return BACKENDS[family](VLAConfig(**vcfg))
 
 
 def main():
@@ -50,7 +63,7 @@ def main():
         if key in vcfg:
             vcfg[key] = tuple(vcfg[key])
     vcfg.setdefault("workdir", str(out) + ".work")
-    backend = VLABackend(VLAConfig(**vcfg))
+    backend = make_backend(vcfg)
     domain = LiberoDomain(plan["suite"], plan["tasks"])
     test = domain.official_test(plan.get("test_inits_per_task", 50))
     initial = Version(f"base:{plan['model_name']}", vcfg["checkpoint"], None)
