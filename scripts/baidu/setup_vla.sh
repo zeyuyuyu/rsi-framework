@@ -29,7 +29,7 @@ fetch_model() {
     if mkdir "$lock" 2>/dev/null; then
       echo "${NAME:-probe} $(hostname) $(date -u +%FT%TZ)" > "$lock/owner"
       ok=no
-      for attempt in 1 2 3; do
+      for attempt in 1 2 3 4 5; do
         echo "fetch $repo attempt $attempt $(el)"
         if python3 - "$repo" "$dir" <<'EOF'
 import json, os, subprocess, sys, urllib.request
@@ -43,7 +43,9 @@ for s in meta["siblings"]:
     if size is not None and os.path.exists(out) and os.path.getsize(out) == size:
         continue
     url = f"https://hf-mirror.com/{repo}/resolve/{meta['sha']}/{f}"
-    rc = subprocess.run(["curl", "-sSfL", "--retry", "5", "--retry-delay", "10", "-C", "-", "-o", out, url]).returncode
+    # abort a stalled transfer (< 100 kB/s for 2 min); the next attempt resumes the partial file
+    rc = subprocess.run(["curl", "-sSfL", "--retry", "5", "--retry-delay", "10", "--speed-limit", "102400",
+                         "--speed-time", "120", "-C", "-", "-o", out, url]).returncode
     got = os.path.getsize(out) if os.path.exists(out) else -1
     if rc != 0 or (size is not None and got != size):
         sys.exit(f"incomplete {f}: curl rc={rc} size {got} expected {size}")
