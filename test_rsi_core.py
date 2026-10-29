@@ -121,6 +121,21 @@ class EngineTests(unittest.TestCase):
         chain_authors = [n["author"] for n in rep["accepted_chain"][1:]]
         self.assertIn("search", chain_authors)
 
+    def test_candidates_of_a_round_share_its_cases(self):
+        # The meta level edits only the solver: the second candidate re-proposes the round's placements.
+        class SolverEdit:
+            def propose(self, program, archive, backend, version, n, rng):
+                return [Program.make(dict(program.params, solver={"t": rng.random()}), program.id, "search", "")]
+
+        e, _ = self.engine("share", proposer=SolverEdit(), rounds=2, candidates_per_round=2)
+        e.run()
+        r1 = json.loads((self.tmp / "share" / "round-01.json").read_text())
+        self.assertEqual(len(r1["candidates"]), 2)
+        self.assertTrue(all(c["gate"] is not None for c in r1["candidates"]))
+        self.assertEqual({c["signal"]["rejected"]["duplicate"] for c in r1["candidates"]}, {0})
+        r2 = json.loads((self.tmp / "share" / "round-02.json").read_text())
+        self.assertTrue(all(c["gate"] is not None for c in r2["candidates"]))
+
     def test_test_suites_use_their_own_evaluator(self):
         class Constant:
             higher_is_better = True

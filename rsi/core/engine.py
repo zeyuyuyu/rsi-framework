@@ -116,18 +116,22 @@ class Engine:
             return self._rollout_cache[key]
         proposed = self._timed("propose", self.domain.propose, self.backend, generator,
                                params, round_index, seed)
-        cases, rejected = [], dict(heldout_leak=0, duplicate=0)
+        # Cases from earlier rounds are never reused; candidates of the same round may share cases (a
+        # candidate that only edits the solver re-proposes the round's placements and must still train).
+        prior = getattr(self, "_seen_before_round", self._seen_train)
+        cases, local, rejected = [], set(), dict(heldout_leak=0, duplicate=0)
         for case in proposed:
             k = self.domain.leakage_key(case)
             if case.split != "train":
                 raise ValueError("proposed_cases_must_be_train")
             if k in heldout:
                 rejected["heldout_leak"] += 1
-            elif k in self._seen_train:
+            elif k in prior or k in local:
                 rejected["duplicate"] += 1
             else:
-                self._seen_train.add(k)
+                local.add(k)
                 cases.append(case)
+        self._seen_train |= local
         if not cases:
             raise ValueError("no_admissible_training_cases")
         attempts = self._timed("attempt", self.domain.attempt, self.backend, generator,
@@ -251,6 +255,7 @@ class Engine:
                 parent, done = root, 0
             for r in range(done + 1, cfg.rounds + 1):
                 self._clock()
+                self._seen_before_round = frozenset(self._seen_train)
                 seed = cfg.seed * 1000 + r
                 programs = [parent.program]
                 if cfg.candidates_per_round > 1:
