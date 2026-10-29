@@ -1,6 +1,6 @@
 # Train-on-test inflation of a published VLA RL result (prereg v3, secondary measurement)
 
-Status: **measured once on the A800; replication on further placements (A800) and on Baidu is running.** This is
+Status: **measured on the A800 and replicated on 500 independent placements; the Baidu replication is running.** This is
 not yet a conclusion under the multi-angle rule.
 
 ## Question
@@ -35,12 +35,19 @@ resamples of episodes within each of the four cells.
 Per task, RL official vs fresh: t0 78/62, t1 84/68, t2 98/92, t3 88/92, t4 80/52, t5 96/90, t6 90/50, t7 86/84,
 t8 82/84, t9 92/86. The loss is concentrated in tasks 4 and 6.
 
+## Replication on independent placements (A800, 2026-10-30)
+
+500 further fresh placements per checkpoint (placements 50-99 per task, never evaluated before):
+SFT 18.0%, RL 74.8%. Inflation on these: **+16.0 points, 95% CI [9.2, 22.4]**, matching the first estimate.
+Re-running the first 500 fresh placements reproduced 491/500 RL outcomes (the A800 stack is close to, but not
+exactly, deterministic).
+
 ## Caveats and checks
 
 * Platform: on Baidu the same SFT checkpoint scores 18.6% on the same 500 official episodes, against 14.6% on
   the A800. The policy is sensitive to small numeric and rendering differences. The inflation estimate uses one
   platform throughout. A Baidu replication is queued.
-* Replication on 500 further fresh placements per checkpoint (A800, placements 50-99 per task) is running.
+* Replicated on 500 independent fresh placements (above).
 * RL still improves on its start under fresh placements (20.0% -> 76.0%). The claim is that the reported number
   is inflated, not that the RL does nothing.
 
