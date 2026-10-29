@@ -1,0 +1,31 @@
+{
+  "model_name": "oft-rl-libero10-traj1",
+  "vla": {
+    "model_family": "oft",
+    "checkpoint": "/data0/home/zeyuwang/rsi/models/oft/openvla-oft-libero10-traj1-rl",
+    "python": "/data0/home/zeyuwang/miniconda3/envs/openvla/bin/python",
+    "openvla_root": "/data0/home/zeyuwang/rsi/simplevla_rl",
+    "rollout_gpus": [
+      0
+    ],
+    "train_gpus": [
+      0
+    ],
+    "greedy_procs_per_gpu": 4
+  },
+  "suite": "libero_10",
+  "tasks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "heldout_per_task": 100,
+  "test_inits_per_task": 50
+}
