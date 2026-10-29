@@ -1,8 +1,11 @@
 """Robotics plans for AIHC (run_vla.sh rewrites checkpoint / python / openvla_root / gpus on the node).
-usage: mkplans_vla.py oft_base | oft_pilot      -> writes plans/<name>.json here and uploads them to BOS plans/
+usage: mkplans_vla.py oft_base | oft_pilot | oft_main <grpo|bc>   -> writes plans/<name>.json here, uploads to BOS plans/
   oft_base   M1 starting point (OFT 1-demo SFT, LIBERO-10): 500 official episodes, --baseline-only
   oft_pilot  the two sealed 2-round pilots of prereg v3 (GRPO on mixed groups vs success-only BC); tests are
-             never read, gate + audit only, to choose the seed program for addendum 1"""
+             never read, gate + audit only, to choose the seed program for addendum 1
+  oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
+             fixed | full (numeric proposer, 2 candidates/round) | nonrec | shuffled | onebig (one round with
+             the summed 6-round budget: cases, curation budget and update steps x6, budget_scale 6)"""
 import json, os, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,5 +42,17 @@ elif sys.argv[1] == "oft_pilot":
     sealed = dict(rounds=2, seed=0, seal_tests=True)
     write("bj_oft3_pilot_l10_grpo", engine=sealed, meta={"proposer": "fixed"}, program=OFT_PROGRAM)
     write("bj_oft3_pilot_l10_bc", engine=sealed, meta={"proposer": "fixed"}, program=merge(OFT_PROGRAM, BC))
+elif sys.argv[1] == "oft_main" and sys.argv[2:3] in (["grpo"], ["bc"]):
+    seed_program = OFT_PROGRAM if sys.argv[2] == "grpo" else merge(OFT_PROGRAM, BC)
+    full_budget = {"curriculum": {"cases": 160 * 6}, "curation": {"budget": 400 * 6},
+                   "update": {"steps": OFT_PROGRAM["update"]["steps"] * 6}}
+    arms = {"fixed": ({}, "fixed", seed_program, 1), "full": ({"candidates_per_round": 2}, "numeric", seed_program, 1),
+            "nonrec": ({"recursive": False}, "fixed", seed_program, 1),
+            "shuffled": ({"feedback": "shuffled"}, "fixed", seed_program, 1),
+            "onebig": ({"rounds": 1}, "fixed", merge(seed_program, full_budget), 6)}
+    for seed in (1, 2, 3):
+        for arm, (engine, proposer, program, scale) in arms.items():
+            write(f"bj_oft3_{arm}_s{seed}", engine=dict({"rounds": 6, "seed": seed}, **engine),
+                  meta={"proposer": proposer}, program=program, budget_scale=scale)
 else:
     raise SystemExit(__doc__)
