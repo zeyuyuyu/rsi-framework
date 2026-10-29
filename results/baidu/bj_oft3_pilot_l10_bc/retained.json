@@ -1,0 +1,43 @@
+{
+  "node": "r01c0",
+  "program": {
+    "author": "seed",
+    "id": "f56efa83af9c1972",
+    "note": "",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 160,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 1e-05,
+        "operator": "bc",
+        "steps": 100
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "c66919d12d59f6ebc01c5bebf9a15f75dd3f9d68492055faf72dd6ceab02f7e2",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_bc/ckpt-r01c0",
+    "parent_id": "base:oft-sft-libero10-traj1"
+  }
+}

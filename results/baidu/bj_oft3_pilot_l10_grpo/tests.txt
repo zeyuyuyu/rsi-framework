@@ -1,0 +1,185 @@
+----- latest worker logs (failure context) -----
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_grpo.work/00009-rollout-1793281838/log-g0.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_grpo.work/00009-rollout-1793281838/log-g1.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_grpo.work/00009-rollout-1793281838/log-g2.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_grpo.work/00009-rollout-1793281838/log-g3.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_grpo.work/00009-rollout-1793281838/log-g4.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oft3_pilot_l10_grpo.work/00008-train-1793280665/log.txt
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+/tmp/src/rsi/backends/openvla_oft/train_worker.py:168: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  step_loss += float(loss)
+{"step": 10, "loss": 0.11746935173869133, "clipfrac": 0.056640625, "elapsed": 39.2}
+{"step": 20, "loss": 0.10010143625549972, "clipfrac": 0.06305803571428571, "elapsed": 78.3}
+{"step": 30, "loss": 0.05114682670682669, "clipfrac": 0.05189732142857143, "elapsed": 117.4}
+{"step": 40, "loss": 0.01795099675655365, "clipfrac": 0.06417410714285714, "elapsed": 156.5}
+{"step": 50, "loss": 0.02951251855120063, "clipfrac": 0.050337457817772775, "elapsed": 195.8}
+{"step": 60, "loss": 0.0715527473948896, "clipfrac": 0.07449776785714286, "elapsed": 234.4}
+{"step": 70, "loss": 0.056334277149289846, "clipfrac": 0.054408482142857144, "elapsed": 272.8}
+{"step": 80, "loss": 0.08856811001896858, "clipfrac": 0.05998883928571429, "elapsed": 311.5}
+{"step": 90, "loss": 0.06948388478485867, "clipfrac": 0.06110491071428571, "elapsed": 350.5}
+{"step": 100, "loss": 0.04584261681884527, "clipfrac": 0.07072691552062868, "elapsed": 389.8}
+/mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/peft/utils/save_and_load.py:195: UserWarning: Could not find a config file in /mnt/pfs/shitianyu-rsi/models/Openvla-oft-SFT-libero10-traj1 - will assume that the vocabulary was not modified.
+  warnings.warn(
