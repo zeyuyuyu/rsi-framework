@@ -136,6 +136,36 @@ class EngineTests(unittest.TestCase):
         r2 = json.loads((self.tmp / "share" / "round-02.json").read_text())
         self.assertTrue(all(c["gate"] is not None for c in r2["candidates"]))
 
+    def test_inner_steps_train_on_policy_on_fresh_cases(self):
+        class SeededToy(ToyDomain):
+            def propose(self, backend, generator, program, round_index, seed):
+                self.calls.append(("propose", generator.id))
+                return [Case(f"r{round_index}-s{seed}-{i}", f"g{i}", "train", {"d": i / 10}, "toy")
+                        for i in range(10)]
+
+        def run(name, **cfg):
+            domain, backend = SeededToy(), ToyBackend()
+            e = Engine(domain, backend, Version("init", "/b"), domain.default_program(),
+                       gate=heldout("gate", 20), audit=heldout("audit", 20),
+                       tests={"t": (domain, heldout("test", 40))}, out=self.tmp / name,
+                       config=EngineConfig(**cfg), proposer=FixedProgram())
+            return e.run(), domain, backend
+
+        rep, domain, backend = run("inner", rounds=2, inner_steps=3)
+        r1 = json.loads((self.tmp / "inner" / "round-01.json").read_text())
+        inner = r1["candidates"][0]["signal"]["inner"]
+        self.assertEqual([s["trained"] for s in inner], [True, True, True])
+        gens = [g for kind, g in domain.calls if kind == "propose"][:3]
+        self.assertEqual(gens[0], "init")
+        self.assertEqual(gens[1:], [inner[0]["version"], inner[1]["version"]])   # samples with what it just trained
+        self.assertEqual({s["signal"]["rejected"]["duplicate"] for s in inner}, {0})  # fresh cases every step
+        self.assertTrue((self.tmp / "inner" / "ckpt-r01c0" / "w.bin").exists())
+        # one gate per round, after three updates: the chain gains more per round than inner_steps=1
+        one, _, _ = run("one", rounds=2)
+        self.assertGreater(rep["tests"]["t"]["final"], one["tests"]["t"]["final"])
+        _, domain_nr, _ = run("inner_nonrec", rounds=1, inner_steps=3, recursive=False)
+        self.assertTrue(all(g == "init" for kind, g in domain_nr.calls if kind == "propose"))
+
     def test_test_suites_use_their_own_evaluator(self):
         class Constant:
             higher_is_better = True

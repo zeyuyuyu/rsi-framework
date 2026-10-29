@@ -43,6 +43,7 @@ class EngineConfig:
     recursive: bool = True
     feedback: str = "true"            # true | shuffled
     candidates_per_round: int = 1     # programs tried per round (incumbent included)
+    inner_steps: int = 1              # on-policy sample -> curate -> train cycles per candidate before its gate
     min_gate_gain: float = 0.0
     wall_seconds: int = 14 * 24 * 3600
     test_all_accepted: bool = True
@@ -108,7 +109,7 @@ class Engine:
                 or not out_dir.is_dir() or not any(out_dir.iterdir())):
             raise ValueError("unproven_or_mismatched_training_update")
 
-    def _rollouts(self, generator, program, round_index, seed, heldout):
+    def _rollouts(self, generator, program, round_index, seed, heldout, exclude=frozenset()):
         params = program.params
         key = digest([generator.id, params.get("curriculum"), params.get("solver"),
                       round_index, seed])
@@ -126,7 +127,7 @@ class Engine:
                 raise ValueError("proposed_cases_must_be_train")
             if k in heldout:
                 rejected["heldout_leak"] += 1
-            elif k in prior or k in local:
+            elif k in prior or k in exclude or k in local:
                 rejected["duplicate"] += 1
             else:
                 local.add(k)
@@ -270,35 +271,54 @@ class Engine:
                 generator = parent.version if cfg.recursive else self.initial
                 candidates = []
                 for k, program in enumerate(programs):
-                    self._clock()
-                    cases, attempts, rejected = self._rollouts(generator, program, r, seed, heldout)
-                    if cfg.feedback == "shuffled":
-                        attempts = shuffle_feedback(attempts, random.Random(seed * 31 + k))
-                    items, item_cases, stats = curate(cases, attempts, program.params["curation"],
-                                                      random.Random(seed * 17 + k))
                     tag = f"r{r:02d}c{k}"
-                    rollout_id = digest([generator.id, program.params.get("curriculum"),
-                                         program.params.get("solver"), r, seed])[:12]
-                    if rollout_id not in self._signals:
-                        self._signals[rollout_id] = self.domain.signal_metrics(cases, attempts)
-                    signal = dict(self._signals[rollout_id], rejected=rejected,
-                                  generator=generator.id)
-                    if not items:
+                    version, used, steps, signal, stats, receipt = parent.version, set(), [], None, None, None
+                    for it in range(cfg.inner_steps):
+                        self._clock()
+                        s_it = seed if it == 0 else seed * 100 + it      # inner_steps=1 keeps the old seeds
+                        gen = (version if it else generator) if cfg.recursive else self.initial
+                        cases, attempts, rejected = self._rollouts(gen, program, r, s_it, heldout,
+                                                                   exclude=frozenset(used))
+                        used |= {self.domain.leakage_key(c) for c in cases}
+                        if cfg.feedback == "shuffled":
+                            attempts = shuffle_feedback(attempts, random.Random(s_it * 31 + k))
+                        items, item_cases, step_stats = curate(cases, attempts, program.params["curation"],
+                                                               random.Random(s_it * 17 + k))
+                        rollout_id = digest([gen.id, program.params.get("curriculum"),
+                                             program.params.get("solver"), r, s_it])[:12]
+                        if rollout_id not in self._signals:
+                            self._signals[rollout_id] = self.domain.signal_metrics(cases, attempts)
+                        step_signal = dict(self._signals[rollout_id], rejected=rejected, generator=gen.id,
+                                           rollout_id=rollout_id)
+                        if signal is None:
+                            signal, stats = dict(step_signal), step_stats
+                        if not items:
+                            steps.append(dict(step=it, signal=step_signal, curation=step_stats, trained=False))
+                            break
+                        if rollout_id not in self._written:
+                            self._written.add(rollout_id)
+                            _jsonl(self.out / f"round-{r:02d}-cases-{rollout_id}.jsonl",
+                                   [asdict(c) for c in cases])
+                            _jsonl(self.out / f"round-{r:02d}-attempts-{rollout_id}.jsonl",
+                                   [asdict(a) for t in attempts for a in t])
+                        last = it == cfg.inner_steps - 1
+                        ckpt = self.out / (f"ckpt-{tag}" if last else f"ckpt-{tag}-i{it}")
+                        step_receipt = self._timed("train", self.backend.train, version, items, ckpt,
+                                                   program.params["update"], s_it * 7 + k)
+                        self._check_receipt(step_receipt, version, ckpt, versions)
+                        versions.add(step_receipt.version.id)
+                        version, receipt = step_receipt.version, step_receipt
+                        steps.append(dict(step=it, signal=step_signal, curation=step_stats, trained=True,
+                                          version=step_receipt.version.id))
+                    if cfg.inner_steps > 1:
+                        signal["inner"] = steps
+                        final = self.out / f"ckpt-{tag}"
+                        if receipt is not None and not final.exists():   # chain stopped early: no mixed groups
+                            final.symlink_to(Path(receipt.version.location).name)
+                    if receipt is None:
                         archive.add(Node(tag, r, parent.version, program, parent.node_id,
                                          signal=signal, curation=stats))
                         continue
-                    if rollout_id not in self._written:
-                        self._written.add(rollout_id)
-                        _jsonl(self.out / f"round-{r:02d}-cases-{rollout_id}.jsonl",
-                               [asdict(c) for c in cases])
-                        _jsonl(self.out / f"round-{r:02d}-attempts-{rollout_id}.jsonl",
-                               [asdict(a) for t in attempts for a in t])
-                    signal["rollout_id"] = rollout_id
-                    ckpt = self.out / f"ckpt-{tag}"
-                    receipt = self._timed("train", self.backend.train, parent.version, items,
-                                          ckpt, program.params["update"], seed * 7 + k)
-                    self._check_receipt(receipt, parent.version, ckpt, versions)
-                    versions.add(receipt.version.id)
                     gate, _ = self._score(receipt.version, self.gate, "gate_eval")
                     node = archive.add(Node(tag, r, receipt.version, program, parent.node_id,
                                             gate=gate, signal=signal, curation=stats,
