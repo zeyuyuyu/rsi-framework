@@ -50,6 +50,13 @@ placements, GRPO lr 1e-4, 100 steps of batch 64, always accept, gate and audit 2
 `vla.ratio_mode = "matched"`. Same seed, so the placements match round by round. The comparison with
 `pilot5_curve` is paired on the training placements and isolates the ratio.
 
+Amendment, made after pilot6 was submitted but before any of its results: an A800 GPU was free, so an A800
+replica runs: `a8_oft3_pilot6_curve_matched_s1`. It uses the same program and ratio mode with seed 1 on 1 GPU,
+so its placements differ, and it runs from a separate code tree (src3). As with addendum 4's replica, it is
+reported next to pilot6 as corroboration and cannot change the decisions below. Before launch, the A800
+`ratio_check` on the pilot-4 replica's round-1 spec gave step-1 out-of-band shares of 0.0533 (legacy) and
+exactly 0 (matched) (docs/results/UPDATE_PROBE_20261030.md).
+
 ## Use of the results, fixed now
 
 1. **Validity.** pilot6's first receipt must show a step-1 out-of-band share below 0.001. Otherwise the fix
