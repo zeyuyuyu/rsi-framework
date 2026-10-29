@@ -1,0 +1,2 @@
+{"round": 3, "parent": "r03c0", "accepted": true, "seconds": {"attempt": 4022, "audit_eval": 287, "gate_eval": 452, "propose": 459, "train": 8985}}
+{"node": "r03c0", "gate": 0.7760180995475113, "author": "seed", "program": "deb463acc37c2f27", "curation_items": 6008, "curation_item_cases": 751, "curation_cases": 2133, "verified_rate": 0.8232332155477032, "mixed_fraction": 0.34946996466431096, "signal_cases": 2830, "rejected": {"duplicate": 170, "heldout_leak": 0}}

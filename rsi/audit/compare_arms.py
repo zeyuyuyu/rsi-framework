@@ -91,10 +91,15 @@ def report(name, pairs, bar):
     diff = sum(y - x for x, y in zip(a, b)) / len(a)
     low, high = paired_bootstrap(a, b)
     per_seed = {s: round(100 * (sum(y) - sum(x)) / len(x), 2) for x, y, s in pairs}
-    # interim until all 3 pre-registered seeds are in (C1 also needs >= 2 of 3 seeds excluding 0 individually)
-    return dict(claim=name, seeds=sorted(per_seed), per_seed_points=per_seed, mean_points=round(100 * diff, 2),
-                ci95_points=[round(100 * low, 2), round(100 * high, 2)], bar_points=bar,
-                mean_and_ci_pass=bool(100 * diff >= bar and low > 0), final=sorted(per_seed) == [1, 2, 3])
+    # C1 also needs >= 2 of 3 seeds whose own paired CI excludes 0 (prereg v2, Bars)
+    seed_ci = {s: [round(100 * v, 2) for v in paired_bootstrap(x, y)] for x, y, s in pairs}
+    out = dict(claim=name, seeds=sorted(per_seed), per_seed_points=per_seed, per_seed_ci95=seed_ci,
+               mean_points=round(100 * diff, 2), ci95_points=[round(100 * low, 2), round(100 * high, 2)],
+               bar_points=bar, mean_and_ci_pass=bool(100 * diff >= bar and low > 0), final=sorted(per_seed) == [1, 2, 3])
+    if name.startswith("C1"):
+        out["seeds_excluding_zero"] = sum(1 for lo, hi in seed_ci.values() if lo > 0 or hi < 0)
+        out["c1_pass"] = bool(out["mean_and_ci_pass"] and out["seeds_excluding_zero"] >= 2)
+    return out
 
 
 def main():

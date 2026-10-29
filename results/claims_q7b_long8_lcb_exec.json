@@ -9,43 +9,67 @@
       "initial": 53.44,
       "final_score": 61.8
     },
+    "fixed_s2": {
+      "run": "results/baidu/bj_q7b_long8fixed_s2",
+      "final": "r07c0",
+      "initial": 54.07,
+      "final_score": 59.71
+    },
+    "fixed_s3": {
+      "run": "results/baidu/bj_q7b_long8fixed_s3",
+      "final": "r05c0",
+      "initial": 54.07,
+      "final_score": 61.17
+    },
     "nonrec_s1": {
       "run": "results/baidu/bj_q7b_long8nonrec_s1",
       "final": "r06c0",
       "initial": 54.28,
       "final_score": 57.41
+    },
+    "nonrec_s2": {
+      "run": "results/baidu/bj_q7b_long8nonrec_s2",
+      "final": "r06c0",
+      "initial": 54.28,
+      "final_score": 55.11
     }
   },
   "claims": [
     {
       "claim": "C1 fixed: final - initial",
       "seeds": [
-        1
+        1,
+        2,
+        3
       ],
       "per_seed_points": {
-        "1": 8.35
+        "1": 8.35,
+        "2": 5.64,
+        "3": 7.1
       },
-      "mean_points": 8.35,
+      "mean_points": 7.03,
       "ci95_points": [
-        4.38,
-        12.32
+        4.04,
+        10.09
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": true,
-      "final": false
+      "final": true
     },
     {
       "claim": "C1 nonrec: final - initial",
       "seeds": [
-        1
+        1,
+        2
       ],
       "per_seed_points": {
-        "1": 3.13
+        "1": 3.13,
+        "2": 0.84
       },
-      "mean_points": 3.13,
+      "mean_points": 1.98,
       "ci95_points": [
-        -1.04,
-        7.52
+        -1.67,
+        5.74
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
@@ -54,15 +78,17 @@
     {
       "claim": "C3 fixed - nonrec",
       "seeds": [
-        1
+        1,
+        2
       ],
       "per_seed_points": {
-        "1": 4.38
+        "1": 4.38,
+        "2": 4.59
       },
-      "mean_points": 4.38,
+      "mean_points": 4.49,
       "ci95_points": [
-        0.42,
-        8.35
+        1.57,
+        7.41
       ],
       "bar_points": 1.0,
       "mean_and_ci_pass": true,
