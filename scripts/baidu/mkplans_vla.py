@@ -1,9 +1,10 @@
 """Robotics plans for AIHC (run_vla.sh rewrites checkpoint / python / openvla_root / gpus on the node).
-usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_main <grpo|bc> [lr]   -> writes plans/<name>.json here, uploads to BOS plans/
+usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_main <grpo|bc> [lr]   -> writes plans/<name>.json here, uploads to BOS plans/
   oft_base   M1 starting point (OFT 1-demo SFT, LIBERO-10): 500 official episodes, --baseline-only
   oft_pilot  the two sealed 2-round pilots of prereg v3 (GRPO on mixed groups vs success-only BC); tests are
              never read, gate + audit only, to choose the seed program for addendum 1
   oft_pilot2 addendum 1 extra sealed pair: GRPO at lr 5e-5 and 1e-4, otherwise the pilot program
+  oft_pilot3 addendum 3 sealed pair, 1 round: GRPO lr 1e-4 with 400 and 1000 update steps
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
              fixed | full (numeric proposer, 2 candidates/round) | nonrec | shuffled | onebig (one round with
              the summed 6-round budget: cases, curation budget and update steps x6, budget_scale 6)"""
@@ -48,12 +49,19 @@ elif sys.argv[1] == "oft_pilot2":
     for tag, lr in (("lr5e5", 5e-5), ("lr1e4", 1e-4)):
         write(f"bj_oft3_pilot2_l10_{tag}", engine=sealed, meta={"proposer": "fixed"},
               program=merge(OFT_PROGRAM, {"update": {"lr": lr}}))
+elif sys.argv[1] == "oft_pilot3":
+    sealed = dict(rounds=1, seed=0, seal_tests=True)
+    for steps in (400, 1000):
+        write(f"bj_oft3_pilot3_l10_s{steps}", engine=sealed, meta={"proposer": "fixed"},
+              program=merge(OFT_PROGRAM, {"update": {"lr": 1e-4, "steps": steps}}))
 elif sys.argv[1] == "oft_main" and sys.argv[2:3] in (["grpo"], ["bc"]):
     seed_program = OFT_PROGRAM if sys.argv[2] == "grpo" else merge(OFT_PROGRAM, BC)
     if len(sys.argv) > 3:                       # lr frozen by addendum 2 (1e-4)
         seed_program = merge(seed_program, {"update": {"lr": float(sys.argv[3])}})
+    if len(sys.argv) > 4:                       # update steps frozen by addendum 4
+        seed_program = merge(seed_program, {"update": {"steps": int(sys.argv[4])}})
     full_budget = {"curriculum": {"cases": 160 * 6}, "curation": {"budget": 400 * 6},
-                   "update": {"steps": OFT_PROGRAM["update"]["steps"] * 6}}
+                   "update": {"steps": seed_program["update"]["steps"] * 6}}
     arms = {"fixed": ({}, "fixed", seed_program, 1), "full": ({"candidates_per_round": 2}, "numeric", seed_program, 1),
             "nonrec": ({"recursive": False}, "fixed", seed_program, 1),
             "shuffled": ({"feedback": "shuffled"}, "fixed", seed_program, 1),
