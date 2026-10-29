@@ -1,0 +1,127 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 46560,
+        "cases": 2910,
+        "excluded_by_flag": 0,
+        "item_cases": 364,
+        "items": 1258,
+        "mixed_cases": 665,
+        "rule": "verified",
+        "solved_cases": 2812,
+        "verified_attempts": 41179
+      },
+      "gate": 0.832579185520362,
+      "node": "r04c0",
+      "program": "59b808364e0669dd",
+      "signal": {
+        "cases": 2910,
+        "finished_rate": 0.9906142611683849,
+        "generator": "b4c236e8e5d556ea9c64db3781c37212e96987ada9f94392f38404a4ffb2cc13",
+        "mean_lines": 7.730584192439863,
+        "mixed_fraction": 0.22852233676975944,
+        "novelty_vs_history": 0.4575,
+        "proposal": {
+          "admitted": 6493,
+          "rejected": {
+            "dup_in_round": 6503,
+            "forbidden_name": 12,
+            "near_duplicate_heldout": 45,
+            "parse": 1105,
+            "runtime_AttributeError": 2,
+            "runtime_IndexError": 8,
+            "runtime_KeyError": 12,
+            "runtime_MemoryError": 3,
+            "runtime_NameError": 9,
+            "runtime_RuntimeError": 2,
+            "runtime_SystemError": 8,
+            "runtime_Timeout": 2,
+            "runtime_TypeError": 57,
+            "size": 734,
+            "syntax": 5
+          },
+          "requested": 15000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 3583,
+          "heldout_leak": 0
+        },
+        "rollout_id": "31ac846d3adf",
+        "unsolved_fraction": 0.03367697594501718,
+        "verified_rate": 0.8844286941580756
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 74608,
+        "cases": 4663,
+        "excluded_by_flag": 0,
+        "item_cases": 610,
+        "items": 2159,
+        "mixed_cases": 1108,
+        "rule": "verified",
+        "solved_cases": 4488,
+        "verified_attempts": 65530
+      },
+      "gate": 0.8438914027149321,
+      "node": "r04c1",
+      "program": "abdadc785f5ed84a",
+      "signal": {
+        "cases": 4663,
+        "finished_rate": 0.9910331331760669,
+        "generator": "b4c236e8e5d556ea9c64db3781c37212e96987ada9f94392f38404a4ffb2cc13",
+        "mean_lines": 7.763671456144113,
+        "mixed_fraction": 0.2376152691400386,
+        "novelty_vs_history": 0.42,
+        "proposal": {
+          "admitted": 9763,
+          "rejected": {
+            "dup_in_round": 11973,
+            "forbidden_name": 22,
+            "near_duplicate_heldout": 61,
+            "output_degenerate": 3,
+            "output_not_literal": 1,
+            "parse": 1884,
+            "runtime_AttributeError": 5,
+            "runtime_IndexError": 21,
+            "runtime_KeyError": 12,
+            "runtime_MemoryError": 2,
+            "runtime_NameError": 16,
+            "runtime_RuntimeError": 7,
+            "runtime_SystemError": 10,
+            "runtime_Timeout": 2,
+            "runtime_TypeError": 74,
+            "runtime_ValueError": 2,
+            "runtime_ZeroDivisionError": 1,
+            "size": 1134,
+            "syntax": 7
+          },
+          "requested": 25000,
+          "round": 4
+        },
+        "rejected": {
+          "duplicate": 5100,
+          "heldout_leak": 0
+        },
+        "rollout_id": "bbea62d072f7",
+        "unsolved_fraction": 0.03752948745442848,
+        "verified_rate": 0.8783240403173922
+      }
+    }
+  ],
+  "parent": "r01c1",
+  "round": 4,
+  "seconds": {
+    "attempt": 55533.973828708054,
+    "audit_eval": 210.90865959506482,
+    "gate_eval": 1392.0769688163418,
+    "meta": 321.0535000450909,
+    "propose": 5990.424183365889,
+    "train": 121357.07887334446
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "node": "r01c1",
+  "program": {
+    "author": "self",
+    "id": "59b808364e0669dd",
+    "note": "{\"curation.band\": [0.0, 0.8], \"curation.budget\": 6000, \"curation.exclude_flag\": \"\", \"curation.per_case\": 4, \"curation.rule\": \"verified\", \"curriculum.instruction\": \"Generate a Python function named f with a specific input and output. The func...\", \"curriculum.max_cases\": 15000, \"curriculum.proposals\": 15000, \"curriculum.shots\": 4, \"curriculum.temperature\": 0.9, \"solver.samples\": 16, \"solver.temperature\": 0.6, \"update.batch\": 256, \"update.lr\": 1e-05, \"update.operator\": \"sft\", \"update.steps\": 128}",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          0.8
+        ],
+        "budget": 6000,
+        "exclude_flag": "",
+        "per_case": 4,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "instruction": "Generate a Python function named f with a specific input and output. The function must be 3-15 lines, use only built-in types, and avoid external libraries. Ensure it's non-trivial: the output requires careful tracing of loops, conditionals, or data structure operations. Provide an assertion demonstrating the function's behavior.",
+        "max_cases": 15000,
+        "pool_growth": 500,
+        "proposals": 15000,
+        "shots": 4,
+        "temperature": 0.9
+      },
+      "solver": {
+        "max_tokens": 1024,
+        "samples": 16,
+        "temperature": 0.6,
+        "top_p": 0.95
+      },
+      "update": {
+        "batch": 256,
+        "lr": 1e-05,
+        "operator": "sft",
+        "steps": 128
+      }
+    },
+    "parent_id": "deb463acc37c2f27"
+  },
+  "version": {
+    "id": "b4c236e8e5d556ea9c64db3781c37212e96987ada9f94392f38404a4ffb2cc13",
+    "location": "/data0/home/zeyuwang/rsi/runs2/cross_qw3_full_s1/ckpt-r01c1",
+    "parent_id": "base:qwen3_8b"
+  }
+}

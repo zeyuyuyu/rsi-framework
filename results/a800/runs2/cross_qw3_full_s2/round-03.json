@@ -1,0 +1,134 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 79344,
+        "cases": 4959,
+        "excluded_by_flag": 0,
+        "item_cases": 728,
+        "items": 1967,
+        "mixed_cases": 1242,
+        "rule": "verified",
+        "solved_cases": 4718,
+        "verified_attempts": 67863
+      },
+      "gate": 0.8393665158371041,
+      "node": "r03c0",
+      "program": "b0345f76f19ad2c9",
+      "signal": {
+        "cases": 4959,
+        "finished_rate": 0.9822922968340391,
+        "generator": "58fbbea4c09e9958938e97eb1b6c8362f821b9475edce01588527f1c04658c5e",
+        "mean_lines": 7.912079048195201,
+        "mixed_fraction": 0.25045372050816694,
+        "novelty_vs_history": 0.7,
+        "proposal": {
+          "admitted": 6000,
+          "rejected": {
+            "dup_in_round": 2850,
+            "forbidden_name": 59,
+            "forbidden_node": 5,
+            "near_duplicate_heldout": 26,
+            "not_single_function_f": 1,
+            "output_degenerate": 4,
+            "output_not_literal": 3,
+            "parse": 587,
+            "runtime_IndexError": 44,
+            "runtime_KeyError": 26,
+            "runtime_MemoryError": 20,
+            "runtime_NameError": 5,
+            "runtime_RuntimeError": 2,
+            "runtime_SystemError": 22,
+            "runtime_Timeout": 7,
+            "runtime_TypeError": 53,
+            "runtime_UnboundLocalError": 2,
+            "runtime_ValueError": 4,
+            "runtime_ZeroDivisionError": 6,
+            "size": 535,
+            "syntax": 21
+          },
+          "requested": 12000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 1041,
+          "heldout_leak": 0
+        },
+        "rollout_id": "112fe0cbfefe",
+        "unsolved_fraction": 0.04859850776366203,
+        "verified_rate": 0.8553009679370841
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 74048,
+        "cases": 4628,
+        "excluded_by_flag": 0,
+        "item_cases": 650,
+        "items": 1763,
+        "mixed_cases": 1093,
+        "rule": "verified",
+        "solved_cases": 4427,
+        "verified_attempts": 64211
+      },
+      "gate": 0.830316742081448,
+      "node": "r03c1",
+      "program": "3dbe2b128bebe581",
+      "signal": {
+        "cases": 4628,
+        "finished_rate": 0.9857659896283492,
+        "generator": "58fbbea4c09e9958938e97eb1b6c8362f821b9475edce01588527f1c04658c5e",
+        "mean_lines": 7.838159031979257,
+        "mixed_fraction": 0.23617113223854796,
+        "novelty_vs_history": 0.6825,
+        "proposal": {
+          "admitted": 6000,
+          "rejected": {
+            "dup_in_round": 2920,
+            "forbidden_name": 68,
+            "forbidden_node": 4,
+            "near_duplicate_heldout": 26,
+            "output_degenerate": 6,
+            "output_not_literal": 2,
+            "parse": 181,
+            "runtime_AttributeError": 2,
+            "runtime_IndexError": 43,
+            "runtime_KeyError": 20,
+            "runtime_MemoryError": 14,
+            "runtime_NameError": 3,
+            "runtime_RuntimeError": 1,
+            "runtime_SystemError": 21,
+            "runtime_Timeout": 16,
+            "runtime_TypeError": 47,
+            "runtime_UnboundLocalError": 3,
+            "runtime_ValueError": 4,
+            "size": 678,
+            "syntax": 4
+          },
+          "requested": 12000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 1372,
+          "heldout_leak": 0
+        },
+        "rollout_id": "d167fcc5a707",
+        "unsolved_fraction": 0.043431287813310286,
+        "verified_rate": 0.8671537381158168
+      }
+    }
+  ],
+  "parent": "r02c0",
+  "round": 3,
+  "seconds": {
+    "attempt": 47999.385436325334,
+    "audit_eval": 697.6304701908957,
+    "gate_eval": 1150.2650565935764,
+    "meta": 246.76183499605395,
+    "propose": 2886.3710110248066,
+    "train": 96601.49649424083
+  }
+}

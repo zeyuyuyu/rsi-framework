@@ -1,0 +1,132 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 55984,
+        "cases": 3499,
+        "excluded_by_flag": 0,
+        "item_cases": 436,
+        "items": 1531,
+        "mixed_cases": 844,
+        "rule": "verified",
+        "solved_cases": 3387,
+        "verified_attempts": 49558
+      },
+      "gate": 0.8438914027149321,
+      "node": "r03c0",
+      "program": "59b808364e0669dd",
+      "signal": {
+        "cases": 3499,
+        "finished_rate": 0.9910688768219491,
+        "generator": "b4c236e8e5d556ea9c64db3781c37212e96987ada9f94392f38404a4ffb2cc13",
+        "mean_lines": 7.709917119176907,
+        "mixed_fraction": 0.24121177479279796,
+        "novelty_vs_history": 0.48,
+        "proposal": {
+          "admitted": 6646,
+          "rejected": {
+            "dup_in_round": 6367,
+            "forbidden_name": 20,
+            "forbidden_node": 1,
+            "near_duplicate_heldout": 47,
+            "output_degenerate": 1,
+            "parse": 990,
+            "runtime_AttributeError": 1,
+            "runtime_IndexError": 7,
+            "runtime_KeyError": 8,
+            "runtime_MemoryError": 3,
+            "runtime_NameError": 13,
+            "runtime_RuntimeError": 5,
+            "runtime_SystemError": 10,
+            "runtime_TypeError": 48,
+            "runtime_UnboundLocalError": 1,
+            "runtime_ValueError": 1,
+            "runtime_ZeroDivisionError": 2,
+            "size": 818,
+            "syntax": 11
+          },
+          "requested": 15000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 3147,
+          "heldout_leak": 0
+        },
+        "rollout_id": "cb0fcc9d9842",
+        "unsolved_fraction": 0.03200914547013432,
+        "verified_rate": 0.8852172049156902
+      }
+    },
+    {
+      "author": "self",
+      "curation": {
+        "attempts": 67936,
+        "cases": 4246,
+        "excluded_by_flag": 0,
+        "item_cases": 531,
+        "items": 1819,
+        "mixed_cases": 999,
+        "rule": "verified",
+        "solved_cases": 4109,
+        "verified_attempts": 60063
+      },
+      "gate": 0.8371040723981901,
+      "node": "r03c1",
+      "program": "90a0261d6e36fcec",
+      "signal": {
+        "cases": 4246,
+        "finished_rate": 0.9910209609043806,
+        "generator": "b4c236e8e5d556ea9c64db3781c37212e96987ada9f94392f38404a4ffb2cc13",
+        "mean_lines": 7.75341497880358,
+        "mixed_fraction": 0.2352802637776731,
+        "novelty_vs_history": 0.4925,
+        "proposal": {
+          "admitted": 8266,
+          "rejected": {
+            "dup_in_round": 9050,
+            "forbidden_name": 24,
+            "forbidden_node": 1,
+            "near_duplicate_heldout": 61,
+            "output_degenerate": 4,
+            "output_not_literal": 2,
+            "parse": 1415,
+            "runtime_AttributeError": 1,
+            "runtime_IndexError": 16,
+            "runtime_KeyError": 14,
+            "runtime_MemoryError": 2,
+            "runtime_NameError": 9,
+            "runtime_RuntimeError": 3,
+            "runtime_SystemError": 17,
+            "runtime_TypeError": 59,
+            "runtime_UnboundLocalError": 1,
+            "runtime_ValueError": 1,
+            "runtime_ZeroDivisionError": 3,
+            "size": 1044,
+            "syntax": 7
+          },
+          "requested": 20000,
+          "round": 3
+        },
+        "rejected": {
+          "duplicate": 4020,
+          "heldout_leak": 0
+        },
+        "rollout_id": "eaec5af37977",
+        "unsolved_fraction": 0.03226566179934055,
+        "verified_rate": 0.8841115167216204
+      }
+    }
+  ],
+  "parent": "r01c1",
+  "round": 3,
+  "seconds": {
+    "attempt": 43252.190402887994,
+    "audit_eval": 210.90865959506482,
+    "gate_eval": 1105.4295972113032,
+    "meta": 238.73230418609455,
+    "propose": 3912.40473955404,
+    "train": 88840.31780935521
+  }
+}

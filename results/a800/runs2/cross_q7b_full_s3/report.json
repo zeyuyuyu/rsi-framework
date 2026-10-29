@@ -1,0 +1,198 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.7406679764243614,
+      "author": "seed",
+      "gate": 0.746606334841629,
+      "node": "n0",
+      "program": "deb463acc37c2f27",
+      "round": 0
+    },
+    {
+      "audit": 0.7465618860510805,
+      "author": "seed",
+      "gate": 0.753393665158371,
+      "node": "r01c0",
+      "program": "deb463acc37c2f27",
+      "round": 1
+    },
+    {
+      "audit": 0.756385068762279,
+      "author": "seed",
+      "gate": 0.7737556561085973,
+      "node": "r02c0",
+      "program": "deb463acc37c2f27",
+      "round": 2
+    },
+    {
+      "audit": 0.7838899803536346,
+      "author": "self",
+      "gate": 0.7760180995475113,
+      "node": "r03c1",
+      "program": "6a020e72c524ff15",
+      "round": 3
+    },
+    {
+      "audit": 0.768172888015717,
+      "author": "self",
+      "gate": 0.7895927601809954,
+      "node": "r04c1",
+      "program": "37fe38d36ac83610",
+      "round": 4
+    }
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 4,
+    "seal_tests": false,
+    "seed": 3,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 94779.08637640788,
+  "retained": "r04c1",
+  "seconds": {
+    "attempt": 24942.754218375077,
+    "audit_eval": 706.6572137703188,
+    "gate_eval": 1209.9367597920354,
+    "meta": 274.4485011419747,
+    "propose": 2919.329038622789,
+    "test_eval": 1919.8716602341738,
+    "train": 62779.5132743842
+  },
+  "status": "complete",
+  "tests": {
+    "cruxeval_i": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.64125
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.6375
+        },
+        {
+          "node": "r02c0",
+          "round": 2,
+          "score": 0.64875
+        },
+        {
+          "node": "r03c1",
+          "round": 3,
+          "score": 0.64375
+        },
+        {
+          "node": "r04c1",
+          "round": 4,
+          "score": 0.66375
+        }
+      ],
+      "final": 0.66375,
+      "initial": 0.64125,
+      "paired": {
+        "ci95": [
+          -0.00375,
+          0.05
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 70,
+        "flipped_to_wrong": 52,
+        "mcnemar_p": 0.12342708698379856,
+        "mean_gain": 0.0225,
+        "n": 800
+      }
+    },
+    "cruxeval_o": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.665
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.6675
+        },
+        {
+          "node": "r02c0",
+          "round": 2,
+          "score": 0.67
+        },
+        {
+          "node": "r03c1",
+          "round": 3,
+          "score": 0.67125
+        },
+        {
+          "node": "r04c1",
+          "round": 4,
+          "score": 0.6975
+        }
+      ],
+      "final": 0.6975,
+      "initial": 0.665,
+      "paired": {
+        "ci95": [
+          0.0075,
+          0.0575
+        ],
+        "ci_excludes_zero": true,
+        "flipped_to_correct": 64,
+        "flipped_to_wrong": 38,
+        "mcnemar_p": 0.0129204519111262,
+        "mean_gain": 0.0325,
+        "n": 800
+      }
+    },
+    "lcb_exec": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.5427974947807933
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.5657620041753654
+        },
+        {
+          "node": "r02c0",
+          "round": 2,
+          "score": 0.5782881002087683
+        },
+        {
+          "node": "r03c1",
+          "round": 3,
+          "score": 0.6075156576200418
+        },
+        {
+          "node": "r04c1",
+          "round": 4,
+          "score": 0.6137787056367432
+        }
+      ],
+      "final": 0.6137787056367432,
+      "initial": 0.5427974947807933,
+      "paired": {
+        "ci95": [
+          0.033402922755741124,
+          0.10855949895615867
+        ],
+        "ci_excludes_zero": true,
+        "flipped_to_correct": 62,
+        "flipped_to_wrong": 28,
+        "mcnemar_p": 0.00043792219663413404,
+        "mean_gain": 0.0709812108559499,
+        "n": 479
+      }
+    }
+  }
+}

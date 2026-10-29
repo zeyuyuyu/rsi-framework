@@ -1,0 +1,97 @@
+{
+  "accepted": false,
+  "candidates": [
+    {
+      "author": "seed",
+      "curation": {
+        "attempts": 1280,
+        "cases": 160,
+        "excluded_by_flag": 0,
+        "item_cases": 82,
+        "items": 656,
+        "mixed_cases": 82,
+        "rule": "mixed_groups",
+        "solved_cases": 159,
+        "verified_attempts": 1054
+      },
+      "gate": 0.78,
+      "node": "r02c0",
+      "program": "d8ef109beeef0eb6",
+      "signal": {
+        "cases": 160,
+        "generator": "a9a946abb7885844fa21d02eecbc65a5c65212c580d46764b3207b1df8f05aa1",
+        "mixed_fraction": 0.5125,
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "41d6c703b745",
+        "task_rates": {
+          "0": 0.671875,
+          "1": 0.984375,
+          "2": 0.84375,
+          "3": 0.578125,
+          "4": 0.9765625,
+          "5": 0.6953125,
+          "6": 0.8046875,
+          "7": 0.984375,
+          "8": 0.9921875,
+          "9": 0.703125
+        },
+        "unsolved_fraction": 0.00625,
+        "verified_rate": 0.8234375
+      }
+    },
+    {
+      "author": "search",
+      "curation": {
+        "attempts": 328,
+        "cases": 41,
+        "excluded_by_flag": 0,
+        "item_cases": 27,
+        "items": 216,
+        "mixed_cases": 27,
+        "rule": "mixed_groups",
+        "solved_cases": 41,
+        "verified_attempts": 263
+      },
+      "gate": 0.78,
+      "node": "r02c1",
+      "program": "d65d54f5fbdd2160",
+      "signal": {
+        "cases": 41,
+        "generator": "a9a946abb7885844fa21d02eecbc65a5c65212c580d46764b3207b1df8f05aa1",
+        "mixed_fraction": 0.6585365853658537,
+        "rejected": {
+          "duplicate": 119,
+          "heldout_leak": 0
+        },
+        "rollout_id": "fe07d15b541a",
+        "task_rates": {
+          "0": 0.7375,
+          "1": 0.984375,
+          "2": 0.84375,
+          "3": 0.6666666666666666,
+          "4": 0.9765625,
+          "5": 0.9166666666666666,
+          "6": 0.9375,
+          "7": 0.984375,
+          "8": 0.9921875,
+          "9": 0.921875
+        },
+        "unsolved_fraction": 0.0,
+        "verified_rate": 0.801829268292683
+      }
+    }
+  ],
+  "parent": "r01c0",
+  "round": 2,
+  "seconds": {
+    "attempt": 14664.028356694616,
+    "audit_eval": 1953.044446699787,
+    "gate_eval": 9469.608656888828,
+    "meta": 0.0013495939783751965,
+    "propose": 0.004524874966591597,
+    "train": 17357.760453790193
+  }
+}
