@@ -7,7 +7,7 @@
 
 Plan keys: model_name, vla (VLAConfig fields + model_family: openvla | oft, default openvla),
 suite, tasks, heldout_per_task,
-test_inits_per_task, program (overrides), engine (EngineConfig fields),
+test_inits_per_task, program (overrides), engine (EngineConfig fields), budget_scale (onebig),
 meta {proposer: fixed|numeric}.
 """
 
@@ -64,7 +64,7 @@ def main():
             vcfg[key] = tuple(vcfg[key])
     vcfg.setdefault("workdir", str(out) + ".work")
     backend = make_backend(vcfg)
-    domain = LiberoDomain(plan["suite"], plan["tasks"])
+    domain = LiberoDomain(plan["suite"], plan["tasks"], plan.get("budget_scale", 1))
     test = domain.official_test(plan.get("test_inits_per_task", 50))
     initial = Version(f"base:{plan['model_name']}", vcfg["checkpoint"], None)
     if args.baseline_only:

@@ -36,6 +36,10 @@ EDIT_SPACE = {
     "update.steps": (50, 1500), "update.batch": (16, 128),
 }
 
+# Count fields whose upper bound grows with a run's budget_scale, so a compute-matched single round (`onebig`:
+# the summed budget of N rounds at once) validates without widening the space the meta level searches.
+BUDGET_FIELDS = ("curriculum.cases", "curation.budget", "update.steps")
+
 COUPLING = {
     "update.operator": {"curation.rule": {"grpo": "mixed_groups", "bc": "verified"}},
     "curation.rule": {"update.operator": {"mixed_groups": "grpo", "verified": "bc"}},
@@ -53,8 +57,9 @@ class LiberoDomain:
     name = "libero"
     higher_is_better = True
 
-    def __init__(self, suite, tasks):
+    def __init__(self, suite, tasks, budget_scale=1):
         self.suite, self.tasks = suite, list(tasks)
+        self.budget_scale = budget_scale
         self.edit_space, self.coupling = EDIT_SPACE, COUPLING
         self.task_rates = {t: None for t in self.tasks}   # latest verified rate per task
 
@@ -75,8 +80,10 @@ class LiberoDomain:
             if isinstance(space, list):
                 if value not in space:
                     raise ValueError(f"program_value_not_allowed:{dotted}")
-            elif not isinstance(value, (int, float)) or not space[0] <= value <= space[1]:
-                raise ValueError(f"program_value_out_of_range:{dotted}")
+            else:
+                high = space[1] * (self.budget_scale if dotted in BUDGET_FIELDS else 1)
+                if not isinstance(value, (int, float)) or not space[0] <= value <= high:
+                    raise ValueError(f"program_value_out_of_range:{dotted}")
         pairs = {("grpo", "mixed_groups"), ("bc", "verified")}
         if (out["update"]["operator"], out["curation"]["rule"]) not in pairs:
             raise ValueError("operator_curation_mismatch")

@@ -11,6 +11,7 @@ from rsi.core.archive import Archive, Node, program_diff
 from rsi.core.curation import curate, shuffle_feedback
 from rsi.core.engine import Engine, EngineConfig
 from rsi.core.gpu import occupied
+from rsi.domains.libero.domain import LiberoDomain
 import rsi.backends.openvla.backend as vla_backend
 import rsi.backends.llm.backend as llm_backend
 from rsi.core.types import Attempt, Case, EvalRecord, Program, Receipt, Version
@@ -516,6 +517,16 @@ class ProgramTests(unittest.TestCase):
         self.assertEqual(len(out), 4)
         self.assertTrue(all(o.params != p for o in out))
         self.assertEqual(program_diff({"a": {"b": 1}}, {"a": {"b": 2}}), {"a.b": 2})
+
+    def test_libero_budget_scale_only_widens_counts(self):
+        big = {"curriculum": {"cases": 960}, "curation": {"budget": 2400}, "update": {"steps": 600}}
+        with self.assertRaises(ValueError):
+            LiberoDomain("libero_10", range(10)).validate_program(big)
+        d = LiberoDomain("libero_10", range(10), budget_scale=6)
+        self.assertEqual(d.validate_program(big)["curriculum"]["cases"], 960)
+        with self.assertRaises(ValueError):                              # non-count fields keep their bounds
+            d.validate_program({"update": {"lr": 1e-3}})
+        self.assertEqual(d.edit_space["curriculum.cases"], (40, 400))   # the meta level's space is unchanged
 
 
 if __name__ == "__main__":
