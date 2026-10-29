@@ -17,7 +17,8 @@ elif mode == "download":
     envs, limit = [{"name": "DOWNLOAD_ONLY", "value": "1"}, {"name": "MS_TIMEOUT", "value": "30000"},
                    {"name": "MODEL_ID", "value": sys.argv[3]}, {"name": "A800_SHA", "value": sys.argv[4]}], 93600
 elif mode == "script":
-    envs, limit = [{"name": k, "value": v} for k, v in (a.split("=", 1) for a in sys.argv[4:])], 1800
+    envs = [{"name": k, "value": v} for k, v in (a.split("=", 1) for a in sys.argv[4:])]
+    limit = int(os.environ.get("SCRIPT_TIMEOUT", "1800"))
 else:
     raise SystemExit(__doc__)
 body = {

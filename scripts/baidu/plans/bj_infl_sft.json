@@ -1,0 +1,32 @@
+{
+  "model_name": "oft-sft-libero10-traj1",
+  "vla": {
+    "model_family": "oft",
+    "checkpoint": "@node",
+    "python": "@node",
+    "openvla_root": "@node",
+    "rollout_gpus": [
+      0
+    ],
+    "train_gpus": [
+      0
+    ],
+    "greedy_procs_per_gpu": 5,
+    "sample_procs_per_gpu": 3
+  },
+  "suite": "libero_10",
+  "tasks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "heldout_per_task": 50,
+  "test_inits_per_task": 50
+}

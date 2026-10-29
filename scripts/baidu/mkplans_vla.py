@@ -1,10 +1,12 @@
 """Robotics plans for AIHC (run_vla.sh rewrites checkpoint / python / openvla_root / gpus on the node).
-usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_main <grpo|bc> [lr]   -> writes plans/<name>.json here, uploads to BOS plans/
+usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | infl | oft_main <grpo|bc> [lr]   -> writes plans/<name>.json here, uploads to BOS plans/
   oft_base   M1 starting point (OFT 1-demo SFT, LIBERO-10): 500 official episodes, --baseline-only
   oft_pilot  the two sealed 2-round pilots of prereg v3 (GRPO on mixed groups vs success-only BC); tests are
              never read, gate + audit only, to choose the seed program for addendum 1
   oft_pilot2 addendum 1 extra sealed pair: GRPO at lr 5e-5 and 1e-4, otherwise the pilot program
   oft_pilot3 addendum 3 sealed pair, 1 round: GRPO lr 1e-4 with 400 and 1000 update steps
+  infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
+             500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
              fixed | full (numeric proposer, 2 candidates/round) | nonrec | shuffled | onebig (one round with
              the summed 6-round budget: cases, curation budget and update steps x6, budget_scale 6)"""
@@ -54,6 +56,16 @@ elif sys.argv[1] == "oft_pilot3":
     for steps in (400, 1000):
         write(f"bj_oft3_pilot3_l10_s{steps}", engine=sealed, meta={"proposer": "fixed"},
               program=merge(OFT_PROGRAM, {"update": {"lr": 1e-4, "steps": steps}}))
+elif sys.argv[1] == "infl":
+    for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
+        write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)
+        receipt = os.path.join(OUT, f"bj_infl_{which}_receipt.json")
+        json.dump({"version": {"id": f"base:oft-{which}-libero10-traj1", "parent_id": None,
+                               "location": f"/mnt/pfs/shitianyu-rsi/models/{repo}"}}, open(receipt, "w"))
+        st = subprocess.run([sys.executable, os.path.join(HERE, "bos_rw.py"), "put", "bos-research-team",
+                             f"shitianyu-rsi/plans/bj_infl_{which}_receipt.json", receipt, "application/json"],
+                            capture_output=True, text=True)
+        print(f"bj_infl_{which}_receipt", st.stdout.strip()[:60])
 elif sys.argv[1] == "oft_main" and sys.argv[2:3] in (["grpo"], ["bc"]):
     seed_program = OFT_PROGRAM if sys.argv[2] == "grpo" else merge(OFT_PROGRAM, BC)
     if len(sys.argv) > 3:                       # lr frozen by addendum 2 (1e-4)
