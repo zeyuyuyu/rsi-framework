@@ -30,6 +30,10 @@ def main():
     args = ap.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     ckpt, root = plan["vla"]["checkpoint"], plan["vla"]["openvla_root"]
+    # the queue runner passes its GPU choice only through the plan (gpu_fields): pin it before torch loads,
+    # or this process lands on physical GPU 0
+    import os
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(plan["vla"]["rollout_gpus"][0])
     # same interpreter state as the rollout workers (PYTHONNOUSERSITE=1): ~/.local carries an onnx that breaks
     # the openvla env's torchvision import
     import site
