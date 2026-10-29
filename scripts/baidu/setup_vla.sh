@@ -12,8 +12,9 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_ROOT_USER_ACTION=ignore PIP_NO_INPUT=
 T0=${T0:-$(date +%s)}; el() { echo "t+$(( $(date +%s) - T0 ))s"; }
 # The A800 worker env as the workers see it (PYTHONNOUSERSITE=1), except where Python 3.12 / sm_120 force a change:
 # torch 2.8 (image) for 2.2, tensorflow-cpu 2.17.1 for 2.15, sentencepiece 0.2.0 for 0.1.99 (no 3.12 wheels),
-# opencv-python 4.10.0.84 for 4.13 (4.13 requires numpy>=2, tensorflow 2.17 numpy<2).
-PINS="mujoco==3.9.0 PyOpenGL==3.1.10 numpy==1.26.4 robosuite==1.4.1 easydict==1.13 gym==0.25.2 hydra-core==1.2.0
+# opencv-python 4.10.0.84 for 4.13 (4.13 requires numpy>=2, tensorflow 2.17 numpy<2), hydra-core 1.3.2 for 1.2.0
+# (1.2.0 does not import on Python >= 3.11).
+PINS="mujoco==3.9.0 PyOpenGL==3.1.10 numpy==1.26.4 robosuite==1.4.1 easydict==1.13 gym==0.25.2 hydra-core==1.3.2
   transformers==4.40.1 tokenizers==0.19.1 timm==0.9.10 peft==0.11.1 sentencepiece==0.2.0 json-numpy==2.1.1
   draccus==0.8.0 tensorflow-cpu==2.17.1 opencv-python==4.10.0.84 scipy==1.15.3 numba imageio termcolor future
   matplotlib pyyaml jsonlines cloudpickle==3.1.2 einops==0.8.2 h5py"
@@ -82,7 +83,8 @@ while [ ! -f "$ENV/.done" ]; do
   if mkdir -p "$(dirname "$ENV")" && mkdir "$LOCK" 2>/dev/null; then
     echo "$(hostname) $(date -u +%FT%TZ)" > "$LOCK/owner"
     echo "== venv build -> $ENV $(el)"
-    rm -rf "$ENV" && python3 -m venv --system-site-packages "$ENV" || { rm -rf "$LOCK"; exit 2; }
+    # a failed build keeps its env: the next build only installs what is missing
+    [ -x "$ENV/bin/python" ] || python3 -m venv --system-site-packages "$ENV" || { rm -rf "$LOCK"; exit 2; }
     # shellcheck disable=SC2086
     timeout 3000 "$ENV/bin/pip" install -q --timeout 60 --retries 3 $PINS 2>&1 | grep -v notice | tail -5
     "$ENV/bin/python" -c "import mujoco, robosuite, transformers, tensorflow, peft, timm, sentencepiece, hydra" 2>/dev/null \
