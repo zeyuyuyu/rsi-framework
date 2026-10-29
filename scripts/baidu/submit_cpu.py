@@ -2,6 +2,7 @@
   submit_cpu.py export <job-suffix> <run> [<run> ...]   per-problem test scores + independent re-scoring of
                                                         finished runs (PFS run dirs, e.g. bj_q15_fixed_s2)
   submit_cpu.py download <job-suffix> <model_id> <a800_sha>   fetch a model to PFS for later GPU jobs
+  submit_cpu.py script <job-suffix> <script in BOS jobs/> [NAME=VALUE ...]   run a small maintenance script
 Appends name<TAB>jobId to jobs.tsv next to this file (the poller reads it)."""
 import datetime, json, os, sys
 sys.path.insert(0, "/home/zeyu/rsi/tools/baidu")
@@ -15,12 +16,14 @@ if mode == "export":
 elif mode == "download":
     envs, limit = [{"name": "DOWNLOAD_ONLY", "value": "1"}, {"name": "MS_TIMEOUT", "value": "30000"},
                    {"name": "MODEL_ID", "value": sys.argv[3]}, {"name": "A800_SHA", "value": sys.argv[4]}], 93600
+elif mode == "script":
+    envs, limit = [{"name": k, "value": v} for k, v in (a.split("=", 1) for a in sys.argv[4:])], 1800
 else:
     raise SystemExit(__doc__)
 body = {
     "name": name,
     "jobType": "PyTorchJob",
-    "command": f"timeout -k 60 {limit} bash /mnt/bos/shitianyu-rsi/jobs/run_rsi.sh",
+    "command": f"timeout -k 60 {limit} bash /mnt/bos/shitianyu-rsi/jobs/" + (sys.argv[3] if mode == "script" else "run_rsi.sh"),
     "jobSpec": {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,

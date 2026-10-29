@@ -97,6 +97,10 @@ while [ ! -f "$ENV/.done" ]; do
     rm -rf "$LOCK"
   else
     [ $WAITED -ge 5400 ] && { echo "VENV_WAIT_TIMEOUT ($(cat "$LOCK/owner" 2>/dev/null))"; exit 4; }
+    # a build takes ~25 min; a lock older than an hour belongs to a job that was stopped mid-build
+    if [ -n "$(find "$LOCK" -maxdepth 0 -mmin +60 2>/dev/null)" ]; then
+      echo "stale venv lock ($(cat "$LOCK/owner" 2>/dev/null)); taking over"; mv "$LOCK" "$LOCK.stale.$$" 2>/dev/null; continue
+    fi
     [ $((WAITED % 300)) -eq 0 ] && echo "waiting for venv build by $(cat "$LOCK/owner" 2>/dev/null) (${WAITED}s)"
     sleep 30; WAITED=$((WAITED + 30))
   fi
