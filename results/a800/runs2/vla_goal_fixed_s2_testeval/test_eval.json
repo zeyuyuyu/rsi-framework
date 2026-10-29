@@ -1,0 +1,13 @@
+{
+  "run": "/data0/home/zeyuwang/rsi/runs2/vla_goal_fixed_s2",
+  "node": "r01c0",
+  "version": {
+    "id": "1c238147776e1f2729a3891d3dd0cbf33cbd36a9ba6742802563f031f3172c2c",
+    "location": "/data0/home/zeyuwang/rsi/runs2/vla_goal_fixed_s2/ckpt-r01c0",
+    "parent_id": "base:openvla-7b-libero-goal"
+  },
+  "test_success": [
+    0.748,
+    0.756
+  ]
+}
