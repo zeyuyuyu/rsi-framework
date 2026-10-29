@@ -65,43 +65,48 @@ def say(msg):
     print(f"[{time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}] {msg}", flush=True)
 
 
-t0 = time.time()
-last, saved = {}, set()
-while True:
-    latest, every = jobs()
-    table = []
-    for name, jid in every:
-        if jid in saved:
-            continue
-        try:
-            st, d = aihc_job.describe(jid)
-        except Exception as e:
-            say(f"{name} {jid} describe error {type(e).__name__}")
-            continue
-        status = d.get("status") if isinstance(d, dict) else f"HTTP{st}"
-        rt = round((d.get("runTimeNanoseconds") or 0) / 3.6e12, 2) if isinstance(d, dict) else None
-        table.append((name, jid, status, rt))
-        if last.get(jid) != status:
-            say(f"{name} {jid} status={status} runtime_h={rt}")
-            last[jid] = status
-        is_latest = latest.get(name) == jid
-        if status in TERMINAL:
-            lines = fetch_logs(jid)
-            write(os.path.join(LOGS, f"{name}.log" if is_latest else f"{name}.{jid}.log"), lines)
-            end = [ln for ln in lines if "RSI_JOB_DONE" in ln or "RSI_JOB_FAILED" in ln]
-            say(f"{name} {jid} FINAL {status}: saved {len(lines)} lines; {end[-1][-120:] if end else 'no end marker'}")
-            saved.add(jid)
-        elif status == "Running" and is_latest:
-            lines = fetch_logs(jid)
-            write(os.path.join(LOGS, f"{name}.running.log"), lines)
-            hb = [ln for ln in lines if "run files:" in ln or "STAGE" in ln or "PREFLIGHT_OK" in ln]
-            if hb:
-                say(f"{name} progress: {hb[-1].split(' F ', 1)[-1][-220:]}")
-    with open(os.path.join(HERE, "status.tsv"), "w") as f:
-        for row in table:
-            f.write("\t".join(str(x) for x in row) + "\n")
-    # jobs submitted later are picked up from jobs.tsv on the next pass, so keep polling until MAX_AGE
-    if time.time() - t0 > MAX_AGE:
-        say("max age reached; poller exiting")
-        break
-    time.sleep(INTERVAL)
+def main():
+    t0 = time.time()
+    last, saved = {}, set()
+    while True:
+        latest, every = jobs()
+        table = []
+        for name, jid in every:
+            if jid in saved:
+                continue
+            try:
+                st, d = aihc_job.describe(jid)
+            except Exception as e:
+                say(f"{name} {jid} describe error {type(e).__name__}")
+                continue
+            status = d.get("status") if isinstance(d, dict) else f"HTTP{st}"
+            rt = round((d.get("runTimeNanoseconds") or 0) / 3.6e12, 2) if isinstance(d, dict) else None
+            table.append((name, jid, status, rt))
+            if last.get(jid) != status:
+                say(f"{name} {jid} status={status} runtime_h={rt}")
+                last[jid] = status
+            is_latest = latest.get(name) == jid
+            if status in TERMINAL:
+                lines = fetch_logs(jid)
+                write(os.path.join(LOGS, f"{name}.log" if is_latest else f"{name}.{jid}.log"), lines)
+                end = [ln for ln in lines if "RSI_JOB_DONE" in ln or "RSI_JOB_FAILED" in ln]
+                say(f"{name} {jid} FINAL {status}: saved {len(lines)} lines; {end[-1][-120:] if end else 'no end marker'}")
+                saved.add(jid)
+            elif status == "Running" and is_latest:
+                lines = fetch_logs(jid)
+                write(os.path.join(LOGS, f"{name}.running.log"), lines)
+                hb = [ln for ln in lines if "run files:" in ln or "STAGE" in ln or "PREFLIGHT_OK" in ln]
+                if hb:
+                    say(f"{name} progress: {hb[-1].split(' F ', 1)[-1][-220:]}")
+        with open(os.path.join(HERE, "status.tsv"), "w") as f:
+            for row in table:
+                f.write("\t".join(str(x) for x in row) + "\n")
+        # jobs submitted later are picked up from jobs.tsv on the next pass, so keep polling until MAX_AGE
+        if time.time() - t0 > MAX_AGE:
+            say("max age reached; poller exiting")
+            break
+        time.sleep(INTERVAL)
+
+
+if __name__ == "__main__":   # importable for fetch_logs without starting a pass
+    main()
