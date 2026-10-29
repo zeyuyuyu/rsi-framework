@@ -62,11 +62,11 @@ def main():
             ids.append(SPACER)
         n = int(len(d["executed"]))
         lps, greedy = [], []
-        for a in range(0, n, 16):
-            frames = list(d["frames"][a:a + 16])
+        for a in range(0, n, 8):
+            frames = list(d["frames"][a:a + 8])
             with torch.no_grad():
                 logits = action_logits(vla, processor, ids, frames).float()
-            tok = torch.tensor(d["tokens"][a:a + 16] - FIRST_ACTION_ID, device=logits.device)
+            tok = torch.tensor(d["tokens"][a:a + 8] - FIRST_ACTION_ID, device=logits.device)
             lp = torch.log_softmax(logits / args.temperature, -1).gather(-1, tok.unsqueeze(-1)).squeeze(-1)
             lps.append(lp.cpu().numpy())
             greedy.append(logits.argmax(-1).cpu().numpy())
