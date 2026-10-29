@@ -95,6 +95,17 @@ heartbeat() {
     n=$((n + 1))
     echo "===== HEARTBEAT [$(date -u +%FT%TZ)] $(el) name=$NAME ====="
     echo "  run files: $(ls "$RUN" 2>/dev/null | grep -vE -- '-(cases|attempts)-|^test-' | tr '\n' ' ')"
+    python - "$RUN" <<'EOF' 2>/dev/null
+import glob, json, os, sys
+for line in open(os.path.join(sys.argv[1], "archive.jsonl")):
+    n = json.loads(line)
+    if n.get("node_id") == "n0":
+        print("  NODE n0 gate", n.get("gate"), "audit", n.get("audit"))
+for p in sorted(glob.glob(os.path.join(sys.argv[1], "round-[0-9][0-9].json"))):
+    d = json.load(open(p))
+    print("  ROUND", d["round"], "parent", d.get("parent"), "accepted", d.get("accepted"),
+          " ".join(f"{c['node']}:gate={c.get('gate')},audit={c.get('audit')}" for c in d.get("candidates", [])))
+EOF
     latest=$(ls -td "$RUN.work"/*/ 2>/dev/null | head -1)
     echo "  latest call: $(basename "$latest") results: $(cat "$latest"results-*.jsonl 2>/dev/null | wc -l)"
     for f in "$latest"log*.txt; do
