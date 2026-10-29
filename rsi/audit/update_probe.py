@@ -30,6 +30,11 @@ def main():
     args = ap.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     ckpt, root = plan["vla"]["checkpoint"], plan["vla"]["openvla_root"]
+    # same interpreter state as the rollout workers (PYTHONNOUSERSITE=1): ~/.local carries an onnx that breaks
+    # the openvla env's torchvision import
+    import site
+    user_site = site.getusersitepackages()
+    sys.path[:] = [p for p in sys.path if not p.startswith(user_site)]
     here = Path(__file__).resolve().parents[1] / "backends" / "openvla_oft"
     sys.path.insert(0, str(here))
     import numpy as np
