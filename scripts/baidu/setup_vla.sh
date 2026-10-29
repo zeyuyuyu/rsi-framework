@@ -7,14 +7,15 @@
 set -u
 PFS=/mnt/pfs/shitianyu-rsi
 J=/mnt/bos/shitianyu-rsi/jobs
-ENV=$PFS/envs/vla312-r2
+ENV=$PFS/envs/vla312-r3
 export PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_ROOT_USER_ACTION=ignore PIP_NO_INPUT=1 PYTHONUNBUFFERED=1
 T0=${T0:-$(date +%s)}; el() { echo "t+$(( $(date +%s) - T0 ))s"; }
 # The A800 worker env as the workers see it (PYTHONNOUSERSITE=1), except where Python 3.12 / sm_120 force a change:
-# torch 2.8 (image) for 2.2, tensorflow-cpu 2.17.1 for 2.15, sentencepiece 0.2.0 for 0.1.99 (no 3.12 wheels).
+# torch 2.8 (image) for 2.2, tensorflow-cpu 2.17.1 for 2.15, sentencepiece 0.2.0 for 0.1.99 (no 3.12 wheels),
+# opencv-python 4.10.0.84 for 4.13 (4.13 requires numpy>=2, tensorflow 2.17 numpy<2).
 PINS="mujoco==3.9.0 PyOpenGL==3.1.10 numpy==1.26.4 robosuite==1.4.1 easydict==1.13 gym==0.25.2 hydra-core==1.2.0
   transformers==4.40.1 tokenizers==0.19.1 timm==0.9.10 peft==0.11.1 sentencepiece==0.2.0 json-numpy==2.1.1
-  draccus==0.8.0 tensorflow-cpu==2.17.1 opencv-python==4.13.0.92 scipy==1.15.3 numba imageio termcolor future
+  draccus==0.8.0 tensorflow-cpu==2.17.1 opencv-python==4.10.0.84 scipy==1.15.3 numba imageio termcolor future
   matplotlib pyyaml jsonlines cloudpickle==3.1.2 einops==0.8.2 h5py"
 
 # fetch_model <hf repo> <dir>: hf-mirror through curl (the image's huggingface_hub fails against the mirror),
