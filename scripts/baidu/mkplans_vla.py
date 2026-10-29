@@ -5,6 +5,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
              never read, gate + audit only, to choose the seed program for addendum 1
   oft_pilot2 addendum 1 extra sealed pair: GRPO at lr 5e-5 and 1e-4, otherwise the pilot program
   oft_pilot3 addendum 3 sealed pair, 1 round: GRPO lr 1e-4 with 400 and 1000 update steps
+  oft_pilot5 addendum 5 sealed pair: 6 rounds x 3 inner on-policy steps of 64 placements, gated vs always-accept
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
@@ -59,6 +60,11 @@ elif sys.argv[1] == "oft_pilot3":
 elif sys.argv[1] == "oft_pilot4":           # addendum 4: 12 short on-policy rounds of 64 placements
     write("bj_oft3_pilot4_short", engine=dict(rounds=12, seed=0, seal_tests=True), meta={"proposer": "fixed"},
           program=merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 1e-4}}))
+elif sys.argv[1] == "oft_pilot5":
+    short = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 1e-4}})
+    for tag, extra in (("gated", {}), ("curve", {"min_gate_gain": -1.0})):
+        write(f"bj_oft3_pilot5_{tag}", engine=dict(rounds=6, inner_steps=3, seed=0, seal_tests=True, **extra),
+              meta={"proposer": "fixed"}, program=short)
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)
