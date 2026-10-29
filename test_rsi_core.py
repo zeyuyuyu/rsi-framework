@@ -186,6 +186,27 @@ class EngineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             e2.run(resume=True)
 
+    def test_rejected_candidates_are_released_accepted_ones_kept(self):
+        class Releasing(ToyBackend):
+            def __init__(self):
+                super().__init__()
+                self.released = []
+
+            def release(self, version):
+                self.released.append(version.id)
+
+        domain, backend = ToyDomain(), Releasing()
+        e = Engine(domain, backend, Version("init", "/b"), domain.default_program(),
+                   gate=heldout("gate", 20), audit=heldout("audit", 20),
+                   tests={"t": (domain, heldout("test", 40))}, out=self.tmp / "rel",
+                   config=EngineConfig(rounds=2, min_gate_gain=10.0), proposer=FixedProgram())
+        rep = e.run()
+        self.assertEqual(rep["retained"], "n0")
+        self.assertEqual(len(backend.released), 2)                    # both rounds' candidates rejected
+        e2, _ = self.engine("kept", rounds=2)
+        e2.backend.release = lambda v: self.fail("an accepted candidate must not be released")
+        e2.run()
+
     def test_regression_is_rejected(self):
         e, _ = self.engine("rej", rounds=2, min_gate_gain=10.0)
         rep = e.run()

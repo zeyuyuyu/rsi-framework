@@ -10,6 +10,7 @@ serves, so serving never depends on vLLM's LoRA kernels. Update operators
 from dataclasses import asdict, dataclass, field
 import json
 from pathlib import Path
+import shutil
 import time
 
 from ...core.gpu import admit, oom_failed_logs, supervised, supervised_parallel
@@ -124,6 +125,13 @@ class LLMBackend:
         if any(r is None or len(r) != requests[i]["n"] for i, r in enumerate(results)):
             raise ValueError("incomplete_sampling_denominator")
         return results
+
+    def release(self, version: Version):
+        """Drop the merged full weights of a version that will not be served again (a rejected candidate).
+        The LoRA adapter stays in the checkpoint, so the version can be re-merged."""
+        merged = Path(version.location) / "merged"
+        if version.parent_id is not None and merged.is_dir():
+            shutil.rmtree(merged)
 
     def train(self, parent: Version, items, output, update: dict, seed: int) -> Receipt:
         cfg = self.config

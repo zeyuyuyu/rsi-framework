@@ -317,6 +317,13 @@ class Engine:
                                      author=n.program.author, curation=n.curation,
                                      signal=n.signal) for n in candidates],
                     seconds=dict(self.seconds)))
+                # a rejected candidate is never served or tested again; the backend may free what only serving
+                # needed (merged full weights: 64 GB per candidate for a 32B model)
+                release = getattr(self.backend, "release", None)
+                if release:
+                    for n in candidates:
+                        if not n.accepted:
+                            release(n.version)
             # ---- sealed tests: only now, after every decision is frozen ----
             _write(self.out / "retained.json", dict(node=parent.node_id,
                                                     version=asdict(parent.version),
