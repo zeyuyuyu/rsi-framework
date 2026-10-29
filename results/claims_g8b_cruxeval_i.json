@@ -21,6 +21,12 @@
       "initial": 45.12,
       "final_score": 47.62
     },
+    "full_s2": {
+      "run": "results/baidu/bj_g8b_full_s2",
+      "final": "r04c1",
+      "initial": 45.12,
+      "final_score": 45.5
+    },
     "shuffled_s1": {
       "run": "results/baidu/bj_g8b_shuffled_s1",
       "final": "r04c0",
@@ -29,6 +35,31 @@
     }
   },
   "claims": [
+    {
+      "claim": "C1 full: final - initial",
+      "seeds": [
+        2
+      ],
+      "per_seed_points": {
+        "2": 0.38
+      },
+      "per_seed_ci95": {
+        "2": [
+          -2.88,
+          3.62
+        ]
+      },
+      "mean_points": 0.38,
+      "ci95_points": [
+        -2.88,
+        3.62
+      ],
+      "bar_points": 2.0,
+      "mean_and_ci_pass": false,
+      "final": false,
+      "seeds_excluding_zero": 0,
+      "c1_pass": false
+    },
     {
       "claim": "C1 fixed: final - initial",
       "seeds": [
@@ -41,6 +72,20 @@
         "2": 1.25,
         "3": 2.5
       },
+      "per_seed_ci95": {
+        "1": [
+          -1.12,
+          5.62
+        ],
+        "2": [
+          -1.88,
+          4.38
+        ],
+        "3": [
+          -0.75,
+          5.88
+        ]
+      },
       "mean_points": 2.04,
       "ci95_points": [
         -0.63,
@@ -48,7 +93,9 @@
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": true
+      "final": true,
+      "seeds_excluding_zero": 0,
+      "c1_pass": false
     },
     {
       "claim": "C1 shuffled: final - initial",
@@ -58,6 +105,12 @@
       "per_seed_points": {
         "1": 0.88
       },
+      "per_seed_ci95": {
+        "1": [
+          -2.12,
+          3.88
+        ]
+      },
       "mean_points": 0.88,
       "ci95_points": [
         -2.12,
@@ -65,7 +118,9 @@
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": false,
+      "seeds_excluding_zero": 0,
+      "c1_pass": false
     },
     {
       "claim": "C2 fixed - shuffled",
@@ -75,10 +130,39 @@
       "per_seed_points": {
         "1": 1.75
       },
+      "per_seed_ci95": {
+        "1": [
+          -1.5,
+          4.88
+        ]
+      },
       "mean_points": 1.75,
       "ci95_points": [
         -1.5,
         4.88
+      ],
+      "bar_points": 1.0,
+      "mean_and_ci_pass": false,
+      "final": false
+    },
+    {
+      "claim": "C4 full - fixed",
+      "seeds": [
+        2
+      ],
+      "per_seed_points": {
+        "2": -1.0
+      },
+      "per_seed_ci95": {
+        "2": [
+          -4.12,
+          2.12
+        ]
+      },
+      "mean_points": -1.0,
+      "ci95_points": [
+        -4.12,
+        2.12
       ],
       "bar_points": 1.0,
       "mean_and_ci_pass": false,

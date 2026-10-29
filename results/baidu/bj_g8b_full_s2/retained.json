@@ -1,0 +1,46 @@
+{
+  "node": "r04c1",
+  "program": {
+    "author": "self",
+    "id": "f3ef18bd1c2a55e4",
+    "note": "{\"curation.budget\": 3500, \"curation.per_case\": 4, \"curriculum.instruction\": \"Create a Python function that solves a given problem related to basic data ma...\", \"curriculum.max_cases\": 7000, \"curriculum.pool_growth\": 700, \"curriculum.proposals\": 21000, \"curriculum.shots\": 5, \"curriculum.temperature\": 1.1, \"solver.max_tokens\": 1500, \"solver.samples\": 12, \"solver.temperature\": 0.9, \"solver.top_p\": 0.95}",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 3500,
+        "exclude_flag": "guessable",
+        "per_case": 4,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "instruction": "Create a Python function that solves a given problem related to basic data manipulation, without using external libraries. The function, named 'f', should be between 6 to 25 lines long, employ built-in types and operations (strings, lists, dicts, sets, tuples, integers, booleans), avoid any imports, no printing, file access or randomness, and ensure swift execution. Make it original, distinct from existing examples, and non-trivial: its output prediction requires careful examination of loops, conditionals, indexing, or data structure methods.",
+        "max_cases": 7000,
+        "pool_growth": 700,
+        "proposals": 21000,
+        "shots": 5,
+        "temperature": 1.1
+      },
+      "solver": {
+        "max_tokens": 1500,
+        "samples": 12,
+        "temperature": 0.9,
+        "top_p": 0.95
+      },
+      "update": {
+        "batch": 256,
+        "lr": 1e-05,
+        "operator": "grpo",
+        "steps": 128
+      }
+    },
+    "parent_id": "65fcc693dd958ced"
+  },
+  "version": {
+    "id": "99a37d34bb1c87a1eb1d0205bf1e95b6e5840426ab8b0147d32966a77e31bb48",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/bj_g8b_full_s2/ckpt-r04c1",
+    "parent_id": "7eec604d04b990bf3ec6d5d93f080cc2b1b52a4354fd69c3637d804e86ea3304"
+  }
+}

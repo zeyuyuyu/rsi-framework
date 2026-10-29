@@ -45,6 +45,16 @@
         "1": 1.04,
         "3": 0.63
       },
+      "per_seed_ci95": {
+        "1": [
+          -1.04,
+          3.13
+        ],
+        "3": [
+          -1.67,
+          2.92
+        ]
+      },
       "mean_points": 0.84,
       "ci95_points": [
         -0.73,
@@ -52,7 +62,9 @@
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": false
+      "final": false,
+      "seeds_excluding_zero": 0,
+      "c1_pass": false
     },
     {
       "claim": "C1 fixed: final - initial",
@@ -66,6 +78,20 @@
         "2": 0.63,
         "3": 0.0
       },
+      "per_seed_ci95": {
+        "1": [
+          0.0,
+          0.0
+        ],
+        "2": [
+          -1.46,
+          2.71
+        ],
+        "3": [
+          0.0,
+          0.0
+        ]
+      },
       "mean_points": 0.21,
       "ci95_points": [
         -0.49,
@@ -73,7 +99,9 @@
       ],
       "bar_points": 2.0,
       "mean_and_ci_pass": false,
-      "final": true
+      "final": true,
+      "seeds_excluding_zero": 0,
+      "c1_pass": false
     },
     {
       "claim": "C4 full - fixed",
@@ -84,6 +112,16 @@
       "per_seed_points": {
         "1": 0.0,
         "3": 1.04
+      },
+      "per_seed_ci95": {
+        "1": [
+          -1.88,
+          1.88
+        ],
+        "3": [
+          -1.04,
+          3.13
+        ]
       },
       "mean_points": 0.52,
       "ci95_points": [
