@@ -19,6 +19,11 @@ on Baidu, the M1 platform, as `bj_oft3_pilot4_short` on one GPU.
 `bj_oft3_pilot4_short`: 12 rounds; curriculum 64 placements per round (8 samples, T=1.6); GRPO lr 1e-4,
 100 steps of batch 64; gate and audit 200 + 200 placements as in the main arms; seed 0.
 
+Second amendment, made after launch but before any of its results: once two A800 GPUs were freed, an A800
+replica started, `a8_oft3_pilot4_short_s1`. It uses the same program on 2 GPUs with seed 1, so its training
+placements differ. The decision rule below is applied to the Baidu pilot only. The replica is reported next to
+it as corroboration and cannot change the decision.
+
 ## Decision rule for the M1 main arms, fixed now
 
 1. **Short rounds** are adopted if both hold:
