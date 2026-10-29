@@ -24,7 +24,8 @@ if resume:
 body = {
     "name": name,
     "jobType": "PyTorchJob",
-    "command": "timeout -k 120 97200 bash /mnt/bos/shitianyu-rsi/jobs/run_vla.sh",
+    # a new script file per change: bash reads a running script from disk, so editing one in place breaks jobs
+    "command": f"timeout -k 120 97200 bash /mnt/bos/shitianyu-rsi/jobs/{os.environ.get('VLA_SCRIPT', 'run_vla.sh')}",
     "jobSpec": {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,
