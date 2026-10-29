@@ -3,7 +3,7 @@
 # env: PLAN      plan json in the A800 format, BOS-relative ("shitianyu-rsi/plans/x.json") or an absolute path;
 #                vla.checkpoint / python / openvla_root / gpus are rewritten for this node
 #      NAME      run name -> /mnt/pfs/shitianyu-rsi/runs/$NAME (+ small files copied to /mnt/bos/shitianyu-rsi/runs/$NAME)
-#      MODEL_ID  hf repo of the starting checkpoint (fetched once to PFS through hf-mirror)
+#      MODEL_ID  hf repo of the starting checkpoint (fetched once to PFS through hf-mirror, fetch_model in setup_vla.sh)
 #      A800_SHA  (optional) weights digest of the same checkpoint on the A800
 #      ARGS      (optional) extra run_libero args, e.g. "--baseline-only" or "--test-eval /mnt/pfs/.../runs/x --replicates 2"
 #      RESUME_RUN (optional) run dir under $PFS/runs to continue (Engine resume)
@@ -27,9 +27,6 @@ el() { echo "t+$(( $(date +%s) - T0 ))s"; }
 log() { echo "[$(date -u +%FT%TZ) $(el)] $*"; }
 stage() { echo; echo "===== [$(date -u +%FT%TZ)] STAGE $1 ($(el)) ====="; }
 die() { log "FATAL: $*"; echo "RSI_JOB_FAILED name=$NAME stage=$CUR reason=$*"; exit "${2:-1}"; }
-weights_sha() {
-  ( cd "$1" && for f in $(ls *.safetensors | sort); do echo "$f $(sha256sum "$f" | cut -d' ' -f1)"; done | sha256sum | cut -d' ' -f1 )
-}
 CUR=init
 
 stage "0 env"; CUR=env
@@ -39,7 +36,7 @@ cp -f "$PLANF" /tmp/plan_in.json || die "plan copy failed"
 cp -f "$BOS/jobs/setup_vla.sh" /tmp/setup_vla.sh || die "setup script unreadable"
 VLA_SETUP_SOURCED=1 . /tmp/setup_vla.sh || die "vla setup failed"
 PY=$(command -v python)
-[ "$PY" = "$PFS/envs/vla312/bin/python" ] || die "venv not active ($PY)"
+[ "$PY" = "$ENV/bin/python" ] || die "venv not active ($PY)"
 # MuJoCo GL backend: EGL on the GPU when it renders here, else osmesa (CPU)
 cat > /tmp/render.py <<'EOF'
 import os, mujoco
@@ -56,33 +53,7 @@ export MUJOCO_GL=$GL PYOPENGL_PLATFORM=$GL
 log "MuJoCo GL backend: $GL"
 
 stage "1 model"; CUR=model
-DONE=$MDIR/.download_done
-LOCK=$PFS/models/.$MNAME.lock
-mkdir -p "$PFS/models"
-WAITED=0
-while [ ! -f "$DONE" ]; do
-  if mkdir "$LOCK" 2>/dev/null; then
-    echo "$NAME $(hostname) $(date -u +%FT%TZ)" > "$LOCK/owner"
-    ok=no
-    for attempt in 1 2 3; do
-      log "hf-mirror download $MODEL_ID attempt $attempt"
-      if HF_ENDPOINT=https://hf-mirror.com timeout 7200 python -c "import sys; from huggingface_hub import snapshot_download; snapshot_download(sys.argv[1], local_dir=sys.argv[2])" "$MODEL_ID" "$MDIR" > /tmp/hf_dl.txt 2>&1 \
-         && [ -f "$MDIR/config.json" ] && ls "$MDIR"/*.safetensors >/dev/null 2>&1; then ok=yes; break; fi
-      tail -5 /tmp/hf_dl.txt
-    done
-    if [ $ok = yes ]; then
-      weights_sha "$MDIR" > "$MDIR/.sha256"; date -u +%FT%TZ > "$DONE"; log "download done: $(du -sh "$MDIR" | cut -f1)"
-    fi
-    rm -rf "$LOCK"; [ $ok = yes ] || die "checkpoint download failed"
-  else
-    [ $WAITED -ge 10800 ] && die "waited ${WAITED}s for another job's download"
-    if [ -n "$(find "$LOCK" -maxdepth 0 -mmin +240 2>/dev/null)" ]; then
-      log "stale lock ($(cat "$LOCK/owner" 2>/dev/null)); taking over"; mv "$LOCK" "$LOCK.stale.$$" 2>/dev/null; continue
-    fi
-    [ $((WAITED % 600)) -eq 0 ] && log "waiting for download by $(cat "$LOCK/owner" 2>/dev/null) (${WAITED}s)"
-    sleep 30; WAITED=$((WAITED + 30))
-  fi
-done
+fetch_model "$MODEL_ID" "$MDIR" || die "checkpoint download failed"
 MSHA=$(cat "$MDIR/.sha256" 2>/dev/null)
 if [ "$MSHA" = "${A800_SHA:-unknown}" ]; then echo "MODEL_SHA_MATCH_A800 $MSHA"; else echo "MODEL_SHA_MISMATCH_A800 baidu=$MSHA a800=${A800_SHA:-unknown}"; fi
 
@@ -92,7 +63,7 @@ rm -rf /tmp/src && mkdir -p /tmp/src && tar -xzf "$SRC_TGZ" -C /tmp/src || die "
 log "src sha256=$(sha256sum "$SRC_TGZ" | cut -c1-16)"
 (cd /tmp/src && find rsi -name '*.py' | sort | xargs md5sum | md5sum | sed 's/^/  py-tree md5: /')
 export PYTHONPATH=/tmp/src:$PYTHONPATH
-python - "$MDIR" "$PFS/envs/vla312/bin/python" <<'EOF' || die "plan rewrite failed"
+python - "$MDIR" "$ENV/bin/python" <<'EOF' || die "plan rewrite failed"
 import json, sys
 p = json.load(open("/tmp/plan_in.json"))
 v = p["vla"]

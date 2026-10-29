@@ -7,13 +7,62 @@
 set -u
 PFS=/mnt/pfs/shitianyu-rsi
 J=/mnt/bos/shitianyu-rsi/jobs
-ENV=$PFS/envs/vla312
+ENV=$PFS/envs/vla312-r2
 export PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_ROOT_USER_ACTION=ignore PIP_NO_INPUT=1 PYTHONUNBUFFERED=1
 T0=${T0:-$(date +%s)}; el() { echo "t+$(( $(date +%s) - T0 ))s"; }
-PINS="mujoco==3.9.0 PyOpenGL==3.1.10 numpy==1.26.4 robosuite==1.5.2 bddl==3.6.0 easydict==1.13 gym==0.25.2
+# The A800 worker env as the workers see it (PYTHONNOUSERSITE=1), except where Python 3.12 / sm_120 force a change:
+# torch 2.8 (image) for 2.2, tensorflow-cpu 2.17.1 for 2.15, sentencepiece 0.2.0 for 0.1.99 (no 3.12 wheels).
+PINS="mujoco==3.9.0 PyOpenGL==3.1.10 numpy==1.26.4 robosuite==1.4.1 easydict==1.13 gym==0.25.2 hydra-core==1.2.0
   transformers==4.40.1 tokenizers==0.19.1 timm==0.9.10 peft==0.11.1 sentencepiece==0.2.0 json-numpy==2.1.1
-  draccus==0.8.0 tensorflow-cpu==2.17.1 opencv-python-headless imageio termcolor future matplotlib pyyaml
-  jsonlines cloudpickle einops h5py hydra-core"
+  draccus==0.8.0 tensorflow-cpu==2.17.1 opencv-python==4.13.0.92 scipy==1.15.3 numba imageio termcolor future
+  matplotlib pyyaml jsonlines cloudpickle==3.1.2 einops==0.8.2 h5py"
+
+# fetch_model <hf repo> <dir>: hf-mirror through curl (the image's huggingface_hub fails against the mirror),
+# resumable, one downloader per checkpoint (lock dir), .download_done marks a complete copy for every job.
+fetch_model() {
+  local repo=$1 dir=$2 lock waited=0 ok attempt
+  lock=$(dirname "$dir")/.$(basename "$dir").lock
+  mkdir -p "$(dirname "$dir")"
+  while [ ! -f "$dir/.download_done" ]; do
+    if mkdir "$lock" 2>/dev/null; then
+      echo "${NAME:-probe} $(hostname) $(date -u +%FT%TZ)" > "$lock/owner"
+      ok=no
+      for attempt in 1 2 3; do
+        echo "fetch $repo attempt $attempt $(el)"
+        if python3 - "$repo" "$dir" <<'EOF'
+import json, os, subprocess, sys, urllib.request
+repo, d = sys.argv[1], sys.argv[2]
+meta = json.load(urllib.request.urlopen(f"https://hf-mirror.com/api/models/{repo}?blobs=true", timeout=60))
+os.makedirs(d, exist_ok=True)
+for s in meta["siblings"]:
+    f, size = s["rfilename"], s.get("size")
+    out = os.path.join(d, f)
+    os.makedirs(os.path.dirname(out) or d, exist_ok=True)
+    if size is not None and os.path.exists(out) and os.path.getsize(out) == size:
+        continue
+    url = f"https://hf-mirror.com/{repo}/resolve/{meta['sha']}/{f}"
+    rc = subprocess.run(["curl", "-sSfL", "--retry", "5", "--retry-delay", "10", "-C", "-", "-o", out, url]).returncode
+    got = os.path.getsize(out) if os.path.exists(out) else -1
+    if rc != 0 or (size is not None and got != size):
+        sys.exit(f"incomplete {f}: curl rc={rc} size {got} expected {size}")
+    print("  got", f, got, flush=True)
+json.dump(dict(repo=repo, sha=meta["sha"]), open(os.path.join(d, ".source.json"), "w"))
+EOF
+        then ok=yes; break; fi
+      done
+      if [ $ok = yes ]; then
+        ( cd "$dir" && for f in $(ls *.safetensors | sort); do echo "$f $(sha256sum "$f" | cut -d' ' -f1)"; done | sha256sum | cut -d' ' -f1 ) > "$dir/.sha256"
+        date -u +%FT%TZ > "$dir/.download_done"; echo "fetched $repo $(du -sh "$dir" | cut -f1) $(el)"
+      fi
+      rm -rf "$lock"; [ $ok = yes ] || return 1
+    else
+      [ $waited -ge 10800 ] && { echo "waited ${waited}s for the download of $repo"; return 1; }
+      if [ -n "$(find "$lock" -maxdepth 0 -mmin +240 2>/dev/null)" ]; then mv "$lock" "$lock.stale.$$" 2>/dev/null; continue; fi
+      [ $((waited % 600)) -eq 0 ] && echo "waiting for download by $(cat "$lock/owner" 2>/dev/null) (${waited}s)"
+      sleep 30; waited=$((waited + 30))
+    fi
+  done
+}
 
 echo "== node $(el)"
 nvidia-smi --query-gpu=name,compute_cap,driver_version,memory.total --format=csv,noheader
@@ -31,24 +80,13 @@ LOCK=$ENV.lock; WAITED=0
 while [ ! -f "$ENV/.done" ]; do
   if mkdir -p "$(dirname "$ENV")" && mkdir "$LOCK" 2>/dev/null; then
     echo "$(hostname) $(date -u +%FT%TZ)" > "$LOCK/owner"
-    echo "== pip mirrors $(el)"
-    pip3 config list 2>/dev/null
-    BEST=""; BESTMS=999999999
-    for idx in https://mirror.baidu.com/pypi/simple https://mirrors.aliyun.com/pypi/simple https://pypi.tuna.tsinghua.edu.cn/simple DEFAULT; do
-      rm -rf /tmp/mt; s=$(date +%s%N)
-      if [ $idx = DEFAULT ]; then a=(); else a=(-i $idx); fi
-      if timeout 300 pip3 download -q --no-deps -d /tmp/mt "${a[@]}" numba==0.61.2 >/dev/null 2>&1; then
-        ms=$(( ($(date +%s%N) - s) / 1000000 )); echo "  $idx ${ms}ms $(du -sh /tmp/mt | cut -f1)"
-        if [ $ms -lt $BESTMS ]; then BEST=$idx; BESTMS=$ms; fi
-      else echo "  $idx FAILED"; fi
-    done
-    echo "fastest: $BEST"
-    if [ "$BEST" = DEFAULT ] || [ -z "$BEST" ]; then IDX=(); else IDX=(-i $BEST); fi
     echo "== venv build -> $ENV $(el)"
     rm -rf "$ENV" && python3 -m venv --system-site-packages "$ENV" || { rm -rf "$LOCK"; exit 2; }
     # shellcheck disable=SC2086
-    timeout 3000 "$ENV/bin/pip" install -q --timeout 60 --retries 3 "${IDX[@]}" $PINS 2>&1 | grep -v notice | tail -5
-    if "$ENV/bin/python" -c "import mujoco, robosuite, bddl, transformers, tensorflow, peft, timm, sentencepiece"; then
+    timeout 3000 "$ENV/bin/pip" install -q --timeout 60 --retries 3 $PINS 2>&1 | grep -v notice | tail -5
+    "$ENV/bin/python" -c "import mujoco, robosuite, transformers, tensorflow, peft, timm, sentencepiece, hydra" 2>/dev/null \
+      || timeout 3000 "$ENV/bin/pip" install -q --timeout 60 --retries 3 -i https://pypi.tuna.tsinghua.edu.cn/simple $PINS 2>&1 | grep -v notice | tail -5
+    if "$ENV/bin/python" -c "import mujoco, robosuite, transformers, tensorflow, peft, timm, sentencepiece, hydra"; then
       "$ENV/bin/pip" freeze > "$ENV/.done"; echo "venv ready $(el)"
     else
       echo "VENV_BUILD_FAILED $(el)"; rm -rf "$LOCK"; exit 3
@@ -115,26 +153,19 @@ for gl in egl osmesa; do
 done
 
 echo "== worker imports $(el)"
-SRC=/tmp/src && rm -rf $SRC && mkdir -p $SRC && tar -xzf /mnt/bos/shitianyu-rsi/src/rsi_src_vla.tar.gz -C $SRC
-MUJOCO_GL=egl timeout 600 python - <<'EOF' 2>&1 | grep -v Warning | tail -15
+MUJOCO_GL=egl timeout 600 python - <<'EOF' 2>&1 | grep -vE "Warning|WARNING|oneDNN|cpu_feature_guard|rebuild TensorFlow"
 import importlib.util, sys, torch
 from pathlib import Path
-sys.path.insert(0, "/tmp/src")
-x = torch.randn(256, 256, device="cuda", dtype=torch.bfloat16); print("cuda matmul ok", float((x @ x).float().abs().mean()) > 0)
+x = torch.randn(256, 256, device="cuda", dtype=torch.bfloat16); print("cuda matmul ok", float((x @ x).float().abs().mean()) > 0, flush=True)
 root = Path("/tmp/vlacode/simplevla_rl")
 sys.path.insert(0, str(root / "verl" / "utils" / "vla_utils"))
 from openvla_oft.modeling_prismatic import OpenVLAForActionPrediction  # noqa
+print("OFT_MODEL_IMPORT_OK", flush=True)
 spec = importlib.util.spec_from_file_location("lu", root / "verl" / "utils" / "libero_utils.py"); lu = importlib.util.module_from_spec(spec); spec.loader.exec_module(lu)
-print("OFT_IMPORTS_OK")
-sys.path.append("/tmp/vlacode/openvla")
-from prismatic.extern.hf.modeling_prismatic import OpenVLAForActionPrediction as O2  # noqa
-print("OPENVLA_IMPORTS_OK")
+print("OFT_IMPORTS_OK", flush=True)
 EOF
 
-echo "== hf-mirror OFT checkpoint -> PFS $(el)"
-M=$PFS/models/Openvla-oft-SFT-libero10-traj1
-mkdir -p $PFS/models
-s=$(date +%s)
-HF_ENDPOINT=https://hf-mirror.com HF_HUB_DISABLE_PROGRESS_BARS=1 timeout 2400 python -c "import sys; from huggingface_hub import snapshot_download; snapshot_download(sys.argv[1], local_dir=sys.argv[2])" Haozhan72/Openvla-oft-SFT-libero10-traj1 $M 2>&1 | tail -3
-echo "download s=$(( $(date +%s) - s )) size=$(du -sh $M | cut -f1)"; ls $M | head -30
+echo "== OFT checkpoint -> PFS $(el)"
+fetch_model Haozhan72/Openvla-oft-SFT-libero10-traj1 $PFS/models/Openvla-oft-SFT-libero10-traj1
+ls -la $PFS/models/Openvla-oft-SFT-libero10-traj1 | head -30; cat $PFS/models/Openvla-oft-SFT-libero10-traj1/.sha256
 echo "SETUP_PROBE_DONE $(el)"
