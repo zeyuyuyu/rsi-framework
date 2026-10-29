@@ -121,24 +121,8 @@ def main(spec_path):
     else:
         vla = PeftModel.from_pretrained(vla, parent["location"], is_trainable=True)
     mb = spec["micro_batch"]
-    old = None
-    if operator == "grpo":
-        vla.eval()
-        old = {}
-        with torch.no_grad():
-            for b in range(0, len(index), mb):
-                picks = index[b:b + mb]
-                lp = chunk_logprobs(vla, picks)
-                for k, key in enumerate(picks):
-                    old[key] = lp[k].detach()
-    vla.train()
-    params = [p for p in vla.parameters() if p.requires_grad]
-    before = digest(vla)
-    opt = torch.optim.AdamW(params, lr=float(update["lr"]), weight_decay=0.0)
     steps, batch = int(update["steps"]), int(update["batch"])
-    clip_lo, clip_hi = float(update.get("clip_low", 0.2)), float(update.get("clip_high", 0.28))
-    order, cursor, losses, clipfrac = [], 0, [], []
-    started = time.time()
+    schedule, order, cursor = [], [], 0
     for step in range(steps):
         picks = []
         while len(picks) < batch:
@@ -147,6 +131,39 @@ def main(spec_path):
                 rng.shuffle(order)
             picks.append(index[order[cursor]])
             cursor += 1
+        schedule.append(picks)
+    # "legacy": old log-probs from one pass over the frames in episode order. Under bf16 a frame's log-probs
+    # depend on which frames share its forward, so ~5% of tokens left the clip band before any update (A800
+    # pilot-4 replica, step 1). "matched": old log-probs from the exact micro-batches training will run, so
+    # the ratio starts at 1 and only the update moves it.
+    ratio_mode = update.get("ratio", "legacy")
+    old = None
+    if operator == "grpo" and ratio_mode == "legacy":
+        vla.eval()
+        old = {}
+        with torch.no_grad():
+            for b in range(0, len(index), mb):
+                picks = index[b:b + mb]
+                lp = chunk_logprobs(vla, picks)
+                for k, key in enumerate(picks):
+                    old[key] = lp[k].detach()
+    elif operator == "grpo" and ratio_mode == "matched":
+        vla.train()
+        old = {}
+        with torch.no_grad():
+            for step, picks in enumerate(schedule):
+                for b in range(0, batch, mb):
+                    old[(step, b)] = chunk_logprobs(vla, picks[b:b + mb]).detach()
+    elif operator == "grpo":
+        raise SystemExit(f"unknown_ratio_mode:{ratio_mode}")
+    vla.train()
+    params = [p for p in vla.parameters() if p.requires_grad]
+    before = digest(vla)
+    opt = torch.optim.AdamW(params, lr=float(update["lr"]), weight_decay=0.0)
+    clip_lo, clip_hi = float(update.get("clip_low", 0.2)), float(update.get("clip_high", 0.28))
+    losses, clipfrac, step1_logratio = [], [], None
+    started = time.time()
+    for step, picks in enumerate(schedule):
         counted = float(masks(picks).sum())
         opt.zero_grad(set_to_none=True)
         step_loss, clipped = 0.0, 0
@@ -157,10 +174,14 @@ def main(spec_path):
             if operator == "bc":
                 obj = lp
             else:
-                ratio = torch.exp(lp - torch.stack([old[k] for k in chunk]))
+                ref = old[(step, b)] if ratio_mode == "matched" else torch.stack([old[k] for k in chunk])
+                ratio = torch.exp(lp - ref)
                 adv = torch.tensor([episodes[e]["adv"] for e, _ in chunk], device=lp.device)[:, None]
                 obj = torch.min(ratio * adv, torch.clamp(ratio, 1 - clip_lo, 1 + clip_hi) * adv)
                 clipped += int((((ratio < 1 - clip_lo) | (ratio > 1 + clip_hi)) & m).sum())
+                if step == 0:
+                    dev = (lp - ref).detach()[m]
+                    step1_logratio = (step1_logratio or []) + dev.cpu().tolist()
             loss = -torch.where(m, obj, torch.zeros_like(obj)).sum() / counted
             if not torch.isfinite(loss):
                 raise SystemExit("nonfinite_loss")
@@ -181,7 +202,12 @@ def main(spec_path):
                    trainable_parameters=sum(p.numel() for p in params),
                    before_sha256=before, after_sha256=after, frames=len(index),
                    seconds=time.time() - started, loss_first=losses[0], loss_last=losses[-1],
-                   extra=dict(losses=losses, clipfrac=clipfrac, update=update,
+                   extra=dict(losses=losses, clipfrac=clipfrac, update=update, ratio_mode=ratio_mode,
+                              step1_logratio=None if not step1_logratio else dict(
+                                  mean_abs=float(np.mean(np.abs(step1_logratio))),
+                                  max_abs=float(np.max(np.abs(step1_logratio))),
+                                  outside_clip=float(np.mean((np.array(step1_logratio) < np.log(1 - clip_lo))
+                                                             | (np.array(step1_logratio) > np.log(1 + clip_hi))))),
                               counted_tokens=int(sum(int(episodes[e]["mask"][c].sum()) for e, c in index))))
     (output / "receipt.json").write_text(json.dumps(receipt, indent=2))
 

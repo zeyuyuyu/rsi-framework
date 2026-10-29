@@ -27,6 +27,7 @@ def main():
     ap.add_argument("--call", required=True)
     ap.add_argument("--max-episodes", type=int, default=96)
     ap.add_argument("--temperature", type=float, default=1.6)
+    ap.add_argument("--noise-episodes", type=int, default=32)
     args = ap.parse_args()
     plan = json.loads(Path(args.plan).read_text())
     ckpt, root = plan["vla"]["checkpoint"], plan["vla"]["openvla_root"]
@@ -59,39 +60,47 @@ def main():
     rng.shuffle(picks)
     picks = picks[:args.max_episodes]
 
-    def logprobs(vla, processor, d):
+    def logprobs(vla, processor, d, offset=0):
+        """Masked per-token log-probs and greedy ids; frames run 8 per forward, the first window cut at
+        ``offset`` so a second pass with another offset puts every frame beside different frames."""
         text = f"In: What action should the robot take to {str(d['task']).lower()}?\nOut:"
         ids = list(processor.tokenizer(text, add_special_tokens=True).input_ids)
         if ids[-1] != SPACER:
             ids.append(SPACER)
         n = int(len(d["executed"]))
         lps, greedy = [], []
-        for a in range(0, n, 8):
-            frames = list(d["frames"][a:a + 8])
+        starts = sorted({0, *range(offset % 8 or 8, n, 8)} - {n}) if offset else list(range(0, n, 8))
+        for a, z in zip(starts, starts[1:] + [n]):
+            frames = list(d["frames"][a:z])
             with torch.no_grad():
                 logits = action_logits(vla, processor, ids, frames).float()
-            tok = torch.tensor(d["tokens"][a:a + 8] - FIRST_ACTION_ID, device=logits.device)
+            tok = torch.tensor(d["tokens"][a:z] - FIRST_ACTION_ID, device=logits.device)
             lp = torch.log_softmax(logits / args.temperature, -1).gather(-1, tok.unsqueeze(-1)).squeeze(-1)
             lps.append(lp.cpu().numpy())
             greedy.append(logits.argmax(-1).cpu().numpy())
         mask = token_mask(d["executed"])
         return np.concatenate(lps)[mask], np.concatenate(greedy)[mask]
 
-    rows = {}
+    rows, noise = {}, []
     for label, adapter in (("base", None), ("adapter", args.adapter)):
         vla, processor = load_policy(ckpt, adapter, root)
-        for c, p, s, adv in picks:
+        for i, (c, p, s, adv) in enumerate(picks):
             with np.load(p) as d:
                 lp, g = logprobs(vla, processor, d)
-            rows.setdefault(p.stem, dict(case=c, success=s, advantage=adv))[label] = (float(lp.mean()), g)
+                # numerical floor: same weights, same tokens, other forward-batch neighbours
+                if label == "base" and i < args.noise_episodes:
+                    lp2, _ = logprobs(vla, processor, d, offset=4)
+                    noise.append(lp2 - lp)
+            rows.setdefault(p.stem, dict(case=c, success=s, advantage=adv))[label] = (float(lp.mean()), g, lp)
         del vla
         torch.cuda.empty_cache()
     out_rows = []
     for name, r in rows.items():
-        (lb, gb), (la, ga) = r["base"], r["adapter"]
+        (lb, gb, tb), (la, ga, ta) = r["base"], r["adapter"]
         out_rows.append(dict(episode=name, case=r["case"], success=r["success"], advantage=r["advantage"],
                              logprob_base=lb, logprob_adapter=la, delta=la - lb,
-                             greedy_agreement=float((gb == ga).mean())))
+                             greedy_agreement=float((gb == ga).mean()),
+                             token_outside_clip=float(np.mean((ta - tb < np.log(0.8)) | (ta - tb > np.log(1.28))))))
     pos = [r["delta"] for r in out_rows if r["advantage"] > 0]
     neg = [r["delta"] for r in out_rows if r["advantage"] < 0]
     adv = np.array([r["advantage"] for r in out_rows])
@@ -101,6 +110,12 @@ def main():
                    mean_delta_negative_advantage=float(np.mean(neg)) if neg else None,
                    corr_advantage_delta=float(np.corrcoef(adv, dl)[0, 1]) if len(out_rows) > 2 else None,
                    mean_greedy_agreement=float(np.mean([r["greedy_agreement"] for r in out_rows])),
+                   adapter_token_outside_clip=float(np.mean([r["token_outside_clip"] for r in out_rows])),
+                   noise_episodes=len(noise),
+                   noise_token_mean_abs=float(np.mean(np.abs(np.concatenate(noise)))) if noise else None,
+                   noise_token_outside_clip=float(np.mean([np.mean((x < np.log(0.8)) | (x > np.log(1.28)))
+                                                           for x in noise])) if noise else None,
+                   noise_episode_mean_abs=float(np.mean([abs(x.mean()) for x in noise])) if noise else None,
                    temperature=args.temperature, adapter=args.adapter, call=args.call)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
