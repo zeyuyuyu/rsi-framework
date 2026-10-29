@@ -365,6 +365,35 @@ class LLMSampleRetryTests(unittest.TestCase):
             self.assertEqual(sorted(p.name for p in (call / "discarded-0").iterdir()), ["log-0.txt", "out-0.jsonl"])
 
 
+class WorkerCleanupTests(unittest.TestCase):
+    def test_sigterm_to_the_runner_stops_its_workers(self):
+        import os, signal, subprocess, sys, time
+        with tempfile.TemporaryDirectory() as tmp:
+            pidfile = Path(tmp) / "child.pid"
+            runner = (
+                "import sys; sys.path.insert(0, %r)\n"
+                "from rsi.core.gpu import stop_workers_on_sigterm, supervised\n"
+                "stop_workers_on_sigterm()\n"
+                "supervised(['bash', '-c', 'echo $$ > %s; exec sleep 60'], gpus=[], timeout=120, log_path=%r)\n"
+            ) % (str(Path(__file__).resolve().parent), pidfile, str(Path(tmp) / "log.txt"))
+            proc = subprocess.Popen([sys.executable, "-c", runner])
+            for _ in range(100):
+                if pidfile.exists() and pidfile.read_text().strip():
+                    break
+                time.sleep(0.05)
+            child = int(pidfile.read_text())
+            proc.send_signal(signal.SIGTERM)
+            self.assertEqual(proc.wait(timeout=10), 128 + signal.SIGTERM)
+            for _ in range(100):
+                try:
+                    os.kill(child, 0)
+                except ProcessLookupError:
+                    break
+                time.sleep(0.05)
+            else:
+                self.fail("worker survived the runner's SIGTERM")
+
+
 class ProgramTests(unittest.TestCase):
     def test_code_wm_program_validation_and_search(self):
         d = CodeWorldModelDomain()

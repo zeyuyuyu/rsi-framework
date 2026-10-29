@@ -15,6 +15,7 @@ from dataclasses import asdict
 import json
 from pathlib import Path
 
+from .core.gpu import stop_workers_on_sigterm
 from .backends.openvla.backend import VLABackend, VLAConfig
 from .core.engine import Engine, EngineConfig
 from .core.types import Version
@@ -37,6 +38,7 @@ def main():
     # continue an interrupted run in place (Engine.run(resume=True); the stored plan must match)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+    stop_workers_on_sigterm()
     plan = json.loads(Path(args.plan).read_text())
     out = Path(args.out)
     if args.resume and not (out / "plan.json").exists():

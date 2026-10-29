@@ -53,6 +53,23 @@ def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=4 * 3600, poll=60.0):
         waited += poll + gap
 
 
+# Workers run in their own sessions so a timeout can kill a whole worker tree; that also means stopping the
+# runner alone leaves them running (10-29: a stopped run's vLLM worker kept a GPU for hours). The runners
+# install stop_workers_on_sigterm(), which takes every live worker group down with them.
+_LIVE_GROUPS = set()
+
+
+def stop_workers_on_sigterm():
+    def handler(signum, frame):
+        for pgid in list(_LIVE_GROUPS):
+            try:
+                os.killpg(pgid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+        raise SystemExit(128 + signum)
+    signal.signal(signal.SIGTERM, handler)
+
+
 def supervised(argv, *, gpus, timeout, log_path, env=None):
     """Run argv on the given GPUs; kill the whole process group on timeout."""
     full_env = dict(os.environ, **(env or {}))
@@ -60,12 +77,15 @@ def supervised(argv, *, gpus, timeout, log_path, env=None):
     with open(log_path, "ab") as log:
         proc = subprocess.Popen(argv, stdout=log, stderr=subprocess.STDOUT, env=full_env,
                                 start_new_session=True)
+        _LIVE_GROUPS.add(proc.pid)
         try:
             code = proc.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             os.killpg(proc.pid, signal.SIGKILL)
             proc.wait()
             raise TimeoutError(f"worker_timeout:{argv[:3]}")
+        finally:
+            _LIVE_GROUPS.discard(proc.pid)
     if code != 0:
         raise RuntimeError(f"worker_failed:{code}:{log_path}")
 
@@ -91,6 +111,7 @@ def supervised_parallel(jobs, *, timeout):
         log = open(log_path, "ab")
         procs.append((subprocess.Popen(argv, stdout=log, stderr=subprocess.STDOUT,
                                        env=full_env, start_new_session=True), log, log_path))
+        _LIVE_GROUPS.add(procs[-1][0].pid)
     failed = []
     try:
         for proc, log, log_path in procs:
@@ -106,6 +127,7 @@ def supervised_parallel(jobs, *, timeout):
             if proc.poll() is None:
                 os.killpg(proc.pid, signal.SIGKILL)
                 proc.wait()
+            _LIVE_GROUPS.discard(proc.pid)
             log.close()
     if failed:
         raise RuntimeError(f"parallel_worker_failed:{failed}")
