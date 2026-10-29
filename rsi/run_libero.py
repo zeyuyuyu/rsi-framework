@@ -125,8 +125,9 @@ def main():
     report = engine.run(resume=args.resume)
     (out / "backend-accounting.json").write_text(json.dumps(dict(
         gpu_seconds=backend.gpu_seconds, admissions=backend.admissions), indent=2, default=str))
-    t = report["tests"]["libero_official"]
-    print(json.dumps(dict(initial=t["initial"], final=t["final"], paired=t["paired"])))
+    t = report.get("tests", {}).get("libero_official")   # absent when tests are sealed (pilots)
+    print(json.dumps(dict(initial=t["initial"], final=t["final"], paired=t["paired"]) if t
+                     else dict(status=report.get("status"), retained=report.get("retained"))))
 
 
 if __name__ == "__main__":
