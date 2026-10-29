@@ -38,6 +38,9 @@ class VLAConfig:
     oom_retries: int = 2               # re-admit and rerun a phase whose worker ran out of GPU memory
     subset_after: float = 600.0        # seconds to wait for every rollout GPU before using the free ones
     env: dict = field(default_factory=dict)
+    # OFT GRPO only: how the PPO ratio's old log-probs are taken (train_worker "legacy" | "matched"). A trainer
+    # numerics setting, not a program field, so the meta level never searches it.
+    ratio_mode: str = "legacy"
 
 
 class VLABackend:
@@ -45,6 +48,8 @@ class VLABackend:
 
     def __init__(self, config: VLAConfig):
         self.config = config
+        if config.ratio_mode != "legacy" and self.worker_dir == HERE:
+            raise ValueError("ratio_mode_needs_oft_worker")
         self.workdir = Path(config.workdir)
         self.workdir.mkdir(parents=True, exist_ok=True)
         self.calls, self.admissions, self.gpu_seconds = 0, [], {}
@@ -155,7 +160,8 @@ class VLABackend:
             raise ValueError("nonempty_training_items_required")
         call = self._call_dir("train")
         spec = dict(checkpoint=cfg.checkpoint, openvla_root=cfg.openvla_root, parent=asdict(parent),
-                    output=str(output), items=list(items), update=update, seed=seed,
+                    output=str(output), items=list(items), seed=seed,
+                    update=update if cfg.ratio_mode == "legacy" else dict(update, ratio=cfg.ratio_mode),
                     lora_rank=cfg.lora_rank, lora_alpha=cfg.lora_alpha,
                     target_modules=list(cfg.target_modules), micro_batch=cfg.micro_batch)
         (call / "train_spec.json").write_text(json.dumps(spec))

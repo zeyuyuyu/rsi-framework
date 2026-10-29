@@ -573,6 +573,24 @@ class ProgramTests(unittest.TestCase):
             d.validate_program({"update": {"lr": 1e-3}})
         self.assertEqual(d.edit_space["curriculum.cases"], (40, 400))   # the meta level's space is unchanged
 
+    def test_matched_ratio_reaches_only_the_oft_train_spec(self):
+        from unittest import mock
+        from rsi.backends.openvla import backend as vb
+        from rsi.backends.openvla_oft.backend import OFTBackend
+        from rsi.core.types import Version
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(ValueError):                          # the OpenVLA worker has no such mode
+                vb.VLABackend(vb.VLAConfig("ck", "py", "root", tmp, ratio_mode="matched"))
+            specs = {}
+            for mode in ("legacy", "matched"):
+                be = OFTBackend(vb.VLAConfig("ck", "py", "root", f"{tmp}/{mode}", ratio_mode=mode))
+                with mock.patch.object(vb, "admit"), mock.patch.object(vb, "supervised", side_effect=RuntimeError):
+                    with self.assertRaises(RuntimeError):
+                        be.train(Version("v0", "ck", None), [{"episode": "e"}], f"{tmp}/out", {"lr": 1e-4}, 0)
+                specs[mode] = json.loads(next(Path(f"{tmp}/{mode}").glob("*-train-*/train_spec.json")).read_text())
+            self.assertEqual(specs["legacy"]["update"], {"lr": 1e-4})    # legacy specs are unchanged
+            self.assertEqual(specs["matched"]["update"], {"lr": 1e-4, "ratio": "matched"})
+
 
 if __name__ == "__main__":
     unittest.main()
