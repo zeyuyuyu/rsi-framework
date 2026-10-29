@@ -31,10 +31,14 @@ def occupied(status, max_used_mib=2000, idle_context_mib=10240, idle_util=5):
     return used > max_used_mib and not (used <= idle_context_mib and util <= idle_util)
 
 
-def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=4 * 3600, poll=60.0):
+def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=4 * 3600, poll=60.0, min_gpus=None, full_wait=0.0):
     """Two readings ``gap`` apart must both show every GPU free (see ``occupied``). A busy GPU is waited
     for (re-checked every ``poll`` seconds) up to ``wait_seconds``, then refused. The wait is long because
-    on a shared box another user can take a GPU between our sample and train steps; failing loses the run."""
+    on a shared box another user can take a GPU between our sample and train steps; failing loses the run.
+    With ``min_gpus``, once ``full_wait`` seconds have passed a free subset of at least ``min_gpus`` GPUs is
+    accepted instead (10-29: another user took the idle second GPU of two VLA runs during their one-GPU
+    training phase, and both runs then sat waiting with their first GPU idle). ``gpus`` in the result lists
+    the GPUs admitted."""
     gpus = [int(g) for g in gpus]
     deadline = time.time() + wait_seconds
     waited = 0.0
@@ -42,13 +46,15 @@ def admit(gpus, max_used_mib=2000, gap=30.0, wait_seconds=4 * 3600, poll=60.0):
         first = gpu_status()
         time.sleep(gap)
         second = gpu_status()
-        busy = [g for g in gpus if g not in first or g not in second
-                or occupied(first[g], max_used_mib) or occupied(second[g], max_used_mib)]
-        if not busy:
-            return dict(first={g: first[g] for g in gpus}, second={g: second[g] for g in gpus},
+        free = [g for g in gpus if g in first and g in second
+                and not occupied(first[g], max_used_mib) and not occupied(second[g], max_used_mib)]
+        take = free if len(free) == len(gpus) else (
+            free if min_gpus and waited >= full_wait and len(free) >= min_gpus else None)
+        if take:
+            return dict(gpus=take, first={g: first[g] for g in take}, second={g: second[g] for g in take},
                         gap_seconds=gap, waited_seconds=waited, admitted_at=time.time())
         if time.time() + poll > deadline:
-            raise RuntimeError(f"gpu_admission_refused:{busy}")
+            raise RuntimeError(f"gpu_admission_refused:{[g for g in gpus if g not in free]}")
         time.sleep(poll)
         waited += poll + gap
 

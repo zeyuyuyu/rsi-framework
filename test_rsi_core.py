@@ -297,7 +297,7 @@ class VLAPhaseRetryTests(unittest.TestCase):
             backend, call = self._backend(tmp)
             phase, attempts = self._fake_phase(call, ["torch.cuda.OutOfMemoryError: CUDA out of memory. Tried"])
             backend._phase = phase
-            original, vla_backend.admit = vla_backend.admit, lambda gpus, gap: {"ok": True}
+            original, vla_backend.admit = vla_backend.admit, lambda gpus, gap, **kw: {"ok": True, "gpus": list(gpus)}
             try:
                 backend._phase_retrying(call, "g")
             finally:
@@ -324,7 +324,7 @@ class VLAPhaseRetryTests(unittest.TestCase):
             backend, call = self._backend(tmp)
             phase, attempts = self._fake_phase(call, ["CUDA out of memory"] * 3)
             backend._phase = phase
-            original, vla_backend.admit = vla_backend.admit, lambda gpus, gap: {}
+            original, vla_backend.admit = vla_backend.admit, lambda gpus, gap, **kw: {"gpus": list(gpus)}
             try:
                 with self.assertRaises(RuntimeError):
                     backend._phase_retrying(call, "s")
@@ -392,6 +392,33 @@ class WorkerCleanupTests(unittest.TestCase):
                 time.sleep(0.05)
             else:
                 self.fail("worker survived the runner's SIGTERM")
+
+
+class AdmitSubsetTests(unittest.TestCase):
+    def _run(self, readings, **kw):
+        import rsi.core.gpu as g
+        it = iter(readings)
+        saved = g.gpu_status, g.time.sleep
+        g.gpu_status, g.time.sleep = (lambda: next(it)), (lambda s: None)
+        try:
+            return g.admit([0, 1], gap=0, poll=60, **kw)
+        finally:
+            g.gpu_status, g.time.sleep = saved
+
+    def test_busy_second_gpu_falls_back_to_the_free_one_after_full_wait(self):
+        busy = {0: (100, 0), 1: (14000, 90)}
+        adm = self._run([busy] * 40, min_gpus=1, full_wait=300, wait_seconds=3600)
+        self.assertEqual(adm["gpus"], [0])
+        self.assertGreaterEqual(adm["waited_seconds"], 300)
+
+    def test_without_min_gpus_every_gpu_is_still_required(self):
+        busy = {0: (100, 0), 1: (14000, 90)}
+        with self.assertRaises(RuntimeError):
+            self._run([busy] * 400, wait_seconds=-1)
+
+    def test_all_free_admits_all(self):
+        free = {0: (100, 0), 1: (100, 0)}
+        self.assertEqual(self._run([free, free], min_gpus=1, full_wait=300)["gpus"], [0, 1])
 
 
 class ProgramTests(unittest.TestCase):

@@ -36,6 +36,7 @@ class VLAConfig:
     train_timeout: int = 10 * 3600
     admission_gap: float = 30.0
     oom_retries: int = 2               # re-admit and rerun a phase whose worker ran out of GPU memory
+    subset_after: float = 600.0        # seconds to wait for every rollout GPU before using the free ones
     env: dict = field(default_factory=dict)
 
 
@@ -45,6 +46,7 @@ class VLABackend:
         self.workdir = Path(config.workdir)
         self.workdir.mkdir(parents=True, exist_ok=True)
         self.calls, self.admissions, self.gpu_seconds = 0, [], {}
+        self.active_gpus = list(config.rollout_gpus)
 
     def _env(self):
         # Thread caps: each worker otherwise starts one thread per core (128 here); a dozen rollout
@@ -65,7 +67,7 @@ class VLABackend:
     def _phase(self, call, tag, adapter, suite, episodes, max_steps, n_envs, procs_per_gpu):
         """Run one homogeneous phase: shards of n_envs-sized same-task blocks over GPU slots."""
         cfg = self.config
-        slots = [g for g in cfg.rollout_gpus for _ in range(procs_per_gpu)]
+        slots = [g for g in self.active_gpus for _ in range(procs_per_gpu)]
         groups = {}
         for ep in episodes:
             groups.setdefault((ep["task_id"], ep["mode"], ep["temperature"]), []).append(ep)
@@ -89,7 +91,15 @@ class VLABackend:
             started = time.time()
             supervised_parallel(jobs, timeout=cfg.rollout_timeout)
             self.gpu_seconds["rollout"] = self.gpu_seconds.get("rollout", 0.0) + \
-                len(cfg.rollout_gpus) * (time.time() - started)
+                len(self.active_gpus) * (time.time() - started)
+
+    def _admit_rollout(self):
+        """All rollout GPUs if they free up within ``subset_after`` seconds, else whichever are free (one at
+        least); later phases of this rollout run on the GPUs admitted."""
+        cfg = self.config
+        adm = admit(cfg.rollout_gpus, gap=cfg.admission_gap, min_gpus=1, full_wait=cfg.subset_after)
+        self.active_gpus = list(adm["gpus"])
+        return adm
 
     def _phase_retrying(self, call, tag, *args):
         """Admission is checked before the rollout, but on a shared box another job can still take a GPU
@@ -112,8 +122,7 @@ class VLABackend:
                     path.rename(aside / path.name)
                 for log in logs:
                     Path(log).rename(aside / Path(log).name)
-                self.admissions.append(dict(admit(self.config.rollout_gpus, gap=self.config.admission_gap),
-                                            retry_of=f"{tag}{attempt}", failed_logs=logs))
+                self.admissions.append(dict(self._admit_rollout(), retry_of=f"{tag}{attempt}", failed_logs=logs))
 
     def rollout(self, version: Version, suite, episodes, max_steps=None):
         """Greedy episodes run unbatched (one env per process, several processes per GPU),
@@ -123,7 +132,7 @@ class VLABackend:
         cfg = self.config
         call = self._call_dir("rollout")
         adapter = None if version.parent_id is None else version.location
-        self.admissions.append(admit(cfg.rollout_gpus, gap=cfg.admission_gap))
+        self.admissions.append(self._admit_rollout())
         greedy = [ep for ep in episodes if ep["mode"] == "greedy"]
         sampled = [ep for ep in episodes if ep["mode"] != "greedy"]
         self._phase_retrying(call, "g", adapter, suite, greedy, max_steps, 1, cfg.greedy_procs_per_gpu)
