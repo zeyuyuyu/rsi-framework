@@ -1,4 +1,4 @@
-# Prereg v3, addendum 4 (M1): short on-policy rounds (sealed pilot on the A800)
+# Prereg v3, addendum 4 (M1): short on-policy rounds (sealed pilot)
 
 Committed 2026-10-30 before the pilot below starts. No v3 run has read a test result.
 
@@ -11,9 +11,12 @@ round-1 changes of about one point match that. More steps per round (addendum 3)
 more rounds should. Twelve rounds of 64 placements (512 sampled episodes each) cost about the same sampling as
 five rounds of 160, and give twelve policy steps. Each step is still gated.
 
-## Pilot (sealed, A800, OFT backend, 3 GPUs)
+## Pilot (sealed, OFT backend)
 
-`a8_oft3_pilot4_short`: 12 rounds; curriculum 64 placements per round (8 samples, T=1.6); GRPO lr 1e-4,
+Amended before launch: the A800 had no free GPU (another user took the free ones), so the pilot runs
+on Baidu, the M1 platform, as `bj_oft3_pilot4_short` on one GPU.
+
+`bj_oft3_pilot4_short`: 12 rounds; curriculum 64 placements per round (8 samples, T=1.6); GRPO lr 1e-4,
 100 steps of batch 64; gate and audit 200 + 200 placements as in the main arms; seed 0.
 
 ## Decision rule for the M1 main arms, fixed now
