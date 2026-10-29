@@ -1,0 +1,98 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.68,
+      "author": "seed",
+      "gate": 0.7,
+      "node": "n0",
+      "program": "d8ef109beeef0eb6",
+      "round": 0
+    },
+    {
+      "audit": 0.82,
+      "author": "seed",
+      "gate": 0.78,
+      "node": "r01c0",
+      "program": "d8ef109beeef0eb6",
+      "round": 1
+    },
+    {
+      "audit": 0.74,
+      "author": "seed",
+      "gate": 0.8,
+      "node": "r02c0",
+      "program": "d8ef109beeef0eb6",
+      "round": 2
+    },
+    {
+      "audit": 0.82,
+      "author": "seed",
+      "gate": 0.8,
+      "node": "r03c0",
+      "program": "d8ef109beeef0eb6",
+      "round": 3
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "true",
+    "min_gate_gain": 0.0,
+    "recursive": false,
+    "rounds": 3,
+    "seal_tests": false,
+    "seed": 2,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 69896.81288515613,
+  "retained": "r03c0",
+  "seconds": {
+    "attempt": 17500.546462588944,
+    "audit_eval": 4171.897355961613,
+    "gate_eval": 4514.471893836977,
+    "propose": 0.002733763074502349,
+    "test_eval": 28888.31440260657,
+    "train": 14819.628226815024
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.784
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.736
+        },
+        {
+          "node": "r02c0",
+          "round": 2,
+          "score": 0.764
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.748
+        }
+      ],
+      "final": 0.748,
+      "initial": 0.784,
+      "paired": {
+        "ci95": [
+          -0.08,
+          0.006
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 51,
+        "flipped_to_wrong": 69,
+        "mcnemar_p": 0.12032782773865801,
+        "mean_gain": -0.036,
+        "n": 500
+      }
+    }
+  }
+}

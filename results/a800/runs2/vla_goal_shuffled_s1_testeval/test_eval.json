@@ -1,0 +1,13 @@
+{
+  "run": "/data0/home/zeyuwang/rsi/runs2/vla_goal_shuffled_s1",
+  "node": "r02c0",
+  "version": {
+    "id": "2c116d3059307d21592a713452f4c2ba86c59dc34e665a62ad4b842ed555320e",
+    "location": "/data0/home/zeyuwang/rsi/runs2/vla_goal_shuffled_s1/ckpt-r02c0",
+    "parent_id": "base:openvla-7b-libero-goal"
+  },
+  "test_success": [
+    0.768,
+    0.756
+  ]
+}
