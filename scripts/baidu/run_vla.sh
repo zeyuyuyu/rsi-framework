@@ -136,7 +136,7 @@ done
 echo "----- FILE tests.txt -----"
 python - "$RUN" <<'EOF'
 import glob, hashlib, json, os, sys
-for p in sorted(glob.glob(os.path.join(sys.argv[1], "test-*.jsonl"))):
+for p in sorted(glob.glob(os.path.join(sys.argv[1], "test-*.jsonl")) + glob.glob(os.path.join(sys.argv[1], "baseline-rep*.jsonl"))):
     recs = [json.loads(l) for l in open(p) if l.strip()]
     ids = hashlib.sha256(json.dumps([r["id"] for r in recs]).encode()).hexdigest()[:16]
     print("TESTBITS", os.path.basename(p), len(recs), ids, "".join("1" if r["score"] >= 0.5 else "0" for r in recs))
