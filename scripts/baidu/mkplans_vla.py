@@ -10,6 +10,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   oft_pilot7 addendum 7: pilot5_curve at lr 3e-5 with the matched ratio, token vs episode-balanced loss
   yq_sweep   addendum 8: lr {1e-5,3e-5,1e-4} x loss {token,episode} x seeds {1,2} always-accept curves (Yangquan)
   yq_main    addendum 9: 5 arms x seeds 1-3 on Yangquan, fresh paired gates, recipe from the addendum-8 rule
+  oftg_pilot addendum 11: OFT on LIBERO-Goal, GRPO (lr 3e-5, matched, episode loss) vs BC curves, seed 0
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
@@ -105,6 +106,14 @@ elif sys.argv[1] == "yq_main":
         for arm, (engine, proposer) in arms.items():
             write(f"yq_oft3_{arm}_s{seed}", vla=vla, engine=dict(gated, seed=seed, **engine),
                   meta={"proposer": proposer}, program=prog)
+elif sys.argv[1] == "oftg_pilot":
+    # addendum 11: OFT 1-traj SFT on LIBERO-Goal (mid-range start), GRPO vs BC always-accept curves, seed 0
+    curve = dict(rounds=6, inner_steps=3, seed=0, seal_tests=True, min_gate_gain=-1.0)
+    grpo = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    bc = merge(merge(OFT_PROGRAM, BC), {"curriculum": {"cases": 64}})
+    for tag, prog, extra in (("grpo", grpo, {"ratio_mode": "matched", "loss_agg": "episode"}), ("bc", bc, {})):
+        write(f"bj_oftg_curve_{tag}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
+              vla=dict(VLA, **extra), engine=curve, meta={"proposer": "fixed"}, program=prog)
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)
