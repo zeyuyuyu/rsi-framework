@@ -51,3 +51,30 @@ with the chosen recipe in 6 rounds x 3 inner steps. `onebig` gets one round with
 acceptance test of the gated arms is changed before launch. Every accepted gate gain so far has had a flat or
 negative audit, so a fixed gate set selects noise. The new test (fresh gate placements each round, with parent
 and child evaluated on them paired) is specified and unit-tested in its own addendum before the main arms start.
+
+## Amendment (2026-10-30 ~09:10Z): Yangquan is not usable today; fallback for the recipe decision
+
+Yangquan cannot read our data. Cross-region BOS reads from yq run at a few KB/s, and direct HTTP runs at
+1-3 MB/s, i.e. 2-3 h per job for the checkpoint. Unblocking it needs yq-local storage or GetObject rights for
+our key, which is the account owner's decision. So the 12-run sweep does not run today. Results seen before
+this amendment:
+
+* the round-1 gates of the Beijing pilot-7 pair (0.140 token, 0.180 episode);
+* the round-1 pooled scores of the three cavin seed-1 replicas (-2.0, -1.0, -0.25 against their own n0);
+* pilot5_curve's gates through round 3.
+
+Fallback rule, used unless the sweep has run in full by 2026-10-31 06:00Z:
+
+* Three recipes, each with two runs (seed 0 on Beijing, seed 1 on cavin):
+  1. lr 1e-4, token loss: `bj_oft3_pilot5_curve` (legacy ratio) and `a8_oft3_pilot6_curve_matched_s1`.
+  2. lr 3e-5, token loss, matched: `bj_oft3_pilot7_lr3e5` and `a8_oft3_pilot7_lr3e5_s1`.
+  3. lr 3e-5, episode loss, matched: `bj_oft3_pilot7_lr3e5_ep` and `a8_oft3_pilot7_lr3e5_ep_s1`.
+* For each run, D = mean over rounds 5 and 6 of (gate + audit) / 2, minus that run's own n0 (gate + audit) / 2.
+  Each run is measured only against itself, so the platform offset cancels. A recipe's D is the mean of its two
+  runs.
+* The decision is the same as above: the highest mean D, provided it is at least +3 points, with the same
+  tie-break. Otherwise no M1 main arms on LIBERO-10.
+* Beijing audits do not appear in the job logs. A 1-CPU reader job prints each pilot's `accepted.jsonl` and
+  `report.json` from PFS when the runs end. Those printed values are the inputs.
+* If a recipe passes, the main arms run where all 15 fit soonest. That is Yangquan if it is unblocked by
+  then; otherwise Beijing, as prereg v3 planned, with every arm compared only within its platform.
