@@ -15,6 +15,9 @@ import time
 sys.path.insert(0, "/home/zeyu/rsi/tools/baidu")
 import aihc_job  # noqa: E402
 
+# AIHC_HOST / AIHC_POOL / AIHC_QUEUE select the region (e.g. aihc.yq.baidubce.com for the Yangquan A800 pool)
+aihc_job.HOST = os.environ.get("AIHC_HOST", aihc_job.HOST)
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOGS = os.path.join(HERE, "logs")
 os.makedirs(LOGS, exist_ok=True)
