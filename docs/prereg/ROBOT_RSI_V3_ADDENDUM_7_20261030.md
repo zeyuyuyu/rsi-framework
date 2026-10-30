@@ -55,6 +55,11 @@ Validity: the first receipt of each must show a step-1 out-of-band share of 0, a
 Otherwise the pilot is stopped and fixed. An A800 seed-1 replica of `pilot7_lr3e5_ep` runs as corroboration if
 GPUs are free, and it cannot change the decision.
 
+Amendment (after launch, before any pilot7 result): a second A800 GPU freed up, so
+`a8_oft3_pilot7_lr3e5_s1` (token loss) also runs, next to `a8_oft3_pilot7_lr3e5_ep_s1` and the matched lr-1e-4
+replica `a8_oft3_pilot6_curve_matched_s1`. Every curve in the rule below then has a seed-1 A800 counterpart.
+These counterparts are reported as corroboration and do not enter the rule.
+
 ## Decision rule for the M1 main-arm update, fixed now
 
 For each curve (pilot5_curve, pilot7_lr3e5, pilot7_lr3e5_ep), S is the mean over its last two evaluated rounds
