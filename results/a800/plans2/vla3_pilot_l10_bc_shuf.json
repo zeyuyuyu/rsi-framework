@@ -1,0 +1,48 @@
+{
+  "model_name": "openvla-7b-libero-10",
+  "vla": {
+    "checkpoint": "/data0/home/zeyuwang/rsi/models/openvla/openvla-7b-finetuned-libero-10",
+    "python": "/data0/home/zeyuwang/miniconda3/envs/openvla/bin/python",
+    "openvla_root": "/data1/work/zeyuwang/vla_demo/openvla",
+    "rollout_gpus": [
+      7
+    ],
+    "train_gpus": [
+      7
+    ],
+    "greedy_procs_per_gpu": 4,
+    "sample_procs_per_gpu": 3
+  },
+  "suite": "libero_10",
+  "tasks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "heldout_per_task": 40,
+  "test_inits_per_task": 50,
+  "engine": {
+    "rounds": 2,
+    "seed": 0,
+    "seal_tests": true,
+    "feedback": "shuffled"
+  },
+  "meta": {
+    "proposer": "fixed"
+  },
+  "program": {
+    "curation": {
+      "rule": "verified"
+    },
+    "update": {
+      "operator": "bc"
+    }
+  }
+}
