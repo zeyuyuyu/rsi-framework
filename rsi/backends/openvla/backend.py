@@ -35,6 +35,9 @@ class VLAConfig:
     rollout_timeout: int = 12 * 3600
     train_timeout: int = 10 * 3600
     admission_gap: float = 30.0
+    # a GPU counts as free below this many MiB in use. 2000 keeps other users' jobs off our cards; on the shared A800
+    # small foreign jobs (~4 GB evals) slip into our phase gaps and stall a run for hours, so plans there may raise it
+    admit_max_used_mib: int = 2000
     oom_retries: int = 2               # re-admit and rerun a phase whose worker ran out of GPU memory
     subset_after: float = 600.0        # seconds to wait for every rollout GPU before using the free ones
     env: dict = field(default_factory=dict)
@@ -105,7 +108,8 @@ class VLABackend:
         """All rollout GPUs if they free up within ``subset_after`` seconds, else whichever are free (one at
         least); later phases of this rollout run on the GPUs admitted."""
         cfg = self.config
-        adm = admit(cfg.rollout_gpus, gap=cfg.admission_gap, min_gpus=1, full_wait=cfg.subset_after)
+        adm = admit(cfg.rollout_gpus, max_used_mib=cfg.admit_max_used_mib, gap=cfg.admission_gap, min_gpus=1,
+                    full_wait=cfg.subset_after)
         self.active_gpus = list(adm["gpus"])
         return adm
 
@@ -167,7 +171,7 @@ class VLABackend:
                     lora_rank=cfg.lora_rank, lora_alpha=cfg.lora_alpha,
                     target_modules=list(cfg.target_modules), micro_batch=cfg.micro_batch)
         (call / "train_spec.json").write_text(json.dumps(spec))
-        self.admissions.append(admit(cfg.train_gpus, gap=cfg.admission_gap))
+        self.admissions.append(admit(cfg.train_gpus, max_used_mib=cfg.admit_max_used_mib, gap=cfg.admission_gap))
         started = time.time()
         supervised([cfg.python, str(self.worker_dir / "train_worker.py"), str(call / "train_spec.json")],
                    gpus=cfg.train_gpus[:1], timeout=cfg.train_timeout,
