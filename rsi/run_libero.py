@@ -119,9 +119,13 @@ def main():
     kind = plan.get("meta", {}).get("proposer", "fixed")
     proposer = FixedProgram() if kind == "fixed" else NumericSearch(
         domain.edit_space, domain.validate_program, domain.coupling)
+    cfg = EngineConfig(**plan.get("engine", {}))
+    fresh = (domain.fresh_gates(cfg.rounds, len(gate) // len(domain.tasks))
+             if cfg.gate_mode == "fresh_paired" else None)
     engine = Engine(domain, backend, initial, program, gate=gate, audit=audit,
                     tests={"libero_official": (domain, test)}, out=out,
-                    config=EngineConfig(**plan.get("engine", {})), proposer=proposer)
+                    config=cfg, proposer=proposer,
+                    fresh_gates=fresh)
     report = engine.run(resume=args.resume)
     (out / "backend-accounting.json").write_text(json.dumps(dict(
         gpu_seconds=backend.gpu_seconds, admissions=backend.admissions), indent=2, default=str))

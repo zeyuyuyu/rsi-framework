@@ -27,6 +27,7 @@ class Node:
     curation: dict = field(default_factory=dict)
     receipt: dict = field(default_factory=dict)
     seconds: dict = field(default_factory=dict)
+    parent_gate: float | None = None      # gate_mode fresh_paired: the parent's score on this node's gate set
 
 
 class Archive:
@@ -67,7 +68,7 @@ class Archive:
         for n in self.nodes[-limit:]:
             parent = self.get(n.parent_node) if n.parent_node else None
             gain = None if parent is None or n.gate is None or parent.gate is None \
-                else n.gate - parent.gate
+                else n.gate - (parent.gate if n.parent_gate is None else n.parent_gate)
             changes = program_diff(parent.program.params if parent else {}, n.program.params)
             rows.append(dict(round=n.round, node=n.node_id, author=n.program.author,
                              changes=changes, gate=n.gate, gate_gain=gain,

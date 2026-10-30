@@ -9,7 +9,7 @@ import unittest
 
 from rsi.core.archive import Archive, Node, program_diff
 from rsi.core.curation import curate, shuffle_feedback
-from rsi.core.engine import Engine, EngineConfig
+from rsi.core.engine import Engine, EngineConfig, _mean
 from rsi.core.gpu import occupied
 from rsi.domains.libero.domain import LiberoDomain
 import rsi.backends.openvla.backend as vla_backend
@@ -165,6 +165,43 @@ class EngineTests(unittest.TestCase):
         self.assertGreater(rep["tests"]["t"]["final"], one["tests"]["t"]["final"])
         _, domain_nr, _ = run("inner_nonrec", rounds=1, inner_steps=3, recursive=False)
         self.assertTrue(all(g == "init" for kind, g in domain_nr.calls if kind == "propose"))
+
+    def test_fresh_paired_gate_rescores_parent_and_never_trains_on_fresh_cases(self):
+        class Colliding(ToyDomain):
+            def propose(self, backend, generator, program, round_index, seed):
+                cases = super().propose(backend, generator, program, round_index, seed)
+                return cases + [Case(f"fr{round_index}-0", "x", "train", {"d": 0.0}, "toy")]   # a fresh gate case
+
+        fresh = {r: [Case(f"fr{r}-{i}", f"fr{r}-{i}", "gate", {"d": (i + 0.5) / 20 + 0.02 * r}, "toy")
+                     for i in range(20)] for r in (1, 2)}
+        domain, backend = Colliding(), ToyBackend()
+        e = Engine(domain, backend, Version("init", "/b"), domain.default_program(),
+                   gate=heldout("gate", 20), audit=heldout("audit", 20),
+                   tests={"t": (domain, heldout("test", 40))}, out=self.tmp / "fresh",
+                   config=EngineConfig(rounds=2, gate_mode="fresh_paired"), proposer=FixedProgram(),
+                   fresh_gates=fresh)
+        e.run()
+        for r in (1, 2):
+            rec = json.loads((self.tmp / "fresh" / f"round-{r:02d}.json").read_text())
+            if r == 1:                                             # the parent is re-scored on this round's set
+                self.assertAlmostEqual(rec["parent_gate"], _mean(domain.evaluate(backend, Version("init", "/b"),
+                                                                                   fresh[1])))
+            best = max(c["gate"] for c in rec["candidates"])
+            self.assertEqual(rec["accepted"], best >= rec["parent_gate"])
+            cases = (self.tmp / "fresh").glob(f"round-{r:02d}-cases-*.jsonl")
+            ids = {json.loads(l)["id"] for p in cases for l in p.read_text().splitlines() if l.strip()}
+            self.assertFalse(ids & {c.id for cs in fresh.values() for c in cs})   # never trained on
+        plan = json.loads((self.tmp / "fresh" / "plan.json").read_text())
+        self.assertEqual(sorted(plan["fresh_gate_ids"]), ["1", "2"])
+        with self.assertRaises(ValueError):                        # fresh sets only with the fresh mode
+            Engine(domain, backend, Version("init", "/b"), domain.default_program(), gate=heldout("gate", 20),
+                   audit=heldout("audit", 20), tests={}, out=self.tmp / "x", config=EngineConfig(rounds=2),
+                   proposer=FixedProgram(), fresh_gates=fresh)
+        with self.assertRaises(ValueError):                        # every round needs its set
+            Engine(domain, backend, Version("init", "/b"), domain.default_program(), gate=heldout("gate", 20),
+                   audit=heldout("audit", 20), tests={}, out=self.tmp / "y",
+                   config=EngineConfig(rounds=3, gate_mode="fresh_paired"), proposer=FixedProgram(),
+                   fresh_gates=fresh)
 
     def test_test_suites_use_their_own_evaluator(self):
         class Constant:
@@ -592,6 +629,21 @@ class ProgramTests(unittest.TestCase):
             d.propose(None, None, prog, 1, 1001 * 100 + 1)                       # the old seed-1 value
         with self.assertRaises(ValueError):
             inner_seed(1, 10, 1)
+
+    def test_libero_fresh_gate_seeds_are_disjoint_and_in_range(self):
+        from rsi.core.engine import inner_seed
+        d = LiberoDomain("libero_10", range(10))
+        fresh = d.fresh_gates(9, 20)
+        seeds = [c.inputs["init"]["seed"] for cs in fresh.values() for c in cs]
+        self.assertEqual(len(seeds), len(set(seeds)))
+        self.assertTrue(all(0 <= s < 2 ** 32 for s in seeds))
+        gate, audit = d.heldout(40)
+        held = {c.inputs["init"]["seed"] for c in gate + audit}
+        prog = d.validate_program({"curriculum": {"cases": 64}})
+        train = {c.inputs["init"]["seed"] for rs in range(4) for r in range(1, 10) for it in range(3)
+                 for c in d.propose(None, None, prog, r, inner_seed(rs, r, it))}
+        self.assertFalse(set(seeds) & (held | train))
+        self.assertTrue(all(c.split == "gate" for cs in fresh.values() for c in cs))
 
     def test_matched_ratio_reaches_only_the_oft_train_spec(self):
         from unittest import mock

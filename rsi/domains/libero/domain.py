@@ -19,6 +19,7 @@ from ...core.types import Attempt, Case, EvalRecord
 
 TRAIN_SEED_BASE = 100_000_000
 HELDOUT_SEED_BASE = 900_000_000
+FRESH_GATE_SEED_BASE = 950_000_000     # per-round gate sets of gate_mode fresh_paired; disjoint from the above
 
 DEFAULT_PROGRAM = {
     "curriculum": {"cases": 160, "allocation": "uniform", "floor": 0.05},
@@ -121,6 +122,19 @@ class LiberoDomain:
         total = sum(weights.values())
         counts = {t: max(1, round(n * w / total)) for t, w in weights.items()}
         return counts
+
+    def fresh_gates(self, rounds, per_task):
+        """{round: gate cases} for gate_mode fresh_paired: a new set of sampled placements each round."""
+        out = {}
+        for r in range(1, rounds + 1):
+            out[r] = []
+            for t in self.tasks:
+                for k in range(per_task):
+                    s = FRESH_GATE_SEED_BASE + 100_000 * r + 1000 * t + k
+                    cid = f"{self.suite}-t{t}-fresh-r{r}-{k}"
+                    out[r].append(Case(cid, cid, "gate", dict(task_id=t, init=dict(kind="random", seed=s)),
+                                       f"libero:{self.suite}:task{t}:sampled{s}"))
+        return out
 
     def propose(self, backend, generator, program, round_index, seed):
         out = []

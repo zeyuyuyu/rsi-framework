@@ -45,6 +45,11 @@ class EngineConfig:
     candidates_per_round: int = 1     # programs tried per round (incumbent included)
     inner_steps: int = 1              # on-policy sample -> curate -> train cycles per candidate before its gate
     min_gate_gain: float = 0.0
+    # "fixed": every candidate is compared on the one gate set against its parent's stored gate score.
+    # "fresh_paired": round r has its own gate set (``fresh_gates[r]``, never trained on); the parent is scored
+    # on it again and the candidates are compared with that paired score, so acceptance cannot ratchet on one
+    # set's noise (fixed-gate gains did not hold on the audit: addenda 7-8).
+    gate_mode: str = "fixed"
     wall_seconds: int = 14 * 24 * 3600
     test_all_accepted: bool = True
     # Pilots (development decisions on the gate set) must not read test suites at all.
@@ -83,7 +88,17 @@ def _mean(records):
 
 class Engine:
     def __init__(self, domain, backend, initial: Version, seed_program: dict, *,
-                 gate, audit, tests: dict, out: Path, config: EngineConfig, proposer):
+                 gate, audit, tests: dict, out: Path, config: EngineConfig, proposer, fresh_gates=None):
+        if config.gate_mode not in ("fixed", "fresh_paired"):
+            raise ValueError(f"unknown_gate_mode:{config.gate_mode}")
+        if (config.gate_mode == "fresh_paired") != (fresh_gates is not None):
+            raise ValueError("fresh_gates_iff_fresh_paired")
+        if fresh_gates is not None:
+            if sorted(fresh_gates) != list(range(1, config.rounds + 1)):
+                raise ValueError("fresh_gates_must_cover_every_round")
+            if any(c.split != "gate" for cs in fresh_gates.values() for c in cs):
+                raise ValueError("gate_split_required")
+        self.fresh_gates = {r: list(cs) for r, cs in fresh_gates.items()} if fresh_gates else None
         if config.inner_steps > 1 and not (config.rounds <= 9 and config.inner_steps <= 99):
             raise ValueError("inner_steps_need_rounds<=9_and_steps<=99")      # inner_seed's range, checked up front
         self.domain, self.backend, self.initial = domain, backend, initial
@@ -240,6 +255,9 @@ class Engine:
                 if c.split != split:
                     raise ValueError(f"{split}_split_required")
                 heldout[self.domain.leakage_key(c)] = split
+        for r, cases in (self.fresh_gates or {}).items():
+            for c in cases:
+                heldout.setdefault(self.domain.leakage_key(c), f"gate_fresh:{r}")
         for name, (suite, cases) in self.tests.items():
             for c in cases:
                 if c.split != "test":
@@ -250,6 +268,8 @@ class Engine:
                     proposer=getattr(self.proposer, "name", type(self.proposer).__name__),
                     gate_ids=[c.id for c in self.gate], audit_ids=[c.id for c in self.audit],
                     tests={n: [c.id for c in cs] for n, (_, cs) in self.tests.items()},
+                    **({"fresh_gate_ids": {str(r): [c.id for c in cs] for r, cs in self.fresh_gates.items()}}
+                       if self.fresh_gates else {}),
                     test_role="read once after the last round; never decides anything")
         if resume:
             stored = json.loads((self.out / "plan.json").read_text())
@@ -285,6 +305,10 @@ class Engine:
                             programs.append(p)
                 generator = parent.version if cfg.recursive else self.initial
                 candidates = []
+                gate_cases, parent_gate = self.gate, None
+                if self.fresh_gates:
+                    gate_cases = self.fresh_gates[r]
+                    parent_gate, _ = self._score(parent.version, gate_cases, "gate_eval")
                 for k, program in enumerate(programs):
                     tag = f"r{r:02d}c{k}"
                     version, used, steps, signal, stats, receipt = parent.version, set(), [], None, None, None
@@ -334,15 +358,16 @@ class Engine:
                         archive.add(Node(tag, r, parent.version, program, parent.node_id,
                                          signal=signal, curation=stats))
                         continue
-                    gate, _ = self._score(receipt.version, self.gate, "gate_eval")
+                    gate, _ = self._score(receipt.version, gate_cases, "gate_eval")
                     node = archive.add(Node(tag, r, receipt.version, program, parent.node_id,
-                                            gate=gate, signal=signal, curation=stats,
+                                            gate=gate, parent_gate=parent_gate, signal=signal, curation=stats,
                                             receipt=asdict(receipt),
                                             seconds=dict(self.seconds)))
                     candidates.append(node)
                 best = max(candidates, key=lambda n: self.sign * n.gate, default=None)
+                bar = parent.gate if parent_gate is None else parent_gate
                 accepted = (best is not None and
-                            self.sign * best.gate >= self.sign * parent.gate + cfg.min_gate_gain)
+                            self.sign * best.gate >= self.sign * bar + cfg.min_gate_gain)
                 if accepted:
                     best.audit, _ = self._score(best.version, self.audit, "audit_eval")
                     archive.mark_accepted(best)
@@ -353,6 +378,7 @@ class Engine:
                     parent = best
                 _write(self.out / f"round-{r:02d}.json", dict(
                     round=r, parent=parent.node_id, accepted=accepted,
+                    **({"parent_gate": parent_gate} if parent_gate is not None else {}),
                     candidates=[dict(node=n.node_id, gate=n.gate, program=n.program.id,
                                      author=n.program.author, curation=n.curation,
                                      signal=n.signal) for n in candidates],

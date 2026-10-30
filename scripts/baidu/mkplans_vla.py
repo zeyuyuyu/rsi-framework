@@ -9,6 +9,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   oft_pilot6 addendum 6: pilot5_curve with vla.ratio_mode "matched" (old log-probs from the training micro-batches)
   oft_pilot7 addendum 7: pilot5_curve at lr 3e-5 with the matched ratio, token vs episode-balanced loss
   yq_sweep   addendum 8: lr {1e-5,3e-5,1e-4} x loss {token,episode} x seeds {1,2} always-accept curves (Yangquan)
+  yq_main    addendum 9: 5 arms x seeds 1-3 on Yangquan, fresh paired gates, recipe from the addendum-8 rule
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
@@ -89,6 +90,21 @@ elif sys.argv[1] == "yq_sweep":
                       vla=dict(VLA, ratio_mode="matched", loss_agg=agg),
                       engine=dict(rounds=6, inner_steps=3, seed=seed, seal_tests=True, min_gate_gain=-1.0),
                       meta={"proposer": "fixed"}, program=prog)
+elif sys.argv[1] == "yq_main":
+    # addendum 9: the 15 M1 main arms on Yangquan with the recipe the addendum-8 rule picks
+    # usage: mkplans_vla.py yq_main <lr> <token|episode>
+    lr, agg = float(sys.argv[2]), sys.argv[3]
+    assert agg in ("token", "episode")
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": lr}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg=agg)
+    gated = {"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired"}
+    arms = {"fixed": ({}, "fixed"), "full": ({"candidates_per_round": 2}, "numeric"),
+            "nonrec": ({"recursive": False}, "fixed"), "shuffled": ({"feedback": "shuffled"}, "fixed"),
+            "onebig": ({"rounds": 1, "inner_steps": 18}, "fixed")}      # same sampling, no intermediate gate
+    for seed in (1, 2, 3):
+        for arm, (engine, proposer) in arms.items():
+            write(f"yq_oft3_{arm}_s{seed}", vla=vla, engine=dict(gated, seed=seed, **engine),
+                  meta={"proposer": proposer}, program=prog)
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)
