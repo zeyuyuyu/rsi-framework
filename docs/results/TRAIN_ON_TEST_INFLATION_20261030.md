@@ -52,8 +52,22 @@ placements are Baidu's gate + audit draw (250 + 250).
 | SFT start | 18.6% | 18.6% (gate 0.176, audit 0.196) | 0.0 |
 | RL (trained on the official states) | 84.0% (420/500) | 78.8% (gate 0.816, audit 0.760) | +5.2 |
 
-Inflation on Baidu: **+5.2 points**. The 95% CI is about [-1.7, +12.1] (independent binomial cells; a rough
-normal interval).
+Inflation on Baidu: **+5.2 points**.
+
+Paired per-episode bootstrap (second session; 4000 resamples of the official and fresh ids, drawn jointly so
+each placement keeps its RL/SFT and A800/Baidu pairing; every cell's ids hash-checked; script
+`scripts/baidu/pfs_epbits.sh`):
+
+| quantity | estimate | 95% CI |
+|---|---|---|
+| A800 DiD | +16.8 | [+10.6, +23.2] |
+| Baidu DiD | +5.2 | [-1.2, +12.0] |
+| A800 - Baidu | +11.6 | [+4.4, +19.0] |
+| mean of the two platforms | +11.0 | |
+
+Per-episode agreement across platforms on identical placements: RL official 417/500, SFT official 420/500, RL
+fresh 410/500, SFT fresh 395/500. So 16-21% of episodes flip outcome between platforms, and those flips do not
+cancel in the DiD.
 
 The two platforms agree in direction but not in size:
 
@@ -65,9 +79,10 @@ The two platforms agree in direction but not in size:
 * **Same weights, different platforms.** The RL checkpoint itself reads 3.4 points lower on Baidu, 417/500
   episodes agreeing. Each DiD therefore stays within its own platform.
 
-So the honest statement is: training on the test states inflates this checkpoint's reported LIBERO-10 score.
-The size depends on the platform, about +5 (Baidu) to +16 (A800) points. The A800 figure alone overstates the
-certainty.
+So the honest statement is: training on the test states inflates this checkpoint's reported LIBERO-10 score on
+both platforms. The size differs significantly between platforms (difference +11.6, CI [+4.4, +19.0]): +16.8 and
+significant on the A800, +5.2 and not significant on Baidu. Report the per-platform values and their mean (+11),
+never the A800 figure alone.
 
 ## Caveats and checks
 
