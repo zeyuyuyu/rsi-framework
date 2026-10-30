@@ -57,6 +57,14 @@ reported next to pilot6 as corroboration and cannot change the decisions below. 
 `ratio_check` on the pilot-4 replica's round-1 spec gave step-1 out-of-band shares of 0.0533 (legacy) and
 exactly 0 (matched) (docs/results/UPDATE_PROBE_20261030.md).
 
+Second amendment (bug, before any pilot6 result): the A800 replica crashed at its second inner step. The
+inner-step seed `round seed * 100 + step` (545f0a6) sent LIBERO placement seeds past 2**32 for engine seeds
+>= 1 (`np.random.seed` refused 1.001e11). Seed 0 stays in range, which is why the Baidu pilot-5 runs are fine.
+The fix (`engine.inner_seed`) gives seed 0 exactly the old values, so pilot5 is unchanged and pilot6's pairing
+holds. For seeds 1-3 every (seed, round <= 9, step) gets its own in-range seed, and placement seeds are now
+range-checked when proposed. The replica restarts from scratch with the fix; its 1.3 h partial run is set aside
+as `.failed1`. The main arms (seeds 1-3) would have hit the same crash.
+
 ## Use of the results, fixed now
 
 1. **Validity.** pilot6's first receipt must show a step-1 out-of-band share below 0.001. Otherwise the fix

@@ -51,6 +51,19 @@ class EngineConfig:
     seal_tests: bool = False
 
 
+def inner_seed(run_seed: int, round_index: int, step: int) -> int:
+    """Seed of on-policy step ``step`` of round ``round_index``. Step 0 keeps the round seed (run_seed * 1000 +
+    round), so inner_steps=1 runs are unchanged. Later steps use run_seed * 1000 + 100 * round + step: the same
+    values as the first formula (round seed * 100 + step) for run seed 0, but small enough for seeds 1-3, where
+    round seed * 100 sent LIBERO placement seeds (1e8 + seed * 1e6) past 2**32 and crashed the rollout workers
+    (A800 pilot-6 replica, 10-30). Distinct for every (run seed, round <= 9, step <= 99)."""
+    if step == 0:
+        return run_seed * 1000 + round_index
+    if not (0 < step < 100 and 0 < round_index < 10):
+        raise ValueError(f"inner_seed_out_of_range:round={round_index},step={step}")
+    return run_seed * 1000 + 100 * round_index + step
+
+
 def _write(path: Path, data):
     with path.open("x") as stream:
         stream.write(json.dumps(data, indent=2, sort_keys=True, default=str) + "\n")
@@ -71,6 +84,8 @@ def _mean(records):
 class Engine:
     def __init__(self, domain, backend, initial: Version, seed_program: dict, *,
                  gate, audit, tests: dict, out: Path, config: EngineConfig, proposer):
+        if config.inner_steps > 1 and not (config.rounds <= 9 and config.inner_steps <= 99):
+            raise ValueError("inner_steps_need_rounds<=9_and_steps<=99")      # inner_seed's range, checked up front
         self.domain, self.backend, self.initial = domain, backend, initial
         self.seed_program = Program.make(domain.validate_program(seed_program))
         self.gate, self.audit, self.tests = list(gate), list(audit), dict(tests)
@@ -275,7 +290,7 @@ class Engine:
                     version, used, steps, signal, stats, receipt = parent.version, set(), [], None, None, None
                     for it in range(cfg.inner_steps):
                         self._clock()
-                        s_it = seed if it == 0 else seed * 100 + it      # inner_steps=1 keeps the old seeds
+                        s_it = inner_seed(cfg.seed, r, it)
                         gen = (version if it else generator) if cfg.recursive else self.initial
                         cases, attempts, rejected = self._rollouts(gen, program, r, s_it, heldout,
                                                                    exclude=frozenset(used))

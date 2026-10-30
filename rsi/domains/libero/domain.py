@@ -127,6 +127,8 @@ class LiberoDomain:
         for t, count in self._allocation(program["curriculum"]).items():
             for k in range(count):
                 s = TRAIN_SEED_BASE + seed * 1_000_000 + round_index * 10_000 + 100 * t + k
+                if not 0 <= s < 2 ** 32:                     # LIBERO seeds numpy's legacy generator
+                    raise ValueError(f"placement_seed_out_of_range:{s}")
                 cid = f"{self.suite}-t{t}-r{round_index}-s{s}"
                 out.append(Case(cid, cid, "train", dict(task_id=t, init=dict(kind="random", seed=s)),
                                 f"libero:{self.suite}:task{t}:sampled{s}"))

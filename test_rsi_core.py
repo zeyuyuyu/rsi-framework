@@ -573,6 +573,26 @@ class ProgramTests(unittest.TestCase):
             d.validate_program({"update": {"lr": 1e-3}})
         self.assertEqual(d.edit_space["curriculum.cases"], (40, 400))   # the meta level's space is unchanged
 
+    def test_inner_seeds_stay_in_range_unique_and_keep_seed0(self):
+        from rsi.core.engine import inner_seed
+        d = LiberoDomain("libero_10", range(10))
+        prog = d.validate_program({"curriculum": {"cases": 64}})
+        seen = {}
+        for run_seed in range(4):
+            for r in range(1, 10):
+                for it in range(3):
+                    s = inner_seed(run_seed, r, it)
+                    self.assertNotIn(s, seen)                                     # no shared placements
+                    seen[s] = (run_seed, r, it)
+                    if run_seed == 0 and it:
+                        self.assertEqual(s, (0 * 1000 + r) * 100 + it)          # pilot-5 seeds unchanged
+                    for case in d.propose(None, None, prog, r, s):                # raises if past 2**32
+                        self.assertLess(case.inputs["init"]["seed"], 2 ** 32)
+        with self.assertRaises(ValueError):
+            d.propose(None, None, prog, 1, 1001 * 100 + 1)                       # the old seed-1 value
+        with self.assertRaises(ValueError):
+            inner_seed(1, 10, 1)
+
     def test_matched_ratio_reaches_only_the_oft_train_spec(self):
         from unittest import mock
         from rsi.backends.openvla import backend as vb
