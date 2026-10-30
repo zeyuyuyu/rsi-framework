@@ -11,7 +11,8 @@
       7
     ],
     "greedy_procs_per_gpu": 4,
-    "sample_procs_per_gpu": 3
+    "sample_procs_per_gpu": 3,
+    "admit_max_used_mib": 8000
   },
   "suite": "libero_10",
   "tasks": [
