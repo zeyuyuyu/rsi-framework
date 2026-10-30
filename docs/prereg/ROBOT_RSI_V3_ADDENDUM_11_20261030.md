@@ -42,3 +42,9 @@ rounds were seen.
   1-3, and the fresh paired gate (addendum 9).
 * If neither reaches +3, LIBERO-Goal is reported next to LIBERO-10 as a negative result at this budget.
 * The audits come from the PFS reader job, as in the addendum-8 amendment.
+
+Amendment (2026-10-30 ~14:15Z, before any LIBERO-Goal result): the Beijing Goal pilots are waiting for CPU,
+and a cavin GPU is free. So seed-1 replicas run on cavin as they become possible:
+`a8_oftg_curve_bc_s1` now, and `a8_oftg_curve_grpo_s1` when a further GPU frees (`scripts/a800/mkoft_goal.py`,
+src3, the same programs, `admit_max_used_mib` 8000). The rule above is applied per operator to the mean D over
+the runs available by 2026-11-01 12:00Z: Beijing seed 0 and cavin seed 1, each against its own n0.
