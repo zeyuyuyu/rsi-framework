@@ -1,0 +1,45 @@
+{
+  "version": {
+    "id": "0b79286c02d2af8afc3f4aa7006deb886ea198e630da1637cbb609b070f88a42",
+    "location": "/data0/home/zeyuwang/rsi/runs2/ratiocheck_pilot4_s1_r01/adapter-legacy",
+    "parent_id": "base:oft-sft-libero10-traj1"
+  },
+  "operator": "grpo",
+  "optimizer_steps": 3,
+  "items": 256,
+  "trainable_parameters": 33554432,
+  "before_sha256": "59827b7e7695e6603d8f3bc62ad44c5d002e1dcbfd5336421d1273e2226f67eb",
+  "after_sha256": "e816c67b815e1f643200ac7591b9af8562982308e074f540f008deb93e1caaea",
+  "frames": 14013,
+  "seconds": 18.501365661621094,
+  "loss_first": 0.028462273767217994,
+  "loss_last": 0.13728714175522327,
+  "extra": {
+    "losses": [
+      0.028462273767217994,
+      0.07986378739587963,
+      0.13728714175522327
+    ],
+    "clipfrac": [
+      0.05329241071428571,
+      0.08063616071428571,
+      0.12834821428571427
+    ],
+    "update": {
+      "operator": "grpo",
+      "lr": 0.0001,
+      "steps": 3,
+      "batch": 64,
+      "clip_low": 0.2,
+      "clip_high": 0.28,
+      "ratio": "legacy"
+    },
+    "ratio_mode": "legacy",
+    "step1_logratio": {
+      "mean_abs": 0.0444870550031638,
+      "max_abs": 0.7759439945220947,
+      "outside_clip": 0.05329241071428571
+    },
+    "counted_tokens": 782719
+  }
+}
