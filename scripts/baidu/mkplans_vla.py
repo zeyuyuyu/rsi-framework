@@ -11,6 +11,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   yq_sweep   addendum 8: lr {1e-5,3e-5,1e-4} x loss {token,episode} x seeds {1,2} always-accept curves (Yangquan)
   yq_main    addendum 9: 5 arms x seeds 1-3 on Yangquan, fresh paired gates, recipe from the addendum-8 rule
   oftg_pilot addendum 11: OFT on LIBERO-Goal, GRPO (lr 3e-5, matched, episode loss) vs BC curves, seed 0
+  oftg_rep   addendum 11 amendment 2: a further seed replica of one oftg_pilot curve (oftg_rep <seed> <grpo|bc>)
   goal_main  LIBERO-Goal main arms (5 arms x seeds 1-3, fresh paired gates) with the operator addendum 11 picks
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
@@ -115,6 +116,17 @@ elif sys.argv[1] == "oftg_pilot":
     for tag, prog, extra in (("grpo", grpo, {"ratio_mode": "matched", "loss_agg": "episode"}), ("bc", bc, {})):
         write(f"bj_oftg_curve_{tag}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
               vla=dict(VLA, **extra), engine=curve, meta={"proposer": "fixed"}, program=prog)
+elif sys.argv[1] == "oftg_rep":
+    # addendum 11, amendment 2: a further seed replica of one oftg_pilot curve. usage: mkplans_vla.py oftg_rep <seed> <grpo|bc>
+    seed, tag = int(sys.argv[2]), sys.argv[3]
+    assert tag in ("grpo", "bc") and seed > 0
+    curve = dict(rounds=6, inner_steps=3, seed=seed, seal_tests=True, min_gate_gain=-1.0)
+    if tag == "grpo":
+        prog, extra = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}}), {"ratio_mode": "matched", "loss_agg": "episode"}
+    else:
+        prog, extra = merge(merge(OFT_PROGRAM, BC), {"curriculum": {"cases": 64}}), {}
+    write(f"bj_oftg_curve_{tag}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
+          vla=dict(VLA, **extra), engine=curve, meta={"proposer": "fixed"}, program=prog)
 elif sys.argv[1] == "goal_main":
     # the LIBERO-Goal main arms once addendum 11's rule picks an operator (specified in its own addendum before launch)
     # usage: mkplans_vla.py goal_main <grpo|bc> <prefix: bj|yq>

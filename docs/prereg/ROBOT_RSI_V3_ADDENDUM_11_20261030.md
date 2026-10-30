@@ -48,3 +48,11 @@ and a cavin GPU is free. So seed-1 replicas run on cavin as they become possible
 `a8_oftg_curve_bc_s1` now, and `a8_oftg_curve_grpo_s1` when a further GPU frees (`scripts/a800/mkoft_goal.py`,
 src3, the same programs, `admit_max_used_mib` 8000). The rule above is applied per operator to the mean D over
 the runs available by 2026-11-01 12:00Z: Beijing seed 0 and cavin seed 1, each against its own n0.
+
+Amendment 2 (2026-10-30 ~21:05Z). This is after round 3 of `bj_oftg_curve_grpo` was seen, and before any
+result from the run added here. A Beijing slot is free, and no cavin GPU is free for `a8_oftg_curve_grpo_s1`
+(still queued). So `bj_oftg_curve_grpo_s2` runs on Beijing now: the same GRPO program, seed 2
+(`mkplans_vla.py oftg_rep 2 grpo`). A run started now cannot reach rounds 5-6 by 2026-11-01 12:00Z, so it is
+**not** part of the decision rule above, which is unchanged. It is a seed replication, read the same way (D at
+rounds 5-6 against its own n0) and reported next to the rule's runs whatever it shows. The cavin seed-1
+replica keeps its place in the rule if it is available by the deadline.
