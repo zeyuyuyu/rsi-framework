@@ -20,7 +20,7 @@ Settings were confirmed from the runs' receipts: `loss_agg` episode and `ratio_m
 | recipe | run | n0 S | S by round so far |
 |---|---|---|---|
 | lr 1e-4, token, matched | `a8_oft3_pilot6_curve_matched_s1` | 0.2025 | 0.200, 0.190, 0.190, 0.1875, 0.200 |
-| lr 3e-5, token, matched | `a8_oft3_pilot7_lr3e5_s1` | 0.2025 | 0.1825, 0.150, 0.185, 0.1975 |
+| lr 3e-5, token, matched | `a8_oft3_pilot7_lr3e5_s1` | 0.2025 | 0.1825, 0.150, 0.185, 0.1975, 0.1925 |
 | lr 3e-5, episode, matched | `a8_oft3_pilot7_lr3e5_ep_s1` | 0.200 | 0.190, 0.175, 0.215, 0.1725 |
 
 ## Reading so far
