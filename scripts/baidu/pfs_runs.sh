@@ -15,6 +15,10 @@ for p in sorted(glob.glob(os.path.join(d, "round-[0-9][0-9].json"))):
     x = json.load(open(p))
     print("ROUNDFILE", r, json.dumps(dict(round=x["round"], parent=x.get("parent"), accepted=x.get("accepted"),
           candidates=[dict(node=c["node"], gate=c.get("gate"), audit=c.get("audit")) for c in x.get("candidates", [])])))
+for p in sorted(glob.glob(os.path.join(d, "ckpt-*", "receipt.json")))[:1]:
+    e = json.load(open(p)).get("extra", {})
+    print("RECEIPT_SETTINGS", r, os.path.basename(os.path.dirname(p)), json.dumps(dict(
+        loss_agg=e.get("loss_agg"), ratio_mode=e.get("ratio_mode"), lr=(e.get("update") or {}).get("lr"))))
 a = os.path.join(d, "archive.jsonl")
 if os.path.exists(a):
     for line in open(a):
