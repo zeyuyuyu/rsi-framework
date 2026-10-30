@@ -50,6 +50,12 @@ exactly, deterministic).
 * Replicated on 500 independent fresh placements (above).
 * RL still improves on its start under fresh placements (20.0% -> 76.0%). The claim is that the reported number
   is inflated, not that the RL does nothing.
+* Control on a second model that never trained on the official inits: OpenVLA-7B's official LIBERO-10
+  fine-tune (M2, A800) scores 55.4% on the 500 official episodes and 54.2% on 500 fresh placements (gate
+  half 134/250, audit half 137/250; `results/a800/runs2/infl_openvla10_fresh`). The gap is -1.2 points, inside
+  noise. So the official inits are not easier than fresh placements for a model that was not trained on them.
+  This supports the difference-in-differences assumption, and it locates the OFT RL checkpoint's +16 points in
+  training on the test inits.
 
 ## Literature (2026-10-30 quick search)
 
