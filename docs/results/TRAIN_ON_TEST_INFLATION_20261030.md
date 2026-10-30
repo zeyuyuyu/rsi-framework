@@ -73,7 +73,7 @@ certainty.
 
 * Platform: on Baidu the same SFT checkpoint scores 18.6% on the same 500 official episodes, against 14.6% on
   the A800. The policy is sensitive to small numeric and rendering differences. The inflation estimate uses one
-  platform throughout. A Baidu replication is queued.
+  platform throughout. The Baidu replication above (+5.2) is computed the same way.
 * Replicated on 500 independent fresh placements (above).
 * RL still improves on its start under fresh placements (20.0% -> 76.0%). The claim is that the reported number
   is inflated, not that the RL does nothing.
