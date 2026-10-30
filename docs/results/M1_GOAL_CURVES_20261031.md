@@ -43,7 +43,8 @@ pairs.
   sampling: `bj_oftg_curve_grpo_s2` (addendum 11 amendment 2, outside the rule) reproduced n0 exactly, gate 0.600 and
   audit 0.575. So a mean over seeds removes training noise but not placement-sampling noise. Any cross-seed CI must
   resample placements jointly across the seeds.
-* One seed. The cavin seed-1 GRPO replica (`a8_oftg_curve_grpo_s1`) is queued for the next free GPU.
+* One seed with results so far. Seed 2 is running on Beijing, and the cavin seed-1 GRPO replica
+  (`a8_oftg_curve_grpo_s1`) is queued for the next free GPU.
 * Contrast with LIBERO-10 (`M1_RECIPE_CURVES_20261031.md`), where the same recipe from a 19% start stays within
   noise for 18 steps. This fits the addendum-11 reason: from a mid-range start, more sampled groups contain both
   outcomes and carry a GRPO signal.
