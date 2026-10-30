@@ -17,6 +17,13 @@ n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
 
 Settings confirmed from the receipt: `loss_agg` episode, `ratio_mode` matched, lr 3e-5.
 
+## cavin, seed 1 (A800, in progress)
+
+| run | update | n0 S | S by round so far | change vs n0 |
+|---|---|---|---|---|
+| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560 | +0.25, -0.75, -2.5 |
+| `a8_oftg_curve_grpo_s1` | GRPO lr 3e-5, matched, episode loss | queued | | |
+
 ## Paired check on identical placements (second session, 2026-10-31)
 
 Reader `scripts/baidu/pfs_nodebits.sh` (job `zw-rsi-script-nodebits1`) takes per-placement greedy outcomes from
