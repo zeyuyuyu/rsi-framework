@@ -39,22 +39,27 @@ def jobs():
 
 
 def fetch_logs(job_id):
+    """All log lines of a job (an error marker line is appended if a page failed)."""
+    return fetch_logs_ok(job_id)[0]
+
+
+def fetch_logs_ok(job_id):
+    """(lines, ok). ok is False when a page failed: the caller then keeps its previous snapshot, because a
+    partial or error-only fetch would overwrite a good log (10-31: a 504 replaced a run's log with one line)."""
     lines, marker = [], None
     for _ in range(80):
         try:
             st, out = aihc_job.logs(job_id, 1000, marker)
-        except Exception as e:  # network hiccup: return what we have
-            lines.append(f"## DescribeJobLogs error {type(e).__name__}")
-            break
+        except Exception as e:  # network hiccup
+            return lines + [f"## DescribeJobLogs error {type(e).__name__}"], False
         if st != 200 or not isinstance(out, dict):
-            lines.append(f"## DescribeJobLogs HTTP {st}: {str(out)[:300]}")
-            break
+            return lines + [f"## DescribeJobLogs HTTP {st}: {str(out)[:300]}"], False
         lines += out.get("logs") or []
         nxt = out.get("nextMarker")
         if not nxt or nxt == marker:
             break
         marker = nxt
-    return lines
+    return lines, True
 
 
 def write(path, lines):
@@ -90,13 +95,19 @@ def main():
                 last[jid] = status
             is_latest = latest.get(name) == jid
             if status in TERMINAL:
-                lines = fetch_logs(jid)
+                lines, ok = fetch_logs_ok(jid)
+                if not ok:              # retry next pass rather than save a broken final log
+                    say(f"{name} {jid} final log fetch failed: {lines[-1][:120]}")
+                    continue
                 write(os.path.join(LOGS, f"{name}.log" if is_latest else f"{name}.{jid}.log"), lines)
                 end = [ln for ln in lines if "RSI_JOB_DONE" in ln or "RSI_JOB_FAILED" in ln]
                 say(f"{name} {jid} FINAL {status}: saved {len(lines)} lines; {end[-1][-120:] if end else 'no end marker'}")
                 saved.add(jid)
             elif status == "Running" and is_latest:
-                lines = fetch_logs(jid)
+                lines, ok = fetch_logs_ok(jid)
+                if not ok:              # keep the last good snapshot
+                    say(f"{name} {jid} log fetch failed, kept previous snapshot: {lines[-1][:120]}")
+                    continue
                 write(os.path.join(LOGS, f"{name}.running.log"), lines)
                 hb = [ln for ln in lines if "run files:" in ln or "STAGE" in ln or "PREFLIGHT_OK" in ln]
                 if hb:
