@@ -42,6 +42,33 @@ SFT 18.0%, RL 74.8%. Inflation on these: **+16.0 points, 95% CI [9.2, 22.4]**, m
 Re-running the first 500 fresh placements reproduced 491/500 RL outcomes (the A800 stack is close to, but not
 exactly, deterministic).
 
+## Replication on Baidu (RTX Blackwell, deterministic evaluation, 2026-10-31)
+
+The same two checkpoints and the same procedure ran on Baidu, each cell on that platform only. The 500 fresh
+placements are Baidu's gate + audit draw (250 + 250).
+
+| checkpoint | official 500 | fresh 500 | gap |
+|---|---|---|---|
+| SFT start | 18.6% | 18.6% (gate 0.176, audit 0.196) | 0.0 |
+| RL (trained on the official states) | 84.0% (420/500) | 78.8% (gate 0.816, audit 0.760) | +5.2 |
+
+Inflation on Baidu: **+5.2 points**. The 95% CI is about [-1.7, +12.1] (independent binomial cells; a rough
+normal interval).
+
+The two platforms agree in direction but not in size:
+
+* **RL gap.** The RL checkpoint scores higher on its training states than on fresh ones on both platforms: +11.4
+  on the A800, +5.2 on Baidu.
+* **Most of the difference is in the SFT term.** On the A800 the SFT start scored 5.4 points *lower* on the
+  official states than on fresh ones, and that adds to the A800 DiD. On Baidu the SFT term is 0.0. The OpenVLA
+  control on the A800 (-1.2, above) suggests the A800 SFT term is partly noise.
+* **Same weights, different platforms.** The RL checkpoint itself reads 3.4 points lower on Baidu, 417/500
+  episodes agreeing. Each DiD therefore stays within its own platform.
+
+So the honest statement is: training on the test states inflates this checkpoint's reported LIBERO-10 score.
+The size depends on the platform, about +5 (Baidu) to +16 (A800) points. The A800 figure alone overstates the
+certainty.
+
 ## Caveats and checks
 
 * Platform: on Baidu the same SFT checkpoint scores 18.6% on the same 500 official episodes, against 14.6% on
