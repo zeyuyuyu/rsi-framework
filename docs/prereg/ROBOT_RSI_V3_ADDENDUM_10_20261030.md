@@ -45,3 +45,8 @@ starting success.
   * the fresh paired gate (addendum 9);
   * the official test read once at the end.
   If either rule fails, M2 is reported as a pilot-level observation only.
+
+Amendment (before `bc_shuf` starts): `bc_shuf` runs from the src3 tree with `vla.admit_max_used_mib = 8000`
+(501f23e). On the shared A800, another user's ~4 GB eval jobs repeatedly take our cards between phases, and the
+default 2000 MiB admission makes a run wait up to 4 h. For this config the src3 tree behaves the same as src2,
+which `bc_s1` uses: one inner step, fixed gate, and every newer option is OFT-only or off by default.
