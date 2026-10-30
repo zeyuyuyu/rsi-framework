@@ -137,6 +137,17 @@ def main(spec_path):
     # pilot-4 replica, step 1). "matched": old log-probs from the exact micro-batches training will run, so
     # the ratio starts at 1 and only the update moves it.
     ratio_mode = update.get("ratio", "legacy")
+    # "token" (default): every counted token weighs the same, so episodes that run to the step limit (failures,
+    # 2-3x the chunks of a success) carry most of the gradient. "episode": each chunk weighs 1 / (chunks of its
+    # episode), so every episode carries the same total weight, as in GRPO's per-sequence mean.
+    loss_agg = update.get("loss_agg", "token")
+    if loss_agg not in ("token", "episode"):
+        raise SystemExit(f"unknown_loss_agg:{loss_agg}")
+
+    def chunk_weights(picks):
+        if loss_agg == "token":
+            return torch.ones(len(picks), 1, device="cuda:0")
+        return torch.tensor([1.0 / len(episodes[e]["tokens"]) for e, _ in picks], device="cuda:0")[:, None]
     old = None
     if operator == "grpo" and ratio_mode == "legacy":
         vla.eval()
@@ -165,6 +176,7 @@ def main(spec_path):
     started = time.time()
     for step, picks in enumerate(schedule):
         counted = float(masks(picks).sum())
+        weighted = float((masks(picks) * chunk_weights(picks)).sum())
         opt.zero_grad(set_to_none=True)
         step_loss, clipped = 0.0, 0
         for b in range(0, batch, mb):
@@ -182,7 +194,7 @@ def main(spec_path):
                 if step == 0:
                     dev = (lp - ref).detach()[m]
                     step1_logratio = (step1_logratio or []) + dev.cpu().tolist()
-            loss = -torch.where(m, obj, torch.zeros_like(obj)).sum() / counted
+            loss = -(torch.where(m, obj, torch.zeros_like(obj)) * chunk_weights(chunk)).sum() / weighted
             if not torch.isfinite(loss):
                 raise SystemExit("nonfinite_loss")
             loss.backward()
@@ -202,7 +214,7 @@ def main(spec_path):
                    trainable_parameters=sum(p.numel() for p in params),
                    before_sha256=before, after_sha256=after, frames=len(index),
                    seconds=time.time() - started, loss_first=losses[0], loss_last=losses[-1],
-                   extra=dict(losses=losses, clipfrac=clipfrac, update=update, ratio_mode=ratio_mode,
+                   extra=dict(losses=losses, clipfrac=clipfrac, update=update, ratio_mode=ratio_mode, loss_agg=loss_agg,
                               step1_logratio=None if not step1_logratio else dict(
                                   mean_abs=float(np.mean(np.abs(step1_logratio))),
                                   max_abs=float(np.max(np.abs(step1_logratio))),

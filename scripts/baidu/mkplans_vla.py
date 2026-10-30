@@ -7,6 +7,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   oft_pilot3 addendum 3 sealed pair, 1 round: GRPO lr 1e-4 with 400 and 1000 update steps
   oft_pilot5 addendum 5 sealed pair: 6 rounds x 3 inner on-policy steps of 64 placements, gated vs always-accept
   oft_pilot6 addendum 6: pilot5_curve with vla.ratio_mode "matched" (old log-probs from the training micro-batches)
+  oft_pilot7 addendum 7: pilot5_curve at lr 3e-5 with the matched ratio, token vs episode-balanced loss
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
@@ -71,6 +72,12 @@ elif sys.argv[1] == "oft_pilot6":
     write("bj_oft3_pilot6_curve_matched", vla=dict(VLA, ratio_mode="matched"),
           engine=dict(rounds=6, inner_steps=3, seed=0, seal_tests=True, min_gate_gain=-1.0),
           meta={"proposer": "fixed"}, program=short)
+elif sys.argv[1] == "oft_pilot7":
+    short = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    for tag, extra in (("lr3e5", {}), ("lr3e5_ep", {"loss_agg": "episode"})):
+        write(f"bj_oft3_pilot7_{tag}", vla=dict(VLA, ratio_mode="matched", **extra),
+              engine=dict(rounds=6, inner_steps=3, seed=0, seal_tests=True, min_gate_gain=-1.0),
+              meta={"proposer": "fixed"}, program=short)
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)

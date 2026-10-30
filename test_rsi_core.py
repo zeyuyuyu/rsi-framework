@@ -602,14 +602,16 @@ class ProgramTests(unittest.TestCase):
             with self.assertRaises(ValueError):                          # the OpenVLA worker has no such mode
                 vb.VLABackend(vb.VLAConfig("ck", "py", "root", tmp, ratio_mode="matched"))
             specs = {}
-            for mode in ("legacy", "matched"):
-                be = OFTBackend(vb.VLAConfig("ck", "py", "root", f"{tmp}/{mode}", ratio_mode=mode))
+            for mode in ("legacy", "matched", "episode"):
+                kw = dict(loss_agg="episode", ratio_mode="matched") if mode == "episode" else dict(ratio_mode=mode)
+                be = OFTBackend(vb.VLAConfig("ck", "py", "root", f"{tmp}/{mode}", **kw))
                 with mock.patch.object(vb, "admit"), mock.patch.object(vb, "supervised", side_effect=RuntimeError):
                     with self.assertRaises(RuntimeError):
                         be.train(Version("v0", "ck", None), [{"episode": "e"}], f"{tmp}/out", {"lr": 1e-4}, 0)
                 specs[mode] = json.loads(next(Path(f"{tmp}/{mode}").glob("*-train-*/train_spec.json")).read_text())
             self.assertEqual(specs["legacy"]["update"], {"lr": 1e-4})    # legacy specs are unchanged
             self.assertEqual(specs["matched"]["update"], {"lr": 1e-4, "ratio": "matched"})
+            self.assertEqual(specs["episode"]["update"], {"lr": 1e-4, "ratio": "matched", "loss_agg": "episode"})
 
 
 if __name__ == "__main__":
