@@ -29,8 +29,9 @@ body = {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,
         "resources": [
-            {"name": "cpu", "quantity": 16},
-            {"name": "memory", "quantity": 32},
+            # the shared Beijing queue (180 CPU, 8 cards) often has only 1-2 CPU left: CPU_JOB=1 still schedules
+            {"name": "cpu", "quantity": int(os.environ.get("CPU_JOB", "16"))},
+            {"name": "memory", "quantity": int(os.environ.get("MEM_JOB", "32"))},
             {"name": "sharedMemory", "quantity": 4},
         ],
         "envs": [

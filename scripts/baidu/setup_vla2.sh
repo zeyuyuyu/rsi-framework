@@ -81,7 +81,10 @@ if ! ls /usr/lib/x86_64-linux-gnu/libEGL.so.1 >/dev/null 2>&1 || ! ls /usr/lib/x
     sed -i "s|http://archive.ubuntu.com|https://mirrors.tuna.tsinghua.edu.cn|g; s|http://security.ubuntu.com|https://mirrors.tuna.tsinghua.edu.cn|g" /etc/apt/sources.list 2>/dev/null
     timeout 600 apt-get -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update -qq 2>&1 | tail -1
   fi
-  timeout 900 env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libegl1 libopengl0 libgl1 libglx0 libglvnd0 libosmesa6 2>&1 | tail -1
+  # EGL first and on its own: on Yangquan the osmesa download (libllvm) is slow enough to time out the whole install
+  timeout 600 env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libegl1 libopengl0 libgl1 libglx0 libglvnd0 2>&1 | tail -1
+  [ "${RSI_SKIP_OSMESA:-0}" = 1 ] || timeout 600 env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libosmesa6 2>&1 | tail -1
+  echo "apt done $(el): $(ls /usr/lib/x86_64-linux-gnu/libEGL.so.1 /usr/lib/x86_64-linux-gnu/libOSMesa.so* 2>/dev/null | tr '\n' ' ')"
 fi
 ls /usr/share/glvnd/egl_vendor.d/
 
