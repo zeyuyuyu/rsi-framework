@@ -78,7 +78,9 @@ unit-temperature NLL of T = 1.6 self-samples. GRPO, which scales the logits by t
 such drift in any run (sampled success about 0.63 at bj seed 0's r05/r06).
 
 **Addendum-11 rule for BC (read 2026-10-31): BC fails.** D is -6.4 on Beijing seed 0 and -48.1 on cavin seed 1,
-and both runs collapse. On Beijing, greedy success held through r05 and fell at r06, 1.5 rounds after the sampled
+and both runs collapse. The Beijing paired placement bootstrap (`nodebits3`, same 200 + 200 ids at every node) gives
+D -6.37 [-11.37, -1.37], P(D <= 0) 0.994. r06 alone is -12.75 [-18.50, -6.75] (gate 51 down / 19 up, audit 46 / 27).
+The early gains are not significant: r03 +4.00 [-0.75, +9.00], r02 and r04 +1.25. On Beijing, greedy success held through r05 and fell at r06, 1.5 rounds after the sampled
 success did, the same order as on cavin. The rule's GRPO read is pending on cavin seed 1.
 
 ## cavin, seed 1 (A800, in progress)
