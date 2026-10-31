@@ -56,3 +56,8 @@ result from the run added here. A Beijing slot is free, and no cavin GPU is free
 **not** part of the decision rule above, which is unchanged. It is a seed replication, read the same way (D at
 rounds 5-6 against its own n0) and reported next to the rule's runs whatever it shows. The cavin seed-1
 replica keeps its place in the rule if it is available by the deadline.
+
+Amendment 3 (2026-10-31 ~02:05Z). This comes after `bj_oftg_curve_grpo` finished; its gates are seen, its
+audits at rounds 5-6 are not yet read. The Beijing slot it held is free. So `bj_oftg_curve_grpo_s3` runs now:
+the same GRPO program, seed 3 (`mkplans_vla.py oftg_rep 3 grpo`). Like seed 2 (amendment 2), it is outside the
+decision rule, which is unchanged. It is a seed replication, read the same way and reported whatever it shows.
