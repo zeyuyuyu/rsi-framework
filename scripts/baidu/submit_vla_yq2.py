@@ -5,7 +5,7 @@ source rsi_src_v14 from CFS, the BOS mount only for the plan file and the small-
 Create one AIHC job for a robotics RSI run on the Yangquan A800 pool (run_vla3.sh, node-local run dir).
 usage: submit_vla_yq.py <plan> <model_id> [a800_sha]
   plan: name of shitianyu-rsi/plans/<plan>.json on BOS (A800 plan format; paths are rewritten on the node)
-env:  ARGS (extra run_libero args), JOB_CPU (default 18: 16 jobs x 18 fit the ~297 free CPUs of the queue),
+env:  ARGS (extra run_libero args), JOB_CPU (default 18: 16 jobs x 18 fit the ~297 free CPUs of the queue), JOB_MEM (Gi, default 160; runs use ~20-31 GB RSS),
       RSI_PFS (node-local root, default /mnt/pfs/shitianyu-rsi: no PFS mounts there, so it is local disk)
 Appends name<TAB>jobId to jobs_yq.tsv here and to the yq poller's jobs.tsv."""
 import datetime, json, os, sys
@@ -45,7 +45,7 @@ body = {
         "resources": [
             {"name": "baidu.com/a800_80g_cgpu", "quantity": 1},
             {"name": "cpu", "quantity": int(os.environ.get("JOB_CPU", "18"))},
-            {"name": "memory", "quantity": 160},
+            {"name": "memory", "quantity": int(os.environ.get("JOB_MEM", "160"))},
             {"name": "sharedMemory", "quantity": 32},
         ],
         "envs": envs,
