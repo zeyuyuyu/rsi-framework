@@ -1,0 +1,69 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.575,
+      "gate": 0.6,
+      "node": "n0",
+      "round": 0
+    },
+    {
+      "audit": 0.585,
+      "gate": 0.555,
+      "node": "r01c0",
+      "round": 1
+    },
+    {
+      "audit": 0.61,
+      "gate": 0.58,
+      "node": "r02c0",
+      "round": 2
+    },
+    {
+      "audit": 0.635,
+      "gate": 0.565,
+      "node": "r03c0",
+      "round": 3
+    },
+    {
+      "audit": 0.59,
+      "gate": 0.645,
+      "node": "r04c0",
+      "round": 4
+    },
+    {
+      "audit": 0.635,
+      "gate": 0.61,
+      "node": "r05c0",
+      "round": 5
+    },
+    {
+      "audit": 0.625,
+      "gate": 0.585,
+      "node": "r06c0",
+      "round": 6
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "true",
+    "gate_mode": "fixed",
+    "inner_steps": 3,
+    "min_gate_gain": -1.0,
+    "recursive": true,
+    "rounds": 6,
+    "seal_tests": true,
+    "seed": 2,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 43241.453827777994,
+  "retained": "r06c0",
+  "seconds": {
+    "attempt": 23714.117720739217,
+    "audit_eval": 3395.4236753819278,
+    "gate_eval": 3500.3252517768415,
+    "propose": 0.002535318722948432,
+    "train": 12629.202739418251
+  },
+  "status": "complete_tests_sealed"
+}
