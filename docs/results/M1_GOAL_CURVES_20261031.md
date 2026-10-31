@@ -68,6 +68,15 @@ n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
 
 Settings confirmed from the receipt: `loss_agg` episode, `ratio_mode` matched, lr 3e-5.
 
+## BC collapse replicates on Beijing (2026-10-31, interim)
+
+`bj_oftg_curve_bc` (seed 0, deterministic Beijing evaluation) follows the cavin seed-1 collapse about 1.5 rounds
+later. Its exact sampled success held at 53-63% through round 4 (pooled r04 0.600). Then in round 5 the training
+items fell 103 → 70 → 50 and the step-100 BC loss rose 0.687 → 1.127 → 1.536. On cavin this is the signature that
+preceded the fall at r03-r04. It shows the same mechanism on two platforms, which fits the addendum-12 diagnosis:
+unit-temperature NLL of T = 1.6 self-samples. GRPO, which scales the logits by the sampling temperature, shows no
+such drift in any run (sampled success about 0.63 at bj seed 0's r05/r06).
+
 ## cavin, seed 1 (A800, in progress)
 
 | run | update | n0 S | S by round so far | change vs n0 |
