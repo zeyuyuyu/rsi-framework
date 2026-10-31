@@ -1,0 +1,43 @@
+{
+  "node": "r01c0",
+  "program": {
+    "author": "seed",
+    "id": "7cc0df8e20b35b27",
+    "note": "",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 40,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 3e-05,
+        "operator": "grpo",
+        "steps": 50
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "21cd292efdc12eae9cf1f9be1aaf14e6f52b6709b9b5c790fa0cdcd5a19b9a21",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_smoke_goal/ckpt-r01c0",
+    "parent_id": "base:oft-sft-libero-goal-traj1"
+  }
+}
