@@ -148,6 +148,29 @@ exclude 0. Seeds 0 and 2 resampled jointly (one draw of placements applied to bo
 +4.81 [+1.19, +8.56], P(D <= 0) = 0.004. This is a descriptive replication read, not the rule's statistic, and
 seed 3 is still running.
 
+## Beijing seed 3 GRPO, final, and the three Beijing seeds together (2026-10-31, outside the rule)
+
+`bj_oftg_curve_grpo_s3` finished at 14:03Z (rc 0). `nodebits5` (job-fhm93dz7e2n9) used the same gate and audit
+ids at every node as seeds 0 and 2, and its counts match the final accepted.jsonl.
+
+| node | gate | audit | S |
+|---|---|---|---|
+| n0 | 120/200 | 115/200 | 0.5875 |
+| r05c0 | 127/200 | 121/200 | 0.6200 |
+| r06c0 | 124/200 | 123/200 | 0.6175 |
+
+D = +3.12 points, paired 95% CI [-0.63, +6.88], P(D <= 0) = 0.057 (10k draws). The analytic paired SE is 1.93,
+giving [-0.66, +6.91]. Flips against n0: r05 up 48 / down 35, r06 up 42 / down 30 (gate + audit).
+
+All three Beijing seeds put D above 0: +7.00, +2.63 and +3.12. Only seed 0 excludes 0 alone. A joint bootstrap
+over the three runs (one draw of the shared placements applied to every run and node, 10k draws) gives
+**+4.25 [+0.83, +7.83], P(D <= 0) = 0.007**. That CI conditions on these three training runs: it resamples
+placements, not training seeds. Treating the seed as the unit (n = 3, t with 2 df) gives mean +4.25, SD 2.39,
+and [-1.70, +10.20], which does not exclude 0. So the defensible statement is: on fixed placements, all three
+Beijing GRPO runs improve over n0, with a placement-level effect of about +4 points. Three seeds are too few to
+bound the between-run spread. This is descriptive and outside the rule; the rule's read is bj seed 0 plus the
+cavin seed-1 replica (r06 due about 16:30Z).
+
 ## Paired check on identical placements (second session, 2026-10-31)
 
 Reader `scripts/baidu/pfs_nodebits.sh` (job `zw-rsi-script-nodebits1`) takes per-placement greedy outcomes from
