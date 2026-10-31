@@ -72,7 +72,7 @@ Settings confirmed from the receipt: `loss_agg` episode, `ratio_mode` matched, l
 
 | run | update | n0 S | S by round so far | change vs n0 |
 |---|---|---|---|---|
-| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560, **0.4475** | +0.25, -0.75, -2.5, **-13.75** |
+| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560, **0.4475**, **0.1525** | +0.25, -0.75, -2.5, **-13.75**, **-43.25** |
 | `a8_oftg_curve_grpo_s1` | GRPO lr 3e-5, matched, episode loss | queued | | |
 | `a8_oftg_curve_bct_s1` | BC with the NLL at the rollout temperature (addendum 12) | queued | | |
 
