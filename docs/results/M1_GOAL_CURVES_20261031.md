@@ -1,7 +1,7 @@
 # M1 on LIBERO-Goal (OFT 1-traj SFT): addendum-11 pilot curves, interim (2026-10-31)
 
-Status: **interim, one seed, rounds 1-3 of 6.** The addendum-11 rule is read at rounds 5-6 (mean D over the
-runs available by 2026-11-01 12:00Z). This is not a conclusion.
+Status: **Beijing seed 0 is complete and read once at rounds 5-6 (below). The addendum-11 rule averages it with
+the cavin seed-1 replica (running), so the rule has not fired yet.** One seed is not a conclusion.
 
 Pilots are sealed, so no test was read. S = (gate + audit) / 2, 400 sampled placements, always-accept curves
 (no selection), Beijing evaluation (deterministic: all variance below comes from placement sampling).
@@ -12,7 +12,7 @@ n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
 
 | run | update | S by round 1 → 3 | change vs n0 |
 |---|---|---|---|
-| `bj_oftg_curve_grpo` | GRPO lr 3e-5, matched ratio, episode loss | 0.6075, 0.6175, 0.650; gate r04 0.645, r05 0.665 (audits read at the end) | +2.0, +3.0, +6.25; gate r04 +4.5, r05 +6.5 |
+| `bj_oftg_curve_grpo` | GRPO lr 3e-5, matched ratio, episode loss | 0.6075, 0.6175, 0.650, 0.6325, 0.655, 0.660 (final) | +2.0, +3.0, +6.25, +4.5, +6.75, +7.25 |
 | `bj_oftg_curve_bc` | BC on verified successes, lr 1e-5 | gate r01 0.570, r02 0.580, r03 0.640 (audit read at the end) | gate -3.0, -2.0, +4.0 |
 | `bj_oftg_curve_grpo_s2` | seed 2 replica (amendment 2, outside the rule) | n0 0.600 / 0.575 (identical to seed 0); gate r01 0.555, r02 0.580 | gate -4.5, -2.0 (seed 0: -1.0, +3.5) |
 
@@ -34,6 +34,34 @@ Beijing BC seed 0 has not shown this through round 3: training items 96-102 per 
 from ~0.32 (rounds 1-2) to ~0.40 (round 3) and not climbing within the round, r03 gate 0.640. At r04 step 0 its loss fell back to 0.34
 with 97 items, so the drift is absent there so far. Either the flattening rate depends on the run (seed, platform numerics), or something
 specific to the cavin run contributes. The temperature-matched pilot is the direct test.
+
+## Beijing seed 0 GRPO: the addendum-11 read at rounds 5-6 (2026-10-31, one read)
+
+Second session, `nodebits2` (job-0w0nr2d1ecjp). The counts match the final log's accepted.jsonl exactly, and all
+nodes share the same gate ids (c629d74a…) and audit ids (71d5ceb3…).
+
+| node | gate | audit | S |
+|---|---|---|---|
+| n0 | 120/200 | 115/200 | 0.5875 |
+| r05c0 | 133/200 | 129/200 | 0.6550 |
+| r06c0 | 138/200 | 126/200 | 0.6600 |
+
+**D = +7.00 points, paired 95% CI [+2.88, +11.25], P(D <= 0) = 0.0006.** The bootstrap uses 10k draws, and each
+draw resamples the gate and audit placements once and applies them to n0, r05 and r06.
+
+| split | D | 95% CI | P(D <= 0) |
+|---|---|---|---|
+| gate only | +7.75 | [+1.75, +13.75] | 0.0066 |
+| audit only (never used for any decision) | +6.25 | [+0.50, +12.25] | 0.017 |
+
+Flips against n0: r05 up 64 / down 37, r06 up 58 / down 29 (gate + audit). An analytic check from these counts
+(this session) gives paired SEs of 2.49 (r05) and 2.30 (r06) points, consistent with the bootstrap CI.
+
+Reading: on its own pre-registered measure, this run clears the +3 bar, and its CI excludes 0. So does its
+never-selected audit half alone. This is an always-accept curve, so no selection inflates it, and the Baidu
+evaluation is deterministic. The rule averages it with the cavin seed-1 replica (started 2026-10-31 01:29Z). If
+that run's D is at least -1.0, the mean reaches +3 and the rule specifies GRPO main arms. Seeds 2 and 3 (Beijing,
+outside the rule) are running.
 
 ## Paired check on identical placements (second session, 2026-10-31)
 
