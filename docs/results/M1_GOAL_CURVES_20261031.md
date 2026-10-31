@@ -142,7 +142,10 @@ pairs.
 * One seed with results so far. Seed 2 is running on Beijing, and the cavin seed-1 GRPO replica
   (`a8_oftg_curve_grpo_s1`) is queued for the next free GPU.
 * Contrast with LIBERO-10 (`M1_RECIPE_CURVES_20261031.md`), where the same recipe from a 19% start stays within
-  noise for 18 steps. This fits the addendum-11 reason: from a mid-range start, more sampled groups contain both
-  outcomes and carry a GRPO signal.
+  noise for 18 steps. The addendum-11 reason ("from a mid-range start, more sampled groups contain both outcomes")
+  is **not** supported by the round files. The mixed-group fraction is about the same on LIBERO-10: Beijing
+  lr3e-5 episode 0.47-0.52, lr1e-4 0.43-0.55 per round. Goal's is 0.48-0.57. So LIBERO-10 does not lack mixed
+  groups, and why it does not improve is open. Candidates: long horizons make the episode-level advantage
+  noisier per token, and its mixed groups mostly hold one or two successes out of eight.
 * The main-arm plan generator is ready (`mkplans_vla.py goal_main <grpo|bc> <bj|yq>`: five arms, seeds 1-3,
   fresh paired gates). It is not run until the rule fires, and the operator is fixed in its own addendum first.
