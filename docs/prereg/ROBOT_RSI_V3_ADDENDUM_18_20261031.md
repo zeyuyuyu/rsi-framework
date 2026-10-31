@@ -49,3 +49,24 @@ with no gate. Measuring R5 only against the gated `onebig` would let a gate reje
   unchanged: +2, CI excluding 0. The RSI-beats-one-shot-RL claim is made only if both reads clear the bar. If they
   disagree, both are stated.
 * Compute ratios (this addendum) are computed for both.
+
+## Amendment 2 (2026-10-31 ~22:20Z): an early test read, and a design freeze from here on
+
+The registered rule is that the official test (500 episodes) is read once, after all main arms finish. At about
+22:15Z the working session read the finished runs `a8_goalmain_fixed_s1` and `a8_goalmain_fixed_s2` early. Both
+runs had completed with code 0.
+
+The numbers:
+* s1: n0 0.590, final 0.616, D +2.60, CI [-0.80, +6.00].
+* s2: n0 0.576, final 0.590, D +1.40, CI [-2.0, +4.6].
+
+These numbers are now known while the other arms are still running. To keep that knowledge from shaping the
+experiment:
+
+* **Design freeze from 22:20Z.** No new arm, bar, analysis, seed or program change is registered from here on.
+  This covers addenda 14-20 and their amendments as they now stand. The only changes allowed are operational:
+  rerunning a crash unchanged, resuming after a job time limit (this addendum), and the reads already registered,
+  such as R5-ungated, H-cap and fixed_t12.
+* **No more early reads.** No other test file is opened until every main arm has its `report.json`. The two early
+  values above stay as they are and are not reread.
+* **Disclosure.** The final write-up states this early read and its time.
