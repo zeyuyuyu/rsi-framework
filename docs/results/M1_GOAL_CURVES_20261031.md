@@ -171,6 +171,44 @@ Beijing GRPO runs improve over n0, with a placement-level effect of about +4 poi
 bound the between-run spread. This is descriptive and outside the rule; the rule's read is bj seed 0 plus the
 cavin seed-1 replica (r06 due about 16:30Z).
 
+## cavin seed-1 GRPO replica: the addendum-11 rule read (2026-10-31 16:30Z)
+
+`a8_oftg_curve_grpo_s1` finished all six rounds at 16:16Z (code 0). The per-placement greedy bits were read on
+cavin with `pfs_nodebits.sh` (RUNROOT=~/rsi/runs2, over ssh). Every node's counts match accepted.jsonl. All nodes
+use the same gate ids (c629d74a…) and audit ids (71d5ceb3…), which are the same sets as Beijing seeds 0, 2 and 3.
+
+| node | gate | audit | S |
+|---|---|---|---|
+| n0 | 110/200 | 122/200 | 0.5800 |
+| r05c0 | 123/200 | 122/200 | 0.6125 |
+| r06c0 | 125/200 | 126/200 | 0.6275 |
+
+**D = +4.00 points, paired 95% CI [+0.25, +7.87], P(D <= 0) = 0.020** (10k draws, gate and audit placements
+resampled jointly as for seed 0). The analytic paired SE is 1.92, giving [+0.24, +7.76].
+
+| split | D | 95% CI | P(D <= 0) |
+|---|---|---|---|
+| gate only | +7.00 | [+1.50, +12.75] | 0.007 |
+| audit only | +1.00 | [-4.00, +6.00] | 0.37 |
+| r05 only (pooled) | +3.25 | [-1.00, +7.50] | 0.073 |
+| r06 only (pooled) | +4.75 | [+0.50, +9.00] | 0.018 |
+
+Flips against n0: r05 gate 27 up / 14 down, audit 17 / 17; r06 gate 28 / 13, audit 20 / 16.
+
+**Addendum-11 rule for GRPO: met.** The replica's D (+4.00) is at least -1.0, and the mean with Beijing seed 0
+is (+7.00 + 4.00) / 2 = **+5.50**, which is at least +3. As registered, the rule specifies GRPO main arms. On the
+identical placements, the two runs resampled jointly (one draw applied to both, 10k draws) give +5.50
+[+2.56, +8.50], P(D <= 0) = 0.0001.
+
+Caveats:
+* On cavin the gain sits mostly on the gate half (+7.0), and the audit half alone is +1.0 and not significant. In
+  an always-accept curve neither half picks anything, so the two are just independent 200-placement samples. The
+  6-point gap between them is about 1.6 of its SE (about 3.8), which fits noise and is not evidence of selection.
+* cavin's n0 gate (0.55) sits 5 points below Beijing's n0 on the same placements (0.60). A800-class evaluation is
+  only near-deterministic, and n0 was evaluated once, so part of cavin's gate gain may come from a low n0 draw.
+  The audit half has no such gap (cavin 0.61 vs Beijing 0.575).
+* Across the four GRPO curves (Beijing 0/2/3, cavin 1), every D is positive: +7.00, +2.63, +3.12, +4.00.
+
 ## Paired check on identical placements (second session, 2026-10-31)
 
 Reader `scripts/baidu/pfs_nodebits.sh` (job `zw-rsi-script-nodebits1`) takes per-placement greedy outcomes from
