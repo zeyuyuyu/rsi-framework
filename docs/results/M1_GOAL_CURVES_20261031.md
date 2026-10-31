@@ -130,6 +130,24 @@ evaluation is deterministic. The rule averages it with the cavin seed-1 replica 
 that run's D is at least -1.0, the mean reaches +3 and the rule specifies GRPO main arms. Seeds 2 and 3 (Beijing,
 outside the rule) are running.
 
+## Beijing seed 2 GRPO, final (2026-10-31, outside the rule)
+
+`bj_oftg_curve_grpo_s2` finished all six rounds. `nodebits4` (job-k4lvach7outw): same gate and audit ids as
+seed 0 at every node, and the counts match the final accepted.jsonl.
+
+| node | gate | audit | S |
+|---|---|---|---|
+| n0 | 120/200 | 115/200 | 0.5875 |
+| r05c0 | 122/200 | 127/200 | 0.6225 |
+| r06c0 | 117/200 | 125/200 | 0.6050 |
+
+D = +2.63 points, paired 95% CI [-1.12, +6.50], P(D <= 0) = 0.094 (10k draws). The analytic paired SE gives 1.95,
+so [-1.20, +6.45]. Flips against n0 are mostly on the audit half: r05 up 44 / down 30, r06 up 45 / down 38
+(gate + audit). Seed 2 points the same way as seed 0 but is about a third of its size, and alone it does not
+exclude 0. Seeds 0 and 2 resampled jointly (one draw of placements applied to both runs, 10k draws) give
++4.81 [+1.19, +8.56], P(D <= 0) = 0.004. This is a descriptive replication read, not the rule's statistic, and
+seed 3 is still running.
+
 ## Paired check on identical placements (second session, 2026-10-31)
 
 Reader `scripts/baidu/pfs_nodebits.sh` (job `zw-rsi-script-nodebits1`) takes per-placement greedy outcomes from
