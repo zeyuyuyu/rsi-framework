@@ -20,7 +20,8 @@ meta level. This addendum adds it and orders the main arms so that the RSI-versu
 ## The `llm` meta level (code: `rsi/meta/proposers.py: LLMMetaProposer`)
 
 * **Model.** `anthropic/claude-sonnet-5-5` through the CommonStack gateway (OpenAI-compatible), temperature 1.0,
-  one call per round. Each call returns k = 2 candidate procedures, the same k as `full`.
+  one call per round. Like `full` (`candidates_per_round` 2), each round trains the incumbent procedure plus
+  `candidates_per_round - 1` = 1 new one, which the LLM proposes. The compute is therefore the same as `full`.
 * **What it reads.** The current procedure; the edit space; and, for each past candidate, its procedure diff,
   gate score and gate change, whether it was kept, and per inner step the sampled success, the share of scenes with
   both outcomes and the item count. It also reads the training loss at the first and last update step.
