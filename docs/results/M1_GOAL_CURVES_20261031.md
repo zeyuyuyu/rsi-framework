@@ -63,8 +63,8 @@ n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
 | run | update | S by round 1 → 3 | change vs n0 |
 |---|---|---|---|
 | `bj_oftg_curve_grpo` | GRPO lr 3e-5, matched ratio, episode loss | 0.6075, 0.6175, 0.650, 0.6325, 0.655, 0.660 (final) | +2.0, +3.0, +6.25, +4.5, +6.75, +7.25 |
-| `bj_oftg_curve_bc` | BC on verified successes, lr 1e-5 | pooled 0.5475, 0.600, 0.6275, 0.600 (r04 gate 0.575, audit 0.625) | -4.0, +1.25, +4.0, +1.25 |
-| `bj_oftg_curve_grpo_s2` | seed 2 replica (amendment 2, outside the rule) | n0 0.600 / 0.575 (identical to seed 0); gate r01 0.555, r02 0.580, r03 0.565, r04 0.645 | gate -4.5, -2.0, -3.5, +4.5 (seed 0: -1.0, +3.5, +5.5, +4.5) |
+| `bj_oftg_curve_bc` | BC on verified successes, lr 1e-5 | pooled 0.5475, 0.600, 0.6275, 0.600, 0.5875, **0.460** (final; r06 gate 0.44 / audit 0.48; **D -6.4**) | -4.0, +1.25, +4.0, +1.25, 0.0, -12.75 |
+| `bj_oftg_curve_grpo_s2` | seed 2 replica (amendment 2, outside the rule) | n0 0.600 / 0.575 (identical to seed 0); gate r01 0.555, r02 0.580, r03 0.565, r04 0.645, r05 0.610 | gate -4.5, -2.0, -3.5, +4.5, +1.0 (seed 0: -1.0, +3.5, +5.5, +4.5, +6.5) |
 
 Settings confirmed from the receipt: `loss_agg` episode, `ratio_mode` matched, lr 3e-5.
 
@@ -76,6 +76,10 @@ items fell 103 → 70 → 50 and the step-100 BC loss rose 0.687 → 1.127 → 1
 preceded the fall at r03-r04. It shows the same mechanism on two platforms, which fits the addendum-12 diagnosis:
 unit-temperature NLL of T = 1.6 self-samples. GRPO, which scales the logits by the sampling temperature, shows no
 such drift in any run (sampled success about 0.63 at bj seed 0's r05/r06).
+
+**Addendum-11 rule for BC (read 2026-10-31): BC fails.** D is -6.4 on Beijing seed 0 and -48.1 on cavin seed 1,
+and both runs collapse. On Beijing, greedy success held through r05 and fell at r06, 1.5 rounds after the sampled
+success did, the same order as on cavin. The rule's GRPO read is pending on cavin seed 1.
 
 ## cavin, seed 1 (A800, in progress)
 
