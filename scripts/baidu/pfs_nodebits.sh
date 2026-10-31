@@ -3,9 +3,10 @@
 # (the run dir itself only holds summaries). Node = the call spec's adapter dir name (n0 when no adapter); a
 # later call for the same node and set replaces an earlier one. One line per (node, set):
 #   NODEBITS <run> <node> <gate|audit> <n> <ids sha256[:16]> <bits in sorted-id order>
-# env: RUNS="run_dir_name ..." under /mnt/pfs/shitianyu-rsi/runs
+# env: RUNS="run_dir_name ..." under RUNROOT (default /mnt/pfs/shitianyu-rsi/runs; on cavin ~/rsi/runs2, e.g.
+#      ssh cavin 'RUNROOT=$HOME/rsi/runs2 RUNS="a8_x" bash -s' < pfs_nodebits.sh)
 for r in $RUNS; do
-  w=/mnt/pfs/shitianyu-rsi/runs/$r.work
+  w=${RUNROOT:-/mnt/pfs/shitianyu-rsi/runs}/$r.work
   echo "== $r: $(ls $w 2>&1 | wc -l) calls"
   python3 - "$w" "$r" <<'PY'
 import glob, hashlib, json, os, sys
