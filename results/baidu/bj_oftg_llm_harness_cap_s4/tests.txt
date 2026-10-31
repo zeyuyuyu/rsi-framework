@@ -1,0 +1,203 @@
+----- latest worker logs (failure context) -----
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oftg_llm_harness_cap_s4.work/00021-train-1793474152/log.txt
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+/tmp/src/rsi/backends/openvla_oft/train_worker.py:215: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  step_loss += float(loss)
+{"step": 10, "loss": 0.06409228383563459, "clipfrac": 0.10212053571428571, "elapsed": 36.7}
+{"step": 20, "loss": -0.038060450344346464, "clipfrac": 0.10412573673870335, "elapsed": 74.4}
+{"step": 30, "loss": -0.01308958325535059, "clipfrac": 0.10188043783328656, "elapsed": 111.7}
+{"step": 40, "loss": 0.12244832469150424, "clipfrac": 0.10580971091776593, "elapsed": 148.8}
+{"step": 50, "loss": -0.04246873641386628, "clipfrac": 0.1137824993010903, "elapsed": 185.5}
+{"step": 60, "loss": -0.007152242586016655, "clipfrac": 0.11400282885431401, "elapsed": 223.5}
+{"step": 70, "loss": -0.057187166064977646, "clipfrac": 0.10463169642857142, "elapsed": 260.5}
+{"step": 80, "loss": -0.15829056734219193, "clipfrac": 0.10881696428571429, "elapsed": 298.0}
+{"step": 90, "loss": 0.0497680208645761, "clipfrac": 0.13922991071428573, "elapsed": 334.6}
+{"step": 100, "loss": -0.0010475516319274902, "clipfrac": 0.11614173228346457, "elapsed": 371.4}
+/mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/peft/utils/save_and_load.py:195: UserWarning: Could not find a config file in /mnt/pfs/shitianyu-rsi/models/Openvla-oft-SFT-libero-goal-traj1 - will assume that the vocabulary was not modified.
+  warnings.warn(
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oftg_llm_harness_cap_s4.work/00020-rollout-1793472614/log-s0.txt
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oftg_llm_harness_cap_s4.work/00020-rollout-1793472614/log-s1.txt
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/bj_oftg_llm_harness_cap_s4.work/00020-rollout-1793472614/log-s2.txt
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
