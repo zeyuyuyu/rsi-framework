@@ -1,6 +1,6 @@
 """A800: addendum-14 LIBERO-Goal main arm (OFT 1-traj SFT, GRPO program of addendum 11, fresh paired gates).
 arms: fixed | full (numeric meta level) | llm (LLM meta level, addendum 14) | llm_harness (addendum 16) |
-onebig | nonrec | shuffled.
+llm_harness_cap (addendum 19: llm_harness capped at the seed's per-step work, src7) | onebig | nonrec | shuffled.
 Runs from src5 (bc_temp + LLM meta level), admit_max_used_mib 8000. The llm arm reads the gateway key from
 ~/.cskey on cavin (mode 600; never in a plan or log).
 usage: mkoft_goal_main.py <order> <seed> <arm>"""
@@ -18,20 +18,26 @@ ARMS = {"fixed": ({}, {"proposer": "fixed"}),
                                                         "base_url": "https://api.commonstack.ai/v1",
                                                         "model": "anthropic/claude-sonnet-5-5",
                                                         "key_file": f"{H}/.cskey", "max_calls": 24}),
+        # addendum 19: same, but no procedure may do more work per inner step than the seed (scaled down onto the cap)
+        "llm_harness_cap": ({"candidates_per_round": 2}, {"proposer": "llm", "space": "harness", "budget": "seed",
+                                                            "base_url": "https://api.commonstack.ai/v1",
+                                                            "model": "anthropic/claude-sonnet-5-5",
+                                                            "key_file": f"{H}/.cskey", "max_calls": 24}),
         "onebig": ({"rounds": 1, "inner_steps": 18}, {"proposer": "fixed"}),
         "nonrec": ({"recursive": False}, {"proposer": "fixed"}),
         "shuffled": ({"feedback": "shuffled"}, {"proposer": "fixed"})}
 assert arm in ARMS
 engine_extra, meta = ARMS[arm]
 name = f"a8_goalmain_{arm}_s{seed}"
-src = f"{H}/rsi/src6" if arm == "llm_harness" else f"{H}/rsi/src5"   # src6 = src5 + harness components
+src = {"llm_harness": f"{H}/rsi/src6",          # src6 = src5 + harness components
+       "llm_harness_cap": f"{H}/rsi/src7"}.get(arm, f"{H}/rsi/src5")   # src7 = src6 + budget cap (addendum 19)
 vla = {"model_family": "oft", "checkpoint": f"{H}/rsi/models/oft/Openvla-oft-SFT-libero-goal-traj1",
        "python": f"{H}/miniconda3/envs/openvla/bin/python", "openvla_root": f"{H}/rsi/simplevla_rl",
        "rollout_gpus": [0], "train_gpus": [0], "greedy_procs_per_gpu": 4, "sample_procs_per_gpu": 3,
        "admit_max_used_mib": 8000, "ratio_mode": "matched", "loss_agg": "episode"}
 program = {"curriculum": {"cases": 64}, "solver": {"temperature": 1.6},
            "update": {"steps": 100, "batch": 64, "lr": 3e-5}}
-if arm == "llm_harness":     # the run's own settings, written into the program so the meta level can edit them
+if arm.startswith("llm_harness"):     # the run's own settings, written into the program so the meta level can edit them
     program["update"].update(ratio="matched", loss_agg="episode", bc_temp="unit")
     program["curation"] = {"adv": "center"}
 engine = dict({"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": seed}, **engine_extra)

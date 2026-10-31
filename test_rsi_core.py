@@ -733,6 +733,25 @@ class ProgramTests(unittest.TestCase):
             d.validate_program({"update": {"lr": 1e-3}})
         self.assertEqual(d.edit_space["curriculum.cases"], (40, 400))   # the meta level's space is unchanged
 
+    def test_budget_cap_scales_proposals_onto_the_seed_budget(self):
+        d = LiberoDomain("libero_goal", range(10))
+        seed = {"curriculum": {"cases": 64}, "solver": {"samples": 8}, "update": {"steps": 100, "batch": 64}}
+        self.assertIn("512 tries", d.set_budget_cap(seed))
+        self.assertEqual(d.budget_cap, dict(rollouts=512, updates=6400))
+        self.assertEqual(d.validate_capped(seed), d.validate_program(seed))           # the seed itself is untouched
+        big = d.validate_capped({"curriculum": {"cases": 160, "allocation": "progress"},
+                                 "solver": {"samples": 12, "temperature": 1.2},
+                                 "update": {"steps": 150, "batch": 64, "lr": 5e-5}})
+        self.assertEqual((big["curriculum"]["cases"], big["solver"]["samples"]), (42, 12))   # fewer scenes first
+        self.assertEqual(big["update"]["steps"], 100)
+        self.assertEqual((big["curriculum"]["allocation"], big["solver"]["temperature"], big["update"]["lr"]),
+                         ("progress", 1.2, 5e-5))                                        # other edits survive
+        many = d.validate_capped({"curriculum": {"cases": 40}, "solver": {"samples": 16}})
+        self.assertEqual((many["curriculum"]["cases"], many["solver"]["samples"]), (40, 12))  # then fewer tries
+        small = d.validate_capped({"curriculum": {"cases": 48}, "update": {"steps": 50}})
+        self.assertEqual((small["curriculum"]["cases"], small["update"]["steps"]), (48, 50))  # under the cap: kept
+        self.assertIsNone(LiberoDomain("libero_goal", range(10)).budget_cap)            # off unless a plan asks
+
     def test_inner_seeds_stay_in_range_unique_and_keep_seed0(self):
         from rsi.core.engine import inner_seed
         d = LiberoDomain("libero_10", range(10))

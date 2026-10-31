@@ -121,19 +121,24 @@ def main():
     kind = plan.get("meta", {}).get("proposer", "fixed")
     harness = plan.get("meta", {}).get("space") == "harness"     # addendum 16: knobs + harness components
     space = domain.harness_space if harness else domain.edit_space
+    doc = domain.harness_doc if harness else ""
+    validate = domain.validate_program
+    if plan.get("meta", {}).get("budget") == "seed":            # addendum 19: no proposal may out-spend the seed
+        doc = (doc + "\n" + domain.set_budget_cap(program)).strip()
+        validate = domain.validate_capped
     if kind == "fixed":
         proposer = FixedProgram()
     elif kind == "numeric":
-        proposer = NumericSearch(space, domain.validate_program, domain.coupling)
+        proposer = NumericSearch(space, validate, domain.coupling)
     elif kind == "llm":                 # addendum 14: an external LLM diagnoses the round history and edits the program
         m = plan["meta"]          # the log lands in the run dir, which the engine creates before any proposal
-        proposer = LLMMetaProposer(space, domain.validate_program,
-                                   NumericSearch(space, domain.validate_program, domain.coupling),
+        proposer = LLMMetaProposer(space, validate,
+                                   NumericSearch(space, validate, domain.coupling),
                                    (RelayClient(os.environ["RSI_LLM_RELAY"], out / "relay-state.json")
                                     if m.get("relay") else      # addendum 17: Yangquan, key stays on cavin
                                     OpenAICompatClient(m["base_url"], m["model"], m["key_file"])), m["model"],
                                    log_path=out / "meta-llm.jsonl", max_calls=m.get("max_calls", 24),
-                                   space_doc=domain.harness_doc if harness else "")
+                                   space_doc=doc)
     else:
         raise ValueError(f"unknown_proposer:{kind}")
     cfg = EngineConfig(**plan.get("engine", {}))

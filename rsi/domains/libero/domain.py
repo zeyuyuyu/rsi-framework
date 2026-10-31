@@ -65,6 +65,11 @@ trained ('matched'). update.loss_agg: the loss averages over tokens ('token') or
 weight ('episode'). update.bc_temp: bc's likelihood uses logits at temperature 1 ('unit') or divided by the
 sampling temperature of the try ('rollout')."""
 
+BUDGET_DOC = """Compute cap: a procedure may not do more work per update step than the starting procedure.
+curriculum.cases x solver.samples must stay at or below {rollouts} tries, and update.steps x update.batch at or
+below {updates} examples. A procedure over the cap is scaled down (fewer scenes, then fewer tries; fewer steps, then
+a smaller batch), so spend the budget where it helps most."""
+
 # Count fields whose upper bound grows with a run's budget_scale, so a compute-matched single round (`onebig`:
 # the summed budget of N rounds at once) validates without widening the space the meta level searches.
 BUDGET_FIELDS = ("curriculum.cases", "curation.budget", "update.steps")
@@ -82,6 +87,11 @@ def _get(params, dotted):
     return node
 
 
+def _put(params, dotted, value):
+    section, key = dotted.split(".")
+    params[section][key] = value
+
+
 class LiberoDomain:
     name = "libero"
     higher_is_better = True
@@ -92,9 +102,35 @@ class LiberoDomain:
         self.edit_space, self.coupling = EDIT_SPACE, COUPLING
         self.harness_space, self.harness_doc = HARNESS_SPACE, HARNESS_DOC
         self.task_rates = {t: None for t in self.tasks}   # latest verified rate per task
+        self.budget_cap = None
 
     def default_program(self):
         return copy.deepcopy(DEFAULT_PROGRAM)
+
+    def set_budget_cap(self, program):
+        """Addendum 19: cap every procedure at the seed program's per-inner-step work, so the meta level can reallocate
+        compute (scenes vs tries, steps vs batch) but not buy more of it."""
+        p = self.validate_program(program)
+        self.budget_cap = dict(rollouts=p["curriculum"]["cases"] * p["solver"]["samples"],
+                               updates=p["update"]["steps"] * p["update"]["batch"])
+        return BUDGET_DOC.format(**self.budget_cap)
+
+    def fit_budget(self, params):
+        """Scale an over-cap procedure down onto the cap: fewer scenes, then fewer tries; fewer steps, then a smaller
+        batch. Every other field is kept."""
+        if not self.budget_cap:
+            return params
+        out = copy.deepcopy(params)
+        for (count, per), cap in ((("curriculum.cases", "solver.samples"), self.budget_cap["rollouts"]),
+                                  (("update.steps", "update.batch"), self.budget_cap["updates"])):
+            if _get(out, count) * _get(out, per) > cap:
+                _put(out, count, max(EDIT_SPACE[count][0], cap // _get(out, per)))
+            if _get(out, count) * _get(out, per) > cap:
+                _put(out, per, max(EDIT_SPACE[per][0], cap // _get(out, count)))
+        return out
+
+    def validate_capped(self, params):
+        return self.fit_budget(self.validate_program(params))
 
     def validate_program(self, params):
         out = copy.deepcopy(DEFAULT_PROGRAM)
