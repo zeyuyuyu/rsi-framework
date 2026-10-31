@@ -34,6 +34,8 @@ if os.environ.get("RSI_LLM_RELAY"):    # addendum 17: presigned URL of this run'
     envs.append({"name": "RSI_LLM_RELAY", "value": os.environ["RSI_LLM_RELAY"]})
 if os.environ.get("ARGS"):
     envs.append({"name": "ARGS", "value": os.environ["ARGS"]})
+if os.environ.get("RESUME_RUN"):       # addendum 18: continue a run dir on the CFS after a job hit RUN_TIMEOUT_S
+    envs.append({"name": "RESUME_RUN", "value": os.environ["RESUME_RUN"]})
 body = {
     "name": name,
     "jobType": "PyTorchJob",
