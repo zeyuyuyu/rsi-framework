@@ -35,3 +35,12 @@ So every bar is computed within one platform:
 addendum 10. It is stopped to free a GPU, and its records are kept. The free GPUs then take, in order: `llm` s1,
 `fixed` s1, `llm` s2, `fixed` s2, `llm` s3, `fixed` s3, as the pilots now running finish. The addendum-11 rule run
 (`a8_oftg_curve_grpo_s1`) is never preempted.
+
+Amendment (2026-10-31 ~05:00Z, user: "the core is to prove RSI"). Every robot result so far is meta level off (pure
+on-policy RL). The cavin GPUs therefore go to the RSI arms first. Two non-core pilots stop now and are reported
+as stopped early, with their records kept: `a8_oftg_curve_bct_s1` (BC temperature fix, addendum 12) and
+`vla3_pilot_l10_bc_shuf` (M2 shuffled control, addendum 10). `a8_oftg_curve_grpo_s1` (the addendum-11 rule run)
+and `a8_ofts_curve_grpo_s0` (Spatial, addendum 13) keep running. Queue order on cavin: `llm` s1, `fixed` s1, `llm` s2,
+`fixed` s2, `llm` s3, `fixed` s3. Added to the analysis, fixed now: whether meta-level edits compound. That means the
+per-round acceptance rate of proposed procedures and the gate gain of accepted edits as a function of the round,
+for `llm` and `full`.
