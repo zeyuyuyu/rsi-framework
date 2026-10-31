@@ -31,8 +31,8 @@ at the last step of round 3, and to 20%, 11% and 1.5% over round 4. The BC loss 
 errors. The diagnosis is that unit-temperature NLL of T = 1.6 self-samples flattens the policy on every step;
 the fix and its pilot are in addendum 12.
 Beijing BC seed 0 has not shown this through round 3: training items 96-102 per step, step-100 BC loss stepping
-from ~0.32 (rounds 1-2) to ~0.40 (round 3) and not climbing within the round, r03 gate 0.640. So the drift is much
-slower there, or absent. Either the flattening rate depends on the run (seed, platform numerics), or something
+from ~0.32 (rounds 1-2) to ~0.40 (round 3) and not climbing within the round, r03 gate 0.640. At r04 step 0 its loss fell back to 0.34
+with 97 items, so the drift is absent there so far. Either the flattening rate depends on the run (seed, platform numerics), or something
 specific to the cavin run contributes. The temperature-matched pilot is the direct test.
 
 ## Paired check on identical placements (second session, 2026-10-31)
