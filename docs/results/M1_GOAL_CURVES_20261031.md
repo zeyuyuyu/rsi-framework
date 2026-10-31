@@ -208,6 +208,16 @@ Caveats:
   only near-deterministic, and n0 was evaluated once, so part of cavin's gate gain may come from a low n0 draw.
   The audit half has no such gap (cavin 0.61 vs Beijing 0.575).
 * Across the four GRPO curves (Beijing 0/2/3, cavin 1), every D is positive: +7.00, +2.63, +3.12, +4.00.
+* Per-set gate noise on 200 placements is about ±3.5 points (SE): r02c0 scored 0.660 on its own round-2 set and
+  0.575 on the round-3 set. The low cavin n0 gate sits inside that range. Always quote the gate-only (+7.0) and
+  audit-only (+1.0) halves together, never one of them alone.
+
+What the rule result means:
+1. The Goal main arms use GRPO as their operator. The running arms (fixed / full / onebig / llm / llm_harness /
+   llm_harness_cap) already use the addendum-11 GRPO program, so nothing is relaunched or changed.
+2. There are no BC main arms, because BC failed its read.
+3. This is a statement about the object level, plain GRPO self-practice. It is **not** evidence for RSI and
+   must not be worded as such. RSI is answered only by R4 / R5 / H-cap.
 
 ## Paired check on identical placements (second session, 2026-10-31)
 
