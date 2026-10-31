@@ -12,7 +12,7 @@ n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
 
 | run | update | S by round 1 → 3 | change vs n0 |
 |---|---|---|---|
-| `bj_oftg_curve_grpo` | GRPO lr 3e-5, matched ratio, episode loss | 0.6075, 0.6175, 0.650; r04 gate 0.645 (audit read at the end) | +2.0, +3.0, +6.25; r04 gate +4.5 |
+| `bj_oftg_curve_grpo` | GRPO lr 3e-5, matched ratio, episode loss | 0.6075, 0.6175, 0.650; gate r04 0.645, r05 0.665 (audits read at the end) | +2.0, +3.0, +6.25; gate r04 +4.5, r05 +6.5 |
 | `bj_oftg_curve_bc` | BC on verified successes, lr 1e-5 | gate r01 0.570, r02 0.580 (audit read at the end) | gate -3.0, -2.0 |
 | `bj_oftg_curve_grpo_s2` | seed 2 replica (amendment 2, outside the rule) | n0 0.600 / 0.575 (identical to seed 0); r01 gate 0.555 | r01 gate -4.5 (seed 0's r01 gate: -1.0) |
 
