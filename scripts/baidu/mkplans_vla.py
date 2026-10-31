@@ -170,6 +170,15 @@ elif sys.argv[1] == "yq_rsi":
         write(f"yq_oftl_fixed_s{seed}", vla=vla, engine=dict(gated, seed=seed), meta={"proposer": "fixed"}, program=prog)
         write(f"yq_oftl_llm_harness_s{seed}", vla=vla, engine=dict(gated, seed=seed, candidates_per_round=2),
               meta=llm_h, program=hprog)
+elif sys.argv[1] == "bj_l10_pair":
+    # addendum 17 amendment: an extra LIBERO-10 pair on Beijing (deterministic evaluation), seed 3, exploratory
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    gated = {"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": 3}
+    hprog = merge(prog, {"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"}, "curation": {"adv": "center"}})
+    write("bj_oftl_fixed_s3", vla=vla, engine=dict(gated), meta={"proposer": "fixed"}, program=prog)
+    write("bj_oftl_llm_harness_s3", vla=vla, engine=dict(gated, candidates_per_round=2), program=hprog,
+          meta={"proposer": "llm", "space": "harness", "relay": True, "model": "anthropic/claude-sonnet-5-5", "max_calls": 24})
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)

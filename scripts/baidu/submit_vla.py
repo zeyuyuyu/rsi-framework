@@ -16,7 +16,11 @@ if resume:
     name += "-resume"
 envs = [{"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"}, {"name": "NAME", "value": plan},
         {"name": "MODEL_ID", "value": model}, {"name": "A800_SHA", "value": sha},
-        {"name": "RUN_TIMEOUT_S", "value": "93600"}, {"name": "NVIDIA_DRIVER_CAPABILITIES", "value": "all"}]
+        {"name": "RUN_TIMEOUT_S", "value": os.environ.get("RUN_TIMEOUT_S", "93600")},
+        {"name": "NVIDIA_DRIVER_CAPABILITIES", "value": "all"}]
+for extra in ("RSI_SRC_TGZ", "RSI_LLM_RELAY"):          # addendum 17: newer source, relayed LLM
+    if os.environ.get(extra):
+        envs.append({"name": extra, "value": os.environ[extra]})
 if os.environ.get("ARGS"):
     envs.append({"name": "ARGS", "value": os.environ["ARGS"]})
 if resume:
@@ -25,7 +29,7 @@ body = {
     "name": name,
     "jobType": "PyTorchJob",
     # a new script file per change: bash reads a running script from disk, so editing one in place breaks jobs
-    "command": f"timeout -k 120 97200 bash /mnt/bos/shitianyu-rsi/jobs/{os.environ.get('VLA_SCRIPT', 'run_vla.sh')}",
+    "command": f"timeout -k 120 {os.environ.get('JOB_TIMEOUT_S', '97200')} bash /mnt/bos/shitianyu-rsi/jobs/{os.environ.get('VLA_SCRIPT', 'run_vla.sh')}",
     "jobSpec": {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,

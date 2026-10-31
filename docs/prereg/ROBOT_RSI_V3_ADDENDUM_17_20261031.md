@@ -42,3 +42,17 @@ procedure (author `llm`) and one with the incumbent procedure. Both are scored o
 for `llm_harness` is <= 0 and below `llm`'s, new runs started afterwards use the knob space instead of `harness`,
 and the change is reported. The running `llm_harness` runs finish as declared. Claims rest only on the test bars of
 addenda 14-16 and this one.
+
+Amendment (2026-10-31 ~06:35Z, before the runs named here start).
+
+* **Yangquan concurrency.** Yangquan runs at most 12 of our jobs at once. Other users hold only 16 of the 64 cards,
+  and the API exposes no quota. The four LIBERO-10 arms there are queued and start as the first Goal arms finish.
+* **Extra LIBERO-10 pair on Beijing.** To get a LIBERO-10 signal sooner, an extra pair runs on Beijing, where
+  evaluation is deterministic: `bj_oftl_fixed_s3` and `bj_oftl_llm_harness_s3`, seed 3, relayed LLM
+  (`run_vla5.sh`, source `rsi_src_v17`, `mkplans_vla.py bj_l10_pair`). The pair is compared within Beijing and is
+  exploratory, under the same +3 bar.
+* **Known exposure.** AIHC job specs, including env values, are visible to other users of the same Baidu account.
+  The presigned source and relay URLs are therefore readable by them. A relay URL lets its holder read the run's
+  request and response slots, or write a request. A forged proposal still passes the validator, the knob or harness
+  space and the gate, so the worst case is one bad but valid candidate. The URLs expire after 5 days, and no key or
+  credential is exposed.
