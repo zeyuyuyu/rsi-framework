@@ -665,6 +665,28 @@ class ProgramTests(unittest.TestCase):
             self.assertEqual(specs["matched"]["update"], {"lr": 1e-4, "ratio": "matched"})
             self.assertEqual(specs["episode"]["update"], {"lr": 1e-4, "ratio": "matched", "loss_agg": "episode"})
 
+    def test_bc_temperature_option_reaches_only_the_oft_spec_and_scales_bc_logits(self):
+        from unittest import mock
+        from rsi.backends.openvla import backend as vb
+        from rsi.backends.openvla_oft.backend import OFTBackend
+        from rsi.backends.openvla_oft.train_worker import logit_temperature
+        from rsi.core.types import Version
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(ValueError):
+                vb.VLABackend(vb.VLAConfig("ck", "py", "root", tmp, bc_temp="rollout"))
+            specs = {}
+            for mode in ("unit", "rollout"):
+                be = OFTBackend(vb.VLAConfig("ck", "py", "root", f"{tmp}/{mode}", bc_temp=mode))
+                with mock.patch.object(vb, "admit"), mock.patch.object(vb, "supervised", side_effect=RuntimeError):
+                    with self.assertRaises(RuntimeError):
+                        be.train(Version("v0", "ck", None), [{"episode": "e"}], f"{tmp}/out", {"lr": 1e-5}, 0)
+                specs[mode] = json.loads(next(Path(f"{tmp}/{mode}").glob("*-train-*/train_spec.json")).read_text())
+            self.assertEqual(specs["unit"]["update"], {"lr": 1e-5})          # default specs are unchanged
+            self.assertEqual(specs["rollout"]["update"], {"lr": 1e-5, "bc_temp": "rollout"})
+        self.assertEqual(logit_temperature("bc", "unit", 1.6), 1.0)
+        self.assertEqual(logit_temperature("bc", "rollout", 1.6), 1.6)
+        self.assertEqual(logit_temperature("grpo", "unit", 1.6), 1.6)        # GRPO is unaffected by the option
+
 
 if __name__ == "__main__":
     unittest.main()

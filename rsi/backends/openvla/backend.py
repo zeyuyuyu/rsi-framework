@@ -45,6 +45,7 @@ class VLAConfig:
     # numerics setting, not a program field, so the meta level never searches it.
     ratio_mode: str = "legacy"
     loss_agg: str = "token"            # OFT GRPO only: "token" | "episode" (each episode equal total weight)
+    bc_temp: str = "unit"              # OFT BC only: "unit" | "rollout" (NLL at the sampling temperature)
 
 
 class VLABackend:
@@ -52,7 +53,8 @@ class VLABackend:
 
     def __init__(self, config: VLAConfig):
         self.config = config
-        if (config.ratio_mode != "legacy" or config.loss_agg != "token") and self.worker_dir == HERE:
+        if (config.ratio_mode != "legacy" or config.loss_agg != "token" or config.bc_temp != "unit") \
+                and self.worker_dir == HERE:
             raise ValueError("ratio_mode_needs_oft_worker")
         self.workdir = Path(config.workdir)
         self.workdir.mkdir(parents=True, exist_ok=True)
@@ -167,7 +169,8 @@ class VLABackend:
         spec = dict(checkpoint=cfg.checkpoint, openvla_root=cfg.openvla_root, parent=asdict(parent),
                     output=str(output), items=list(items), seed=seed,
                     update=dict(update, **({} if cfg.ratio_mode == "legacy" else {"ratio": cfg.ratio_mode}),
-                                **({} if cfg.loss_agg == "token" else {"loss_agg": cfg.loss_agg})),
+                                **({} if cfg.loss_agg == "token" else {"loss_agg": cfg.loss_agg}),
+                                **({} if cfg.bc_temp == "unit" else {"bc_temp": cfg.bc_temp})),
                     lora_rank=cfg.lora_rank, lora_alpha=cfg.lora_alpha,
                     target_modules=list(cfg.target_modules), micro_batch=cfg.micro_batch)
         (call / "train_spec.json").write_text(json.dumps(spec))

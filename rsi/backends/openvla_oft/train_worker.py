@@ -5,7 +5,11 @@ the tokens of actions that ran count (SimpleVLA-RL masks tokens past ``finish_st
 Log-probs are taken as SimpleVLA-RL's actor takes them (dp_rob.py): the model's parallel-decoding
 forward, logits restricted to the 256 action-token ids, divided by the rollout temperature.
 
-bc   - items {episode}; NLL of the emitted chunk tokens (temperature 1).
+bc   - items {episode}; NLL of the emitted chunk tokens, at temperature 1 (``bc_temp`` "unit", the default) or
+       at the rollout temperature (``bc_temp`` "rollout"). Unit-temperature NLL of tokens sampled at T > 1
+       pulls the policy toward p^(1/T); repeated on its own samples it flattens the policy step after step
+       (measured on LIBERO-Goal, docs/results/M1_GOAL_CURVES_20261031.md). At the rollout temperature the
+       tempered policy fits its own samples, so only the success filter moves it.
 grpo - items {experience: {episode, temperature}, advantage}; the episode-level advantage applies
        to every counted token; token-level PPO-clip against the parent policy (old log-probs
        computed here before the first update), logits scaled by the rollout temperature so the
@@ -47,6 +51,13 @@ def action_logits(model, processor, prompt, frames):
     return logits[..., FIRST_ACTION_ID:FIRST_ACTION_ID + ACTION_TOKENS].float()
 
 
+def logit_temperature(operator, bc_temp, rollout_temperature):
+    """Temperature dividing the logits of one episode's tokens in the loss."""
+    if operator == "grpo" or bc_temp == "rollout":
+        return rollout_temperature
+    return 1.0
+
+
 def digest(model):
     h = hashlib.sha256()
     for name, p in model.named_parameters():
@@ -65,6 +76,9 @@ def main(spec_path):
 
     update = spec["update"]
     operator = update["operator"]
+    bc_temp = update.get("bc_temp", "unit")
+    if bc_temp not in ("unit", "rollout"):
+        raise SystemExit(f"unknown_bc_temp:{bc_temp}")
     torch.manual_seed(spec["seed"])
     rng = random.Random(spec["seed"])
     output = Path(spec["output"])
@@ -101,7 +115,7 @@ def main(spec_path):
         for prompt, ks in groups.items():
             logits = action_logits(model, processor, prompt,
                                    [episodes[picks[k][0]]["frames"][picks[k][1]] for k in ks])
-            temps = torch.tensor([episodes[picks[k][0]]["temperature"] if operator == "grpo" else 1.0
+            temps = torch.tensor([logit_temperature(operator, bc_temp, episodes[picks[k][0]]["temperature"])
                                   for k in ks], device=logits.device)[:, None, None]
             target = torch.tensor(np.stack([episodes[picks[k][0]]["tokens"][picks[k][1]] for k in ks]),
                                   device=logits.device) - FIRST_ACTION_ID
@@ -215,6 +229,7 @@ def main(spec_path):
                    before_sha256=before, after_sha256=after, frames=len(index),
                    seconds=time.time() - started, loss_first=losses[0], loss_last=losses[-1],
                    extra=dict(losses=losses, clipfrac=clipfrac, update=update, ratio_mode=ratio_mode, loss_agg=loss_agg,
+                              bc_temp=bc_temp,
                               step1_logratio=None if not step1_logratio else dict(
                                   mean_abs=float(np.mean(np.abs(step1_logratio))),
                                   max_abs=float(np.max(np.abs(step1_logratio))),
