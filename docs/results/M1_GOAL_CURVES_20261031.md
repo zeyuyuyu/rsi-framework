@@ -64,7 +64,7 @@ n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
 |---|---|---|---|
 | `bj_oftg_curve_grpo` | GRPO lr 3e-5, matched ratio, episode loss | 0.6075, 0.6175, 0.650, 0.6325, 0.655, 0.660 (final) | +2.0, +3.0, +6.25, +4.5, +6.75, +7.25 |
 | `bj_oftg_curve_bc` | BC on verified successes, lr 1e-5 | pooled 0.5475, 0.600, 0.6275, 0.600 (r04 gate 0.575, audit 0.625) | -4.0, +1.25, +4.0, +1.25 |
-| `bj_oftg_curve_grpo_s2` | seed 2 replica (amendment 2, outside the rule) | n0 0.600 / 0.575 (identical to seed 0); gate r01 0.555, r02 0.580 | gate -4.5, -2.0 (seed 0: -1.0, +3.5) |
+| `bj_oftg_curve_grpo_s2` | seed 2 replica (amendment 2, outside the rule) | n0 0.600 / 0.575 (identical to seed 0); gate r01 0.555, r02 0.580, r03 0.565 | gate -4.5, -2.0, -3.5 (seed 0: -1.0, +3.5, +5.5) |
 
 Settings confirmed from the receipt: `loss_agg` episode, `ratio_mode` matched, lr 3e-5.
 
