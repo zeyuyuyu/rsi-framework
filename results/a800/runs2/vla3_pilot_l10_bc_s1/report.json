@@ -1,0 +1,38 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.54,
+      "gate": 0.56,
+      "node": "n0",
+      "round": 0
+    },
+    {
+      "audit": 0.55,
+      "gate": 0.61,
+      "node": "r01c0",
+      "round": 1
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "true",
+    "inner_steps": 1,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 2,
+    "seal_tests": true,
+    "seed": 1,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 65177.87521534902,
+  "retained": "r01c0",
+  "seconds": {
+    "attempt": 28777.766482278006,
+    "audit_eval": 13891.511551019968,
+    "gate_eval": 19967.60761573864,
+    "propose": 0.001146445982158184,
+    "train": 2540.875396520132
+  },
+  "status": "complete_tests_sealed"
+}
