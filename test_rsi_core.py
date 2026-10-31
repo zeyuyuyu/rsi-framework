@@ -600,6 +600,45 @@ class ProgramTests(unittest.TestCase):
         self.assertTrue(all(o.params != p for o in out))
         self.assertEqual(program_diff({"a": {"b": 1}}, {"a": {"b": 2}}), {"a.b": 2})
 
+    def test_llm_meta_proposer_never_sees_audit_and_falls_back(self):
+        from rsi.meta.proposers import LLMMetaProposer, llm_history
+        d = LiberoDomain("libero_goal", range(10))
+        p = d.validate_program({"curriculum": {"cases": 64}, "solver": {"temperature": 1.6}, "update": {"lr": 3e-5}})
+        archive = Archive(Path(tempfile.mkdtemp()) / "a.jsonl")
+        n0 = archive.add(Node("n0", 0, Version("i", "/b"), Program.make(p), None, gate=0.6, audit=0.123457, accepted=True))
+        inner = [dict(step=0, signal=dict(mixed_fraction=0.55), curation=dict(attempts=480, verified_attempts=264, items=101))]
+        archive.add(Node("r01c0", 1, Version("v1", "/c"), Program.make(p), "n0", gate=0.635, audit=0.987653,
+                         accepted=True, signal=dict(mixed_fraction=0.55, inner=inner),
+                         receipt=dict(extra=dict(loss_first=0.06, loss_last=0.03))))
+        rows = llm_history(archive)
+        self.assertEqual(rows[1]["inner"][0], dict(sampled_success=0.55, mixed_share=0.55, items=101))
+        self.assertAlmostEqual(rows[1]["gate_change"], 0.035)
+        ns = NumericSearch(d.edit_space, d.validate_program, d.coupling)
+        good = json.loads(json.dumps(p)); good["update"]["lr"] = 5e-5
+        bad = json.loads(json.dumps(p)); bad["update"]["operator"] = "bc"            # bc needs verified: invalid
+        outside = json.loads(json.dumps(p)); outside["curriculum"]["floor"] = 0.1      # valid field, not a knob
+        seen = []
+        def client(prompt, temperature, max_tokens):
+            seen.append(prompt)
+            return json.dumps(dict(diagnosis="gate rising", proposals=[dict(why="y", procedure=outside),
+                                                                         dict(why="faster", procedure=good),
+                                                                         dict(why="x", procedure=bad)])), {}
+        prop = LLMMetaProposer(d.edit_space, d.validate_program, ns, client, "m", max_calls=1)
+        out = prop.propose(Program.make(p), archive, None, None, 2, random.Random(0))
+        self.assertEqual(len(out), 2)
+        self.assertEqual(out[0].author, "llm")
+        self.assertEqual(out[0].params["update"]["lr"], 5e-5)
+        self.assertEqual(out[1].author, "search")                                # the invalid one fell back
+        for secret in ("0.123457", "0.987653", "audit"):                        # audit never reaches the LLM
+            self.assertNotIn(secret, seen[0])
+        out2 = prop.propose(Program.make(p), archive, None, None, 2, random.Random(1))   # call cap reached
+        self.assertEqual(len(seen), 1)
+        self.assertTrue(all(o.author == "search" for o in out2))
+        def broken(prompt, temperature, max_tokens):
+            raise RuntimeError("llm_call_failed:URLError")
+        prop3 = LLMMetaProposer(d.edit_space, d.validate_program, ns, broken, "m")
+        self.assertEqual(len(prop3.propose(Program.make(p), archive, None, None, 2, random.Random(2))), 2)
+
     def test_libero_budget_scale_only_widens_counts(self):
         big = {"curriculum": {"cases": 960}, "curation": {"budget": 2400}, "update": {"steps": 600}}
         with self.assertRaises(ValueError):

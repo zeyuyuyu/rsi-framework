@@ -8,7 +8,7 @@
 Plan keys: model_name, vla (VLAConfig fields + model_family: openvla | oft, default openvla),
 suite, tasks, heldout_per_task,
 test_inits_per_task, program (overrides), engine (EngineConfig fields), budget_scale (onebig),
-meta {proposer: fixed|numeric}.
+meta {proposer: fixed|numeric|llm (+ base_url, model, key_file, max_calls)}.
 """
 
 import argparse
@@ -22,7 +22,7 @@ from .backends.openvla_oft.backend import OFTBackend
 from .core.engine import Engine, EngineConfig
 from .core.types import Version
 from .domains.libero.domain import LiberoDomain
-from .meta.proposers import FixedProgram, NumericSearch
+from .meta.proposers import FixedProgram, LLMMetaProposer, NumericSearch, OpenAICompatClient
 
 BACKENDS = {"openvla": VLABackend, "oft": OFTBackend}
 
@@ -117,8 +117,18 @@ def main():
         program[section].update(values)
     gate, audit = domain.heldout(plan["heldout_per_task"])
     kind = plan.get("meta", {}).get("proposer", "fixed")
-    proposer = FixedProgram() if kind == "fixed" else NumericSearch(
-        domain.edit_space, domain.validate_program, domain.coupling)
+    if kind == "fixed":
+        proposer = FixedProgram()
+    elif kind == "numeric":
+        proposer = NumericSearch(domain.edit_space, domain.validate_program, domain.coupling)
+    elif kind == "llm":                 # addendum 14: an external LLM diagnoses the round history and edits the program
+        m = plan["meta"]          # the log lands in the run dir, which the engine creates before any proposal
+        proposer = LLMMetaProposer(domain.edit_space, domain.validate_program,
+                                   NumericSearch(domain.edit_space, domain.validate_program, domain.coupling),
+                                   OpenAICompatClient(m["base_url"], m["model"], m["key_file"]), m["model"],
+                                   log_path=out / "meta-llm.jsonl", max_calls=m.get("max_calls", 24))
+    else:
+        raise ValueError(f"unknown_proposer:{kind}")
     cfg = EngineConfig(**plan.get("engine", {}))
     fresh = (domain.fresh_gates(cfg.rounds, len(gate) // len(domain.tasks))
              if cfg.gate_mode == "fresh_paired" else None)
