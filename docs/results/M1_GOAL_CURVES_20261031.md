@@ -6,6 +6,56 @@ the cavin seed-1 replica (running), so the rule has not fired yet.** One seed is
 Pilots are sealed, so no test was read. S = (gate + audit) / 2, 400 sampled placements, always-accept curves
 (no selection), Beijing evaluation (deterministic: all variance below comes from placement sampling).
 
+## Background, in brief
+
+* **Model.** OpenVLA-OFT (7B vision-language-action model). It reads a camera image and an instruction ("put
+  the bowl on the plate") and outputs robot-arm actions. The start is SimpleVLA-RL's checkpoint fine-tuned on
+  one human demonstration per task, so it is weak: about 59% on LIBERO-Goal and 19% on LIBERO-10.
+* **Benchmark.** LIBERO, a simulated tabletop arm. LIBERO-Goal has 10 goals in one scene; LIBERO-10 has 10
+  long, multi-step tasks. Each episode starts from a random object placement and succeeds if the goal is reached
+  within the step limit.
+* **What the framework does each round.** The current policy practices on fresh random placements (8 tries
+  each). The simulator reports only success or failure, so there are no human demonstrations, labels or reward
+  shaping. The framework turns those outcomes into an update (here GRPO, a policy-gradient RL method), trains
+  the next policy from the current one, and repeats. One round = 3 such updates; 6 rounds per run. The official
+  test states stay sealed.
+
+## What "improvement" means here
+
+The change, in percentage points, in task success rate on 400 placements never used for training. Decoding is
+greedy, and there are two halves:
+
+* **gate** (200): the framework may see this half;
+* **audit** (200): never shown to the framework or used for any decision, so it guards against the framework
+  grading itself.
+
+The measure, fixed before the run, is D = mean success over rounds 5-6 minus the starting model's, and the bar
+is +3. Seed 0's result: start 58.75% (235/400) → 65.5% (r05) and 66.0% (r06), so **D = +7.0 points**. That is
+about 28 more successful episodes out of 400, with 95% CI [+2.9, +11.3]. The audit half alone gives +6.25,
+CI [+0.5, +12.3].
+
+## Is the gain due to the RSI design? (what this does and does not show)
+
+* **Shown:** a policy improves on unseen placements by practising in the framework's loop, with sim success as
+  its only feedback: no new human data, no test-state training, no selection of lucky checkpoints (every round
+  is accepted).
+* **Not yet shown:** that the *recursive self-improvement* parts are what cause it. This run is the `fixed`
+  configuration (a fixed recipe, each round building on the last). So far its result is equally consistent
+  with "repeated on-policy RL works from a mid-range start". The prereg-v3 main arms separate these, each
+  against `fixed` with the same budget:
+
+| comparison | question it answers | prereg bar |
+|---|---|---|
+| `fixed` vs `shuffled` (success labels permuted) | does the gain need the real verifier signal? | +3, CI excludes 0 |
+| `fixed` vs `nonrec` (every round practises with the initial policy) | does building on the improved policy matter? | +2 |
+| `full` vs `fixed` (the meta level proposes the recipe) | does self-modifying the recipe add anything? | +2 |
+| best of `fixed`/`full` vs `onebig` (the same total budget as one round) | does iterating beat one-shot RL, SimpleVLA-RL-style? | +2 |
+
+  These arms start only when the addendum-11 rule fires (the seed-0 and cavin seed-1 mean D >= +3).
+* **Framework-specific design changes inside this run.** These are the matched-ratio old log-probs (addendum 6)
+  and the episode-balanced loss (addendum 7), both introduced after earlier null results. Their contribution on
+  LIBERO-Goal has not been ablated.
+
 ## Beijing, seed 0
 
 n0: gate 0.600, audit 0.575, S 0.5875 (both runs share it).
