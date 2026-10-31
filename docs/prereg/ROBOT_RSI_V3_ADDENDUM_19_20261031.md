@@ -48,3 +48,15 @@ uncapped `llm_harness` arm still runs on Yangquan (s1-3) as registered in addend
   Disclosure: the arm trains two candidates per round, so it spends about 2x fixed's GPU time. Under addendum 18 a
   win is labelled "not compute-matched"; H-cap is the compute-matched claim.
 * If a run cannot finish six rounds by the analysis date, the rule of addendum 18 applies.
+
+## Amendment 1 (2026-10-31 ~14:40Z, before the run named here starts)
+
+A Beijing slot is free, and the cavin cap runs wait behind four running jobs. One more `llm_harness_cap` run,
+`bj_oftg_llm_harness_cap_s4`, therefore runs on Beijing: LIBERO-Goal, seed 4, the same program, cap, relay and model,
+from `rsi_src_v19.tar.gz`. Beijing's evaluation is deterministic.
+
+* It has no `fixed` partner, so it adds nothing to R4-cap.
+* Its head-to-heads join the H-cap pool as a fourth cluster. The cluster unit is the run, and the CI is clustered by
+  run.
+* H-cap is also reported on the three cavin runs alone, as registered above. If the two reads disagree on whether
+  the bar is met, the cavin-only read is the registered one, and the disagreement is stated.

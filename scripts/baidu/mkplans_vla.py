@@ -179,6 +179,16 @@ elif sys.argv[1] == "bj_l10_pair":
     write("bj_oftl_fixed_s3", vla=vla, engine=dict(gated), meta={"proposer": "fixed"}, program=prog)
     write("bj_oftl_llm_harness_s3", vla=vla, engine=dict(gated, candidates_per_round=2), program=hprog,
           meta={"proposer": "llm", "space": "harness", "relay": True, "model": "anthropic/claude-sonnet-5-5", "max_calls": 24})
+elif sys.argv[1] == "bj_cap":
+    # addendum 19 amendment: one more compute-capped harness run on Beijing (deterministic evaluation), Goal seed 4.
+    # It only adds proposal-vs-incumbent head-to-heads to H-cap; it has no fixed partner here.
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    hprog = merge(prog, {"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"}, "curation": {"adv": "center"}})
+    write("bj_oftg_llm_harness_cap_s4", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
+          engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": 4, "candidates_per_round": 2},
+          program=hprog, meta={"proposer": "llm", "space": "harness", "budget": "seed", "relay": True,
+                               "model": "anthropic/claude-sonnet-5-5", "max_calls": 24})
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)
