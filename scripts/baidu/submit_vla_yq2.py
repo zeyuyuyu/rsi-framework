@@ -26,13 +26,19 @@ envs = [{"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"}, {"name": 
         # /mnt/pfs/shitianyu-rsi is a plain node-local dir on yq; the same path keeps the BOS-staged venv valid
         {"name": "RSI_PFS", "value": "/mnt/pfs/shitianyu-rsi"}, {"name": "RSI_CFS_LINK", "value": "1"},
         {"name": "RSI_JOBS", "value": "/mnt/cfs/shitianyu-rsi/jobs"},
-        {"name": "RSI_SRC_TGZ", "value": os.environ.get("RSI_SRC_TGZ", "/mnt/cfs/shitianyu-rsi/jobs/rsi_src_v14.tar.gz")}]
+        {"name": "RSI_SRC_TGZ", "value": "/tmp/rsi_src.tgz" if os.environ.get("RSI_SRC_URL")
+         else os.environ.get("RSI_SRC_TGZ", "/mnt/cfs/shitianyu-rsi/jobs/rsi_src_v14.tar.gz")}]
+if os.environ.get("RSI_SRC_URL"):      # addendum 17: newer source fetched at job start (presigned GET, no credentials)
+    envs.append({"name": "RSI_SRC_URL", "value": os.environ["RSI_SRC_URL"]})
+if os.environ.get("RSI_LLM_RELAY"):    # addendum 17: presigned URL of this run's relay slots
+    envs.append({"name": "RSI_LLM_RELAY", "value": os.environ["RSI_LLM_RELAY"]})
 if os.environ.get("ARGS"):
     envs.append({"name": "ARGS", "value": os.environ["ARGS"]})
 body = {
     "name": name,
     "jobType": "PyTorchJob",
-    "command": "timeout -k 120 194400 bash /mnt/cfs/shitianyu-rsi/jobs/run_vla4.sh",
+    "command": ("bash -c 'set -e; [ -z \"${RSI_SRC_URL:-}\" ] || curl -sS --retry 5 -o /tmp/rsi_src.tgz \"$RSI_SRC_URL\"; "
+                "exec timeout -k 120 194400 bash /mnt/cfs/shitianyu-rsi/jobs/run_vla4.sh'"),
     "jobSpec": {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,

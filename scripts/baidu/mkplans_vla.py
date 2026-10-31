@@ -154,6 +154,22 @@ elif sys.argv[1] == "goal_main":
         for arm, (engine, proposer) in arms.items():
             write(f"{prefix}_oftg_{arm}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
                   vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
+elif sys.argv[1] == "yq_rsi":
+    # addendum 17: Yangquan arms beyond addendum 15 -- Goal llm_harness x3 (LLM relayed through BOS, key stays on cavin)
+    # and LIBERO-10 fixed vs llm_harness x2 (does a harness-editing meta level make a recipe work where fixed fails?)
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    gated = {"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired"}
+    llm_h = {"proposer": "llm", "space": "harness", "relay": True, "model": "anthropic/claude-sonnet-5-5", "max_calls": 24}
+    hprog = merge(prog, {"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"},
+                         "curation": {"adv": "center"}})
+    for seed in (1, 2, 3):
+        write(f"yq_oftg_llm_harness_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
+              engine=dict(gated, seed=seed, candidates_per_round=2), meta=llm_h, program=hprog)
+    for seed in (1, 2):
+        write(f"yq_oftl_fixed_s{seed}", vla=vla, engine=dict(gated, seed=seed), meta={"proposer": "fixed"}, program=prog)
+        write(f"yq_oftl_llm_harness_s{seed}", vla=vla, engine=dict(gated, seed=seed, candidates_per_round=2),
+              meta=llm_h, program=hprog)
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)
