@@ -79,3 +79,23 @@ and not from a meta level that keeps adapting.
   * If the cap run is not ahead of this control, the meta-level gain is credited to a single edit, not to the loop.
   * If the cap run is ahead, the loop's later rounds add value beyond that edit.
   * It costs half of the cap run, because it trains one candidate per round.
+
+## Amendment 3 (2026-10-31 ~19:45Z): run seed 4 cannot be used; the Beijing pair moves to seed 0
+
+`bj_oftg_llm_harness_cap_s4` crashed in round 2 (job-6z02h1zf3dde, rc 1). The cause was
+`placement_seed_out_of_range:4301020000`. Training placement seeds are `1e8 + inner_seed(seed, r, step) * 1e6 + ...`,
+and `inner_seed` only keeps them below 2^32 for run seeds 0-3 (its docstring says so). The largest values are:
+seed 0: 7.0e8; seeds 1-3: 1.7e9 to 3.7e9; seed 4: 4.7e9; seed 5: 5.7e9.
+
+* **Engine unchanged.** No remapping while other runs are in flight.
+* **Beijing pair moves to seed 0.** The Beijing capped run and its fixed control become `bj_oftg_llm_harness_cap_s0`
+  and `bj_oftg_fixed_t12_s0`, rerun from round 0. On Beijing, seed 0 is used only by the GRPO curve
+  `bj_oftg_curve_grpo`, which is a different arm. The seed-0 training placements lie below the held-out (9e8) and
+  fresh-gate (9.5e8) bases.
+  * The seed-4 control (job-ig9l068qvgo1) was stopped minutes after it started.
+* **Seed-4 round 1 kept out of H-cap.** Its record was c1 0.595 against c0 0.555. It is reported as a void run and
+  is not pooled into H-cap, so the cluster is the complete seed-0 run.
+* **The control's program is unchanged.** It is the seed-4 round-1 LLM edit (T 1.2, progress floor 0.1,
+  mixed_groups budget 400 per_case 2, adv center), so the control still asks whether that one edit alone explains a
+  cap-arm gain.
+* **Generators refuse run seeds above 3.**

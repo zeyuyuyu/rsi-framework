@@ -180,24 +180,29 @@ elif sys.argv[1] == "bj_l10_pair":
     write("bj_oftl_llm_harness_s3", vla=vla, engine=dict(gated, candidates_per_round=2), program=hprog,
           meta={"proposer": "llm", "space": "harness", "relay": True, "model": "anthropic/claude-sonnet-5-5", "max_calls": 24})
 elif sys.argv[1] == "bj_cap":
-    # addendum 19 amendment: one more compute-capped harness run on Beijing (deterministic evaluation), Goal seed 4.
-    # It only adds proposal-vs-incumbent head-to-heads to H-cap; it has no fixed partner here.
+    # addendum 19 amendments 1/3: one more compute-capped harness run on Beijing (deterministic evaluation), Goal.
+    # It only adds proposal-vs-incumbent head-to-heads to H-cap. usage: mkplans_vla.py bj_cap [seed=0]
+    seed = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+    assert 0 <= seed <= 3, "run seeds >= 4 send training placement seeds past 2**32 (amendment 3)"
     prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
     vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
     hprog = merge(prog, {"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"}, "curation": {"adv": "center"}})
-    write("bj_oftg_llm_harness_cap_s4", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
-          engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": 4, "candidates_per_round": 2},
+    write(f"bj_oftg_llm_harness_cap_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
+          engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": seed, "candidates_per_round": 2},
           program=hprog, meta={"proposer": "llm", "space": "harness", "budget": "seed", "relay": True,
                                "model": "anthropic/claude-sonnet-5-5", "max_calls": 24})
 elif sys.argv[1] == "bj_t12":
-    # addendum 19 amendment 2: fixed control that applies bj cap s4's round-1 LLM edit from round 0 and never changes it
+    # addendum 19 amendments 2/3: fixed control that applies bj cap s4's round-1 LLM edit from round 0, never changed.
+    # usage: mkplans_vla.py bj_t12 [seed=0]
+    seed = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+    assert 0 <= seed <= 3, "run seeds >= 4 send training placement seeds past 2**32 (amendment 3)"
     prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64, "allocation": "progress", "floor": 0.1},
                                "solver": {"temperature": 1.2},
                                "curation": {"rule": "mixed_groups", "budget": 400, "per_case": 2, "adv": "center"},
                                "update": {"lr": 3e-5, "ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"}})
     vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
-    write("bj_oftg_fixed_t12_s4", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
-          engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": 4},
+    write(f"bj_oftg_fixed_t12_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
+          engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": seed},
           program=prog, meta={"proposer": "fixed"})
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):

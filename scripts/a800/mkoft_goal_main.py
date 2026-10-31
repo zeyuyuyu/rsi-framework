@@ -10,6 +10,7 @@ Q = f"{H}/rsi/queue"
 order, seed, arm = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3]
 suite = sys.argv[4] if len(sys.argv) > 4 else "goal"
 assert suite in ("goal", "spatial")
+assert 0 <= seed <= 3, "run seeds >= 4 send training placement seeds past 2**32 (addendum 19 amendment 3)"
 ARMS = {"fixed": ({}, {"proposer": "fixed"}),
         "full": ({"candidates_per_round": 2}, {"proposer": "numeric"}),
         "llm": ({"candidates_per_round": 2}, {"proposer": "llm", "base_url": "https://api.commonstack.ai/v1",
