@@ -50,6 +50,8 @@ def main():
     # further test replicates of an ended run's retained version (VLA addendum 2: single 500-episode
     # evaluations of one model differ by up to 3.6 points, so a final is averaged over replicates)
     parser.add_argument("--test-eval", metavar="RUN_DIR")
+    # with --test-eval: score this node of the run instead of the retained one (its ckpt-<node> must exist)
+    parser.add_argument("--node")
     # continue an interrupted run in place (Engine.run(resume=True); the stored plan must match)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
@@ -99,7 +101,7 @@ def main():
     if args.test_eval:
         run = Path(args.test_eval)
         report = json.loads((run / "report.json").read_text())   # written only when the run has ended
-        node = report["retained"]
+        node = args.node or report["retained"]                   # --node: addendum 18 am. 1 (R5-ungated)
         version = initial if node == "n0" else \
             Version(**json.loads((run / f"ckpt-{node}" / "receipt.json").read_text())["version"])
         out.mkdir(parents=True)
