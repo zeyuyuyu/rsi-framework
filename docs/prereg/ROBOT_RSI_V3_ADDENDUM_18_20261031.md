@@ -34,3 +34,18 @@ resubmitted with `RESUME_RUN=<run dir name>` (Engine `--resume`). The plan is un
 the relay slots: the slot counter lives in the run dir. Finished rounds are kept. An unfinished round is rerun from
 its parent. Every resume is listed in the results with its job ids. If a run cannot finish its six rounds before the
 analysis date, its last finished round is reported as that run's final node, and the shortfall is stated.
+
+## Amendment 1 (2026-10-31 ~21:10Z, before any main-arm test is read): R5 also against an ungated one-shot RL
+
+`onebig` spends fixed's six-round budget in one round of 18 inner steps. Its candidate then faces the same gate as
+every arm. On Yangquan s1 that candidate scored 0.59 on its fresh gate and was not accepted, so the arm's retained
+node, and with it its test, is the starting checkpoint n0. SimpleVLA-RL-style one-shot RL keeps the trained policy
+with no gate. Measuring R5 only against the gated `onebig` would let a gate rejection stand in for the RL baseline.
+
+* **R5-ungated (sensitivity, registered now).** After the main arms finish, each `onebig` run's single trained
+  candidate (`r01c0`) is scored on the official test (500 episodes, read once), whatever its gate. The tool is
+  `run_libero --test-eval`, applied to the kept checkpoint. Engine checkpoints are never pruned.
+* R5 is reported both ways: against the registered gated `onebig` and against the ungated candidate. The bar is
+  unchanged: +2, CI excluding 0. The RSI-beats-one-shot-RL claim is made only if both reads clear the bar. If they
+  disagree, both are stated.
+* Compute ratios (this addendum) are computed for both.
