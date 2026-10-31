@@ -692,6 +692,37 @@ class ProgramTests(unittest.TestCase):
         out2 = ns2.propose(Program.make(base), archive, None, None, 6, random.Random(4))
         self.assertTrue(all("ratio" not in o.params["update"] for o in out2))
 
+    def test_relay_client_puts_request_polls_response_and_never_reuses_a_slot(self):
+        import io, urllib.error
+        from rsi.meta.relay import RelayClient
+        store, puts = {}, []
+        class Resp(io.BytesIO):
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def http(req, timeout=60):
+            if hasattr(req, "get_method") and req.get_method() == "PUT":
+                puts.append(req.full_url); store[req.full_url.replace("put", "get")] = 0
+                return Resp(b"")
+            url = req if isinstance(req, str) else req.full_url
+            n = store.get(url.replace("resp", "req"), None)
+            if n is None or n < 2:                   # not answered yet: 404 twice
+                if n is not None: store[url.replace("resp", "req")] = n + 1
+                raise urllib.error.HTTPError(url, 404, "nf", {}, None)
+            return Resp(json.dumps({"content": "ok:" + url, "usage": {"total_tokens": 7}}).encode())
+        urls = {"req_put": [f"https://b/req-put-{k}" for k in range(3)],
+                "resp_get": [f"https://b/resp-get-{k}" for k in range(3)]}
+        with tempfile.TemporaryDirectory() as tmp:
+            c = RelayClient(urls, Path(tmp) / "relay-state.json", poll=0.0, timeout=5, http=http)
+            text, usage = c("p", 1.0, 10)
+            self.assertEqual((text, usage["total_tokens"]), ("ok:https://b/resp-get-0", 7))
+            c2 = RelayClient(urls, Path(tmp) / "relay-state.json", poll=0.0, timeout=5, http=http)   # a resumed run
+            self.assertEqual(c2("p", 1.0, 10)[0], "ok:https://b/resp-get-1")
+            self.assertEqual(puts, ["https://b/req-put-0", "https://b/req-put-1"])
+            c2("p", 1.0, 10)
+            with self.assertRaises(RuntimeError):                                          # slots exhausted
+                c2("p", 1.0, 10)
+
     def test_libero_budget_scale_only_widens_counts(self):
         big = {"curriculum": {"cases": 960}, "curation": {"budget": 2400}, "update": {"steps": 600}}
         with self.assertRaises(ValueError):

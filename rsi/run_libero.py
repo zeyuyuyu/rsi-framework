@@ -14,6 +14,7 @@ meta {proposer: fixed|numeric|llm (+ base_url, model, key_file, max_calls)}.
 import argparse
 from dataclasses import asdict
 import json
+import os
 from pathlib import Path
 
 from .core.gpu import stop_workers_on_sigterm
@@ -23,6 +24,7 @@ from .core.engine import Engine, EngineConfig
 from .core.types import Version
 from .domains.libero.domain import LiberoDomain
 from .meta.proposers import FixedProgram, LLMMetaProposer, NumericSearch, OpenAICompatClient
+from .meta.relay import RelayClient
 
 BACKENDS = {"openvla": VLABackend, "oft": OFTBackend}
 
@@ -127,7 +129,9 @@ def main():
         m = plan["meta"]          # the log lands in the run dir, which the engine creates before any proposal
         proposer = LLMMetaProposer(space, domain.validate_program,
                                    NumericSearch(space, domain.validate_program, domain.coupling),
-                                   OpenAICompatClient(m["base_url"], m["model"], m["key_file"]), m["model"],
+                                   (RelayClient(os.environ["RSI_LLM_RELAY"], out / "relay-state.json")
+                                    if m.get("relay") else      # addendum 17: Yangquan, key stays on cavin
+                                    OpenAICompatClient(m["base_url"], m["model"], m["key_file"])), m["model"],
                                    log_path=out / "meta-llm.jsonl", max_calls=m.get("max_calls", 24),
                                    space_doc=domain.harness_doc if harness else "")
     else:
