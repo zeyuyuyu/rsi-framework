@@ -189,6 +189,16 @@ elif sys.argv[1] == "bj_cap":
           engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": 4, "candidates_per_round": 2},
           program=hprog, meta={"proposer": "llm", "space": "harness", "budget": "seed", "relay": True,
                                "model": "anthropic/claude-sonnet-5-5", "max_calls": 24})
+elif sys.argv[1] == "bj_t12":
+    # addendum 19 amendment 2: fixed control that applies bj cap s4's round-1 LLM edit from round 0 and never changes it
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64, "allocation": "progress", "floor": 0.1},
+                               "solver": {"temperature": 1.2},
+                               "curation": {"rule": "mixed_groups", "budget": 400, "per_case": 2, "adv": "center"},
+                               "update": {"lr": 3e-5, "ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    write("bj_oftg_fixed_t12_s4", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", vla=vla,
+          engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "seed": 4},
+          program=prog, meta={"proposer": "fixed"})
 elif sys.argv[1] == "infl":
     for which, repo in (("sft", "Openvla-oft-SFT-libero10-traj1"), ("rl", "openvla-oft-libero10-traj1-rl")):
         write(f"bj_infl_{which}", model_name=f"oft-{which}-libero10-traj1", heldout_per_task=50)

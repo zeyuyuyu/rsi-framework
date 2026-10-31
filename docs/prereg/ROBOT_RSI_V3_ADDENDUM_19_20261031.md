@@ -60,3 +60,22 @@ from `rsi_src_v19.tar.gz`. Beijing's evaluation is deterministic.
   run.
 * H-cap is also reported on the three cavin runs alone, as registered above. If the two reads disagree on whether
   the bar is met, the cavin-only read is the registered one, and the disagreement is stated.
+
+## Amendment 2 (2026-10-31 ~19:20Z, before the run named here starts): is it one good edit, or the loop?
+
+The first capped proposals on Beijing (s4) and cavin (s1) were the same procedure in all but one field: temperature
+1.6 → 1.2, `progress` allocation (floor 0.1), and `mixed_groups` with budget 400 and per_case 2. Only the advantage
+differed (center vs zscore). A win for `llm_harness_cap` could therefore come from one better setting, found once,
+and not from a meta level that keeps adapting.
+
+* **Control `bj_oftg_fixed_t12_s4`.** Beijing, Goal, seed 4, meta `fixed`. Its program is bj s4's round-1 LLM edit,
+  applied from round 0 and never changed: T 1.2, progress floor 0.1, mixed_groups budget 400 per_case 2, adv center,
+  64 scenes x 8 tries, 100 steps x 64, lr 3e-5, matched, episode. Otherwise it is the cap run's plan, with 6 rounds
+  and fresh paired gates.
+* **Read (exploratory, reported with H-cap).** `bj_oftg_llm_harness_cap_s4` minus `bj_oftg_fixed_t12_s4`:
+  * the round-by-round accepted-node gate,
+  * the official test at the end, read once.
+* **Interpretation.**
+  * If the cap run is not ahead of this control, the meta-level gain is credited to a single edit, not to the loop.
+  * If the cap run is ahead, the loop's later rounds add value beyond that edit.
+  * It costs half of the cap run, because it trains one candidate per round.
