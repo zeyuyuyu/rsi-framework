@@ -81,7 +81,7 @@ such drift in any run (sampled success about 0.63 at bj seed 0's r05/r06).
 
 | run | update | n0 S | S by round so far | change vs n0 |
 |---|---|---|---|---|
-| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560, **0.4475**, **0.1525** | +0.25, -0.75, -2.5, **-13.75**, **-43.25** |
+| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560, **0.4475**, **0.1525**, **0.055** (final; r06 gate 0.07 / audit 0.04; **D -48.1**) | +0.25, -0.75, -2.5, -13.75, -43.25, -53.0 |
 | `a8_oftg_curve_grpo_s1` | GRPO lr 3e-5, matched, episode loss | queued | | |
 | `a8_oftg_curve_bct_s1` | BC with the NLL at the rollout temperature (addendum 12) | queued | | |
 
