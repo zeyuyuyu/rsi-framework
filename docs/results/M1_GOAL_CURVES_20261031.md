@@ -22,8 +22,14 @@ Settings confirmed from the receipt: `loss_agg` episode, `ratio_mode` matched, l
 
 | run | update | n0 S | S by round so far | change vs n0 |
 |---|---|---|---|---|
-| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560 | +0.25, -0.75, -2.5 |
+| `a8_oftg_curve_bc_s1` | BC on verified successes, lr 1e-5 | 0.585 (gate 0.585, audit 0.585) | 0.5875, 0.5775, 0.560, **0.4475** | +0.25, -0.75, -2.5, **-13.75** |
 | `a8_oftg_curve_grpo_s1` | GRPO lr 3e-5, matched, episode loss | queued | | |
+| `a8_oftg_curve_bct_s1` | BC with the NLL at the rollout temperature (addendum 12) | queued | | |
+
+BC seed 1 collapsed in round 4: gate 0.400, audit 0.495. Sampled success fell from 53-66% (rounds 1-2) to 34%
+at the last step of round 3, and to 20%, 11% and 1.5% over round 4. The BC loss rose 0.3 → 3.3. No rollout
+errors. The diagnosis is that unit-temperature NLL of T = 1.6 self-samples flattens the policy on every step;
+the fix and its pilot are in addendum 12.
 
 ## Paired check on identical placements (second session, 2026-10-31)
 
