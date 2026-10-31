@@ -168,9 +168,10 @@ class VLABackend:
         call = self._call_dir("train")
         spec = dict(checkpoint=cfg.checkpoint, openvla_root=cfg.openvla_root, parent=asdict(parent),
                     output=str(output), items=list(items), seed=seed,
-                    update=dict(update, **({} if cfg.ratio_mode == "legacy" else {"ratio": cfg.ratio_mode}),
-                                **({} if cfg.loss_agg == "token" else {"loss_agg": cfg.loss_agg}),
-                                **({} if cfg.bc_temp == "unit" else {"bc_temp": cfg.bc_temp})),
+                    # run-level defaults, overridden by the program (a harness meta level may edit them per round)
+                    update=dict({**({} if cfg.ratio_mode == "legacy" else {"ratio": cfg.ratio_mode}),
+                                 **({} if cfg.loss_agg == "token" else {"loss_agg": cfg.loss_agg}),
+                                 **({} if cfg.bc_temp == "unit" else {"bc_temp": cfg.bc_temp})}, **update),
                     lora_rank=cfg.lora_rank, lora_alpha=cfg.lora_alpha,
                     target_modules=list(cfg.target_modules), micro_batch=cfg.micro_batch)
         (call / "train_spec.json").write_text(json.dumps(spec))

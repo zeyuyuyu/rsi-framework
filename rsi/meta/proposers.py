@@ -67,6 +67,14 @@ class NumericSearch:
                 credit.setdefault(knob, []).append(row["gate_gain"])
         return {k: sum(v) / len(v) for k, v in credit.items()}
 
+    @staticmethod
+    def _has(params, knob):
+        try:
+            _get(params, knob)
+            return True
+        except (KeyError, TypeError):
+            return False
+
     def _mutate(self, params, knob, rng):
         space = self.space[knob]
         value = _get(params, knob)
@@ -88,7 +96,7 @@ class NumericSearch:
 
     def propose(self, program, archive, backend, version, k, rng):
         credit = self._credit(archive)
-        knobs = list(self.space)
+        knobs = [k for k in self.space if self._has(program.params, k)]   # optional harness fields only if set
         weights = [math.exp(4.0 * credit.get(knob, 0.0) * 10) for knob in knobs]
         out, tries = [], 0
         while len(out) < k and tries < 50 * k:
@@ -177,6 +185,7 @@ Current procedure (JSON):
 You may change ONLY these fields (numbers are [min, max]; lists are the allowed choices; grpo needs mixed_groups,
 bc needs verified). Copy every other field of the procedure unchanged; changes to other fields are discarded:
 {space}
+{space_doc}
 
 History, oldest first. For each candidate: the fields that differed from its parent's procedure, its gate score and the
 change against its parent, whether it was kept, and training-side signals per inner step (sampled success rate,
@@ -249,14 +258,15 @@ class LLMMetaProposer:
     name = "llm_meta"
 
     def __init__(self, edit_space, validate, fallback: NumericSearch, client, model, log_path=None,
-                 max_calls=24, temperature=1.0, max_tokens=4000):
+                 max_calls=24, temperature=1.0, max_tokens=4000, space_doc=""):
         self.space, self.validate, self.fallback, self.client = edit_space, validate, fallback, client
         self.model, self.log_path, self.max_calls = model, log_path, max_calls
         self.temperature, self.max_tokens, self.calls = temperature, max_tokens, 0
+        self.space_doc = space_doc
 
     def prompt(self, program, archive, k):
         return LLM_META_PROMPT.format(program=json.dumps(program.params, indent=1, sort_keys=True),
-                                      space=json.dumps(self.space), k=k,
+                                      space=json.dumps(self.space), space_doc=self.space_doc, k=k,
                                       history=json.dumps(llm_history(archive), indent=1, default=str)[:12000])
 
     def _log(self, row):
@@ -287,7 +297,8 @@ class LLMMetaProposer:
                         dropped[",".join(outside)] = dropped.get(",".join(outside), 0) + 1
                         kept = copy.deepcopy(program.params)
                         for knob in self.space:
-                            _put(kept, knob, _get(params, knob))
+                            if NumericSearch._has(params, knob):
+                                _put(kept, knob, _get(params, knob))
                         try:
                             params = self.validate(kept)
                         except (ValueError, TypeError) as exc:

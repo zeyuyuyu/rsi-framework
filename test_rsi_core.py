@@ -648,6 +648,50 @@ class ProgramTests(unittest.TestCase):
         prop3 = LLMMetaProposer(d.edit_space, d.validate_program, ns, broken, "m")
         self.assertEqual(len(prop3.propose(Program.make(p), archive, None, None, 2, random.Random(2))), 2)
 
+    def test_harness_components_validate_and_reach_curation_and_train_spec(self):
+        from unittest import mock
+        from rsi.backends.openvla import backend as vb
+        from rsi.backends.openvla_oft.backend import OFTBackend
+        from rsi.core.curation import curate
+        from rsi.core.types import Attempt, Case, Version
+        from rsi.domains.libero.domain import HARNESS_SPACE, HARNESS_DOC, EDIT_SPACE
+        d = LiberoDomain("libero_goal", range(10))
+        base = d.validate_program({})
+        self.assertNotIn("ratio", base["update"])                      # optional fields stay absent by default
+        h = d.validate_program({"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "rollout"},
+                                "curation": {"adv": "zscore", "band": [0.2, 0.8], "per_case": 4},
+                                "curriculum": {"floor": 0.1}})
+        self.assertEqual(h["curation"]["adv"], "zscore")
+        for bad in ({"update": {"ratio": "fast"}}, {"curation": {"band": [0.8, 0.2]}},
+                    {"curation": {"per_case": 9}}, {"update": {"clip_high": 0.9}}, {"update": {"other": 1}}):
+            with self.assertRaises(ValueError):
+                d.validate_program(bad)
+        self.assertTrue(set(EDIT_SPACE) < set(HARNESS_SPACE))
+        for knob in HARNESS_SPACE:                                      # every component is documented for the LLM
+            self.assertIn(knob, HARNESS_DOC)
+        cases = [Case("c0", "g", "train", {}, "sim")]
+        tries = [[Attempt("c0", float(r), bool(r), {"episode": f"e{k}"}, {}) for k, r in enumerate([1, 0, 0, 0])]]
+        center, _, _ = curate(cases, tries, {"rule": "mixed_groups"}, random.Random(0))
+        z, _, _ = curate(cases, tries, {"rule": "mixed_groups", "adv": "zscore"}, random.Random(0))
+        self.assertAlmostEqual(center[0]["advantage"], 0.75)
+        self.assertAlmostEqual(z[0]["advantage"], 0.75 / (0.75 * 0.25) ** 0.5, places=4)
+        with tempfile.TemporaryDirectory() as tmp:                     # the program overrides the run defaults
+            be = OFTBackend(vb.VLAConfig("ck", "py", "root", tmp, ratio_mode="matched", loss_agg="episode"))
+            with mock.patch.object(vb, "admit"), mock.patch.object(vb, "supervised", side_effect=RuntimeError):
+                with self.assertRaises(RuntimeError):
+                    be.train(Version("v0", "ck", None), [{"episode": "e"}], f"{tmp}/out",
+                             {"lr": 1e-5, "ratio": "legacy", "bc_temp": "rollout"}, 0)
+            spec = json.loads(next(Path(tmp).glob("*-train-*/train_spec.json")).read_text())
+            self.assertEqual(spec["update"], {"lr": 1e-5, "ratio": "legacy", "loss_agg": "episode", "bc_temp": "rollout"})
+        ns = NumericSearch(HARNESS_SPACE, d.validate_program, d.coupling)
+        archive = Archive(Path(tempfile.mkdtemp()) / "a.jsonl")
+        archive.add(Node("n0", 0, Version("i", "/b"), Program.make(h), None, gate=0.4, accepted=True))
+        out = ns.propose(Program.make(h), archive, None, None, 6, random.Random(3))
+        self.assertEqual(len(out), 6)
+        ns2 = NumericSearch(HARNESS_SPACE, d.validate_program, d.coupling)   # optional fields absent: never touched
+        out2 = ns2.propose(Program.make(base), archive, None, None, 6, random.Random(4))
+        self.assertTrue(all("ratio" not in o.params["update"] for o in out2))
+
     def test_libero_budget_scale_only_widens_counts(self):
         big = {"curriculum": {"cases": 960}, "curation": {"budget": 2400}, "update": {"steps": 600}}
         with self.assertRaises(ValueError):

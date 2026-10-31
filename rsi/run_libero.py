@@ -117,16 +117,19 @@ def main():
         program[section].update(values)
     gate, audit = domain.heldout(plan["heldout_per_task"])
     kind = plan.get("meta", {}).get("proposer", "fixed")
+    harness = plan.get("meta", {}).get("space") == "harness"     # addendum 16: knobs + harness components
+    space = domain.harness_space if harness else domain.edit_space
     if kind == "fixed":
         proposer = FixedProgram()
     elif kind == "numeric":
-        proposer = NumericSearch(domain.edit_space, domain.validate_program, domain.coupling)
+        proposer = NumericSearch(space, domain.validate_program, domain.coupling)
     elif kind == "llm":                 # addendum 14: an external LLM diagnoses the round history and edits the program
         m = plan["meta"]          # the log lands in the run dir, which the engine creates before any proposal
-        proposer = LLMMetaProposer(domain.edit_space, domain.validate_program,
-                                   NumericSearch(domain.edit_space, domain.validate_program, domain.coupling),
+        proposer = LLMMetaProposer(space, domain.validate_program,
+                                   NumericSearch(space, domain.validate_program, domain.coupling),
                                    OpenAICompatClient(m["base_url"], m["model"], m["key_file"]), m["model"],
-                                   log_path=out / "meta-llm.jsonl", max_calls=m.get("max_calls", 24))
+                                   log_path=out / "meta-llm.jsonl", max_calls=m.get("max_calls", 24),
+                                   space_doc=domain.harness_doc if harness else "")
     else:
         raise ValueError(f"unknown_proposer:{kind}")
     cfg = EngineConfig(**plan.get("engine", {}))

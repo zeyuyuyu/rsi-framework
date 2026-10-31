@@ -37,6 +37,34 @@ EDIT_SPACE = {
     "update.steps": (50, 1500), "update.batch": (16, 128),
 }
 
+# Harness components (addendum 16): design choices of the improvement procedure itself, which a meta level with
+# space "harness" may change in addition to the knobs above. The four OPTIONAL_FIELDS may be absent from a program;
+# absent means the historical behaviour (the run's VLAConfig for ratio/loss_agg/bc_temp, a centred advantage).
+OPTIONAL_FIELDS = {"update.ratio": ["legacy", "matched"], "update.loss_agg": ["token", "episode"],
+                   "update.bc_temp": ["unit", "rollout"], "curation.adv": ["center", "zscore"]}
+HARNESS_EXTRA = {"curation.band": [[0.0, 1.0], [0.1, 0.9], [0.2, 0.8], [0.3, 0.7]],
+                 "curation.per_case": (1, 8), "curriculum.floor": (0.0, 0.3),
+                 "update.clip_low": (0.1, 0.4), "update.clip_high": (0.1, 0.5)}
+HARNESS_SPACE = dict(EDIT_SPACE, **HARNESS_EXTRA, **OPTIONAL_FIELDS)
+# Neutral descriptions of every field for an LLM meta level: what each option computes, never which is better.
+HARNESS_DOC = """Field meanings. curriculum.cases: scenes practised per update step. curriculum.allocation: 'uniform' spreads
+scenes evenly over tasks; 'progress' gives more scenes to tasks whose recent tries had both outcomes.
+curriculum.floor: minimum share of a task under 'progress'. solver.samples: tries per scene. solver.temperature:
+sampling temperature of the tries. curation.rule: 'mixed_groups' keeps every try of scenes whose success fraction
+lies strictly inside curation.band (used by grpo); 'verified' keeps successful tries only (used by bc).
+curation.band: [lo, hi] success-fraction band of the scenes that are used. curation.per_case: at most this many
+successful tries per scene (bc). curation.budget: at most this many scenes (grpo) or tries (bc) per step.
+curation.adv: the per-try advantage in a scene is reward minus the scene mean ('center') or that divided by the
+scene's standard deviation ('zscore'). update.operator: 'grpo' (clipped policy gradient with those advantages) or
+'bc' (maximise the likelihood of the kept tries). update.lr, update.steps, update.batch: learning rate,
+optimiser steps and batch size of one update.
+update.clip_low, update.clip_high: clip range of the
+policy ratio in grpo. update.ratio: the 'old' log-probabilities of
+the ratio are computed in a separate pass over all items ('legacy') or on exactly the micro-batches that are
+trained ('matched'). update.loss_agg: the loss averages over tokens ('token') or gives every episode the same total
+weight ('episode'). update.bc_temp: bc's likelihood uses logits at temperature 1 ('unit') or divided by the
+sampling temperature of the try ('rollout')."""
+
 # Count fields whose upper bound grows with a run's budget_scale, so a compute-matched single round (`onebig`:
 # the summed budget of N rounds at once) validates without widening the space the meta level searches.
 BUDGET_FIELDS = ("curriculum.cases", "curation.budget", "update.steps")
@@ -62,6 +90,7 @@ class LiberoDomain:
         self.suite, self.tasks = suite, list(tasks)
         self.budget_scale = budget_scale
         self.edit_space, self.coupling = EDIT_SPACE, COUPLING
+        self.harness_space, self.harness_doc = HARNESS_SPACE, HARNESS_DOC
         self.task_rates = {t: None for t in self.tasks}   # latest verified rate per task
 
     def default_program(self):
@@ -73,9 +102,21 @@ class LiberoDomain:
             if section not in out or not isinstance(values, dict):
                 raise ValueError(f"unknown_program_section:{section}")
             for key, value in values.items():
-                if key not in out[section]:
+                if key not in out[section] and f"{section}.{key}" not in OPTIONAL_FIELDS:
                     raise ValueError(f"unknown_program_field:{section}.{key}")
                 out[section][key] = value
+        for dotted, allowed in OPTIONAL_FIELDS.items():
+            section, key = dotted.split(".")
+            if key in out[section] and out[section][key] not in allowed:
+                raise ValueError(f"program_value_not_allowed:{dotted}")
+        band = out["curation"]["band"]
+        if not (isinstance(band, (list, tuple)) and len(band) == 2 and 0.0 <= band[0] < band[1] <= 1.0):
+            raise ValueError("program_value_out_of_range:curation.band")
+        for dotted, space in HARNESS_EXTRA.items():
+            if isinstance(space, tuple):
+                value = _get(out, dotted)
+                if not isinstance(value, (int, float)) or not space[0] <= value <= space[1]:
+                    raise ValueError(f"program_value_out_of_range:{dotted}")
         for dotted, space in EDIT_SPACE.items():
             value = _get(out, dotted)
             if isinstance(space, list):

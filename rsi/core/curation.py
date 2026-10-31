@@ -8,7 +8,8 @@ Rules (chosen by the improvement program):
                        hardest still-solvable cases first (ReST-EM / expert iteration);
   * ``mixed_groups`` - keep every attempt of cases whose verified rate lies strictly
                        inside ``band``; each item carries a group-relative advantage
-                       (reward minus case mean). Uniform groups carry no signal.
+                       (reward minus case mean; divided by the case std when ``adv`` is
+                       "zscore"). Uniform groups carry no signal.
 The control ``feedback="shuffled"`` permutes rewards/verification *within each
 case* before curation: same counts, same structure, no information from the
 oracle. It applies to every rule, so "does external feedback matter" is tested
@@ -63,10 +64,14 @@ def curate(cases, attempts, rule: dict, rng: random.Random):
     elif name == "mixed_groups":
         eligible = [i for i in range(len(cases)) if lo < rates[i] < hi]
         rng.shuffle(eligible)
+        zscore = rule.get("adv", "center") == "zscore"     # addendum 16 harness component
         for i in eligible[:budget]:
-            mean = sum(a.reward for a in attempts[i]) / len(attempts[i])
+            rewards = [a.reward for a in attempts[i]]
+            mean = sum(rewards) / len(rewards)
+            sd = (sum((r - mean) ** 2 for r in rewards) / len(rewards)) ** 0.5
             for a in attempts[i]:
-                items.append(dict(experience=a.experience, advantage=a.reward - mean))
+                adv = (a.reward - mean) / (sd + 1e-6) if zscore else a.reward - mean
+                items.append(dict(experience=a.experience, advantage=adv))
                 item_cases.append(cases[i].id)
     else:
         raise ValueError(f"unknown_curation_rule:{name}")
