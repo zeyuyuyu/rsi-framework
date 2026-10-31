@@ -75,3 +75,12 @@ failure signal." It proposed two procedures:
 
 So it reached the addendum-12 diagnosis on its own. One of its proposals changed `curriculum.floor`, a field outside
 the knob set, which is why the edit-space restriction above was added before launch.
+
+Amendment (2026-10-31 ~04:50Z, before any `llm` result). The first call of `a8_goalmain_llm_s1` (round 1) returned
+one sensible proposal: temperature 1.2, 160 scenes, 12 samples, lr 2e-5 and 150 steps. It also changed
+`curation.per_case`, which is not a knob. The whole proposal was rejected and numeric search filled in, so the arm
+would silently degrade into `full`. From now on a proposal keeps its values on the knobs and drops changes to any
+other field. Each drop is logged (`dropped_fields`). The prompt now says which fields may change. The knob set,
+validator, gate and call cap are unchanged. `a8_goalmain_llm_s1` restarts on the fixed code before its round 1
+finished (its first run dir is kept as `.void1`). Test: `test_llm_meta_proposer_never_sees_audit_and_falls_back`
+(36 pass).

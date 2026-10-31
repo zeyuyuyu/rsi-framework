@@ -616,23 +616,32 @@ class ProgramTests(unittest.TestCase):
         ns = NumericSearch(d.edit_space, d.validate_program, d.coupling)
         good = json.loads(json.dumps(p)); good["update"]["lr"] = 5e-5
         bad = json.loads(json.dumps(p)); bad["update"]["operator"] = "bc"            # bc needs verified: invalid
-        outside = json.loads(json.dumps(p)); outside["curriculum"]["floor"] = 0.1      # valid field, not a knob
+        outside = json.loads(json.dumps(p)); outside["curriculum"]["floor"] = 0.1      # valid field, not a knob:
+        # dropped, and with no knob change left the proposal equals the incumbent and is skipped
+        mixed = json.loads(json.dumps(p)); mixed["curation"]["per_case"] = 4; mixed["solver"]["temperature"] = 1.2
         seen = []
         def client(prompt, temperature, max_tokens):
             seen.append(prompt)
             return json.dumps(dict(diagnosis="gate rising", proposals=[dict(why="y", procedure=outside),
+                                                                         dict(why="z", procedure=mixed),
                                                                          dict(why="faster", procedure=good),
                                                                          dict(why="x", procedure=bad)])), {}
         prop = LLMMetaProposer(d.edit_space, d.validate_program, ns, client, "m", max_calls=1)
         out = prop.propose(Program.make(p), archive, None, None, 2, random.Random(0))
         self.assertEqual(len(out), 2)
-        self.assertEqual(out[0].author, "llm")
-        self.assertEqual(out[0].params["update"]["lr"], 5e-5)
-        self.assertEqual(out[1].author, "search")                                # the invalid one fell back
+        self.assertEqual([o.author for o in out], ["llm", "llm"])
+        self.assertEqual(out[0].params["solver"]["temperature"], 1.2)              # knob kept ...
+        self.assertEqual(out[0].params["curation"]["per_case"], p["curation"]["per_case"])   # ... non-knob dropped
+        self.assertEqual(out[1].params["update"]["lr"], 5e-5)
+        prop_b = LLMMetaProposer(d.edit_space, d.validate_program, ns, client, "m", max_calls=5)
+        out_b = prop_b.propose(Program.make(p), archive, None, None, 3, random.Random(0))
+        self.assertEqual([o.author for o in out_b], ["llm", "llm", "search"])    # the invalid one fell back
         for secret in ("0.123457", "0.987653", "audit"):                        # audit never reaches the LLM
             self.assertNotIn(secret, seen[0])
+        n_seen = len(seen)
         out2 = prop.propose(Program.make(p), archive, None, None, 2, random.Random(1))   # call cap reached
-        self.assertEqual(len(seen), 1)
+        self.assertEqual(len(seen), n_seen)
+        self.assertEqual(prop.calls, 1)
         self.assertTrue(all(o.author == "search" for o in out2))
         def broken(prompt, temperature, max_tokens):
             raise RuntimeError("llm_call_failed:URLError")

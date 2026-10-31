@@ -127,6 +127,14 @@ elif sys.argv[1] == "oftg_rep":
         prog, extra = merge(merge(OFT_PROGRAM, BC), {"curriculum": {"cases": 64}}), {}
     write(f"bj_oftg_curve_{tag}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
           vla=dict(VLA, **extra), engine=curve, meta={"proposer": "fixed"}, program=prog)
+elif sys.argv[1] == "yq_smoke":
+    # Yangquan end-to-end check before the main arms (addendum 15): 1 round x 1 inner step of 40 placements, 20 + 20
+    # gate/audit placements, tests sealed; the main-arm GRPO settings. Not a result.
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 40}, "update": {"lr": 3e-5, "steps": 50}})
+    write("yq_smoke_goal", model_name="oft-sft-libero-goal-traj1", suite="libero_goal", heldout_per_task=2,
+          vla=dict(VLA, ratio_mode="matched", loss_agg="episode"),
+          engine=dict(rounds=1, inner_steps=1, seed=0, seal_tests=True, min_gate_gain=-1.0),
+          meta={"proposer": "fixed"}, program=prog)
 elif sys.argv[1] == "goal_main":
     # the LIBERO-Goal main arms once addendum 11's rule picks an operator (specified in its own addendum before launch)
     # usage: mkplans_vla.py goal_main <grpo|bc> <prefix: bj|yq>

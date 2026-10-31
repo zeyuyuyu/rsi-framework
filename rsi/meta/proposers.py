@@ -174,7 +174,8 @@ scenes, decides whether a round's new policy is kept and passed on.
 Current procedure (JSON):
 {program}
 
-Allowed values (numbers are [min, max]; lists are the allowed choices; grpo needs mixed_groups, bc needs verified):
+You may change ONLY these fields (numbers are [min, max]; lists are the allowed choices; grpo needs mixed_groups,
+bc needs verified). Copy every other field of the procedure unchanged; changes to other fields are discarded:
 {space}
 
 History, oldest first. For each candidate: the fields that differed from its parent's procedure, its gate score and the
@@ -265,7 +266,7 @@ class LLMMetaProposer:
 
     def propose(self, program, archive, backend, version, k, rng):
         import hashlib
-        out, rejected, reply, diagnosis = [], {}, None, None
+        out, rejected, dropped, reply, diagnosis = [], {}, {}, None, None
         prompt = self.prompt(program, archive, k)
         if self.calls < self.max_calls:
             self.calls += 1
@@ -282,9 +283,17 @@ class LLMMetaProposer:
                         rejected[key] = rejected.get(key, 0) + 1
                         continue
                     outside = sorted(set(program_diff(program.params, params)) - set(self.space))
-                    if outside:                   # same knobs as numeric search, nothing else
-                        rejected["outside_edit_space"] = rejected.get("outside_edit_space", 0) + 1
-                        continue
+                    if outside:                   # same knobs as numeric search: keep its knob values, drop the rest
+                        dropped[",".join(outside)] = dropped.get(",".join(outside), 0) + 1
+                        kept = copy.deepcopy(program.params)
+                        for knob in self.space:
+                            _put(kept, knob, _get(params, knob))
+                        try:
+                            params = self.validate(kept)
+                        except (ValueError, TypeError) as exc:
+                            key = str(exc).split(":")[0] or type(exc).__name__
+                            rejected[key] = rejected.get(key, 0) + 1
+                            continue
                     if params != program.params and all(params != p.params for p in out):
                         note = json.dumps(dict(why=str(prop.get("why", ""))[:300],
                                                diff=program_diff(program.params, params)))
@@ -302,5 +311,6 @@ class LLMMetaProposer:
             out += self.fallback.propose(program, archive, backend, version, k - len(out), rng)
         self._log(dict(model=self.model, prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
                        prompt_chars=len(prompt), reply=reply, diagnosis=diagnosis, usage=usage,
-                       llm_programs=n_llm, fallback_programs=len(out) - n_llm, rejected=rejected))
+                       llm_programs=n_llm, fallback_programs=len(out) - n_llm, rejected=rejected,
+                       dropped_fields=dropped))
         return out[:k]
