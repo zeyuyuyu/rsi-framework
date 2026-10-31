@@ -14,7 +14,12 @@ d, r = sys.argv[1], sys.argv[2]
 for p in sorted(glob.glob(os.path.join(d, "round-[0-9][0-9].json"))):
     x = json.load(open(p))
     print("ROUNDFILE", r, json.dumps(dict(round=x["round"], parent=x.get("parent"), accepted=x.get("accepted"),
-          candidates=[dict(node=c["node"], gate=c.get("gate"), audit=c.get("audit")) for c in x.get("candidates", [])])))
+          candidates=[dict(node=c["node"], gate=c.get("gate"), audit=c.get("audit"),
+                           verified_rate=(c.get("signal") or {}).get("verified_rate"),
+                           mixed_fraction=(c.get("signal") or {}).get("mixed_fraction"),
+                           inner_verified=[(s.get("signal") or {}).get("verified_rate")
+                                           for s in (c.get("signal") or {}).get("inner") or []])
+                      for c in x.get("candidates", [])])))
 for p in sorted(glob.glob(os.path.join(d, "ckpt-*", "receipt.json")))[:1]:
     e = json.load(open(p)).get("extra", {})
     print("RECEIPT_SETTINGS", r, os.path.basename(os.path.dirname(p)), json.dumps(dict(
