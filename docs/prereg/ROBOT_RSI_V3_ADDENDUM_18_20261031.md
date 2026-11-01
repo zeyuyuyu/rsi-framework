@@ -70,3 +70,7 @@ experiment:
 * **No more early reads.** No other test file is opened until every main arm has its `report.json`. The two early
   values above stay as they are and are not reread.
 * **Disclosure.** The final write-up states this early read and its time.
+* **Second exposure (2026-11-01 ~01:15Z, disclosed).** A Beijing log monitor matched `TESTBITS` and echoed the raw
+  official-test bit strings of `bj_oftl_fixed_s3` (nodes n0 and r01c0, LIBERO-10) into the operator session. They
+  were not counted, compared or analyzed. The monitor filter now drops every line that mentions a test, and no
+  design change follows from this, per the freeze above.
