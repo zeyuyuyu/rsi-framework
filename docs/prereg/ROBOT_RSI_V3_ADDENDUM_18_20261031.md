@@ -74,3 +74,13 @@ experiment:
   official-test bit strings of `bj_oftl_fixed_s3` (nodes n0 and r01c0, LIBERO-10) into the operator session. They
   were not counted, compared or analyzed. The monitor filter now drops every line that mentions a test, and no
   design change follows from this, per the freeze above.
+* **Gateway failures (operational, disclosed).** Two failures so far:
+  * 2026-10-31 22:56-23:30Z: the TLS handshake from cavin to the gateway timed out. `yq_oftg_llm_harness_s3` round 3
+    fell back to numeric.
+  * 2026-11-01 ~04:50Z: the gateway returned HTTP 500 `internal_error`. `a8_goalmain_llm_s1` round 4 fell back to
+    numeric.
+  * Every such round is tagged FALLBACK: it is excluded from LLM head-to-head lists, and fallbacks are counted per
+    arm.
+  * The relay (Yangquan and Beijing runs) now retries a failed call for up to about 15 minutes before answering with
+    an error, inside the run's 30-minute wait. The model, the prompt and the runs are unchanged.
+  * cavin runs call the gateway directly and keep their in-process client (3 retries).

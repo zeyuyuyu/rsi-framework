@@ -39,11 +39,17 @@ while True:
                 print(time.strftime("%FT%TZ", time.gmtime()), run, k, "req_get_exc", type(e).__name__, flush=True)
                 break
             t = time.time()
-            try:
-                content, usage = client(req["prompt"], req["temperature"], req["max_tokens"])
-                out = dict(content=content, usage=usage)
-            except Exception as e:
-                out = dict(error=str(e)[:200])
+            for attempt in range(8):          # gateway 5xx / TLS blips (11-01): keep trying ~10 min, inside the
+                try:                          # run's 30-min relay wait, before answering with an error
+                    content, usage = client(req["prompt"], req["temperature"], req["max_tokens"])
+                    out = dict(content=content, usage=usage)
+                    break
+                except Exception as e:
+                    out = dict(error=str(e)[:200])
+                    print(time.strftime("%FT%TZ", time.gmtime()), run, k, "retry", attempt, out["error"][:80], flush=True)
+                    if time.time() - t > 900:     # a hung TLS handshake costs ~9 min per attempt: stop at 15 min
+                        break
+                    time.sleep(60)
             st = put(urls["resp_put"][k], out)
             done.add(k)
             donef.write_text(json.dumps(sorted(done)))
