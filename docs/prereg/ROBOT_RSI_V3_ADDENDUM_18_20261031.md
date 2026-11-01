@@ -84,3 +84,14 @@ experiment:
   * The relay (Yangquan and Beijing runs) now retries a failed call for up to about 15 minutes before answering with
     an error, inside the run's 30-minute wait. The model, the prompt and the runs are unchanged.
   * cavin runs call the gateway directly and keep their in-process client (3 retries).
+* **Disk-full crash on cavin (operational, disclosed).** 2026-11-01 12:20-12:22Z: `/data0` reached 100%, and six
+  runs died with `OSError 28` inside the rollout worker's episode write:
+  * goal: `a8_goalmain_llm_s1/s2/s3` and `a8_goalmain_llm_harness_cap_s1/s2`
+  * spatial: `a8_spatmain_llm_harness_cap_s1`
+  * The space was freed by deleting only the episode frame files (`*.npz`) of finished or abandoned pilots'
+    scratch dirs (`vla_goal_*`, `vla3_pilot_*`, `a8_oft3_pilot*`, `a8_oftg_curve_*` `.work`), about 700 GB. No
+    main-arm file was touched.
+  * The six runs were resumed unchanged with `--resume`. Completed rounds are kept. The unfinished round is set
+    aside in `resume-NN/` and run again from its start, and the meta RNG is reseeded as `resume.json` records.
+  * For the LLM arms this means the unfinished round's proposal call is made again. The first proposal was never
+    scored, so no outcome selected between the two draws.
