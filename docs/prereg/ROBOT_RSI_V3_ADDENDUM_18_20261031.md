@@ -95,3 +95,10 @@ experiment:
     aside in `resume-NN/` and run again from its start, and the meta RNG is reseeded as `resume.json` records.
   * For the LLM arms this means the unfinished round's proposal call is made again. The first proposal was never
     scored, so no outcome selected between the two draws.
+  * In three runs the aborted round's call had failed (gateway outage) and the re-drawn call succeeded:
+    `a8_goalmain_llm_harness_cap_s1` r4, `a8_goalmain_llm_harness_cap_s2` r3 and `a8_spatmain_llm_harness_cap_s1`
+    r1. The resume therefore turned what would have been FALLBACK rounds into LLM rounds. That selection is on call
+    failure, not on outcome, because neither call was scored. Those three FALLBACK tags are dropped.
+  * Fallback tags are assigned per completed round from the call that round used: the last `meta-llm.jsonl` line
+    before its `round-NN.json`, cross-checked against the candidate's `author`. On cavin the tags are
+    `a8_goalmain_llm_s1` r4 and `a8_goalmain_llm_harness_cap_s3` r3 (the latter while that round is in progress).
