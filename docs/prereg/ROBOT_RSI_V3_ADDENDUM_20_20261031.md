@@ -25,3 +25,14 @@ can be asked. That question is whether, at equal compute, the meta level's edits
   with a run-clustered bootstrap CI when there is more than one run, else a round-level CI. It is reported next to
   the Goal H-cap and never pooled into it. The registered H-cap of addendum 19 stays Goal-only.
 * There is no fixed partner, so no arm-level Spatial claim is made.
+
+## Amendment 1 (2026-11-01 ~13:10Z, before the final test pass): scope of the read-once rule
+
+This amendment only clarifies scope. It adds no read and changes no bar.
+
+* The registered Spatial read (H-cap-spatial) uses gates only. No Spatial claim rests on the official test.
+* The final Goal test pass (addendum 18, amendment 2) waits for every Goal main arm. It does not wait for
+  `a8_spatmain_llm_harness_cap_s1`, and it does not open that run's test files.
+* The Spatial run's test file is opened only after its own `report.json` exists, and is reported as descriptive.
+  Reading the Goal test (another suite, checkpoint and episode set) is not an early look at Spatial. Because of the
+  design freeze, nothing in the Spatial run depends on it.
