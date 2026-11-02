@@ -169,3 +169,7 @@ are now free.
   errors. No decision logic changed. The run was resumed again from v23, and later resumes use v23.
 * **Seed-2 cavin replicate (amendment 1).** GPUs 5 and 7 are free before the 11-03 06:00Z deadline, so
   `a8_m2_pre_llm_s2` and `a8_m2_pre_rep_s2` start now, from src10 (v23 tree) and the OpenRouter-via-proxy meta.
+* **Second relay-client fix (rsi_src_v24, commit 5812b66).** The resumed `yq_m2_pre_llm_s3` crashed at start
+  (rc=1). The relay URL file it fetched from BOS came back truncated (`IncompleteRead`). `RelayClient` now retries
+  that fetch and treats `http.client.HTTPException` as transient. The run was resumed from v24 (job-5wxf2l0cqda3);
+  later resumes use v24.
