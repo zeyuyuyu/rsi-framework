@@ -1,0 +1,3 @@
+{"round": 6, "parent": "r06c0", "accepted": true, "seconds": {"attempt": 55548, "audit_eval": 4881, "gate_eval": 16190, "meta": 0, "propose": 0, "train": 53781}}
+{"node": "r06c0", "gate": 0.65, "audit": null, "author": "search", "program": "175d94ab3a159b76", "verified_rate": 0.6875, "mixed_fraction": 0.43333333333333335}
+{"node": "r06c1", "gate": 0.64, "audit": null, "author": "search", "program": "5235f9e6732855e7", "verified_rate": 0.6875, "mixed_fraction": 0.43333333333333335}

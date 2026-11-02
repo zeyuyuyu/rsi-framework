@@ -1,0 +1,140 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.215,
+      "author": "seed",
+      "gate": 0.165,
+      "node": "n0",
+      "program": "a1a1dff4c45a1409",
+      "round": 0
+    },
+    {
+      "audit": 0.215,
+      "author": "seed",
+      "gate": 0.2,
+      "node": "r01c0",
+      "program": "a1a1dff4c45a1409",
+      "round": 1
+    },
+    {
+      "audit": 0.205,
+      "author": "seed",
+      "gate": 0.18,
+      "node": "r02c0",
+      "program": "a1a1dff4c45a1409",
+      "round": 2
+    },
+    {
+      "audit": 0.185,
+      "author": "seed",
+      "gate": 0.195,
+      "node": "r03c0",
+      "program": "a1a1dff4c45a1409",
+      "round": 3
+    },
+    {
+      "audit": 0.225,
+      "author": "seed",
+      "gate": 0.19,
+      "node": "r04c0",
+      "program": "a1a1dff4c45a1409",
+      "round": 4
+    },
+    {
+      "audit": 0.18,
+      "author": "seed",
+      "gate": 0.205,
+      "node": "r05c0",
+      "program": "a1a1dff4c45a1409",
+      "round": 5
+    },
+    {
+      "audit": 0.27,
+      "author": "llm",
+      "gate": 0.2,
+      "node": "r06c1",
+      "program": "3ceab74139fac749",
+      "round": 6
+    }
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 3,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 155729.81140300003,
+  "retained": "r06c1",
+  "seconds": {
+    "attempt": 99244.71172776597,
+    "audit_eval": 4758.215141150868,
+    "gate_eval": 13026.621078869794,
+    "meta": 1068.5073217381723,
+    "propose": 0.005760131636634469,
+    "test_eval": 10609.534580456093,
+    "train": 27014.473542015534
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.186
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.188
+        },
+        {
+          "node": "r02c0",
+          "round": 2,
+          "score": 0.166
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.164
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.146
+        },
+        {
+          "node": "r05c0",
+          "round": 5,
+          "score": 0.186
+        },
+        {
+          "node": "r06c1",
+          "round": 6,
+          "score": 0.158
+        }
+      ],
+      "final": 0.158,
+      "initial": 0.186,
+      "paired": {
+        "ci95": [
+          -0.064,
+          0.008
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 34,
+        "flipped_to_wrong": 48,
+        "mcnemar_p": 0.15067520762630382,
+        "mean_gain": -0.028,
+        "n": 500
+      }
+    }
+  }
+}

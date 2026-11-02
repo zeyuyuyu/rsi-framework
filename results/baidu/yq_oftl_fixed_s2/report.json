@@ -1,0 +1,100 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.19,
+      "author": "seed",
+      "gate": 0.15,
+      "node": "n0",
+      "program": "2a8413c825eed0ba",
+      "round": 0
+    },
+    {
+      "audit": 0.19,
+      "author": "seed",
+      "gate": 0.165,
+      "node": "r01c0",
+      "program": "2a8413c825eed0ba",
+      "round": 1
+    },
+    {
+      "audit": 0.22,
+      "author": "seed",
+      "gate": 0.275,
+      "node": "r03c0",
+      "program": "2a8413c825eed0ba",
+      "round": 3
+    },
+    {
+      "audit": 0.18,
+      "author": "seed",
+      "gate": 0.195,
+      "node": "r04c0",
+      "program": "2a8413c825eed0ba",
+      "round": 4
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 2,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 88850.94000830082,
+  "retained": "r04c0",
+  "seconds": {
+    "attempt": 43838.60991245229,
+    "audit_eval": 4135.1890570232645,
+    "gate_eval": 14197.528779780027,
+    "propose": 0.002705588471144438,
+    "test_eval": 8240.090211958159,
+    "train": 18432.604446137324
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.186
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.178
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.162
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.182
+        }
+      ],
+      "final": 0.182,
+      "initial": 0.186,
+      "paired": {
+        "ci95": [
+          -0.038,
+          0.03
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 38,
+        "flipped_to_wrong": 40,
+        "mcnemar_p": 0.9099464518745243,
+        "mean_gain": -0.004,
+        "n": 500
+      }
+    }
+  }
+}

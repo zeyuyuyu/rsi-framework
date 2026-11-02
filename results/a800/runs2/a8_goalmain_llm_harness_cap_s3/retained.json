@@ -1,0 +1,47 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "search",
+    "id": "29f4c416b4e34cf9",
+    "note": "{\"update.batch\": 48}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.2
+      },
+      "update": {
+        "batch": 48,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 3e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "201bbff4d1072961"
+  },
+  "version": {
+    "id": "e3719a1b5bdfd632acbb108ad09f60cfa5afd5bf92aaa678f6ffb6175382e4e7",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_goalmain_llm_harness_cap_s3/ckpt-r06c1",
+    "parent_id": "442964bde5a8903b21bc326868584ad29c3fceb369705ced686387a9d64fe4d0"
+  }
+}

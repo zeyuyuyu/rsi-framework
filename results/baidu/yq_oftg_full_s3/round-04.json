@@ -1,0 +1,3 @@
+{"round": 4, "parent": "r04c1", "accepted": true, "seconds": {"attempt": 36340, "audit_eval": 3400, "gate_eval": 11734, "meta": 0, "propose": 0, "train": 33638}}
+{"node": "r04c0", "gate": 0.555, "audit": null, "author": "search", "program": "d550cdb18ac6b05b", "verified_rate": 0.5729166666666666, "mixed_fraction": 0.48333333333333334}
+{"node": "r04c1", "gate": 0.605, "audit": null, "author": "search", "program": "175d94ab3a159b76", "verified_rate": 0.5729166666666666, "mixed_fraction": 0.48333333333333334}
