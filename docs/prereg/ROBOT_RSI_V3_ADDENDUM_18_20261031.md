@@ -102,3 +102,8 @@ experiment:
   * Fallback tags are assigned per completed round from the call that round used: the last `meta-llm.jsonl` line
     before its `round-NN.json`, cross-checked against the candidate's `author`. On cavin the tags are
     `a8_goalmain_llm_s1` r4 and `a8_goalmain_llm_harness_cap_s3` r3 (the latter while that round is in progress).
+* **Wall-time resumes on Yangquan (operational, disclosed).** 2026-11-02: `yq_oftg_llm_harness_s1` reached the
+  53-hour job limit (`RUN_TIMEOUT_S` 190800, rc=124) after completing round 4. It was resubmitted unchanged with
+  `RESUME_RUN=yq_oftg_llm_harness_s1` (job-6q2hr7mbex2q): the same plan, the source rsi_src_v17, and the same relay
+  slots. The other Yangquan llm_harness runs that hit the limit are resumed the same way and listed in
+  scripts/baidu/jobs_yq.tsv.
