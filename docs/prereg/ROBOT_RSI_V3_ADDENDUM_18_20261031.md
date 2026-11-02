@@ -107,3 +107,13 @@ experiment:
   `RESUME_RUN=yq_oftg_llm_harness_s1` (job-6q2hr7mbex2q): the same plan, the source rsi_src_v17, and the same relay
   slots. The other Yangquan llm_harness runs that hit the limit are resumed the same way and listed in
   scripts/baidu/jobs_yq.tsv.
+* **More wall-time resumes and a disk prune (operational, disclosed), 2026-11-02.**
+  * `yq_oftg_llm_harness_s2` and `s3` were resumed after rc=124, at rounds 4 and 5.
+  * `yq_oftl_llm_harness_s1` was resumed after rc=124 at round 4 (job-6bok2pb9c5xb), about 4.5 h after its limit.
+  * At 16:30Z, cavin's `/data0` held 421G. The episode frames (`*.npz`) were deleted from the `.work` dirs of the
+    finished runs (each has `report.json`): goal fixed s1-3, cap s1-3, llm_s1 and the two v2 smoke runs. That
+    freed 739G in total. Round, checkpoint and test files were kept.
+* **LLM gateway outage, 2026-11-02 from ~10:18Z.** The CommonStack key returns 401 "Access key is not active".
+  Every LLM meta call since then, relayed (Yangquan) or direct (cavin), failed after its retries. Each such round
+  ran on the numeric fallback, as the protocol prescribes, and is tagged FALLBACK from the candidate author
+  ("search"). The fix is pending with the user; its time and the affected rounds will be listed here.
