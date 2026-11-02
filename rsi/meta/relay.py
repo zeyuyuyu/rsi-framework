@@ -5,11 +5,17 @@ holds the key (scripts/a800/llm_relay.py on cavin) answers. Neither side holds B
 on the workstation, scoped to single objects and expire. The slot counter lives in the run dir, so a resumed run
 never reuses a slot.
 """
+import http.client
 import json
 import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+
+
+# network errors a BOS round trip can raise transiently; HTTPException covers IncompleteRead and RemoteDisconnected,
+# ValueError a truncated JSON body. HTTPError is handled before these wherever its status matters.
+_TRANSIENT = (urllib.error.URLError, OSError, http.client.HTTPException, ValueError)
 
 
 class RelayClient:
@@ -18,8 +24,15 @@ class RelayClient:
         self.http = http or urllib.request.urlopen
         if isinstance(urls, str):
             if urls.startswith("http"):
-                with self.http(urls, timeout=60) as r:
-                    urls = json.loads(r.read())
+                for attempt in range(6):           # a truncated BOS read crashed a resumed yq run at start (11-02)
+                    try:
+                        with self.http(urls, timeout=60) as r:
+                            urls = json.loads(r.read())
+                        break
+                    except _TRANSIENT:
+                        if attempt == 5:
+                            raise
+                        time.sleep(10 * (attempt + 1))
             else:
                 urls = json.loads(Path(urls).read_text())
         self.req_put, self.resp_get = urls["req_put"], urls["resp_get"]
@@ -43,7 +56,7 @@ class RelayClient:
                     if r.status != 200:
                         raise RuntimeError(f"llm_call_failed:relay_put_{r.status}")
                 break
-            except (urllib.error.URLError, OSError) as e:
+            except _TRANSIENT as e:
                 if attempt == 4:
                     raise RuntimeError(f"llm_call_failed:relay_put_{type(e).__name__}")
                 time.sleep(5 * (attempt + 1))
@@ -58,7 +71,7 @@ class RelayClient:
             except urllib.error.HTTPError as e:
                 if e.code not in (403, 404):
                     raise RuntimeError(f"llm_call_failed:relay_get_{e.code}")
-            except (urllib.error.URLError, OSError, ValueError):   # reset / timeout / partial body: poll again
+            except _TRANSIENT:                    # reset / timeout / truncated body: poll again
                 pass
             time.sleep(self.poll)
         raise RuntimeError("llm_call_failed:relay_timeout")

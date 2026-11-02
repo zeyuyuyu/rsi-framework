@@ -778,6 +778,8 @@ class ProgramTests(unittest.TestCase):
                 raise ConnectionResetError(104, "reset")
             if calls["get"] == 3:
                 return Resp(b'{"content": "ok"')                 # truncated body: poll again
+            if calls["get"] == 4:
+                raise http.client.IncompleteRead(b"x", 10)
             return Resp(json.dumps({"content": "ok", "usage": {}}).encode())
         import rsi.meta.relay as relay_mod
         sleep, relay_mod.time.sleep = relay_mod.time.sleep, (lambda s: None)
@@ -786,7 +788,15 @@ class ProgramTests(unittest.TestCase):
                 c = RelayClient({"req_put": ["https://b/req-0"], "resp_get": ["https://b/resp-0"]},
                                 Path(tmp) / "s.json", poll=0.0, timeout=5, http=http_)
                 self.assertEqual(c("p", 1.0, 10)[0], "ok")
-                self.assertEqual((calls["put"], calls["get"]), (2, 4))
+                self.assertEqual((calls["put"], calls["get"]), (2, 5))
+                fetched = []
+                def url_http(url, timeout=60):                 # the urls file itself: one truncated read
+                    fetched.append(url)
+                    if len(fetched) == 1:
+                        raise http.client.IncompleteRead(b"{", 100)
+                    return Resp(json.dumps({"req_put": ["p"], "resp_get": ["g"]}).encode())
+                c3 = RelayClient("https://b/node_urls.json", Path(tmp) / "s3.json", http=url_http)
+                self.assertEqual((c3.req_put, len(fetched)), (["p"], 2))
         finally:
             relay_mod.time.sleep = sleep
 
