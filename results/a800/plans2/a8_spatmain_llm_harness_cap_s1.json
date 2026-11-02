@@ -43,9 +43,9 @@
     "proposer": "llm",
     "space": "harness",
     "budget": "seed",
-    "base_url": "https://api.commonstack.ai/v1",
+    "base_url": "https://openrouter.ai/api/v1",
     "model": "anthropic/claude-sonnet-5-5",
-    "key_file": "/data0/home/zeyuwang/.cskey",
+    "key_file": "/data0/home/zeyuwang/.orkey",
     "max_calls": 24
   },
   "program": {

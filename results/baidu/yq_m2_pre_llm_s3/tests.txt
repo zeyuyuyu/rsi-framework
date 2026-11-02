@@ -1,0 +1,203 @@
+----- latest worker logs (failure context) -----
+--- /mnt/pfs/shitianyu-rsi/runs/yq_m2_pre_llm_s3.work/00038-rollout-1793636479/log-s0.txt
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/yq_m2_pre_llm_s3.work/00038-rollout-1793636479/log-s1.txt
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/yq_m2_pre_llm_s3.work/00038-rollout-1793636479/log-s2.txt
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+--- /mnt/pfs/shitianyu-rsi/runs/yq_m2_pre_llm_s3.work/00037-train-1793635574/log.txt
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+/tmp/src/rsi/backends/openvla_oft/train_worker.py:215: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:835.)
+  step_loss += float(loss)
+{"step": 10, "loss": 0.2231207713484764, "clipfrac": 0.11210511601901034, "elapsed": 57.3}
+{"step": 20, "loss": 0.17656884342432022, "clipfrac": 0.12422360248447205, "elapsed": 113.8}
+{"step": 30, "loss": 0.19728342443704605, "clipfrac": 0.14792899408284024, "elapsed": 170.5}
+{"step": 40, "loss": 0.32150016725063324, "clipfrac": 0.12436974789915967, "elapsed": 227.0}
+{"step": 50, "loss": 0.14981919340789318, "clipfrac": 0.1389201349831271, "elapsed": 282.6}
+{"step": 60, "loss": 0.1978488676249981, "clipfrac": 0.1378052203199551, "elapsed": 337.9}
+{"step": 70, "loss": 0.18000932782888412, "clipfrac": 0.13783482142857142, "elapsed": 393.9}
+{"step": 80, "loss": 0.10472042299807072, "clipfrac": 0.10361377752682101, "elapsed": 449.8}
+{"step": 90, "loss": 0.19527485966682434, "clipfrac": 0.14228912240840672, "elapsed": 505.3}
+{"step": 100, "loss": 0.09629588015377522, "clipfrac": 0.13206475433115591, "elapsed": 560.5}
+/mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/peft/utils/save_and_load.py:195: UserWarning: Could not find a config file in /mnt/pfs/shitianyu-rsi/models/Openvla-oft-SFT-libero-goal-traj1 - will assume that the vocabulary was not modified.
+  warnings.warn(

@@ -1,1 +1,3 @@
 {"at": 1793535957.1075537, "completed_rounds": 3, "parent": "r03c0", "set_aside": ["ckpt-r04c0-i0", "failure.json", "round-04-attempts-c951da36eb35.jsonl", "round-04-cases-c951da36eb35.jsonl", "archive.jsonl", "accepted.jsonl"], "seen_train": 1203, "meta_rng": "reseeded seed*1000003+3"}
+{"at": 1793637439.2106173, "completed_rounds": 5, "parent": "r05c1", "set_aside": ["ckpt-r06c0-i0", "round-06-attempts-9c5ac6d82a61.jsonl", "round-06-cases-9c5ac6d82a61.jsonl", "archive.jsonl", "accepted.jsonl"], "seen_train": 2378, "meta_rng": "reseeded seed*1000003+5"}
+{"at": 1793637860.8910835, "completed_rounds": 5, "parent": "r05c1", "set_aside": ["archive.jsonl", "accepted.jsonl"], "seen_train": 2378, "meta_rng": "reseeded seed*1000003+5"}
