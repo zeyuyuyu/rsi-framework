@@ -12,6 +12,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   yq_main    addendum 9: 5 arms x seeds 1-3 on Yangquan, fresh paired gates, recipe from the addendum-8 rule
   oftg_pilot addendum 11: OFT on LIBERO-Goal, GRPO (lr 3e-5, matched, episode loss) vs BC curves, seed 0
   oftg_rep   addendum 11 amendment 2: a further seed replica of one oftg_pilot curve (oftg_rep <seed> <grpo|bc>)
+  m2         addendum 21: meta level v2 on Yangquan (pre/tun start x replica/llm x seeds 1-3)
   goal_main  LIBERO-Goal main arms (5 arms x seeds 1-3, fresh paired gates) with the operator addendum 11 picks
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
@@ -170,6 +171,21 @@ elif sys.argv[1] == "yq_rsi":
         write(f"yq_oftl_fixed_s{seed}", vla=vla, engine=dict(gated, seed=seed), meta={"proposer": "fixed"}, program=prog)
         write(f"yq_oftl_llm_harness_s{seed}", vla=vla, engine=dict(gated, seed=seed, candidates_per_round=2),
               meta=llm_h, program=hprog)
+elif sys.argv[1] == "m2":
+    # addendum 21: meta level v2 on Yangquan. Two starts (pre: addendum 2's lr 1e-4 / token loss at 64 scenes; tun: the
+    # v3 Goal main program) x {replica (compute-matched fixed), llm v2} x seeds 1-3. usage: mkplans_vla.py m2
+    gated = {"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "candidates_per_round": 2, "meta_v2": True}
+    llm2 = {"proposer": "llm", "space": "v2", "budget": "seed", "relay": True, "model": "anthropic/claude-sonnet-5-5",
+            "max_calls": 24}
+    for start, lr, agg in (("pre", 1e-4, "token"), ("tun", 3e-5, "episode")):
+        prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": lr, "ratio": "matched", "loss_agg": agg,
+                                                                           "bc_temp": "unit"},
+                                   "curation": {"adv": "center"}})
+        vla = dict(VLA, ratio_mode="matched", loss_agg=agg)
+        for seed in (1, 2, 3):
+            for arm, meta, extra in (("rep", {"proposer": "replica"}, {"replica_candidates": True}), ("llm", llm2, {})):
+                write(f"yq_m2_{start}_{arm}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
+                      vla=vla, engine=dict(gated, seed=seed, **extra), meta=meta, program=prog)
 elif sys.argv[1] == "bj_l10_pair":
     # addendum 17 amendment: an extra LIBERO-10 pair on Beijing (deterministic evaluation), seed 3, exploratory
     prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
