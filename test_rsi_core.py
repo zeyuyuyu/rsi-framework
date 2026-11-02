@@ -756,6 +756,40 @@ class ProgramTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):                                          # slots exhausted
                 c2("p", 1.0, 10)
 
+    def test_relay_client_survives_network_blips(self):
+        # yq 11-02: a reset connection while polling BOS crashed a run (RemoteDisconnected was not caught)
+        import http.client, io, urllib.error
+        from rsi.meta.relay import RelayClient
+        calls = {"put": 0, "get": 0}
+        class Resp(io.BytesIO):
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+        def http_(req, timeout=60):
+            if hasattr(req, "get_method") and req.get_method() == "PUT":
+                calls["put"] += 1
+                if calls["put"] == 1:
+                    raise urllib.error.URLError("reset")        # first PUT fails, the retry succeeds
+                return Resp(b"")
+            calls["get"] += 1
+            if calls["get"] == 1:
+                raise http.client.RemoteDisconnected("closed")
+            if calls["get"] == 2:
+                raise ConnectionResetError(104, "reset")
+            if calls["get"] == 3:
+                return Resp(b'{"content": "ok"')                 # truncated body: poll again
+            return Resp(json.dumps({"content": "ok", "usage": {}}).encode())
+        import rsi.meta.relay as relay_mod
+        sleep, relay_mod.time.sleep = relay_mod.time.sleep, (lambda s: None)
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                c = RelayClient({"req_put": ["https://b/req-0"], "resp_get": ["https://b/resp-0"]},
+                                Path(tmp) / "s.json", poll=0.0, timeout=5, http=http_)
+                self.assertEqual(c("p", 1.0, 10)[0], "ok")
+                self.assertEqual((calls["put"], calls["get"]), (2, 4))
+        finally:
+            relay_mod.time.sleep = sleep
+
     def test_libero_budget_scale_only_widens_counts(self):
         big = {"curriculum": {"cases": 960}, "curation": {"budget": 2400}, "update": {"steps": 600}}
         with self.assertRaises(ValueError):

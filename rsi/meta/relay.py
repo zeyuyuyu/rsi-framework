@@ -37,9 +37,16 @@ class RelayClient:
         body = json.dumps(dict(k=k, prompt=prompt, temperature=temperature, max_tokens=max_tokens)).encode()
         req = urllib.request.Request(self.req_put[k], data=body, method="PUT",
                                      headers={"Content-Type": "application/json"})
-        with self.http(req, timeout=60) as r:
-            if r.status != 200:
-                raise RuntimeError(f"llm_call_failed:relay_put_{r.status}")
+        for attempt in range(5):                  # a BOS network blip must not crash the run (yq, 11-02)
+            try:
+                with self.http(req, timeout=60) as r:
+                    if r.status != 200:
+                        raise RuntimeError(f"llm_call_failed:relay_put_{r.status}")
+                break
+            except (urllib.error.URLError, OSError) as e:
+                if attempt == 4:
+                    raise RuntimeError(f"llm_call_failed:relay_put_{type(e).__name__}")
+                time.sleep(5 * (attempt + 1))
         start = time.time()
         while time.time() - start < self.timeout:
             try:
@@ -51,5 +58,7 @@ class RelayClient:
             except urllib.error.HTTPError as e:
                 if e.code not in (403, 404):
                     raise RuntimeError(f"llm_call_failed:relay_get_{e.code}")
+            except (urllib.error.URLError, OSError, ValueError):   # reset / timeout / partial body: poll again
+                pass
             time.sleep(self.poll)
         raise RuntimeError("llm_call_failed:relay_timeout")
