@@ -1,0 +1,169 @@
+{
+  "audit_ids": [
+    "libero_goal-t0-audit1",
+    "libero_goal-t0-audit3",
+    "libero_goal-t1-audit1",
+    "libero_goal-t1-audit3",
+    "libero_goal-t2-audit1",
+    "libero_goal-t2-audit3",
+    "libero_goal-t3-audit1",
+    "libero_goal-t3-audit3",
+    "libero_goal-t4-audit1",
+    "libero_goal-t4-audit3",
+    "libero_goal-t5-audit1",
+    "libero_goal-t5-audit3",
+    "libero_goal-t6-audit1",
+    "libero_goal-t6-audit3",
+    "libero_goal-t7-audit1",
+    "libero_goal-t7-audit3",
+    "libero_goal-t8-audit1",
+    "libero_goal-t8-audit3",
+    "libero_goal-t9-audit1",
+    "libero_goal-t9-audit3"
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 2,
+    "meta_v2": true,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "replica_candidates": true,
+    "rounds": 2,
+    "seal_tests": true,
+    "seed": 1,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "domain": "libero",
+  "fresh_gate_ids": {
+    "1": [
+      "libero_goal-t0-fresh-r1-0",
+      "libero_goal-t0-fresh-r1-1",
+      "libero_goal-t1-fresh-r1-0",
+      "libero_goal-t1-fresh-r1-1",
+      "libero_goal-t2-fresh-r1-0",
+      "libero_goal-t2-fresh-r1-1",
+      "libero_goal-t3-fresh-r1-0",
+      "libero_goal-t3-fresh-r1-1",
+      "libero_goal-t4-fresh-r1-0",
+      "libero_goal-t4-fresh-r1-1",
+      "libero_goal-t5-fresh-r1-0",
+      "libero_goal-t5-fresh-r1-1",
+      "libero_goal-t6-fresh-r1-0",
+      "libero_goal-t6-fresh-r1-1",
+      "libero_goal-t7-fresh-r1-0",
+      "libero_goal-t7-fresh-r1-1",
+      "libero_goal-t8-fresh-r1-0",
+      "libero_goal-t8-fresh-r1-1",
+      "libero_goal-t9-fresh-r1-0",
+      "libero_goal-t9-fresh-r1-1"
+    ],
+    "2": [
+      "libero_goal-t0-fresh-r2-0",
+      "libero_goal-t0-fresh-r2-1",
+      "libero_goal-t1-fresh-r2-0",
+      "libero_goal-t1-fresh-r2-1",
+      "libero_goal-t2-fresh-r2-0",
+      "libero_goal-t2-fresh-r2-1",
+      "libero_goal-t3-fresh-r2-0",
+      "libero_goal-t3-fresh-r2-1",
+      "libero_goal-t4-fresh-r2-0",
+      "libero_goal-t4-fresh-r2-1",
+      "libero_goal-t5-fresh-r2-0",
+      "libero_goal-t5-fresh-r2-1",
+      "libero_goal-t6-fresh-r2-0",
+      "libero_goal-t6-fresh-r2-1",
+      "libero_goal-t7-fresh-r2-0",
+      "libero_goal-t7-fresh-r2-1",
+      "libero_goal-t8-fresh-r2-0",
+      "libero_goal-t8-fresh-r2-1",
+      "libero_goal-t9-fresh-r2-0",
+      "libero_goal-t9-fresh-r2-1"
+    ]
+  },
+  "gate_ids": [
+    "libero_goal-t0-gate0",
+    "libero_goal-t0-gate2",
+    "libero_goal-t1-gate0",
+    "libero_goal-t1-gate2",
+    "libero_goal-t2-gate0",
+    "libero_goal-t2-gate2",
+    "libero_goal-t3-gate0",
+    "libero_goal-t3-gate2",
+    "libero_goal-t4-gate0",
+    "libero_goal-t4-gate2",
+    "libero_goal-t5-gate0",
+    "libero_goal-t5-gate2",
+    "libero_goal-t6-gate0",
+    "libero_goal-t6-gate2",
+    "libero_goal-t7-gate0",
+    "libero_goal-t7-gate2",
+    "libero_goal-t8-gate0",
+    "libero_goal-t8-gate2",
+    "libero_goal-t9-gate0",
+    "libero_goal-t9-gate2"
+  ],
+  "initial": {
+    "id": "base:oft-sft-libero-goal-traj1",
+    "location": "/data0/home/zeyuwang/rsi/models/oft/Openvla-oft-SFT-libero-goal-traj1",
+    "parent_id": null
+  },
+  "proposer": "fixed",
+  "protocol": "rsi_two_level_v1",
+  "seed_program": {
+    "author": "seed",
+    "id": "2946fd2ae7a790c3",
+    "note": "",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 40,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 4,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 16,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "token",
+        "lr": 0.0001,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 50
+      }
+    },
+    "parent_id": null
+  },
+  "test_role": "read once after the last round; never decides anything",
+  "tests": {
+    "libero_official": [
+      "libero_goal-t0-official0",
+      "libero_goal-t1-official0",
+      "libero_goal-t2-official0",
+      "libero_goal-t3-official0",
+      "libero_goal-t4-official0",
+      "libero_goal-t5-official0",
+      "libero_goal-t6-official0",
+      "libero_goal-t7-official0",
+      "libero_goal-t8-official0",
+      "libero_goal-t9-official0"
+    ]
+  }
+}
