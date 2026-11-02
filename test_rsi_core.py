@@ -791,6 +791,12 @@ class ProgramTests(unittest.TestCase):
         self.assertLessEqual(c * s_, 512); self.assertLessEqual(st * b, 6400)
         self.assertEqual((c, s_), (82, 6))                                # both shrink by sqrt(512/1920)
         self.assertEqual(d.validate_capped(seed), d.validate_program(seed))
+        realloc = {"curriculum": {"cases": 32}, "solver": {"samples": 16}, "update": {"steps": 25, "batch": 128}}
+        with self.assertRaises(ValueError):                              # v3 bounds reject an in-budget reallocation
+            LiberoDomain("libero_goal", range(10)).validate_program(realloc)
+        r = d.validate_capped(realloc)                                   # v2 keeps it (512 tries, 3200 examples)
+        self.assertEqual((r["curriculum"]["cases"], r["solver"]["samples"], r["update"]["steps"]), (32, 16, 25))
+        self.assertEqual(d.v2_space["curriculum.cases"], (16, 400))
         archive = Archive(Path(tempfile.mkdtemp()) / "a.jsonl")
         prog = Program.make(d.validate_program(seed))
         archive.add(Node("n0", 0, Version("i", "/b"), prog, None, gate=0.6, audit=0.123457, accepted=True))

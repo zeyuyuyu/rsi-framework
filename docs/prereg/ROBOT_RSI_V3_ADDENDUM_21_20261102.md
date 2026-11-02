@@ -49,6 +49,10 @@ Every change sits behind a flag, so v3 plans run bit-for-bit as before.
     [0, 4] per task, where 0 gives a task no scenes that round.
   * An over-cap procedure shrinks both factors by the same ratio (scenes and tries; steps and batch), so the split
     the proposal chose survives.
+  * Lower bounds widen to 16 scenes and 25 steps (v3: 40 and 50), so in-budget reallocations stay legal, e.g.
+    16 tries × 32 scenes or batch 128 × 25 steps. This revision was made on 11-02, before any run here started.
+    The cavin smoke run's first LLM proposal had used exactly such a split (20 scenes × 8 tries, 25 steps) to stay
+    under its cap, and was rejected as out of range.
 * **LLM prompt v2.**
   * States the objective: the FINAL policy after the last round.
   * States the round number out of the total.

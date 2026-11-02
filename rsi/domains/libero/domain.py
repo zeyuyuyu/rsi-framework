@@ -76,7 +76,11 @@ a smaller batch), so spend the budget where it helps most."""
 TASK_WEIGHT_RANGE = (0.0, 4.0)
 V2_EXTRA = {"curriculum.allocation": ["uniform", "progress", "weights"],
             "curriculum.task_weights": f"list of one number per task in [{TASK_WEIGHT_RANGE[0]}, {TASK_WEIGHT_RANGE[1]}]"}
-V2_SPACE = dict(HARNESS_SPACE, **V2_EXTRA)
+# v2 lower bounds: under the seed cap (64 x 8 tries, 100 x 64 examples) a proposal that wants more tries per scene or a
+# bigger batch must go below v3's 40 scenes / 50 steps (16 tries -> 32 scenes); the smoke run's LLM did exactly that
+# and was rejected, so v2 widens the two lower bounds instead of discarding in-budget reallocations.
+V2_BOUNDS = {"curriculum.cases": (16, 400), "update.steps": (25, 1500)}
+V2_SPACE = dict(HARNESS_SPACE, **V2_EXTRA, **V2_BOUNDS)
 V2_DOC = HARNESS_DOC + """
 curriculum.allocation 'weights': scenes are split over tasks in proportion to curriculum.task_weights (one weight per
 task, in task order; 0 gives a task no scenes this round); 'uniform' and 'progress' ignore task_weights."""
@@ -154,13 +158,14 @@ class LiberoDomain:
         for (count, per), cap in ((("curriculum.cases", "solver.samples"), self.budget_cap["rollouts"]),
                                   (("update.steps", "update.batch"), self.budget_cap["updates"])):
             a, b = _get(out, count), _get(out, per)
+            lo_a, lo_b = V2_BOUNDS.get(count, EDIT_SPACE[count])[0], EDIT_SPACE[per][0]
             if a * b > cap:
                 f = (cap / (a * b)) ** 0.5
-                a = max(EDIT_SPACE[count][0], int(a * f))
-                b = max(EDIT_SPACE[per][0], int(b * f))
-                while a * b > cap and a > EDIT_SPACE[count][0]:
+                a = max(lo_a, int(a * f))
+                b = max(lo_b, int(b * f))
+                while a * b > cap and a > lo_a:
                     a -= 1
-                while a * b > cap and b > EDIT_SPACE[per][0]:
+                while a * b > cap and b > lo_b:
                     b -= 1
                 _put(out, count, a)
                 _put(out, per, b)
@@ -200,6 +205,7 @@ class LiberoDomain:
                 if not isinstance(value, (int, float)) or not space[0] <= value <= space[1]:
                     raise ValueError(f"program_value_out_of_range:{dotted}")
         for dotted, space in EDIT_SPACE.items():
+            space = V2_BOUNDS.get(dotted, space) if self.v2 else space
             value = cur["allocation"] if dotted == "curriculum.allocation" else _get(out, dotted)
             if isinstance(space, list):
                 if value not in space:
