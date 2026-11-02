@@ -1,0 +1,47 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "llm",
+    "id": "e5f5b72d8fb5f1f8",
+    "note": "{\"why\": \"Keep the kept procedure's structure but use the full 512-try cap with more scenes per step (cases 128 x samples 4 stays at 512), and raise batch and steps to the 6400-example cap. Use a slightly lower lr for stability and a narrower band to focus on informative scenes, with a higher temperature for \", \"diff\": {\"update.batch\": 100, \"update.lr\": 3e-05, \"update.steps\": 64}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 128,
+        "floor": 0.14907088559708087
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 4,
+        "temperature": 1.2
+      },
+      "update": {
+        "batch": 100,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 3e-05,
+        "operator": "grpo",
+        "ratio": "legacy",
+        "steps": 64
+      }
+    },
+    "parent_id": "04fb8fbd82ce2c89"
+  },
+  "version": {
+    "id": "091310b7971085ad601609fe927d922b689ea8534a5e3dfa5cdadaaced7ce6f1",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_spatmain_llm_harness_cap_s1/ckpt-r06c1",
+    "parent_id": "9d4a7653cf33216e2fabf0878fe8e767b96b746fa2a58ed5ddb12f740e299bb3"
+  }
+}
