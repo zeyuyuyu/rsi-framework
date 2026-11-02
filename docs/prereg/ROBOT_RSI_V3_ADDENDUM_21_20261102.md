@@ -128,3 +128,18 @@ Each comparison is llm minus rep, same start and same seeds. Every arm measures 
 * **Test reads:** no file of this study is opened before all 12 runs have `report.json`. After that, M2-A and M2-B
   are read once.
 * **Changes after start:** any change after a run starts is an amendment here, before it takes effect.
+
+## Amendment 1 (2026-11-02 ~06:45Z): a cavin replicate of the primary comparison
+
+This amendment was registered before any Yangquan run of this study had finished a round, so no v2 result was
+known. The cavin smoke runs ended normally (`a8_m2smoke_llm_s1` code 0, tests sealed), and the cavin GPUs they used
+are now free.
+
+* **Runs.** `a8_m2_pre_llm_s1` and `a8_m2_pre_rep_s1`:
+  * the plan of `yq_m2_pre_{llm,rep}_s1`, with cavin paths;
+  * source src9, which is the v22 tree, commit c7f11d1 or later with the same `rsi/`;
+  * the LLM called directly from cavin with the key in `~/.cskey`, not through the relay.
+  * Seed 2 is added the same way if two more cavin GPUs free up before 2026-11-03 06:00Z; it is announced here
+    first.
+* **Read.** This replicate is exploratory. Its llm−rep difference on the final test is computed within cavin only,
+  never pooled with Yangquan, and reported next to M2-A. Its test files are opened together with the study's.
