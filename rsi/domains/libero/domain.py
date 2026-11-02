@@ -70,6 +70,22 @@ curriculum.cases x solver.samples must stay at or below {rollouts} tries, and up
 below {updates} examples. A procedure over the cap is scaled down (fewer scenes, then fewer tries; fewer steps, then
 a smaller batch), so spend the budget where it helps most."""
 
+# Meta level v2 (addendum 21): per-task allocation. curriculum.task_weights is a list with one weight per task (in the
+# domain's task order); allocation "weights" splits curriculum.cases in proportion to it (weight 0 = no scenes).
+# Only a domain built with v2=True accepts it, so v3 programs validate exactly as before.
+TASK_WEIGHT_RANGE = (0.0, 4.0)
+V2_EXTRA = {"curriculum.allocation": ["uniform", "progress", "weights"],
+            "curriculum.task_weights": f"list of one number per task in [{TASK_WEIGHT_RANGE[0]}, {TASK_WEIGHT_RANGE[1]}]"}
+V2_SPACE = dict(HARNESS_SPACE, **V2_EXTRA)
+V2_DOC = HARNESS_DOC + """
+curriculum.allocation 'weights': scenes are split over tasks in proportion to curriculum.task_weights (one weight per
+task, in task order; 0 gives a task no scenes this round); 'uniform' and 'progress' ignore task_weights."""
+
+BUDGET_DOC_V2 = """Compute cap: a procedure may not do more work per update step than the starting procedure.
+curriculum.cases x solver.samples must stay at or below {rollouts} tries, and update.steps x update.batch at or
+below {updates} examples. A procedure over the cap is shrunk proportionally (scenes and tries by the same factor;
+steps and batch by the same factor), so choose how to split the budget yourself."""
+
 # Count fields whose upper bound grows with a run's budget_scale, so a compute-matched single round (`onebig`:
 # the summed budget of N rounds at once) validates without widening the space the meta level searches.
 BUDGET_FIELDS = ("curriculum.cases", "curation.budget", "update.steps")
@@ -96,9 +112,10 @@ class LiberoDomain:
     name = "libero"
     higher_is_better = True
 
-    def __init__(self, suite, tasks, budget_scale=1):
+    def __init__(self, suite, tasks, budget_scale=1, v2=False):
         self.suite, self.tasks = suite, list(tasks)
-        self.budget_scale = budget_scale
+        self.budget_scale, self.v2 = budget_scale, v2
+        self.v2_space, self.v2_doc = V2_SPACE, V2_DOC
         self.edit_space, self.coupling = EDIT_SPACE, COUPLING
         self.harness_space, self.harness_doc = HARNESS_SPACE, HARNESS_DOC
         self.task_rates = {t: None for t in self.tasks}   # latest verified rate per task
@@ -113,7 +130,7 @@ class LiberoDomain:
         p = self.validate_program(program)
         self.budget_cap = dict(rollouts=p["curriculum"]["cases"] * p["solver"]["samples"],
                                updates=p["update"]["steps"] * p["update"]["batch"])
-        return BUDGET_DOC.format(**self.budget_cap)
+        return (BUDGET_DOC_V2 if self.v2 else BUDGET_DOC).format(**self.budget_cap)
 
     def fit_budget(self, params):
         """Scale an over-cap procedure down onto the cap: fewer scenes, then fewer tries; fewer steps, then a smaller
@@ -121,12 +138,32 @@ class LiberoDomain:
         if not self.budget_cap:
             return params
         out = copy.deepcopy(params)
+        if self.v2:
+            return self._fit_proportional(out)
         for (count, per), cap in ((("curriculum.cases", "solver.samples"), self.budget_cap["rollouts"]),
                                   (("update.steps", "update.batch"), self.budget_cap["updates"])):
             if _get(out, count) * _get(out, per) > cap:
                 _put(out, count, max(EDIT_SPACE[count][0], cap // _get(out, per)))
             if _get(out, count) * _get(out, per) > cap:
                 _put(out, per, max(EDIT_SPACE[per][0], cap // _get(out, count)))
+        return out
+
+    def _fit_proportional(self, out):
+        """v2 cap: shrink both factors of an over-cap product by the same factor, so the split the proposal chose
+        (e.g. fewer scenes with more tries each) survives; v3 cut scenes first."""
+        for (count, per), cap in ((("curriculum.cases", "solver.samples"), self.budget_cap["rollouts"]),
+                                  (("update.steps", "update.batch"), self.budget_cap["updates"])):
+            a, b = _get(out, count), _get(out, per)
+            if a * b > cap:
+                f = (cap / (a * b)) ** 0.5
+                a = max(EDIT_SPACE[count][0], int(a * f))
+                b = max(EDIT_SPACE[per][0], int(b * f))
+                while a * b > cap and a > EDIT_SPACE[count][0]:
+                    a -= 1
+                while a * b > cap and b > EDIT_SPACE[per][0]:
+                    b -= 1
+                _put(out, count, a)
+                _put(out, per, b)
         return out
 
     def validate_capped(self, params):
@@ -138,9 +175,18 @@ class LiberoDomain:
             if section not in out or not isinstance(values, dict):
                 raise ValueError(f"unknown_program_section:{section}")
             for key, value in values.items():
-                if key not in out[section] and f"{section}.{key}" not in OPTIONAL_FIELDS:
+                v2_field = self.v2 and f"{section}.{key}" == "curriculum.task_weights"
+                if key not in out[section] and f"{section}.{key}" not in OPTIONAL_FIELDS and not v2_field:
                     raise ValueError(f"unknown_program_field:{section}.{key}")
                 out[section][key] = value
+        cur = out["curriculum"]
+        if self.v2 and cur["allocation"] == "weights":
+            w = cur.get("task_weights")
+            if not (isinstance(w, list) and len(w) == len(self.tasks)
+                    and all(isinstance(x, (int, float)) and TASK_WEIGHT_RANGE[0] <= x <= TASK_WEIGHT_RANGE[1] for x in w)
+                    and sum(w) > 0):
+                raise ValueError("program_value_out_of_range:curriculum.task_weights")
+            cur = dict(cur, allocation="uniform")      # the generic check below knows only uniform|progress
         for dotted, allowed in OPTIONAL_FIELDS.items():
             section, key = dotted.split(".")
             if key in out[section] and out[section][key] not in allowed:
@@ -154,7 +200,7 @@ class LiberoDomain:
                 if not isinstance(value, (int, float)) or not space[0] <= value <= space[1]:
                     raise ValueError(f"program_value_out_of_range:{dotted}")
         for dotted, space in EDIT_SPACE.items():
-            value = _get(out, dotted)
+            value = cur["allocation"] if dotted == "curriculum.allocation" else _get(out, dotted)
             if isinstance(space, list):
                 if value not in space:
                     raise ValueError(f"program_value_not_allowed:{dotted}")
@@ -191,6 +237,10 @@ class LiberoDomain:
 
     def _allocation(self, cur):
         n = int(cur["cases"])
+        if self.v2 and cur["allocation"] == "weights":
+            w = dict(zip(self.tasks, cur["task_weights"]))
+            total = sum(w.values())
+            return {t: (max(1, round(n * x / total)) if x > 0 else 0) for t, x in w.items()}
         if cur["allocation"] == "uniform" or any(r is None for r in self.task_rates.values()):
             weights = {t: 1.0 for t in self.tasks}
         else:

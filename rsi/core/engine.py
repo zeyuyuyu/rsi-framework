@@ -54,6 +54,12 @@ class EngineConfig:
     test_all_accepted: bool = True
     # Pilots (development decisions on the gate set) must not read test suites at all.
     seal_tests: bool = False
+    # Meta level v2 (addendum 21): every candidate starts from the per-task rates its parent left (v3 let a candidate
+    # read the rates its sibling's last inner step left), and nodes keep per-task gate success for the meta level.
+    meta_v2: bool = False
+    # Compute-matched fixed control (addendum 21): fill the round with copies of the incumbent program, so a fixed
+    # arm trains as many children per round as a meta arm (they differ only in the training seed).
+    replica_candidates: bool = False
 
 
 def inner_seed(run_seed: int, round_index: int, step: int) -> int:
@@ -86,6 +92,14 @@ def _mean(records):
     return sum(r.score for r in records) / len(records)
 
 
+
+def _per_task(cases, records):
+    """Per-task mean score of an evaluation, keyed by the case's task id (meta_v2 history for the meta level)."""
+    out = {}
+    for c, rec in zip(cases, records):
+        out.setdefault(str(c.inputs.get("task_id")), []).append(rec.score)
+    return {t: round(sum(v) / len(v), 4) for t, v in sorted(out.items())}
+
 class Engine:
     def __init__(self, domain, backend, initial: Version, seed_program: dict, *,
                  gate, audit, tests: dict, out: Path, config: EngineConfig, proposer, fresh_gates=None):
@@ -111,6 +125,7 @@ class Engine:
         self._rollout_cache = {}
         self._written = set()
         self._signals = {}
+        self._rates_after = {}   # node -> per-task rates after its last inner step (meta_v2)
 
     # ---------------------------------------------------------------- helpers
     def _timed(self, kind, fn, *args, **kw):
@@ -293,6 +308,8 @@ class Engine:
                 self._clock()
                 self._seen_before_round = frozenset(self._seen_train)
                 seed = cfg.seed * 1000 + r
+                rates0 = dict(self._rates_after.get(parent.node_id, self.domain.task_rates)) \
+                    if cfg.meta_v2 and hasattr(self.domain, "task_rates") else None
                 programs = [parent.program]
                 if cfg.candidates_per_round > 1:
                     proposed = self._timed("meta", self.proposer.propose, parent.program,
@@ -303,14 +320,19 @@ class Engine:
                                          parent.program.id, p.author, p.note)
                         if p.id not in {q.id for q in programs}:
                             programs.append(p)
+                if cfg.replica_candidates:
+                    programs += [parent.program] * (cfg.candidates_per_round - len(programs))
                 generator = parent.version if cfg.recursive else self.initial
                 candidates = []
-                gate_cases, parent_gate = self.gate, None
+                gate_cases, parent_gate, parent_tasks = self.gate, None, None
                 if self.fresh_gates:
                     gate_cases = self.fresh_gates[r]
-                    parent_gate, _ = self._score(parent.version, gate_cases, "gate_eval")
+                    parent_gate, precs = self._score(parent.version, gate_cases, "gate_eval")
+                    parent_tasks = _per_task(gate_cases, precs) if cfg.meta_v2 else None
                 for k, program in enumerate(programs):
                     tag = f"r{r:02d}c{k}"
+                    if rates0 is not None:
+                        self.domain.task_rates = dict(rates0)
                     version, used, steps, signal, stats, receipt = parent.version, set(), [], None, None, None
                     for it in range(cfg.inner_steps):
                         self._clock()
@@ -358,7 +380,12 @@ class Engine:
                         archive.add(Node(tag, r, parent.version, program, parent.node_id,
                                          signal=signal, curation=stats))
                         continue
-                    gate, _ = self._score(receipt.version, gate_cases, "gate_eval")
+                    gate, grecs = self._score(receipt.version, gate_cases, "gate_eval")
+                    if cfg.meta_v2:
+                        if hasattr(self.domain, "task_rates"):
+                            self._rates_after[tag] = dict(self.domain.task_rates)
+                        signal = dict(signal, gate_tasks=_per_task(gate_cases, grecs),
+                                      parent_gate_tasks=parent_tasks)
                     node = archive.add(Node(tag, r, receipt.version, program, parent.node_id,
                                             gate=gate, parent_gate=parent_gate, signal=signal, curation=stats,
                                             receipt=asdict(receipt),

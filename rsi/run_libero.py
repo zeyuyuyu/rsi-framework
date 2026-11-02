@@ -68,7 +68,8 @@ def main():
             vcfg[key] = tuple(vcfg[key])
     vcfg.setdefault("workdir", str(out) + ".work")
     backend = make_backend(vcfg)
-    domain = LiberoDomain(plan["suite"], plan["tasks"], plan.get("budget_scale", 1))
+    domain = LiberoDomain(plan["suite"], plan["tasks"], plan.get("budget_scale", 1),
+                          v2=bool(plan.get("engine", {}).get("meta_v2")))
     test = domain.official_test(plan.get("test_inits_per_task", 50))
     initial = Version(f"base:{plan['model_name']}", vcfg["checkpoint"], None)
     if args.baseline_only:
@@ -121,9 +122,13 @@ def main():
         program[section].update(values)
     gate, audit = domain.heldout(plan["heldout_per_task"])
     kind = plan.get("meta", {}).get("proposer", "fixed")
-    harness = plan.get("meta", {}).get("space") == "harness"     # addendum 16: knobs + harness components
+    meta_space = plan.get("meta", {}).get("space")
+    harness = meta_space in ("harness", "v2")                    # addendum 16: knobs + harness components
     space = domain.harness_space if harness else domain.edit_space
     doc = domain.harness_doc if harness else ""
+    if meta_space == "v2":                                      # addendum 21: + per-task allocation weights
+        assert domain.v2, "meta space v2 needs engine.meta_v2 = true"
+        space, doc = domain.v2_space, domain.v2_doc
     validate = domain.validate_program
     if plan.get("meta", {}).get("budget") == "seed":            # addendum 19: no proposal may out-spend the seed
         doc = (doc + "\n" + domain.set_budget_cap(program)).strip()
@@ -132,15 +137,24 @@ def main():
         proposer = FixedProgram()
     elif kind == "numeric":
         proposer = NumericSearch(space, validate, domain.coupling)
+    elif kind == "replica":             # addendum 21: compute-matched fixed control (engine.replica_candidates)
+        assert plan.get("engine", {}).get("replica_candidates"), "proposer replica needs engine.replica_candidates"
+        proposer = FixedProgram()
     elif kind == "llm":                 # addendum 14: an external LLM diagnoses the round history and edits the program
         m = plan["meta"]          # the log lands in the run dir, which the engine creates before any proposal
+        # the numeric fallback never edits task_weights (it cannot mutate a list); v2 keeps it on the harness space
         proposer = LLMMetaProposer(space, validate,
-                                   NumericSearch(space, validate, domain.coupling),
+                                   NumericSearch(domain.harness_space if meta_space == "v2" else space, validate,
+                                                 domain.coupling),
                                    (RelayClient(os.environ["RSI_LLM_RELAY"], out / "relay-state.json")
                                     if m.get("relay") else      # addendum 17: Yangquan, key stays on cavin
                                     OpenAICompatClient(m["base_url"], m["model"], m["key_file"])), m["model"],
                                    log_path=out / "meta-llm.jsonl", max_calls=m.get("max_calls", 24),
-                                   space_doc=doc)
+                                   space_doc=doc,
+                                   v2=(dict(rounds=plan["engine"]["rounds"],
+                                            inner_steps=plan["engine"].get("inner_steps", 1),
+                                            gate_per_task=plan["heldout_per_task"] // 2,
+                                            n_tasks=len(domain.tasks)) if meta_space == "v2" else None))
     else:
         raise ValueError(f"unknown_proposer:{kind}")
     cfg = EngineConfig(**plan.get("engine", {}))

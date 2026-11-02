@@ -223,6 +223,59 @@ def llm_history(archive, limit=12):
     return rows
 
 
+LLM_META_PROMPT_V2 = """You tune the training procedure of a robot policy that improves itself in simulation. Your goal is
+the success rate of the FINAL policy, after the last round, on unseen scenes.
+
+Each round, the current policy practises on fresh random scenes of {n_tasks} tasks: curriculum.cases scenes, solver.samples
+tries each, sampled at solver.temperature. A simulator marks every try success or failure, and that is the only
+feedback. Curation picks the training items: "mixed_groups" (scenes with both outcomes; used with operator "grpo") or
+"verified" (successful tries; used with operator "bc"). The update then trains the policy (operator, lr, steps,
+batch). A round runs this practise-and-update loop {inner_steps} times, each time with the newest policy.
+
+Each round trains two children of the current policy on the same scenes: c0 with the current procedure and c1 with your
+proposal. Both are scored on a new gate set (greedy, {gate_per_task} scenes per task) together with the parent; the
+better child is kept if it scores at least the parent, and its procedure becomes the current one. Gate noise: the same
+policy re-scored on another gate set moves by about +/-3 points (95% range about +/-6), so a gate change of less than
+about 5 points on one round is not evidence. Look for patterns across rounds and tasks instead.
+This is round {round} of {rounds}.
+
+Current procedure (JSON):
+{program}
+
+You may change ONLY these fields (numbers are [min, max]; lists are the allowed choices; grpo needs mixed_groups,
+bc needs verified). Copy every other field of the procedure unchanged; changes to other fields are discarded:
+{space}
+{space_doc}
+
+History, oldest first. For each candidate: the fields that differed from its parent's procedure, its gate score and the
+change against its parent on the same gate set, whether it was kept, its per-task gate success next to the parent's
+(task order as in curriculum.task_weights), training-side signals per inner step (sampled success rate, share of
+scenes with both outcomes, number of training items, per-task sampled success), and the training loss at the first
+and last update step:
+{history}
+
+First diagnose in two or three sentences what limits improvement, using the per-task numbers (for example tasks
+that are already solved or never solved and so give no grpo signal, sampled success collapsing, a loss that keeps
+rising, a setting that has been tried before without effect). Then propose {k} DIFFERENT procedures to try next.
+Change only allowed fields. Answer with JSON only:
+{{"diagnosis": "...", "proposals": [{{"why": "<one sentence>", "procedure": <complete procedure JSON>}}, ...]}}"""
+
+
+def llm_history_v2(archive, limit=12):
+    """v2 history: llm_history plus per-task gate success (candidate and parent on the same gate set) and per-task
+    sampled success per inner step. Audit scores and test results are never included."""
+    rows = llm_history(archive, limit)
+    for row, n in zip(rows, archive.nodes[-limit:]):
+        sig = n.signal or {}
+        row["gate_tasks"] = sig.get("gate_tasks")
+        row["parent_gate_tasks"] = sig.get("parent_gate_tasks")
+        steps = sig.get("inner") or [dict(signal=sig)]
+        for out, st in zip(row["inner"], steps):
+            rates = (st.get("signal") or {}).get("task_rates") or {}
+            out["task_sampled_success"] = {str(t): (None if v is None else round(v, 3)) for t, v in rates.items()}
+    return rows
+
+
 class OpenAICompatClient:
     """Minimal chat-completions client (stdlib only). The key is read from a file and never logged."""
 
@@ -258,13 +311,20 @@ class LLMMetaProposer:
     name = "llm_meta"
 
     def __init__(self, edit_space, validate, fallback: NumericSearch, client, model, log_path=None,
-                 max_calls=24, temperature=1.0, max_tokens=4000, space_doc=""):
+                 max_calls=24, temperature=1.0, max_tokens=4000, space_doc="", v2=None):
         self.space, self.validate, self.fallback, self.client = edit_space, validate, fallback, client
         self.model, self.log_path, self.max_calls = model, log_path, max_calls
         self.temperature, self.max_tokens, self.calls = temperature, max_tokens, 0
         self.space_doc = space_doc
+        self.v2 = v2       # addendum 21: dict(rounds, inner_steps, gate_per_task, n_tasks) selects the v2 prompt
 
     def prompt(self, program, archive, k):
+        if self.v2:
+            rnd = max([n.round for n in archive.nodes] or [0]) + 1
+            return LLM_META_PROMPT_V2.format(program=json.dumps(program.params, indent=1, sort_keys=True),
+                                             space=json.dumps(self.space), space_doc=self.space_doc, k=k,
+                                             round=rnd, **self.v2,
+                                             history=json.dumps(llm_history_v2(archive), default=str)[:30000])
         return LLM_META_PROMPT.format(program=json.dumps(program.params, indent=1, sort_keys=True),
                                       space=json.dumps(self.space), space_doc=self.space_doc, k=k,
                                       history=json.dumps(llm_history(archive), indent=1, default=str)[:12000])

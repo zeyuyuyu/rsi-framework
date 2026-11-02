@@ -166,6 +166,39 @@ class EngineTests(unittest.TestCase):
         _, domain_nr, _ = run("inner_nonrec", rounds=1, inner_steps=3, recursive=False)
         self.assertTrue(all(g == "init" for kind, g in domain_nr.calls if kind == "propose"))
 
+    def test_meta_v2_isolates_task_rates_keeps_per_task_gate_and_replicates(self):
+        # addendum 21: a candidate starts from the rates its parent left, not those its sibling left behind
+        class Rated(ToyDomain):
+            task_rates = {"t": None}
+            def propose(self, backend, generator, program, round_index, seed):
+                self.calls.append(("rates", dict(self.task_rates)))
+                return super().propose(backend, generator, program, round_index, seed)
+            def attempt(self, backend, generator, cases, program, seed):
+                self.task_rates = {"t": generator.id + str(program.get("solver"))}
+                return super().attempt(backend, generator, cases, program, seed)
+
+        class SolverEdit:
+            def propose(self, program, archive, backend, version, n, rng):
+                return [Program.make(dict(program.params, solver={"t": rng.random()}), program.id, "search", "")]
+
+        for v2 in (False, True):
+            domain, backend = Rated(), ToyBackend()
+            e = Engine(domain, backend, Version("init", "/b"), domain.default_program(), gate=heldout("gate", 20),
+                       audit=heldout("audit", 20), tests={}, out=self.tmp / f"iso{v2}",
+                       config=EngineConfig(rounds=2, candidates_per_round=2, meta_v2=v2), proposer=SolverEdit())
+            e.run()
+            seen = [r for kind, r in domain.calls if kind == "rates"]
+            self.assertEqual(len(seen), 4)                                  # 2 rounds x 2 candidates
+            self.assertEqual(seen[0] == seen[1], v2)                      # v3 leaked c0's rates into c1
+            node = json.loads((self.tmp / f"iso{v2}" / "round-01.json").read_text())["candidates"][0]
+            self.assertEqual("gate_tasks" in node["signal"], v2)
+        e, _ = self.engine("rep", rounds=2, candidates_per_round=2, replica_candidates=True, meta_v2=True)
+        e.run()
+        r1 = json.loads((self.tmp / "rep" / "round-01.json").read_text())
+        self.assertEqual([c["node"] for c in r1["candidates"]], ["r01c0", "r01c1"])   # two copies of the incumbent
+        self.assertEqual(len({c["program"] for c in r1["candidates"]}), 1)
+        self.assertEqual(r1["candidates"][0]["signal"]["gate_tasks"], {"None": r1["candidates"][0]["gate"]})
+
     def test_fresh_paired_gate_rescores_parent_and_never_trains_on_fresh_cases(self):
         class Colliding(ToyDomain):
             def propose(self, backend, generator, program, round_index, seed):
@@ -732,6 +765,55 @@ class ProgramTests(unittest.TestCase):
         with self.assertRaises(ValueError):                              # non-count fields keep their bounds
             d.validate_program({"update": {"lr": 1e-3}})
         self.assertEqual(d.edit_space["curriculum.cases"], (40, 400))   # the meta level's space is unchanged
+
+    def test_meta_v2_task_weights_proportional_cap_and_prompt(self):
+        from rsi.meta.proposers import LLMMetaProposer
+        seed = {"curriculum": {"cases": 64}, "solver": {"samples": 8, "temperature": 1.6},
+                "update": {"steps": 100, "batch": 64, "lr": 3e-5}}
+        w = [0, 1, 1, 2, 2, 1, 1, 1, 1, 1]
+        weighted = {"curriculum": {"cases": 64, "allocation": "weights", "task_weights": w}}
+        with self.assertRaises(ValueError):                              # v3 domains never accept the field
+            LiberoDomain("libero_goal", range(10)).validate_program(weighted)
+        d = LiberoDomain("libero_goal", range(10), v2=True)
+        self.assertEqual(d.validate_program(seed), LiberoDomain("libero_goal", range(10)).validate_program(seed))
+        p = d.validate_program(weighted)
+        counts = d._allocation(p["curriculum"])
+        self.assertEqual(counts[0], 0)                                   # weight 0: no scenes for that task
+        self.assertEqual(counts[3], 2 * counts[1])
+        for bad in ([1] * 9, [5] + [1] * 9, [0] * 10, ["x"] * 10):
+            with self.assertRaises(ValueError):
+                d.validate_program({"curriculum": {"cases": 64, "allocation": "weights", "task_weights": bad}})
+        self.assertIn("same factor", d.set_budget_cap(seed))
+        big = d.validate_capped({"curriculum": {"cases": 160}, "solver": {"samples": 12},
+                                 "update": {"steps": 150, "batch": 64}})
+        c, s_, st, b = (big["curriculum"]["cases"], big["solver"]["samples"], big["update"]["steps"],
+                        big["update"]["batch"])
+        self.assertLessEqual(c * s_, 512); self.assertLessEqual(st * b, 6400)
+        self.assertEqual((c, s_), (82, 6))                                # both shrink by sqrt(512/1920)
+        self.assertEqual(d.validate_capped(seed), d.validate_program(seed))
+        archive = Archive(Path(tempfile.mkdtemp()) / "a.jsonl")
+        prog = Program.make(d.validate_program(seed))
+        archive.add(Node("n0", 0, Version("i", "/b"), prog, None, gate=0.6, audit=0.123457, accepted=True))
+        inner = [dict(step=0, signal=dict(mixed_fraction=0.5, task_rates={0: 0.9, 1: 0.25}),
+                      curation=dict(attempts=512, verified_attempts=300, items=200))]
+        archive.add(Node("r01c0", 1, Version("v1", "/c"), prog, "n0", gate=0.62, parent_gate=0.6, audit=0.987653,
+                         accepted=True, signal=dict(inner=inner, gate_tasks={"0": 0.95, "1": 0.3},
+                                                    parent_gate_tasks={"0": 0.9, "1": 0.35})))
+        seen = []
+        def client(prompt, temperature, max_tokens):
+            seen.append(prompt)
+            return json.dumps(dict(diagnosis="task 0 solved", proposals=[dict(why="w", procedure=dict(
+                prog.params, curriculum=dict(prog.params["curriculum"], allocation="weights", task_weights=w)))])), {}
+        prop = LLMMetaProposer(d.v2_space, d.validate_capped, NumericSearch(d.harness_space, d.validate_capped),
+                               client, "m", v2=dict(rounds=6, inner_steps=3, gate_per_task=20, n_tasks=10))
+        out = prop.propose(prog, archive, None, None, 1, random.Random(0))
+        self.assertEqual(out[0].author, "llm")
+        self.assertEqual(out[0].params["curriculum"]["task_weights"], w)
+        for text in ("round 2 of 6", "FINAL policy", "+/-3 points", '"gate_tasks": {"0": 0.95',
+                     '"task_sampled_success": {"0": 0.9'):
+            self.assertIn(text, seen[0])
+        for secret in ("0.123457", "0.987653"):                           # audit never reaches the LLM
+            self.assertNotIn(secret, seen[0])
 
     def test_budget_cap_scales_proposals_onto_the_seed_budget(self):
         d = LiberoDomain("libero_goal", range(10))
