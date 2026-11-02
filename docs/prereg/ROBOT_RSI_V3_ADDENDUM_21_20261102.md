@@ -143,3 +143,29 @@ are now free.
     first.
 * **Read.** This replicate is exploratory. Its llm−rep difference on the final test is computed within cavin only,
   never pooled with Yangquan, and reported next to M2-A. Its test files are opened together with the study's.
+
+## Amendment 2 (2026-11-02 ~17:05Z): gateway outage, provider switch, re-drawn rounds, seed-2 cavin replicate
+
+* **Outage.** From ~10:06Z the CommonStack key returned 401 ("Access key is not active"). Every LLM call failed
+  after its retries, and its round ran on the numeric fallback (author `search`).
+* **Switch, made with the user's approval.** Same model id, `anthropic/claude-sonnet-5-5`, through OpenRouter:
+  * The relay switched at 16:32Z. OpenRouter geo-blocks Anthropic models from cavin (403 "not available in your
+    region"), so from 16:41:57Z the relay and the cavin runs reach it through cavin's outbound proxy. BOS traffic
+    stays direct.
+  * The cavin runs start through `~/rsi/bin/py_llmproxy.sh`. It is the same interpreter plus the proxy variables,
+    with no code change.
+  * The serving provider differs from CommonStack's, which exposes none. The model id and prompt are unchanged.
+* **Rounds that fell back and stay** (completed before the fix; tagged FALLBACK, kept in the arm as the protocol
+  says): round 2 of `yq_m2_tun_llm_s1`, `yq_m2_tun_llm_s2`, `yq_m2_tun_llm_s3` and `yq_m2_pre_llm_s3`.
+* **Rounds re-drawn.** These rounds were still running, and their candidates had not been scored. They were stopped
+  and resumed (`--resume`), so the round re-draws its LLM call. The selection is on call failure only, never on
+  outcome (as on 11-01):
+  * `yq_m2_pre_llm_s1` and `yq_m2_pre_llm_s2`: round 2;
+  * `yq_m2_pre_llm_s3`, `yq_m2_tun_llm_s1`, `yq_m2_tun_llm_s2` and `yq_m2_tun_llm_s3`: round 3;
+  * `a8_m2_pre_llm_s1`: round 2 (re-drawn twice, because the first re-draw hit the geo block).
+  * The v3 runs re-drawn the same way are listed in addendum 18.
+* **Relay-client fix (rsi_src_v23, commit 46f9a1d).** The resumed `yq_m2_tun_llm_s1` crashed (rc=1). A BOS
+  `RemoteDisconnected` while it polled for the reply was not caught. `RelayClient` now retries transient network
+  errors. No decision logic changed. The run was resumed again from v23, and later resumes use v23.
+* **Seed-2 cavin replicate (amendment 1).** GPUs 5 and 7 are free before the 11-03 06:00Z deadline, so
+  `a8_m2_pre_llm_s2` and `a8_m2_pre_rep_s2` start now, from src10 (v23 tree) and the OpenRouter-via-proxy meta.
