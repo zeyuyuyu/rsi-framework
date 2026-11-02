@@ -173,3 +173,14 @@ are now free.
   (rc=1). The relay URL file it fetched from BOS came back truncated (`IncompleteRead`). `RelayClient` now retries
   that fetch and treats `http.client.HTTPException` as transient. The run was resumed from v24 (job-5wxf2l0cqda3);
   later resumes use v24.
+
+## Amendment 3 (2026-11-02 ~23:50Z): a seed-3 cavin replicate
+
+Registered before any run of this study had a `report.json`, so no v2 final result was known. GPU1 has been free
+since the Spatial run ended at 23:16Z, and the cavin queue is empty.
+
+* **Runs.** `a8_m2_pre_llm_s3` and `a8_m2_pre_rep_s3`. They are defined exactly as the seed-1/2 cavin replicates
+  (amendments 1-2): src10, OpenRouter through the proxy wrapper.
+* **Start.** The llm run starts on the first free GPU and the rep run on the next one.
+* **Read.** The comparison is computed within cavin only, never pooled with Yangquan. It is reported next to M2-A,
+  pooled with the cavin seeds 1-2, and its test is read with the study's.
