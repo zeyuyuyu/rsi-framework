@@ -1,0 +1,342 @@
+{
+  "accepted": true,
+  "candidates": [
+    {
+      "author": "llm",
+      "curation": {
+        "attempts": 480,
+        "cases": 40,
+        "excluded_by_flag": 0,
+        "item_cases": 12,
+        "items": 144,
+        "mixed_cases": 20,
+        "rule": "mixed_groups",
+        "solved_cases": 34,
+        "verified_attempts": 305
+      },
+      "gate": 0.63,
+      "node": "r06c0",
+      "program": "feb84444357548af",
+      "signal": {
+        "cases": 40,
+        "generator": "a7b53ba9e7a74f6bd63ad08732f315480702f291fca1b30bbe0b2c00fca66374",
+        "inner": [
+          {
+            "curation": {
+              "attempts": 480,
+              "cases": 40,
+              "excluded_by_flag": 0,
+              "item_cases": 12,
+              "items": 144,
+              "mixed_cases": 20,
+              "rule": "mixed_groups",
+              "solved_cases": 34,
+              "verified_attempts": 305
+            },
+            "signal": {
+              "cases": 40,
+              "generator": "a7b53ba9e7a74f6bd63ad08732f315480702f291fca1b30bbe0b2c00fca66374",
+              "mixed_fraction": 0.5,
+              "rejected": {
+                "duplicate": 0,
+                "heldout_leak": 0
+              },
+              "rollout_id": "727c3afbe47d",
+              "task_rates": {
+                "0": 0.0,
+                "1": 0.7833333333333333,
+                "2": 0.8,
+                "3": 0.9166666666666666,
+                "4": 0.7916666666666666,
+                "5": 0.7361111111111112,
+                "6": 0.2,
+                "7": 1.0,
+                "8": 0.5138888888888888,
+                "9": 0.7166666666666667
+              },
+              "unsolved_fraction": 0.15,
+              "verified_rate": 0.6354166666666666
+            },
+            "step": 0,
+            "trained": true,
+            "version": "25f8bdb39397316730bcc9c9591271ede11be242ff370c86aa5ba1b244028f22"
+          },
+          {
+            "curation": {
+              "attempts": 456,
+              "cases": 38,
+              "excluded_by_flag": 0,
+              "item_cases": 19,
+              "items": 228,
+              "mixed_cases": 27,
+              "rule": "mixed_groups",
+              "solved_cases": 35,
+              "verified_attempts": 279
+            },
+            "signal": {
+              "cases": 38,
+              "generator": "25f8bdb39397316730bcc9c9591271ede11be242ff370c86aa5ba1b244028f22",
+              "mixed_fraction": 0.7105263157894737,
+              "rejected": {
+                "duplicate": 0,
+                "heldout_leak": 0
+              },
+              "rollout_id": "2a8c832f3e4a",
+              "task_rates": {
+                "0": 0.0,
+                "1": 0.7708333333333334,
+                "2": 0.9166666666666666,
+                "3": 0.875,
+                "4": 0.7916666666666666,
+                "5": 0.55,
+                "6": 0.1875,
+                "7": 0.6666666666666666,
+                "8": 0.5138888888888888,
+                "9": 0.7333333333333333
+              },
+              "unsolved_fraction": 0.07894736842105263,
+              "verified_rate": 0.6118421052631579
+            },
+            "step": 1,
+            "trained": true,
+            "version": "072735651e5953cd1d85f4a026abb48712b2026c1a9c77cd7c1d2b7e2bf81032"
+          },
+          {
+            "curation": {
+              "attempts": 492,
+              "cases": 41,
+              "excluded_by_flag": 0,
+              "item_cases": 20,
+              "items": 240,
+              "mixed_cases": 30,
+              "rule": "mixed_groups",
+              "solved_cases": 39,
+              "verified_attempts": 264
+            },
+            "signal": {
+              "cases": 41,
+              "generator": "072735651e5953cd1d85f4a026abb48712b2026c1a9c77cd7c1d2b7e2bf81032",
+              "mixed_fraction": 0.7317073170731707,
+              "rejected": {
+                "duplicate": 0,
+                "heldout_leak": 0
+              },
+              "rollout_id": "664595fa0aef",
+              "task_rates": {
+                "0": 0.041666666666666664,
+                "1": 0.7708333333333334,
+                "2": 0.4583333333333333,
+                "3": 0.9444444444444444,
+                "4": 0.8125,
+                "5": 0.4583333333333333,
+                "6": 0.14583333333333334,
+                "7": 1.0,
+                "8": 0.4027777777777778,
+                "9": 0.21666666666666667
+              },
+              "unsolved_fraction": 0.04878048780487805,
+              "verified_rate": 0.5365853658536586
+            },
+            "step": 2,
+            "trained": true,
+            "version": "2041247c9a3a4ccf713eff0d5d9d85ba8960ecfe98c70b6d520c4391da3ace00"
+          }
+        ],
+        "mixed_fraction": 0.5,
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "727c3afbe47d",
+        "task_rates": {
+          "0": 0.0,
+          "1": 0.7833333333333333,
+          "2": 0.8,
+          "3": 0.9166666666666666,
+          "4": 0.7916666666666666,
+          "5": 0.7361111111111112,
+          "6": 0.2,
+          "7": 1.0,
+          "8": 0.5138888888888888,
+          "9": 0.7166666666666667
+        },
+        "unsolved_fraction": 0.15,
+        "verified_rate": 0.6354166666666666
+      }
+    },
+    {
+      "author": "llm",
+      "curation": {
+        "attempts": 528,
+        "cases": 66,
+        "excluded_by_flag": 0,
+        "item_cases": 28,
+        "items": 224,
+        "mixed_cases": 28,
+        "rule": "mixed_groups",
+        "solved_cases": 57,
+        "verified_attempts": 368
+      },
+      "gate": 0.64,
+      "node": "r06c1",
+      "program": "472a7a8e65a4beaa",
+      "signal": {
+        "cases": 66,
+        "generator": "a7b53ba9e7a74f6bd63ad08732f315480702f291fca1b30bbe0b2c00fca66374",
+        "inner": [
+          {
+            "curation": {
+              "attempts": 528,
+              "cases": 66,
+              "excluded_by_flag": 0,
+              "item_cases": 28,
+              "items": 224,
+              "mixed_cases": 28,
+              "rule": "mixed_groups",
+              "solved_cases": 57,
+              "verified_attempts": 368
+            },
+            "signal": {
+              "cases": 66,
+              "generator": "a7b53ba9e7a74f6bd63ad08732f315480702f291fca1b30bbe0b2c00fca66374",
+              "mixed_fraction": 0.42424242424242425,
+              "rejected": {
+                "duplicate": 0,
+                "heldout_leak": 0
+              },
+              "rollout_id": "81c00d18e5eb",
+              "task_rates": {
+                "0": 0.0,
+                "1": 0.8392857142857143,
+                "2": 0.825,
+                "3": 0.84375,
+                "4": 0.7708333333333334,
+                "5": 0.725,
+                "6": 0.325,
+                "7": 1.0,
+                "8": 0.5833333333333334,
+                "9": 0.8214285714285714
+              },
+              "unsolved_fraction": 0.13636363636363635,
+              "verified_rate": 0.696969696969697
+            },
+            "step": 0,
+            "trained": true,
+            "version": "2413899fe4ba246362fa83edfab43584a5b5c0ddb65d80ca0988faee5e778fc3"
+          },
+          {
+            "curation": {
+              "attempts": 512,
+              "cases": 64,
+              "excluded_by_flag": 0,
+              "item_cases": 38,
+              "items": 304,
+              "mixed_cases": 38,
+              "rule": "mixed_groups",
+              "solved_cases": 52,
+              "verified_attempts": 290
+            },
+            "signal": {
+              "cases": 64,
+              "generator": "2413899fe4ba246362fa83edfab43584a5b5c0ddb65d80ca0988faee5e778fc3",
+              "mixed_fraction": 0.59375,
+              "rejected": {
+                "duplicate": 0,
+                "heldout_leak": 0
+              },
+              "rollout_id": "27596463e713",
+              "task_rates": {
+                "0": 0.0,
+                "1": 0.825,
+                "2": 0.7916666666666666,
+                "3": 0.8,
+                "4": 0.7678571428571429,
+                "5": 0.53125,
+                "6": 0.2361111111111111,
+                "7": 0.8125,
+                "8": 0.5,
+                "9": 0.5625
+              },
+              "unsolved_fraction": 0.1875,
+              "verified_rate": 0.56640625
+            },
+            "step": 1,
+            "trained": true,
+            "version": "a260ad700de678d4bcde2dd785e78460d79e62a70daf65349da722ae4b143d63"
+          },
+          {
+            "curation": {
+              "attempts": 520,
+              "cases": 65,
+              "excluded_by_flag": 0,
+              "item_cases": 34,
+              "items": 272,
+              "mixed_cases": 34,
+              "rule": "mixed_groups",
+              "solved_cases": 53,
+              "verified_attempts": 281
+            },
+            "signal": {
+              "cases": 65,
+              "generator": "a260ad700de678d4bcde2dd785e78460d79e62a70daf65349da722ae4b143d63",
+              "mixed_fraction": 0.5230769230769231,
+              "rejected": {
+                "duplicate": 0,
+                "heldout_leak": 0
+              },
+              "rollout_id": "0d2e20394d44",
+              "task_rates": {
+                "0": 0.0,
+                "1": 0.85,
+                "2": 0.7291666666666666,
+                "3": 0.875,
+                "4": 0.8333333333333334,
+                "5": 0.375,
+                "6": 0.16666666666666666,
+                "7": 1.0,
+                "8": 0.4027777777777778,
+                "9": 0.3611111111111111
+              },
+              "unsolved_fraction": 0.18461538461538463,
+              "verified_rate": 0.5403846153846154
+            },
+            "step": 2,
+            "trained": true,
+            "version": "59cf8e90d015d5a9b5beb2212c8eccf0aa8370710d4624b20c6b93ac3133afb1"
+          }
+        ],
+        "mixed_fraction": 0.42424242424242425,
+        "rejected": {
+          "duplicate": 0,
+          "heldout_leak": 0
+        },
+        "rollout_id": "81c00d18e5eb",
+        "task_rates": {
+          "0": 0.0,
+          "1": 0.8392857142857143,
+          "2": 0.825,
+          "3": 0.84375,
+          "4": 0.7708333333333334,
+          "5": 0.725,
+          "6": 0.325,
+          "7": 1.0,
+          "8": 0.5833333333333334,
+          "9": 0.8214285714285714
+        },
+        "unsolved_fraction": 0.13636363636363635,
+        "verified_rate": 0.696969696969697
+      }
+    }
+  ],
+  "parent": "r06c1",
+  "parent_gate": 0.62,
+  "round": 6,
+  "seconds": {
+    "attempt": 58181.29373117443,
+    "audit_eval": 3620.604591952637,
+    "gate_eval": 11626.638442182448,
+    "meta": 52.44452628586441,
+    "propose": 0.01367386570200324,
+    "train": 34608.98834816739
+  }
+}

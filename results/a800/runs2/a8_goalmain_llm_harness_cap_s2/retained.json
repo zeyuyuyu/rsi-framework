@@ -1,0 +1,47 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "llm",
+    "id": "472a7a8e65a4beaa",
+    "note": "{\"why\": \"Use the full 6400-example update budget (more steps at a moderate lr) on a broader set of scenes with moderate temperature, so each round learns more from more diverse mixed groups without raising per-step compute.\", \"diff\": {\"curriculum.cases\": 64, \"solver.samples\": 8, \"update.lr\": 3e-05}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 64,
+        "floor": 0.1
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.1
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 3e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "feb84444357548af"
+  },
+  "version": {
+    "id": "59cf8e90d015d5a9b5beb2212c8eccf0aa8370710d4624b20c6b93ac3133afb1",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_goalmain_llm_harness_cap_s2/ckpt-r06c1",
+    "parent_id": "a260ad700de678d4bcde2dd785e78460d79e62a70daf65349da722ae4b143d63"
+  }
+}
