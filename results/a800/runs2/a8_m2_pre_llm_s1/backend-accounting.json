@@ -1,0 +1,1688 @@
+{
+  "gpu_seconds": {
+    "rollout": 65450.0022149086,
+    "train": 28179.442548513412
+  },
+  "admissions": [
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793637915.5895212
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          56
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793638509.538097
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          75
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793640047.8481336
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793641012.1998858
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793642586.2528696
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          36
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793643563.1788647
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          41
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793645163.0462477
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          51
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793646107.9491563
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          62
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793646655.5970087
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793648504.5674047
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793649447.8501115
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793651288.7747579
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793652214.32439
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          65
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793654020.807596
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793654953.8640287
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          73
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793655536.9920337
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793656176.7712066
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          28
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793656801.7289448
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          60
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793658307.2630198
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          15
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793659277.5162697
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793660850.975234
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          86
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793661817.28163
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          76
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793663267.0018997
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          41
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793664224.645349
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          97
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793664834.5005887
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793666315.1941757
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          74
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793667275.0386744
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793668890.1725671
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          95
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793669857.5995975
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          5,
+          73
+        ]
+      },
+      "second": {
+        "4": [
+          5,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793671284.5039284
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          95
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793672250.0710294
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          99
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793672872.8531735
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793673472.466755
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          76
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793674091.1312454
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          93
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793675630.148649
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          94
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793676575.204874
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793678152.9184237
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793679114.667597
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          4402,
+          29
+        ]
+      },
+      "second": {
+        "4": [
+          4402,
+          29
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 2340.0,
+      "admitted_at": 1793683152.9768414
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          4404,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          4404,
+          28
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793684304.1330235
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          5,
+          37
+        ]
+      },
+      "second": {
+        "4": [
+          4,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793685070.1636782
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          4,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          4,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793686257.6785245
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          5,
+          77
+        ]
+      },
+      "second": {
+        "4": [
+          5,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793687995.9445765
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          99
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793688989.9204183
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          40
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793690466.5286543
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793691445.334753
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          72
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793692065.3687434
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793692712.9204524
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          21
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793693327.5360847
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          44
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793694852.1885297
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          46
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793695813.6577697
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          5,
+          82
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793697387.8852403
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          4,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          4,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793698375.0755053
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          71
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793699963.3921251
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          77
+        ]
+      },
+      "second": {
+        "4": [
+          843,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793700929.427751
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          426,
+          26
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793701553.8890307
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          38
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793703406.553284
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793704356.0281603
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          53
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793706175.9416575
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          846,
+          88
+        ]
+      },
+      "second": {
+        "4": [
+          846,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793707165.5892367
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793708844.7407632
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2106,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2945,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793709839.6572964
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          69
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793710438.3336277
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2526,
+          0
+        ]
+      },
+      "second": {
+        "4": [
+          2946,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793711045.0967383
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          846,
+          91
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793711603.6679916
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          47
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793713222.953542
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          92
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793714142.173738
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793715762.2535276
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793716711.125271
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793718390.9833305
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          80
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793719328.612096
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          87
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793719923.2047586
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793721521.654661
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793722420.391949
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793724007.4125113
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          30
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793724914.1891842
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          74
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793726531.0866427
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          55
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793727470.1771827
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          22
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793728032.534298
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          100
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793729400.894916
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          39
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793730857.3435369
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          2,
+          93
+        ]
+      },
+      "second": {
+        "4": [
+          2,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793732235.8783174
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          72
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793733634.0485835
+    },
+    {
+      "gpus": [
+        4
+      ],
+      "first": {
+        "4": [
+          1,
+          68
+        ]
+      },
+      "second": {
+        "4": [
+          1,
+          0
+        ]
+      },
+      "gap_seconds": 30.0,
+      "waited_seconds": 0.0,
+      "admitted_at": 1793735087.0624654
+    }
+  ]
+}
