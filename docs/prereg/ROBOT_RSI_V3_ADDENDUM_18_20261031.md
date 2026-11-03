@@ -120,3 +120,11 @@ experiment:
 * **Wall-time resume, 2026-11-03 ~02:30Z.** `yq_oftl_llm_harness_s2` reached the 53 h limit (rc=124) after round
   4. It was resumed unchanged (job-ug0nsuz93h4a), with the same plan, rsi_src_v17 and the same relay slots. The
   in-progress round re-draws its LLM call through the repaired relay.
+* **Patient LLM-client retries for `a8_goalmain_llm_s3` round 6 (operational, 2026-11-03 ~08:40Z).** Direct cavin
+  calls to OpenRouter go through the outbound proxy, and that path drops connections. Two cavin v2-replicate calls
+  fell back after the client's 3 quick retries.
+  * Before llm_s3's round-6 resume starts, its job runs from **src5b**. That is src5 with one change, in
+    `OpenAICompatClient` in `rsi/meta/proposers.py`: when `RSI_LLM_RETRIES` is set, it retries that many times,
+    60 s apart, for at most 15 min. The commit is a82600f; with the variable unset, the behaviour is unchanged.
+  * The proxy wrapper sets `RSI_LLM_RETRIES=8`.
+  * No decision logic changed.

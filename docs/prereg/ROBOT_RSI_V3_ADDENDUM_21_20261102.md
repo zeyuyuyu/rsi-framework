@@ -184,3 +184,8 @@ since the Spatial run ended at 23:16Z, and the cavin queue is empty.
 * **Start.** The llm run starts on the first free GPU and the rep run on the next one.
 * **Read.** The comparison is computed within cavin only, never pooled with Yangquan. It is reported next to M2-A,
   pooled with the cavin seeds 1-2, and its test is read with the study's.
+* **Cavin replicate fallbacks, 2026-11-03.** These are tagged FALLBACK and kept, per the protocol:
+  * `a8_m2_pre_llm_s2` round 3 (`RemoteDisconnected` after 3 retries; author `search`);
+  * `a8_m2_pre_llm_s3` round 2 (`URLError`, in progress at the time of writing).
+  * From their next resume on, the cavin runs use the patient client (a82600f) through the proxy wrapper with
+    `RSI_LLM_RETRIES=8`, as llm_s3 does (addendum 18).
