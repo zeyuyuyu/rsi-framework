@@ -245,6 +245,13 @@ rests on the free GPU alone.
   * The Yangquan resumes (job-vwux5ax79s0c, job-hrhchcnb9qz7, job-3ytk6p2ixefr) were already submitted.
   * A re-drawn call that fails again leaves its round as FALLBACK and still unscored. That round is re-drawn
     again under the same rule once the proxy forwards again. The selection stays on call failure only.
+  * As of 22:45Z the re-drawn calls have failed again. They are tagged FALLBACK, and each round stays in
+    progress and unscored:
+    * `a8_m2_pre_llm_s2` round 6 and `a8_m2_pre_llm_s3` round 5 (22:19Z);
+    * `yq_m2_pre_llm_s3` round 6 (22:26Z);
+    * `a8_m2_pre_llm_s0` round 1 (22:36Z).
+    `yq_oftg_llm_harness_s2` and `yq_oftl_llm_harness_s2` are still retrying. The next re-draw waits until
+    the proxy has been up on consecutive checks for at least 5 minutes.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
