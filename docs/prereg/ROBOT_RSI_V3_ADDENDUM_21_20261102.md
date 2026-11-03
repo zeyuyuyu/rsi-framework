@@ -239,6 +239,12 @@ rests on the free GPU alone.
   * on cavin, direct: `a8_m2_pre_llm_s2` round 6 and `a8_m2_pre_llm_s3` round 5. They resume from src10b,
     the patient client, as the note under amendment 3 says ("from their next resume on").
   * `a8_m2_pre_llm_s0` (amendment 4a) is released from hold now.
+* **The proxy flapped: down again at 22:02Z**, about 2.5 min after it came back. The re-draws still went ahead:
+  * Both cavin re-draws were held for 2 minutes before launch, then released. Their GPUs would sit idle
+    anyway, and the patient client retries for 15 min.
+  * The Yangquan resumes (job-vwux5ax79s0c, job-hrhchcnb9qz7, job-3ytk6p2ixefr) were already submitted.
+  * A re-drawn call that fails again leaves its round as FALLBACK and still unscored. That round is re-drawn
+    again under the same rule once the proxy forwards again. The selection stays on call failure only.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
