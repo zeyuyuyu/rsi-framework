@@ -1,0 +1,142 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.635,
+      "author": "seed",
+      "gate": 0.61,
+      "node": "n0",
+      "program": "e86397c513535155",
+      "round": 0
+    },
+    {
+      "audit": 0.62,
+      "author": "seed",
+      "gate": 0.62,
+      "node": "r01c0",
+      "program": "e86397c513535155",
+      "round": 1
+    },
+    {
+      "audit": 0.605,
+      "author": "seed",
+      "gate": 0.635,
+      "node": "r02c1",
+      "program": "e86397c513535155",
+      "round": 2
+    },
+    {
+      "audit": 0.6,
+      "author": "seed",
+      "gate": 0.655,
+      "node": "r03c1",
+      "program": "e86397c513535155",
+      "round": 3
+    },
+    {
+      "audit": 0.645,
+      "author": "seed",
+      "gate": 0.64,
+      "node": "r04c0",
+      "program": "e86397c513535155",
+      "round": 4
+    },
+    {
+      "audit": 0.68,
+      "author": "seed",
+      "gate": 0.665,
+      "node": "r05c0",
+      "program": "e86397c513535155",
+      "round": 5
+    },
+    {
+      "audit": 0.675,
+      "author": "seed",
+      "gate": 0.705,
+      "node": "r06c0",
+      "program": "e86397c513535155",
+      "round": 6
+    }
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "meta_v2": true,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "replica_candidates": true,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 3,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 100616.3067120933,
+  "retained": "r06c0",
+  "seconds": {
+    "attempt": 46205.39461683575,
+    "audit_eval": 3876.3039081306197,
+    "gate_eval": 10583.987435299437,
+    "meta": 1.5505123883485794e-05,
+    "propose": 0.004594425205141306,
+    "test_eval": 8896.009061459918,
+    "train": 31052.29721779283
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.592
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.6
+        },
+        {
+          "node": "r02c1",
+          "round": 2,
+          "score": 0.626
+        },
+        {
+          "node": "r03c1",
+          "round": 3,
+          "score": 0.59
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.58
+        },
+        {
+          "node": "r05c0",
+          "round": 5,
+          "score": 0.582
+        },
+        {
+          "node": "r06c0",
+          "round": 6,
+          "score": 0.62
+        }
+      ],
+      "final": 0.62,
+      "initial": 0.592,
+      "paired": {
+        "ci95": [
+          -0.01,
+          0.066
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 56,
+        "flipped_to_wrong": 42,
+        "mcnemar_p": 0.18884671980890244,
+        "mean_gain": 0.028,
+        "n": 500
+      }
+    }
+  }
+}
