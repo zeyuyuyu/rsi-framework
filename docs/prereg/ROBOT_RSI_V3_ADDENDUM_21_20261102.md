@@ -252,6 +252,13 @@ rests on the free GPU alone.
     * `a8_m2_pre_llm_s0` round 1 (22:36Z).
     `yq_oftg_llm_harness_s2` and `yq_oftl_llm_harness_s2` are still retrying. The next re-draw waits until
     the proxy has been up on consecutive checks for at least 5 minutes.
+* **The proxy is flapping (23:50-23:58Z).** It answered on 4 of 10 checks, 30 s apart, then went down again.
+  * **Relay change (transport only, operational).** Each relay attempt used the client's default of
+    3 tries x 180 s, so it hung for about 9 min, and only 2 attempts fit in the 15-min budget.
+  * From 00:05Z the relay builds its client with timeout 120 s and 1 try. It retries every 10 s and stops
+    after 23 min, inside the run side's 30-min wait.
+  * Prompt, model, temperature and the parsing of the answer are unchanged. The only effect is that a
+    short up-window is caught.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
