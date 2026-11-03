@@ -1,0 +1,59 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "llm",
+    "id": "89e7354debf9f3d4",
+    "note": "{\"why\": \"Keep the proven procedure and slightly shift weights toward the weak, mixed-outcome tasks (5, 6, 8, 9) while keeping tasks 0 and 7 at zero.\", \"diff\": {\"curriculum.task_weights\": [0.0, 0.5, 1.0, 1.0, 1.0, 2.0, 2.5, 0.0, 2.0, 2.0]}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 1,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "weights",
+        "cases": 64,
+        "floor": 0.05,
+        "task_weights": [
+          0.0,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          2.0,
+          2.5,
+          0.0,
+          2.0,
+          2.0
+        ]
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 5e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "ae2575f3c9e44da6"
+  },
+  "version": {
+    "id": "893bf97f5ab2edb54a7d0deb1fb889eea1d27b4dc00c24f37ca9d4e266511643",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_m2_tun_llm_s1/ckpt-r06c1",
+    "parent_id": "c4e18a9878c4da5241ade325829c825e399bf33fb5e835e620527182247edd0c"
+  }
+}
