@@ -279,9 +279,14 @@ def llm_history_v2(archive, limit=12):
 class OpenAICompatClient:
     """Minimal chat-completions client (stdlib only). The key is read from a file and never logged."""
 
-    def __init__(self, base_url, model, key_file, timeout=180, retries=3):
+    def __init__(self, base_url, model, key_file, timeout=180, retries=None):
+        import os
         self.base_url, self.model, self.key_file = base_url.rstrip("/"), model, key_file
-        self.timeout, self.retries = timeout, retries
+        # RSI_LLM_RETRIES (unset: 3 quick retries, the historical behaviour) makes the client as patient as the relay:
+        # 60 s between attempts, at most 15 min in all (cavin -> OpenRouter via the proxy drops connections, 11-03)
+        env = os.environ.get("RSI_LLM_RETRIES")
+        self.timeout, self.retries = timeout, retries if retries is not None else int(env or 3)
+        self.patient = retries is None and env is not None
 
     def __call__(self, prompt, temperature, max_tokens):
         import time
@@ -290,7 +295,7 @@ class OpenAICompatClient:
         key = Path(self.key_file).expanduser().read_text().strip()
         body = json.dumps(dict(model=self.model, messages=[dict(role="user", content=prompt)],
                                temperature=temperature, max_tokens=max_tokens)).encode()
-        last = None
+        last, start = None, time.time()
         for attempt in range(self.retries):
             try:
                 req = urllib.request.Request(f"{self.base_url}/chat/completions", data=body, headers={
@@ -300,7 +305,12 @@ class OpenAICompatClient:
                 return out["choices"][0]["message"]["content"], out.get("usage") or {}
             except Exception as exc:              # network or gateway error: retry, then let the caller fall back
                 last = exc
-                time.sleep(5 * (attempt + 1))
+                if self.patient:
+                    if time.time() - start > 900:
+                        break
+                    time.sleep(60)
+                else:
+                    time.sleep(5 * (attempt + 1))
         raise RuntimeError(f"llm_call_failed:{type(last).__name__}")
 
 

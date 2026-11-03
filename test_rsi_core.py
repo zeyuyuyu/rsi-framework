@@ -800,6 +800,33 @@ class ProgramTests(unittest.TestCase):
         finally:
             relay_mod.time.sleep = sleep
 
+    def test_llm_client_retries_patiently_only_when_asked(self):
+        import os, urllib.request
+        from rsi.meta import proposers
+        from rsi.meta.proposers import OpenAICompatClient
+        key = Path(tempfile.mkdtemp()) / "k"; key.write_text("x")
+        calls, slept = [], []
+        def boom(req, timeout=None):
+            calls.append(1); raise ConnectionResetError("reset")
+        orig_open, orig_sleep = urllib.request.urlopen, proposers.time.sleep if hasattr(proposers, "time") else None
+        import time as time_mod
+        sleep0 = time_mod.sleep
+        urllib.request.urlopen, time_mod.sleep = boom, (lambda s: slept.append(s))
+        try:
+            os.environ.pop("RSI_LLM_RETRIES", None)
+            with self.assertRaises(RuntimeError):
+                OpenAICompatClient("https://x/v1", "m", str(key))("p", 1.0, 5)
+            self.assertEqual((len(calls), slept), (3, [5, 10, 15]))            # historical behaviour unchanged
+            calls.clear(); slept.clear()
+            os.environ["RSI_LLM_RETRIES"] = "8"
+            with self.assertRaises(RuntimeError):
+                OpenAICompatClient("https://x/v1", "m", str(key))("p", 1.0, 5)
+            self.assertEqual(len(calls), 8)
+            self.assertTrue(all(s == 60 for s in slept))
+        finally:
+            urllib.request.urlopen, time_mod.sleep = orig_open, sleep0
+            os.environ.pop("RSI_LLM_RETRIES", None)
+
     def test_libero_budget_scale_only_widens_counts(self):
         big = {"curriculum": {"cases": 960}, "curation": {"budget": 2400}, "update": {"steps": 600}}
         with self.assertRaises(ValueError):
