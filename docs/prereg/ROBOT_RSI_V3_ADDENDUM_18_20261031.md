@@ -117,3 +117,6 @@ experiment:
   Every LLM meta call since then, relayed (Yangquan) or direct (cavin), failed after its retries. Each such round
   ran on the numeric fallback, as the protocol prescribes, and is tagged FALLBACK from the candidate author
   ("search"). The fix is pending with the user; its time and the affected rounds will be listed here.
+* **Wall-time resume, 2026-11-03 ~02:30Z.** `yq_oftl_llm_harness_s2` reached the 53 h limit (rc=124) after round
+  4. It was resumed unchanged (job-ug0nsuz93h4a), with the same plan, rsi_src_v17 and the same relay slots. The
+  in-progress round re-draws its LLM call through the repaired relay.
