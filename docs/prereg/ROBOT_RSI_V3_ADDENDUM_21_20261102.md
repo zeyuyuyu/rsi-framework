@@ -235,3 +235,17 @@ rests on the free GPU alone.
     is on call failure only.
   * A round that finished before the proxy came back keeps its FALLBACK tag.
   * Every round in either group is listed here.
+
+## Amendment 4a (2026-11-03 ~20:20Z): the seed-4 cavin replicate is replaced by seed 0
+
+* **Why.** `a8_m2_pre_llm_s4` crashed in round 2 (rc=1, `placement_seed_out_of_range:4301020000`). The engine's
+  step seed is `run_seed * 1000 + 100 * round + step`, and LIBERO placement seeds are
+  `1e8 + step_seed * 1e6 + ...`, which must stay below 2^32. That holds only for run seeds 0-3 (engine.py says
+  so). Amendment 4 picked seed 4 without checking, and that was a mistake. `a8_m2_pre_rep_s4` would have crashed
+  the same way, so it was stopped 4 min after its launch, before it scored anything.
+* **The s4 record**, kept for disclosure: round 1 was scored (seed 0.61 vs llm 0.595, not accepted, parent 0.615).
+  Round 2 fell back (proxy outage, amendment 5) and crashed before it was scored. Both s4 runs are dropped as
+  crashed, and nothing from them enters any comparison. The crash forced this choice; no result did.
+* **Replacement.** `a8_m2_pre_llm_s0` and `a8_m2_pre_rep_s0`, defined exactly as amendment 4 but with engine
+  seed 0. Seed 0 is unused by this study and stays in range. The rep run starts now. The llm run is held until
+  the outbound proxy forwards again (amendment 5), so it does not start on fallback rounds.
