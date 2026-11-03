@@ -212,3 +212,20 @@ rests on the free GPU alone.
 * **Start.** The llm run starts on the first free GPU and the rep run on the next one.
 * **Read.** The comparison is within cavin only, pooled with cavin seeds 1-3, and read with the study's tests. The
   primary bar M2-A (Yangquan) is unchanged.
+
+## Amendment 5 (2026-11-03 ~15:35Z): outbound-proxy outage
+
+* **What.** cavin's outbound proxy (127.0.0.1:1080, a root-owned tunnel we do not operate) has stopped forwarding.
+  Requests through it time out: OpenRouter and google.com both fail at 15:30Z. Its upstream host still answers
+  directly. The last good relay answer was at 13:50Z. The first failed call started at ~15:11Z.
+* **Affected so far.** All LLM meta calls go through this proxy, relayed (Yangquan) or direct (cavin), so they fail
+  for as long as it is down. Two rounds fell back to the numeric search (author `search`):
+  * `yq_m2_pre_llm_s1` round 6, a primary-study run. The relay sent an error answer at 15:30Z after 2 attempts
+    (1127 s), each of which hung for about 9 minutes.
+  * `a8_m2_pre_llm_s3` round 4 (cavin replicate): `URLError` at 15:26Z.
+* **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
+  * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
+    resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
+    is on call failure only.
+  * A round that finished before the proxy came back keeps its FALLBACK tag.
+  * Every round in either group is listed here.
