@@ -1,0 +1,114 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.59,
+      "author": "seed",
+      "gate": 0.595,
+      "node": "n0",
+      "program": "a1a1dff4c45a1409",
+      "round": 0
+    },
+    {
+      "audit": 0.605,
+      "author": "llm",
+      "gate": 0.61,
+      "node": "r01c1",
+      "program": "8b695092c7a86a1a",
+      "round": 1
+    },
+    {
+      "audit": 0.645,
+      "author": "llm",
+      "gate": 0.64,
+      "node": "r02c1",
+      "program": "89735efc7d6b8823",
+      "round": 2
+    },
+    {
+      "audit": 0.645,
+      "author": "search",
+      "gate": 0.67,
+      "node": "r05c1",
+      "program": "04fb8fbd82ce2c89",
+      "round": 5
+    },
+    {
+      "audit": 0.645,
+      "author": "llm",
+      "gate": 0.7,
+      "node": "r06c1",
+      "program": "e5f5b72d8fb5f1f8",
+      "round": 6
+    }
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 1,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 23468.252279654145,
+  "retained": "r06c1",
+  "seconds": {
+    "attempt": 66001.73298180941,
+    "audit_eval": 2472.3932182039134,
+    "gate_eval": 11467.677939599846,
+    "meta": 90.79155020974576,
+    "propose": 0.024655706714838743,
+    "test_eval": 7717.288683479652,
+    "train": 30894.362526077777
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.586
+        },
+        {
+          "node": "r01c1",
+          "round": 1,
+          "score": 0.582
+        },
+        {
+          "node": "r02c1",
+          "round": 2,
+          "score": 0.606
+        },
+        {
+          "node": "r05c1",
+          "round": 5,
+          "score": 0.616
+        },
+        {
+          "node": "r06c1",
+          "round": 6,
+          "score": 0.612
+        }
+      ],
+      "final": 0.612,
+      "initial": 0.586,
+      "paired": {
+        "ci95": [
+          -0.004,
+          0.056
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 37,
+        "flipped_to_wrong": 24,
+        "mcnemar_p": 0.12373144253809217,
+        "mean_gain": 0.026,
+        "n": 500
+      }
+    }
+  }
+}
