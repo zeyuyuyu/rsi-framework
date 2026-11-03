@@ -196,3 +196,19 @@ since the Spatial run ended at 23:16Z, and the cavin queue is empty.
     and its 4 completed rounds are all LLM. `a8_m2_pre_llm_s2`: 2 of 4 rounds fell back. `a8_m2_pre_llm_s3`: 1 of
     3. All Yangquan runs go through the relay, which has 15 minutes of retries. None of them has fallen back since
     the provider switch.
+
+## Amendment 4 (2026-11-03 ~13:55Z): a seed-4 cavin replicate
+
+GPU0 has been free since `a8_goalmain_llm_s2` finished at 13:42Z, and the cavin queue is empty. Some runs of this
+study already have a `report.json`. None of their test files, and no `tests` key, has been opened. The decision
+rests on the free GPU alone.
+
+* **Runs.** `a8_m2_pre_llm_s4` and `a8_m2_pre_rep_s4`, defined exactly as the seed-1/2/3 cavin replicates with
+  engine seed 4. One difference: both run from **src10b**, which is src10 with only the patient LLM client
+  (a82600f) added, through the proxy wrapper (`RSI_LLM_RETRIES=8`). With the variable unset the client is
+  unchanged, and the rep arm never calls the LLM.
+* **Why the change.** It brings the direct cavin calls up to the relay's patience (15 min). Seeds 2-3 lost 3 rounds
+  to the 3-quick-retry client.
+* **Start.** The llm run starts on the first free GPU and the rep run on the next one.
+* **Read.** The comparison is within cavin only, pooled with cavin seeds 1-3, and read with the study's tests. The
+  primary bar M2-A (Yangquan) is unchanged.
