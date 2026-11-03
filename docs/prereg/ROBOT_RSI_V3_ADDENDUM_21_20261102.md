@@ -232,6 +232,13 @@ rests on the free GPU alone.
   * `a8_m2_pre_llm_s3` round 5 (cavin replicate): `URLError` at 19:50Z.
   * **Scored before the proxy came back, so FALLBACK stays (as of 20:50Z):** `a8_m2_pre_llm_s3` round 4
     and `yq_m2_pre_llm_s1` round 6. `a8_m2_pre_llm_s4` round 2 crashed and is dropped (amendment 4a).
+* **Proxy back at 21:59Z** (first good check at 21:59:46Z). Six rounds that fell back are still running, and none
+  has been scored. Each is stopped and resumed (`--resume`), so it re-draws its LLM call:
+  * on Yangquan, through the relay: `yq_m2_pre_llm_s3` round 6 (rsi_src_v24), `yq_oftg_llm_harness_s2` round 6
+    and `yq_oftl_llm_harness_s2` round 6 (rsi_src_v17);
+  * on cavin, direct: `a8_m2_pre_llm_s2` round 6 and `a8_m2_pre_llm_s3` round 5. They resume from src10b,
+    the patient client, as the note under amendment 3 says ("from their next resume on").
+  * `a8_m2_pre_llm_s0` (amendment 4a) is released from hold now.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
