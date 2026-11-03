@@ -1,0 +1,47 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "5b412f51507f86fb",
+    "note": "{\"why\": \"Zscore advantages amplify the learning signal from low-variance mixed scenes on the hard tasks while the rest of the procedure stays at the known-good setting.\", \"diff\": {\"curation.adv\": \"zscore\"}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 52,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 9,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 3e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "85777b878e771048"
+  },
+  "version": {
+    "id": "cf2bd52f2e7b57ae60c64e0decc129dc52022bb182aa6111e1d213afdb55406d",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_m2_tun_llm_s2/ckpt-r06c0",
+    "parent_id": "63f9cdcf11a167260d0b3d50eb65e7ea8a47ef56103aac985577c4da7faa8c7b"
+  }
+}

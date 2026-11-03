@@ -1,0 +1,43 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "llm",
+    "id": "8746dc3f1344ce23",
+    "note": "{\"why\": \"Keep the stable lr of 1e-5 and batch of 128 that just gave the best gate, and increase scene diversity (cases 200) and the budget to 800 so each update sees more mixed groups, with steps modestly raised to 300 to use the extra data.\", \"diff\": {\"curation.budget\": 800, \"curriculum.cases\": 200, \"update.steps\": 300}}",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 800,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 200,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 12,
+        "temperature": 1.2
+      },
+      "update": {
+        "batch": 128,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 1e-05,
+        "operator": "grpo",
+        "steps": 300
+      }
+    },
+    "parent_id": "0a68e593dec175e3"
+  },
+  "version": {
+    "id": "ea344d9413e0b13a217c22a6c4ca47aaa0ae3bcca5fd26df4b854b9be7e5e352",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_goalmain_llm_s2/ckpt-r06c1",
+    "parent_id": "6e7845a86fc3fc7d8218b0e2410b3608a6f1da0b16ea9487b4a6895171ab9ebd"
+  }
+}
