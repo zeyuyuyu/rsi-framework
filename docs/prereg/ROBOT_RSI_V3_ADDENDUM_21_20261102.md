@@ -186,6 +186,13 @@ since the Spatial run ended at 23:16Z, and the cavin queue is empty.
   pooled with the cavin seeds 1-2, and its test is read with the study's.
 * **Cavin replicate fallbacks, 2026-11-03.** These are tagged FALLBACK and kept, per the protocol:
   * `a8_m2_pre_llm_s2` round 3 (`RemoteDisconnected` after 3 retries; author `search`);
-  * `a8_m2_pre_llm_s3` round 2 (`URLError`, in progress at the time of writing).
+  * `a8_m2_pre_llm_s3` round 2 (`URLError`; the round completed and was accepted, 0.635 vs parent 0.63);
+  * `a8_m2_pre_llm_s2` round 4 (`URLError` at ~08:34Z. The relay saw a `URLError` at 08:42Z in the same
+    network blip and got through on its second attempt).
   * From their next resume on, the cavin runs use the patient client (a82600f) through the proxy wrapper with
-    `RSI_LLM_RETRIES=8`, as llm_s3 does (addendum 18).
+    `RSI_LLM_RETRIES=8`, as llm_s3 does (addendum 18). They are not stopped to switch early: a stop mid-round
+    would re-draw that round.
+  * Tally at 12:20Z, by LLM call. `a8_m2_pre_llm_s1` made 7 calls: 2 failed and were re-drawn under amendment 2,
+    and its 4 completed rounds are all LLM. `a8_m2_pre_llm_s2`: 2 of 4 rounds fell back. `a8_m2_pre_llm_s3`: 1 of
+    3. All Yangquan runs go through the relay, which has 15 minutes of retries. None of them has fallen back since
+    the provider switch.
