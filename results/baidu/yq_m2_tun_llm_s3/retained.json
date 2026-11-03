@@ -1,0 +1,59 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "b05257ecdc8aefa4",
+    "note": "{\"why\": \"Reallocate scenes away from the unsolvable task 0 and the saturated task 7 toward tasks with mixed outcomes, with a lower temperature for cleaner signal and a lower lr for stability.\", \"diff\": {\"curriculum.allocation\": \"weights\", \"curriculum.task_weights\": [0.0, 1.0, 1.0, 0.7, 1.0, 1.5, 2.0, 0.0, 2.0, 1.5], \"solver.temperature\": 1.3, \"update.lr\": 2e-05}}",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "weights",
+        "cases": 64,
+        "floor": 0.05,
+        "task_weights": [
+          0.0,
+          1.0,
+          1.0,
+          0.7,
+          1.0,
+          1.5,
+          2.0,
+          0.0,
+          2.0,
+          1.5
+        ]
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.3
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 2e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "a1a1dff4c45a1409"
+  },
+  "version": {
+    "id": "a7e0c56932c3268029fc87550dd41ff19cd7a3112f1702d3cb3c4813394a12df",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_m2_tun_llm_s3/ckpt-r06c0",
+    "parent_id": "ee0f2471d3d49832c8a7972d6ad64a8264799938d250f55a3130c815625112a8"
+  }
+}

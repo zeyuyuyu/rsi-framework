@@ -1,0 +1,47 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "llm",
+    "id": "4cecb023d0d2df63",
+    "note": "{\"why\": \"Lower the sampling temperature to 1.4 and use 12 samples over 42 scenes to get better-calibrated mixed groups with the same try budget, keeping the conservative lr 5e-5.\", \"diff\": {\"curriculum.cases\": 42, \"solver.samples\": 12, \"solver.temperature\": 1.4}}",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 42,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 12,
+        "temperature": 1.4
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "token",
+        "lr": 5e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 50
+      }
+    },
+    "parent_id": "ee9916c8a324de85"
+  },
+  "version": {
+    "id": "8eb9b330b68df510281a50bb73f8e030990525dbe853e4a06dc04db1a75db13a",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_m2_pre_llm_s2/ckpt-r06c1",
+    "parent_id": "a592f758d16f509c75807edb3db3342258482507c73344d0ec86a189f99248d4"
+  }
+}
