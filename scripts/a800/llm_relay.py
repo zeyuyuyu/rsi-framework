@@ -8,7 +8,9 @@ sys.path.insert(0, "/data0/home/zeyuwang/rsi/src6")
 from rsi.meta.proposers import OpenAICompatClient
 
 d = Path(sys.argv[1])
-client = OpenAICompatClient("https://api.commonstack.ai/v1", "anthropic/claude-sonnet-5-5", "/data0/home/zeyuwang/.cskey")
+# 2026-11-03: CommonStack key deactivated (401) -> OpenRouter, same model id (user-approved; addenda 18 and 21 am. 2)
+client = OpenAICompatClient("https://openrouter.ai/api/v1", "anthropic/claude-sonnet-5-5", "/data0/home/zeyuwang/.orkey",
+                           timeout=120, retries=1)   # 11-04 flapping proxy: short tries, many of them (am. 5)
 
 
 def put(url, obj):
@@ -39,7 +41,7 @@ while True:
                 print(time.strftime("%FT%TZ", time.gmtime()), run, k, "req_get_exc", type(e).__name__, flush=True)
                 break
             t = time.time()
-            for attempt in range(8):          # gateway 5xx / TLS blips (11-01): keep trying ~10 min, inside the
+            for attempt in range(60):          # gateway 5xx / TLS blips / flapping proxy: keep trying ~23 min, inside the
                 try:                          # run's 30-min relay wait, before answering with an error
                     content, usage = client(req["prompt"], req["temperature"], req["max_tokens"])
                     out = dict(content=content, usage=usage)
@@ -47,9 +49,9 @@ while True:
                 except Exception as e:
                     out = dict(error=str(e)[:200])
                     print(time.strftime("%FT%TZ", time.gmtime()), run, k, "retry", attempt, out["error"][:80], flush=True)
-                    if time.time() - t > 900:     # a hung TLS handshake costs ~9 min per attempt: stop at 15 min
+                    if time.time() - t > 1380:     # each try hangs at most 120 s (11-04): stop at 23 min
                         break
-                    time.sleep(60)
+                    time.sleep(10)
             st = put(urls["resp_put"][k], out)
             done.add(k)
             donef.write_text(json.dumps(sorted(done)))
