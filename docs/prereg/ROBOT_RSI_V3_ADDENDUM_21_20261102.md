@@ -283,6 +283,11 @@ rests on the free GPU alone.
   round. Its re-drawn call fell back at 03:29Z. The search proposal was accepted (0.675 vs parent 0.63), so the
   final policy of this cavin llm run, like s2's, comes from a numeric-search proposal.
   * `a8_m2_pre_llm_s0` round 2 was a real LLM round (not accepted).
+* **Third re-draw, 13:40Z.** The proxy passed 10 consecutive 1-min checks from 13:26Z. The two remaining
+  unscored fallback rounds are `yq_oftg_llm_harness_s2` and `yq_oftl_llm_harness_s2`, round 6 each. Each is
+  re-drawn only if its job's live log, read just before the stop, has no `ROUND 6` line
+  (`guarded_redraw.sh`).
+  * `a8_m2_pre_llm_s0` round 3 needs nothing: a real LLM answer at 08:29Z.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
