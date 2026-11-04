@@ -268,6 +268,12 @@ rests on the free GPU alone.
   * `yq_m2_pre_llm_s3`, `yq_oftg_llm_harness_s2` and `yq_oftl_llm_harness_s2`, round 6 each;
   * `a8_m2_pre_llm_s3` round 5.
   * `a8_m2_pre_llm_s0` round 2 needs nothing: its patient client got a real LLM answer at 03:01Z.
+  * `a8_m2_pre_llm_s3` round 5 wrote its round file at 03:12:18Z, about 20 s before the stop. It was scored
+    (not accepted), so it keeps FALLBACK.
+  * The stop cut off round 6's LLM call while it was still in flight; no answer had been logged. Nothing
+    completed is re-drawn, and the run resumes at round 6 (`a8_m2_pre_llm_s3_redraw2`, src10b).
+  * Yangquan resubmissions: job-isfuc5k0jwjn, job-mqdutod7t22y and job-ifgp8gdre6so.
+  * The proxy dropped again at 03:12:45Z, so these calls may fall back once more. The same rule applies.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
