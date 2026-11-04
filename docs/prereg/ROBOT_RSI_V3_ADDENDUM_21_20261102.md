@@ -274,6 +274,11 @@ rests on the free GPU alone.
     completed is re-drawn, and the run resumes at round 6 (`a8_m2_pre_llm_s3_redraw2`, src10b).
   * Yangquan resubmissions: job-isfuc5k0jwjn, job-mqdutod7t22y and job-ifgp8gdre6so.
   * The proxy dropped again at 03:12:45Z, so these calls may fall back once more. The same rule applies.
+  * **Correction (03:25Z).** `yq_m2_pre_llm_s3` round 6 had been scored before its stop (accepted r06c0 0.645 vs
+    fallback 0.635). My state check was a progress listing from 03:03Z, and the round finished in the gap. It
+    keeps FALLBACK. Its resubmission (job-isfuc5k0jwjn) resumes after round 6 and only runs the final test;
+    nothing is re-drawn. The other two Yangquan stops were still in round 6 (last log line ROUND 5), so they
+    re-draw as planned.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
