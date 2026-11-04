@@ -263,6 +263,11 @@ rests on the free GPU alone.
   * `a8_m2_pre_llm_s0` round 1. Not accepted (search 0.57 vs seed 0.595, parent 0.60).
   * `a8_m2_pre_llm_s2` round 6, its last round. Accepted: search 0.67 vs 0.61, parent 0.62. The final policy
     of this cavin llm run therefore comes from a numeric-search proposal, and that is disclosed with its test.
+* **Second re-draw, 03:11Z.** The proxy passed 5 consecutive 1-min checks from 03:07Z. Four fallback rounds are
+  still running and unscored, and each is stopped and resumed:
+  * `yq_m2_pre_llm_s3`, `yq_oftg_llm_harness_s2` and `yq_oftl_llm_harness_s2`, round 6 each;
+  * `a8_m2_pre_llm_s3` round 5.
+  * `a8_m2_pre_llm_s0` round 2 needs nothing: its patient client got a real LLM answer at 03:01Z.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
