@@ -1,0 +1,43 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "84990686fefc30c9",
+    "note": "{\"why\": \"Keep the stable lr and budget, but lower the sampling temperature to 1.0 and use more samples so the groups are on-policy and cleaner, with more steps at a moderate lr to extract more signal from the bigger pool.\", \"diff\": {\"solver.samples\": 16, \"solver.temperature\": 1.0}}",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 600,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 240,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 16,
+        "temperature": 1.0
+      },
+      "update": {
+        "batch": 128,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 1.5e-05,
+        "operator": "grpo",
+        "steps": 100
+      }
+    },
+    "parent_id": "a5e2d33396cf1236"
+  },
+  "version": {
+    "id": "de938c326b02f3f1af2a8429b6545fbce8c5461202482665809be6e20a19a589",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_goalmain_llm_s3/ckpt-r06c0",
+    "parent_id": "94e27749319a6d21c84823db8865cebb3bbe82333906d10dc993f40811deab6c"
+  }
+}
