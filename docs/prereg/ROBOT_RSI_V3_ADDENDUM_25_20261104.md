@@ -14,7 +14,8 @@ four arms must share a platform, but different seeds may sit on different platfo
 * **Seed-0 Goal block (addendum 23) moves to cavin.** `yq_oftg_{fixed,nonrec,shuffled,onebig}_s0` are stopped
   (each about 2 h in, round 1 unscored) and replaced by `a8_goalmain_{fixed,nonrec,shuffled,onebig}_s0` on cavin:
   the cavin Goal `fixed` plan of seeds 1-3 with `engine.seed = 0` and the arm's one engine field (`recursive`
-  false / `feedback` shuffled / `rounds` 1 + `inner_steps` 18), source src6 like the other cavin Goal arms. R2, R3
+  false / `feedback` shuffled / `rounds` 1 + `inner_steps` 18), source src5, the tree the cavin Goal `fixed`
+  arms ran on (their job files). R2, R3
   and R5 remain seed-averaged over seeds 0-3; seed 0's comparison is paired within cavin. Seeds 1-3 stay on
   Yangquan. The yq seed-0 job ids are kept in `jobs_yq.tsv` with their stop time.
 * **`yq_oftgb_fixed_s3` is stopped** (about 1.5 h in, round 1 unscored) and resubmitted with `--resume`, so it
