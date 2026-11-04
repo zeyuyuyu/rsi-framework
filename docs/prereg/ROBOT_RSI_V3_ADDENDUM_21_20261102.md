@@ -279,6 +279,10 @@ rests on the free GPU alone.
     keeps FALLBACK. Its resubmission (job-isfuc5k0jwjn) resumes after round 6 and only runs the final test;
     nothing is re-drawn. The other two Yangquan stops were still in round 6 (last log line ROUND 5), so they
     re-draw as planned.
+* **Scored while the proxy was still down, so FALLBACK stays (as of 08:20Z):** `a8_m2_pre_llm_s3` round 6, its last
+  round. Its re-drawn call fell back at 03:29Z. The search proposal was accepted (0.675 vs parent 0.63), so the
+  final policy of this cavin llm run, like s2's, comes from a numeric-search proposal.
+  * `a8_m2_pre_llm_s0` round 2 was a real LLM round (not accepted).
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
