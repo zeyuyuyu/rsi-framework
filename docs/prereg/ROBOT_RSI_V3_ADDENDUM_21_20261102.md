@@ -288,6 +288,9 @@ rests on the free GPU alone.
   re-drawn only if its job's live log, read just before the stop, has no `ROUND 6` line
   (`guarded_redraw.sh`).
   * `a8_m2_pre_llm_s0` round 3 needs nothing: a real LLM answer at 08:29Z.
+  * Both stops found round 6 unscored (last log line ROUND 5). Resubmitted as job-uattmi06hc4z and
+    job-32u42knmeahe. Both re-drawn calls got real LLM answers at 13:46Z, so round 6 of both runs is now an
+    LLM round. As of 13:50Z no fallback round of the outage is left unscored.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
