@@ -1,0 +1,59 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "search",
+    "id": "a1da9a8a4f78329f",
+    "note": "{\"curation.adv\": \"zscore\"}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "weights",
+        "cases": 64,
+        "floor": 0.05,
+        "task_weights": [
+          0.0,
+          1.0,
+          1.0,
+          1.0,
+          0.6,
+          1.5,
+          2.0,
+          0.0,
+          2.0,
+          2.0
+        ]
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "rollout",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "token",
+        "lr": 0.0001,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "427e157850604462"
+  },
+  "version": {
+    "id": "a7b3664e9bf3dc4dfaacb00407e6aab3bafe73d15625a2a9d359e8ceb857a5d4",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_m2_pre_llm_s3/ckpt-r06c1",
+    "parent_id": "a1f9c1b219036da7bf4f8636c3be2e8c32330650d557ed1cb854fd1ee3101b58"
+  }
+}
