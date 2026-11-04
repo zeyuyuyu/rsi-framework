@@ -22,3 +22,12 @@ four arms must share a platform, but different seeds may sit on different platfo
   continues its own state; it queues behind the five addendum-24 runs now able to start.
 * Nothing else is touched. Test reads are unchanged: the Goal read-once waits for the cavin seed-0 block and the
   addendum-22 runs; addendum 24 is read when its nine runs have `report.json`.
+
+## Done (17:41Z)
+
+* Stopped on Yangquan (all in round 1, unscored): `yq_oftg_fixed_s0` job-34uta55xtrp3 17:40:45Z,
+  `yq_oftg_nonrec_s0` job-2pzb8q3j0yin 17:40:49Z, `yq_oftg_shuffled_s0` job-qm65vcxhfsb6 17:40:52Z,
+  `yq_oftg_onebig_s0` job-4b9x3p1wmglh 17:40:55Z, `yq_oftgb_fixed_s3` job-dqg3chkgttmo 17:41:01Z.
+* `yq_oftgb_fixed_s3` resumed as job-ljwhdzou3x5l (`--resume`, rsi_src_v24).
+* cavin queue: `a8_goalmain_{fixed,nonrec,shuffled,onebig}_s0` (jobs 64-67, src5), each differing from
+  `a8_goalmain_fixed_s1` only in `engine.seed` and the arm's engine field.
