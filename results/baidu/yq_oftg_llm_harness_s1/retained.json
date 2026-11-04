@@ -1,0 +1,47 @@
+{
+  "node": "r05c1",
+  "program": {
+    "author": "llm",
+    "id": "c80bbb8595ea4846",
+    "note": "{\"why\": \"Return to the gentle update that scored best (lr 1e-5, 60 steps) and lower gradient variance with more tries per scene at near-greedy-matched temperature 1.0, so advantages are less noisy and sampling matches the greedy gate.\", \"diff\": {\"solver.samples\": 16, \"solver.temperature\": 1.0, \"update.lr\": 1e-05, \"update.steps\": 60}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 200,
+        "floor": 0.1
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 16,
+        "temperature": 1.0
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 1e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 60
+      }
+    },
+    "parent_id": "2d882170838f4cd9"
+  },
+  "version": {
+    "id": "6ea4e299f9ea11295b48d06a76b639ae2b787a2785807753f1028226480c0cd3",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftg_llm_harness_s1/ckpt-r05c1",
+    "parent_id": "74f70243a2ddd09748f2f5298587c73d3ad6b61a0ca69e0859edbfd8409e868d"
+  }
+}
