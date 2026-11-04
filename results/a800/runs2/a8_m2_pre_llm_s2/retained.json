@@ -1,0 +1,47 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "search",
+    "id": "bc9d982fc0e43810",
+    "note": "{\"update.loss_agg\": \"episode\"}",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 0.0001,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "d67e9a1b44243295"
+  },
+  "version": {
+    "id": "ce25329996c63bf02969a72bed5849b228567613f81160114362ee2520fecf2e",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_m2_pre_llm_s2/ckpt-r06c1",
+    "parent_id": "391639528324190120b5041eec9c2d2ced7c3e910a56bf9cc55ef04c24161752"
+  }
+}
