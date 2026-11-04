@@ -299,3 +299,21 @@ rests on the free GPU alone.
 * **Replacement.** `a8_m2_pre_llm_s0` and `a8_m2_pre_rep_s0`, defined exactly as amendment 4 but with engine
   seed 0. Seed 0 is unused by this study and stays in range. The rep run starts now. The llm run is held until
   the outbound proxy forwards again (amendment 5), so it does not start on fallback rounds.
+
+## Amendment 4b (2026-11-04 ~06:00Z): the M2-A/M2-B read, before it happens
+
+* **When.** All 12 Yangquan runs have `report.json`. The last one, `yq_m2_pre_llm_s3`, came in at ~05:20Z. M2-A and
+  M2-B are now read once with `scripts/report/m2_read.py`:
+  * the final retained node of each run;
+  * the 3 seeds pooled;
+  * a per-episode paired bootstrap, 10,000 draws, seed 0, as in "Claims and bars".
+* **Pre-read structure check** (`--check`, no test numbers). Every run has 500-episode bits for its retained node
+  and for n0, and the episode-id digest is the same everywhere (7a5650d1f3cdcbbc).
+  * Fallback rounds, counted from the new proposal's author: pre_llm s1/s2/s3 = 1/0/2 and tun_llm s1/s2/s3 =
+    1/1/1. The rep arms have none.
+* **The cavin replicate is read later.** Amendment 1 says its test files are "opened together with the study's".
+  Four cavin runs are still going: `a8_m2_pre_llm_s3`, `a8_m2_pre_rep_s3` and the seed-0 pair. Their test files
+  stay closed until all of them have `report.json`, and the within-cavin comparison is then read once. The study
+  read does not wait for them, because the study's own rule is met.
+* **Read alongside these:** the v3 Goal read-once (addendum 14) is unaffected. Its test files are separate and
+  stay closed until every Goal main arm has `report.json`.
