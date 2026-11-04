@@ -259,6 +259,10 @@ rests on the free GPU alone.
     after 23 min, inside the run side's 30-min wait.
   * Prompt, model, temperature and the parsing of the answer are unchanged. The only effect is that a
     short up-window is caught.
+* **Scored while the proxy was still down, so FALLBACK stays (as of 02:55Z):**
+  * `a8_m2_pre_llm_s0` round 1. Not accepted (search 0.57 vs seed 0.595, parent 0.60).
+  * `a8_m2_pre_llm_s2` round 6, its last round. Accepted: search 0.67 vs 0.61, parent 0.62. The final policy
+    of this cavin llm run therefore comes from a numeric-search proposal, and that is disclosed with its test.
 * **Handling, as in amendment 2 (outage, not a one-off blip).** The fix is with the cluster admin.
   * Once the proxy forwards again, any round that fell back during the outage and is still running is stopped and
     resumed (`--resume`), so it re-draws its LLM call. Its candidates must not have been scored yet. The selection
