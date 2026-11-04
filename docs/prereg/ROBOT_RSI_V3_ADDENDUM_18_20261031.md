@@ -128,3 +128,8 @@ experiment:
     60 s apart, for at most 15 min. The commit is a82600f; with the variable unset, the behaviour is unchanged.
   * The proxy wrapper sets `RSI_LLM_RETRIES=8`.
   * No decision logic changed.
+* **Second disk prune (operational), 2026-11-04 ~03:50Z.** cavin's `/data0` was down to 338G free. The episode frames
+  (`*.npz`) were deleted from the `.work` dirs of finished runs:
+  * `a8_goalmain_llm_s2`, `a8_m2_pre_llm_s1`, `a8_m2_pre_rep_s1` and `a8_m2_pre_rep_s2` (each has `report.json`);
+  * the dropped `a8_m2_pre_llm_s4` (addendum 21 am. 4a).
+  * Free space is now 622G. Round, checkpoint, report and test files were kept.
