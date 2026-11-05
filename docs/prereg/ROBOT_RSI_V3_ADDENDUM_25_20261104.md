@@ -31,3 +31,18 @@ four arms must share a platform, but different seeds may sit on different platfo
 * `yq_oftgb_fixed_s3` resumed as job-ljwhdzou3x5l (`--resume`, rsi_src_v24).
 * cavin queue: `a8_goalmain_{fixed,nonrec,shuffled,onebig}_s0` (jobs 64-67, src5), each differing from
   `a8_goalmain_fixed_s1` only in `engine.seed` and the arm's engine field.
+
+## Operational note (2026-11-05 ~03:40Z): `a8_goalmain_onebig_s0` rollout worker crash and resume
+
+* 03:32Z: the run failed at inner step 12 of its single 18-step round (work step 28, a rollout): one of three
+  rollout workers died in `mujoco.MjrContext` with `Offscreen framebuffer is not complete, error 0x8cdd` (EGL
+  offscreen renderer on GPU 6). No code or data error; at the same time other users' processes appeared on cavin
+  GPUs 0, 6 and 7 (25-65 GB each). The backend's retry wrapper did not recover it; the engine wrote `failure.json`.
+* 03:36Z: resumed with `--resume` on the same plan file (`queue/plans/a8_goalmain_onebig_s0.json`, GPU 6) and
+  source tree (src5), launched by hand because the queue runner only starts jobs on GPUs with under 2 GB in use and
+  every GPU now carries another user's job; the GPU is recorded in `queue/reservations.json` (pid 370274). Per the
+  engine's resume rule the unfinished round 1 (checkpoints `ckpt-r01c0-i0..i11`, its attempts/cases files and
+  `failure.json`) is set aside in `resume-01/` and round 1 is rerun from its start with the same step seeds. Nothing
+  about the arm, recipe or bars changes.
+* Effect on timing: round 1 now ends about 13:40Z and the test about 16:00Z on 2026-11-05, so the Goal read-once
+  (R1-R5, seeds 0-3) moves from ~14:00Z to ~16:00Z.
