@@ -133,3 +133,9 @@ experiment:
   * `a8_goalmain_llm_s2`, `a8_m2_pre_llm_s1`, `a8_m2_pre_rep_s1` and `a8_m2_pre_rep_s2` (each has `report.json`);
   * the dropped `a8_m2_pre_llm_s4` (addendum 21 am. 4a).
   * Free space is now 622G. Round, checkpoint, report and test files were kept.
+* **Third disk prune (operational), 2026-11-05 ~02:18Z.** cavin's `/data0` fell from 425G to 361G free within 30 min
+  (none of it from the running runs; their files written in that window were 130 MB adapters). The episode frames
+  (`*.npz`) were deleted from the `.work` dirs of finished runs, each with `report.json`: `a8_goalmain_llm_s3`
+  (79,658 files, 213G), `a8_m2_pre_llm_s2` (53G), `a8_m2_pre_llm_s3` (50G), `a8_m2_pre_rep_s3` (39G),
+  `a8_spatmain_llm_harness_cap_s1` (51G) and the pilot `a8_ofts_curve_grpo_s0` (20G). Free space is now 758G.
+  Round, checkpoint, report and test files were kept; no running run was touched. Script: `scripts/a800/prune_npz.sh`.
