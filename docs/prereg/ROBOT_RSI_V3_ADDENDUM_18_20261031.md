@@ -139,3 +139,6 @@ experiment:
   (79,658 files, 213G), `a8_m2_pre_llm_s2` (53G), `a8_m2_pre_llm_s3` (50G), `a8_m2_pre_rep_s3` (39G),
   `a8_spatmain_llm_harness_cap_s1` (51G) and the pilot `a8_ofts_curve_grpo_s0` (20G). Free space is now 758G.
   Round, checkpoint, report and test files were kept; no running run was touched. Script: `scripts/a800/prune_npz.sh`.
+  * 05:46Z, same rule: `a8_m2_pre_rep_s0` (finished 02:26Z, `report.json`), 14,400 files, 39G; free 667G → 703G.
+    The running cavin runs write about 10G of episode frames per rollout step, so their `.work` dirs are pruned
+    the same way as each one finishes.
