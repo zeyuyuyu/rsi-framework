@@ -58,3 +58,6 @@ four arms must share a platform, but different seeds may sit on different platfo
   will be stopped and resumed with admission relaxed to share the GPU (`admit_max_used_mib` 30000,
   `sample_procs_per_gpu` 2: rollouts 1.5x slower, same episodes and seeds); llm_s0 by 06:45Z. Each such restart
   reruns the unfinished round from its start, as the engine's resume rule prescribes, and is listed here.
+* 04:15Z: the other user's jobs ended between 03:50Z and 04:10Z; `fixed_s0`, `nonrec_s0` and `a8_m2_pre_llm_s0` were
+  admitted on their own GPUs and are rolling out (three workers each). No further restart was needed; the
+  contingency above was not used. Lost time: about 40 min of waiting per run, plus the onebig_s0 round-1 rerun.
