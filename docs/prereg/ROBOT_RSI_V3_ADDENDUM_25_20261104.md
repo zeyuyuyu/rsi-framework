@@ -46,3 +46,15 @@ four arms must share a platform, but different seeds may sit on different platfo
   about the arm, recipe or bars changes.
 * Effect on timing: round 1 now ends about 13:40Z and the test about 16:00Z on 2026-11-05, so the Goal read-once
   (R1-R5, seeds 0-3) moves from ~14:00Z to ~16:00Z.
+* 03:43Z update: the resumed `onebig_s0` never got GPU 6: another user's job (25.7 GB, 100% util) holds GPUs 1, 2,
+  4 and 6, and the backend's admission rule (`admit_max_used_mib` 8000, wait up to 4 h, then refuse) kept it waiting.
+  It was stopped before doing any work and resumed once more on the then-free GPU 0 (`queue/plans` GPU fields
+  rewritten to [0]; these fields are not part of the resume-checked `plan.json`; pid 390917, reservation recorded).
+  It is rolling out on GPU 0 since 03:43Z. `fixed_s0` (GPU 1), `nonrec_s0` (GPU 2) and `a8_m2_pre_llm_s0` (GPU 4)
+  are likewise waiting in admission at the start of a rollout phase (fixed/nonrec: round 4 after one inner step;
+  llm_s0: round 6 candidate 1); they will proceed on their own when the GPUs clear, and fail with
+  `gpu_admission_refused` after 4 h otherwise. A move of `nonrec_s0` to GPU 7 at 03:47Z was aborted by the move
+  script's guard because GPU 7 had just been taken. If the GPUs are still held at ~05:15Z, fixed_s0 and nonrec_s0
+  will be stopped and resumed with admission relaxed to share the GPU (`admit_max_used_mib` 30000,
+  `sample_procs_per_gpu` 2: rollouts 1.5x slower, same episodes and seeds); llm_s0 by 06:45Z. Each such restart
+  reruns the unfinished round from its start, as the engine's resume rule prescribes, and is listed here.
