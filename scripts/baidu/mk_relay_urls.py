@@ -2,7 +2,7 @@
 <out_dir>/<run>.json for cavin, uploads the node's file (req PUT, resp GET) to BOS and prints a presigned GET URL of
 it for the job env RSI_LLM_RELAY. All URLs expire after <days>.  usage: mk_relay_urls.py <run> <out_dir> [slots=28] [days=5]"""
 import json, os, subprocess, sys
-PRESIGN = "/tmp/claude-1000/-home-zeyu/04cfb8d7-2d31-45ec-83a6-11d2231cafdf/scratchpad/yq/presign.py"
+PRESIGN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "presign.py")
 HERE = os.path.dirname(os.path.abspath(__file__))
 run, out_dir = sys.argv[1], sys.argv[2]
 slots = int(sys.argv[3]) if len(sys.argv) > 3 else 28

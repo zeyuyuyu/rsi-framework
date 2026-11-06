@@ -11,16 +11,17 @@ Appends name<TAB>jobId to jobs_yq.tsv here and to the yq poller's jobs.tsv."""
 import datetime, json, os, sys
 os.environ.setdefault("AIHC_POOL", "aihc-serverless")      # the pool id itself is refused for this sub-account
 os.environ.setdefault("AIHC_QUEUE", "aihcq-4yv1euenciip")  # yangquan-research (elastic), aihc-rd-yangquan
-sys.path.insert(0, "/home/zeyu/rsi/tools/baidu")
+sys.path.insert(0, HERE if "HERE" in dir() else os.path.dirname(os.path.abspath(__file__)))
 import aihc_job
 aihc_job.HOST = "aihc.yq.baidubce.com"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-POLLER_TSV = "/tmp/claude-1000/-home-zeyu/04cfb8d7-2d31-45ec-83a6-11d2231cafdf/scratchpad/baidu_yq/jobs.tsv"
+POLLER_TSV = os.environ.get("POLLER_TSV", "/home/zeyu/rsi/yq_logs/jobs.tsv")
 plan, model = sys.argv[1], sys.argv[2]
 sha = sys.argv[3] if len(sys.argv) > 3 else "unknown"
-name = "zw-rsi-" + plan.replace("_", "-")
-envs = [{"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"}, {"name": "NAME", "value": plan},
+run_name = os.environ.get("RUN_NAME", plan)      # replicate / test-eval jobs: another run dir, the run's own plan
+name = "zw-rsi-" + run_name.replace("_", "-")
+envs = [{"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"}, {"name": "NAME", "value": run_name},
         {"name": "MODEL_ID", "value": model}, {"name": "A800_SHA", "value": sha},
         {"name": "RUN_TIMEOUT_S", "value": os.environ.get("RUN_TIMEOUT_S", "190800")}, {"name": "NVIDIA_DRIVER_CAPABILITIES", "value": "all"},
         # /mnt/pfs/shitianyu-rsi is a plain node-local dir on yq; the same path keeps the BOS-staged venv valid
@@ -61,7 +62,7 @@ body = {
                      "cfsMountPoint": "cfs-n1EUBUrCPv.lb-59r8awst.cfs.yq.baidubce.com"}},
     ],
 }
-json.dump(body, open(os.path.join(HERE, f"body_{plan}.json"), "w"), indent=1)
+json.dump(body, open(os.path.join(HERE, f"body_{run_name}.json"), "w"), indent=1)
 st, out = aihc_job.create(body)
 print(st, json.dumps(out, ensure_ascii=False)[:600])
 if st == 200 and isinstance(out, dict) and out.get("jobId"):
