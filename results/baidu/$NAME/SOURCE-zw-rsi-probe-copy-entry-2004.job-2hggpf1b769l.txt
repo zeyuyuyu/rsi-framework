@@ -1,0 +1,3 @@
+echo "===== RSI_RESULT_BEGIN name=$NAME run=$RNAME rc=$RC $(el) ====="
+echo "===== RSI_RESULT_END name=$NAME rc=$RC ====="
+extracted from Baidu AIHC job log zw-rsi-probe-copy-entry-2004.job-2hggpf1b769l.log
