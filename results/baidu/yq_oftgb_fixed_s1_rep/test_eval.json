@@ -1,0 +1,13 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_fixed_s1",
+  "node": "r06c0",
+  "version": {
+    "id": "385f8607b5589cfb0a0ef91cde8f8cfc826df7f69345d5a85fbb223056ff7138",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_fixed_s1/ckpt-r06c0",
+    "parent_id": "da57bdcdb61c2c04337b6f20fc6d4b3eca1f338d3e976dbde4b9b742540747b6"
+  },
+  "test_success": [
+    0.546,
+    0.566
+  ]
+}
