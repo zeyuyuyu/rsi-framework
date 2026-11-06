@@ -1,0 +1,13 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s3",
+  "node": "r06c1",
+  "version": {
+    "id": "5a298f5b9a53b510603f85e27b3c9847492fa0efb5b23c1eba61d44b534a0724",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s3/ckpt-r06c1",
+    "parent_id": "f1c7e16012df9d86cf222bec1993276076fd26ec54f1537412de146f88313018"
+  },
+  "test_success": [
+    0.576,
+    0.586
+  ]
+}
