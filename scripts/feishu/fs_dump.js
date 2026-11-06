@@ -23,7 +23,7 @@ const { chromium } = require('/home/zeyu/.npm/_npx/86170c4cd1c5da32/node_modules
     const end = await step('down'); await page.waitForTimeout(700);
     if (end) { for (const b of await grab()) if (!seen.has(b.id)) { seen.set(b.id, b); order.push(b.id); } break; }
   }
-  const ids = order.map(Number).every(n => !isNaN(n)) ? order.slice().sort((a,b)=>a-b) : order;
+  const ids = process.env.FS_DOM_ORDER ? order : (order.map(Number).every(n => !isNaN(n)) ? order.slice().sort((a,b)=>a-b) : order);
   console.log('BLOCKS', ids.length);
   for (const id of ids) { const b = seen.get(id); console.log(`[${b.type}] ${b.text}`); }
   if (shot) await page.screenshot({ path: shot });
