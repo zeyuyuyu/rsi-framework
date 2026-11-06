@@ -48,3 +48,8 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   `yq_oftg_onebig_s1` retained n0, so its final is the initial model by construction; its rejected candidate r01c0
   is evaluated three times for R5-ungated (`--node r01c0 --replicates 3`, addendum 18 am. 1).
 * Nothing is re-trained; no test file is opened by these jobs.
+* 06:34Z: two gate-only pilots for a possible second self-repair scenario were submitted to idle Yangquan cards
+  (`yq_pilot_fail{1,2}_s{1,2}`, fixed proposer, 3 rounds, seeds 1-2; no test is read). Candidate failing recipes:
+  fail1 = GRPO at lr 1e-4, temperature 2.0, clip [0.1, 0.5], z-scored advantages, token-level loss; fail2 = BC at
+  rollout temperature 2.0 cloning up to 8 successes per scene. Only a recipe whose gate falls clearly below its
+  start over three rounds would be registered (addendum 27) as scenario 2; otherwise nothing follows from them.
