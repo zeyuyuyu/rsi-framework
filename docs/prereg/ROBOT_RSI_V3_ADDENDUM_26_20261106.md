@@ -77,3 +77,9 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   To free the cards, the exploratory `a8_pilot_fail3_s1` / `a8_pilot_fail4_s1` pilots were stopped 1.5 h in
   (no round scored, nothing read); `fail1_s1` finishes its third round. The Yangquan `fail2` pilots ended null
   (s1 60/64/62.5, s2 56.5/60/62.5 vs starts near 58-60).
+* 16:05Z: the same round-boundary continuation is applied to the Yangquan LLM arms `yq_oftgb_llm_harness_s1-3`
+  (one card each, about 9 h per round, 53 h job limit at 22:45Z). A probe job confirmed that a Yangquan job can hold
+  several cards. Each arm is stopped after its next `round-NN.json` (or when its job ends at the limit, whichever
+  comes first) and resumed on the same CFS run directory with three cards (`run_vla6.sh`: rollouts on all cards,
+  training on card 0; `NGPU=3 scripts/baidu/resume_oftgb_llm.sh`). Plan, seeds, gate sets, relay slots and the test
+  are unchanged; the resume re-seeds the proposer's random stream as before.
