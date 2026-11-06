@@ -5,7 +5,7 @@ cd "$(dirname "$0")/../.." || exit 1
 export AIHC_HOST=aihc.yq.baidubce.com AIHC_POOL=aihc-serverless AIHC_QUEUE=aihcq-4yv1euenciip
 prev=${1:-/tmp/mon_yq_status.txt}; n=${2:-40}; touch "$prev"
 while true; do
-  cur=$(tail -n "$n" scripts/baidu/jobs_yq.tsv | awk -F'\t' '{print $1"\t"$2}' | sort -u -k1,1 | while IFS=$'\t' read name job; do
+  cur=$(tail -n "$n" scripts/baidu/jobs_yq.tsv | awk -F'\t' '{a[$1]=$2} END {for (k in a) print k"\t"a[k]}' | sort | while IFS=$'\t' read name job; do
     st=$(timeout 40 python3 scripts/baidu/aihc_job.py describe "$job" 2>/dev/null | python3 -c '
 import json,sys
 t=sys.stdin.read(); i=t.find("{")
