@@ -32,3 +32,19 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
 * S3 (descriptive) adds the cavin seed-0 runs against `a8_goalmain_fixed_s0`.
 * All addendum-24 tests stay sealed until all twelve runs have `report.json`; they are then read once.
 * Fallback rounds (numeric search replacing a failed LLM call) are counted from the candidate author, as before.
+
+## Operational note (2026-11-06 ~04:40Z): the registered replicate evaluations are launched; preliminary read disclosed
+
+* The Goal read of `docs/results/GOAL_MAIN_READ_20261106.md` used each run's own single test (replicate 0) and its own
+  n0 test. The registered final (prereg v3 "Test (sealed)"; VLA addendum 2) is the per-episode mean of three
+  evaluations of the retained policy (own test + `run_libero --test-eval <run> --replicates 2`, same plan) against
+  the per-episode mean of every in-run n0 test of the model and suite on that platform. That read is done once the
+  replicates exist; `scripts/report/goal_read.py --mode final` implements it (mode `single` is the preliminary read).
+  The preliminary numbers are reported as such and are not replaced.
+* Launched: cavin queue jobs 71-83 (`<run>_rep`, 2 replicates, the run's own queue plan and source tree) for the 13
+  cavin Goal runs; Yangquan jobs `<run>_rep` for the 17 Goal runs with a retained node other than n0 and for the six
+  finished addendum-24 arms (`yq_oftgb_{fixed,full}_s1-3`, tests still unread), source tarball `rsi_src_v27.tgz`
+  (the repository's `rsi/` package at de4528a; no change to any evaluation or training code since v24).
+  `yq_oftg_onebig_s1` retained n0, so its final is the initial model by construction; its rejected candidate r01c0
+  is evaluated three times for R5-ungated (`--node r01c0 --replicates 3`, addendum 18 am. 1).
+* Nothing is re-trained; no test file is opened by these jobs.
