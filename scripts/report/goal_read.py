@@ -1,0 +1,184 @@
+"""Prereg v3 LIBERO-Goal main study: the one-time read of R1-R5 (prereg v3; addenda 14-16, 18 am. 1, 22, 23, 25).
+
+Platforms (addendum 15): Yangquan seeds 1-3 (results/baidu/yq_oftg_<arm>_s<seed>) carry R1, R2, R3, R4, R4-harness
+and R5; cavin seeds 1-3 (results/a800/runs2/a8_goalmain_<arm>_s<seed>) carry R4-llm and R4-cap against cavin's own
+`fixed`. Seed 0 (addendum 23, moved to cavin by addendum 25: a8_goalmain_{fixed,nonrec,shuffled,onebig}_s0) joins
+R2, R3 and R5 as a fourth seed; the 3-seed statistic is reported alongside. Every run is measured on its final
+retained policy; comparisons are paired per episode within a seed, seed-averaged, with a paired bootstrap CI
+(10,000 draws). R5-ungated (addendum 18 am. 1) uses each onebig run's r01c0 test whatever its gate; a rejected
+candidate needs a `--test-eval --node r01c0` job first (test-libero_official-r01c0*.jsonl in the run dir).
+usage: python3 scripts/report/goal_read.py [results root] [--check] [--json out.json]
+"""
+import json
+import statistics
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from rsi.audit.compare_arms import load_scores, seed_avg   # noqa: E402
+from rsi.core.stats import mcnemar_exact, paired_bootstrap   # noqa: E402
+
+SUITE = "libero_official"
+
+
+def run_dir(root, platform, arm, seed):
+    if platform == "yq":
+        return Path(root) / "baidu" / f"yq_oftg_{arm}_s{seed}"
+    return Path(root) / "a800" / "runs2" / f"a8_goalmain_{arm}_s{seed}"
+
+
+def round_candidates(run):
+    """[(round, node, gate, accepted)] from the round files of either platform format."""
+    out = []
+    for f in sorted(run.glob("round-[0-9][0-9].json")):
+        text = f.read_text()
+        try:
+            whole = json.loads(text)
+        except json.JSONDecodeError:
+            whole = None
+        if isinstance(whole, dict) and "candidates" in whole:
+            rnd, cands, acc = whole["round"], whole["candidates"], whole.get("accepted")
+        else:
+            lines = [json.loads(l) for l in text.splitlines() if l.strip()]
+            head = next((l for l in lines if "round" in l and "node" not in l), {})
+            rnd, acc = head.get("round"), head.get("accepted")
+            cands = [c for c in lines if "node" in c]
+        for c in cands:
+            out.append((rnd, c["node"], c.get("gate"), acc))
+    return out
+
+
+def record(run):
+    if not (run / "report.json").exists():
+        raise SystemExit(f"{run}: no report.json (run not finished)")
+    rep = json.loads((run / "report.json").read_text())
+    node = rep["retained"]
+    scores = load_scores(run, SUITE)
+    if "n0" not in scores or node not in scores:
+        raise SystemExit(f"{run.name}: missing test bits for n0 or retained {node}: {sorted(scores)}")
+    cands = round_candidates(run)
+    gates = {n: g for _, n, g, _ in cands}
+    gate = None if node == "n0" else gates.get(node)
+    return dict(run=run.name, retained=node, retained_gate=gate, rounds=len({r for r, _, _, _ in cands}),
+                digest=scores[node][0], bits=scores[node][1], n0_digest=scores["n0"][0], n0_bits=scores["n0"][1],
+                cands=cands, scores=scores)
+
+
+def pct(bits):
+    return round(100 * sum(bits) / len(bits), 2)
+
+
+def paired(pairs, bar, name, extra=None):
+    """pairs: [(seed, control_bits, arm_bits)] -> seed-averaged arm - control with CI and per-seed detail."""
+    a, b = seed_avg([(x, y) for _, x, y in pairs])
+    diff = 100 * sum(y - x for x, y in zip(a, b)) / len(a)
+    lo, hi = paired_bootstrap(a, b)
+    per = {}
+    for s, x, y in pairs:
+        p, gain, loss = mcnemar_exact(x, y)
+        l2, h2 = paired_bootstrap(x, y)
+        per[s] = dict(control=pct(x), arm=pct(y), diff=round(pct(y) - pct(x), 2), ci95=[round(100 * l2, 2), round(100 * h2, 2)],
+                      mcnemar_p=round(p, 4), arm_only=gain, control_only=loss)
+    out = dict(claim=name, seeds=[s for s, _, _ in pairs], n_episodes=len(a), bar_points=bar,
+               mean_points=round(diff, 2), ci95_points=[round(100 * lo, 2), round(100 * hi, 2)],
+               passes=bool(diff >= bar and lo > 0), per_seed=per)
+    if extra:
+        out.update(extra)
+    return out
+
+
+def r1(recs, arm, bar=5.0):
+    pairs = [(s, r["n0_bits"], r["bits"]) for s, r in sorted(recs.items())]
+    out = paired(pairs, bar, f"R1 {arm}: final - initial")
+    excl = sum(1 for v in out["per_seed"].values() if v["ci95"][0] > 0)
+    out["seeds_excluding_zero"] = excl
+    out["passes"] = bool(out["passes"] and excl >= 2)
+    out["bar_note"] = "prereg v3 R1 for M1: >= +5.0, CI > 0, >= 2 of 3 seeds individually > 0; the +3.0 pilot rule of addendum 11 is also shown"
+    out["passes_at_3"] = bool(out["mean_points"] >= 3.0 and out["ci95_points"][0] > 0 and excl >= 2)
+    return out
+
+
+def noise_check(recs):
+    """prereg v3: the same statistic between two halves of the n0 evaluations (odd vs even episodes)."""
+    out = {}
+    for key, r in recs.items():
+        b = r["n0_bits"]
+        out[str(key)] = round(100 * (sum(b[0::2]) / len(b[0::2]) - sum(b[1::2]) / len(b[1::2])), 2)
+    return out
+
+
+def main():
+    args = sys.argv[1:]
+    out = None
+    if "--json" in args:
+        i = args.index("--json"); out = args[i + 1]; del args[i:i + 2]
+    check = "--check" in args
+    args = [a for a in args if a != "--check"]
+    root = args[0] if args else "results"
+
+    yq = {(arm, s): record(run_dir(root, "yq", arm, s))
+          for arm in ("fixed", "full", "llm_harness", "onebig", "nonrec", "shuffled") for s in (1, 2, 3)}
+    cv = {(arm, s): record(run_dir(root, "cavin", arm, s))
+          for arm in ("fixed", "llm", "llm_harness_cap") for s in (1, 2, 3)}
+    s0 = {(arm, 0): record(run_dir(root, "cavin", arm, 0)) for arm in ("fixed", "nonrec", "shuffled", "onebig")}
+    digests = {r["digest"] for d in (yq, cv, s0) for r in d.values()} | {r["n0_digest"] for d in (yq, cv, s0) for r in d.values()}
+    if len(digests) != 1:
+        raise SystemExit(f"episode id lists differ across runs: {sorted(digests)}")
+    if check:
+        for d in (yq, cv, s0):
+            for (arm, s), r in sorted(d.items()):
+                print(f"{r['run']:34s} retained={r['retained']:6s} gate={r['retained_gate']} rounds={r['rounds']} "
+                      f"n0_bits={len(r['n0_bits'])} final_bits={len(r['bits'])}")
+        print("digest", digests.pop())
+        return
+
+    res = {}
+    # R1 (Yangquan seeds 1-3, fixed and full)
+    res["R1_fixed"] = r1({s: yq[("fixed", s)] for s in (1, 2, 3)}, "fixed")
+    res["R1_full"] = r1({s: yq[("full", s)] for s in (1, 2, 3)}, "full")
+    # R2 / R3: seeds 0-3 (seed 0 paired within cavin), 3-seed alongside
+    for name, arm, ctrl, bar in (("R2 fixed - shuffled", "fixed", "shuffled", 3.0), ("R3 fixed - nonrec", "fixed", "nonrec", 2.0)):
+        p4 = [(0, s0[(ctrl, 0)]["bits"], s0[(arm, 0)]["bits"])] + [(s, yq[(ctrl, s)]["bits"], yq[(arm, s)]["bits"]) for s in (1, 2, 3)]
+        res[name.split()[0] + "_seeds0to3"] = paired(p4, bar, name + " (seeds 0-3; seed 0 on cavin)")
+        res[name.split()[0] + "_seeds1to3"] = paired(p4[1:], bar, name + " (seeds 1-3, Yangquan)")
+    # R4 family (seeds 1-3)
+    res["R4_full_minus_fixed"] = paired([(s, yq[("fixed", s)]["bits"], yq[("full", s)]["bits"]) for s in (1, 2, 3)], 2.0, "R4 full - fixed (Yangquan)",
+                                        extra=dict(gate_minus_test_of_selected={s: (None if yq[("full", s)]["retained_gate"] is None else
+                                                   round(100 * yq[("full", s)]["retained_gate"] - pct(yq[("full", s)]["bits"]), 2)) for s in (1, 2, 3)}))
+    res["R4_harness_minus_fixed_yq"] = paired([(s, yq[("fixed", s)]["bits"], yq[("llm_harness", s)]["bits"]) for s in (1, 2, 3)], 2.0, "R4-harness llm_harness - fixed (Yangquan)")
+    res["R4_llm_minus_fixed_cavin"] = paired([(s, cv[("fixed", s)]["bits"], cv[("llm", s)]["bits"]) for s in (1, 2, 3)], 2.0, "R4-llm llm - fixed (cavin)")
+    res["R4_cap_minus_fixed_cavin"] = paired([(s, cv[("fixed", s)]["bits"], cv[("llm_harness_cap", s)]["bits"]) for s in (1, 2, 3)], 2.0, "R4-cap llm_harness_cap - fixed (cavin)")
+    res["R4_llm_minus_full_secondary"] = paired([(s, yq[("full", s)]["bits"], yq[("llm_harness", s)]["bits"]) for s in (1, 2, 3)], 0.0, "secondary llm_harness - full (Yangquan, no bar)")
+    # R5: best of fixed/full/llm_harness by retained gate (never by test) minus onebig; seed 0 has fixed only
+    best = {}
+    for s in (1, 2, 3):
+        cands = {arm: yq[(arm, s)] for arm in ("fixed", "full", "llm_harness")}
+        arm = max(cands, key=lambda a: (cands[a]["retained_gate"] or -1))
+        best[s] = (arm, cands[arm])
+    best[0] = ("fixed", s0[("fixed", 0)])
+    p4 = [(s, (s0 if s == 0 else yq)[("onebig", s)]["bits"], best[s][1]["bits"]) for s in (0, 1, 2, 3)]
+    res["R5_seeds0to3"] = paired(p4, 2.0, "R5 best-by-gate - onebig (seeds 0-3)", extra=dict(best_arm={s: best[s][0] for s in best}))
+    res["R5_seeds1to3"] = paired(p4[1:], 2.0, "R5 best-by-gate - onebig (seeds 1-3, Yangquan)", extra=dict(best_arm={s: best[s][0] for s in (1, 2, 3)}))
+    # R5-ungated: onebig's r01c0 test whatever its gate (addendum 18 am. 1)
+    ung, missing = [], []
+    for s in (0, 1, 2, 3):
+        r = (s0 if s == 0 else yq)[("onebig", s)]
+        bits = r["scores"].get("r01c0", (None, None))[1]
+        if bits is None:
+            missing.append(s)
+        else:
+            ung.append((s, bits, best[s][1]["bits"]))
+    if ung:
+        res["R5_ungated"] = paired(ung, 2.0, "R5-ungated best-by-gate - onebig r01c0 (available seeds)", extra=dict(missing_seeds=missing))
+    res["noise_check_n0_halves"] = dict(yq=noise_check({f"{a}_s{s}": r for (a, s), r in yq.items()}),
+                                        cavin=noise_check({f"{a}_s{s}": r for (a, s), r in {**cv, **s0}.items()}))
+    res["runs"] = {d: {f"{a}_s{s}": dict(retained=r["retained"], gate=r["retained_gate"], test=pct(r["bits"]), n0=pct(r["n0_bits"]), rounds=r["rounds"])
+                       for (a, s), r in sorted(src.items())} for d, src in (("yq", yq), ("cavin", cv), ("cavin_s0", s0))}
+    text = json.dumps(res, indent=1)
+    print(text)
+    if out:
+        Path(out).write_text(text + "\n")
+
+
+if __name__ == "__main__":
+    main()
