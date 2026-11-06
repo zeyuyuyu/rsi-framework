@@ -5,6 +5,7 @@ Every arm is measured on its final retained policy (report.json "retained"). The
 per-episode paired bootstrap is taken: each draw resamples episode ids once, for both arms and all seeds.
 The cavin replicate is not read here (amendment 4b).
 usage: python3 scripts/report/m2_read.py [results root] [--check] [--json out.json]
+       [--platform baidu|a800] [--seeds 1,2,3] [--starts pre,tun]   (a800 = the cavin replicate, amendment 4b)
 """
 import json
 import sys
@@ -26,10 +27,15 @@ def run_record(run):
         raise SystemExit(f"{run.name}: no test bits for retained node {node} or n0")
     authors = []
     for f in sorted(run.glob("round-*.json")):
-        lines = [json.loads(l) for l in f.read_text().splitlines() if l.strip()]
-        if len(lines) == 1 and "candidates" in lines[0]:      # A800 round file: one object
-            cands = lines[0]["candidates"]
+        text = f.read_text()
+        try:
+            whole = json.loads(text)                            # A800 round file: one (pretty-printed) object
+        except json.JSONDecodeError:
+            whole = None
+        if isinstance(whole, dict) and "candidates" in whole:
+            cands = whole["candidates"]
         else:                                                  # Baidu extract: round line, then one line per node
+            lines = [json.loads(l) for l in text.splitlines() if l.strip()]
             cands = [c for c in lines if "node" in c]
         authors.append([c.get("author") for c in cands])
     fallback_rounds = sum(1 for a in authors if a and a[-1] == "search")   # the new proposal (c1); c0 is the incumbent
@@ -38,26 +44,34 @@ def run_record(run):
                 rounds=len(authors))
 
 
-def compare(root, start):
+PLATFORMS = {"baidu": ("baidu", "yq_m2"), "a800": ("a800/runs2", "a8_m2")}   # amendment 4b: the cavin replicate
+
+
+def run_dir(root, start, arm, seed, platform="baidu"):
+    sub, prefix = PLATFORMS[platform]
+    return Path(root) / sub / f"{prefix}_{start}_{arm}_s{seed}"
+
+
+def compare(root, start, seeds=(1, 2, 3), platform="baidu"):
     name, bar = BARS[start]
-    recs = {(arm, s): run_record(Path(root) / "baidu" / f"yq_m2_{start}_{arm}_s{s}")
-            for arm in ("rep", "llm") for s in (1, 2, 3)}
+    recs = {(arm, s): run_record(run_dir(root, start, arm, s, platform))
+            for arm in ("rep", "llm") for s in seeds}
     digests = {r["digest"] for r in recs.values()} | {r["n0_digest"] for r in recs.values()}
     if len(digests) != 1:
         raise SystemExit(f"{name}: episode id lists differ across runs: {sorted(digests)}")
-    pairs = [(recs[("rep", s)]["bits"], recs[("llm", s)]["bits"]) for s in (1, 2, 3)]
+    pairs = [(recs[("rep", s)]["bits"], recs[("llm", s)]["bits"]) for s in seeds]
     a, b = seed_avg(pairs)
     diff = sum(y - x for x, y in zip(a, b)) / len(a)
     low, high = paired_bootstrap(a, b)
     per_seed = {}
-    for s in (1, 2, 3):
+    for s in seeds:
         x, y = recs[("rep", s)]["bits"], recs[("llm", s)]["bits"]
         p, gain, loss = mcnemar_exact(x, y)
         lo, hi = paired_bootstrap(x, y)
         per_seed[s] = dict(rep=round(100 * sum(x) / len(x), 2), llm=round(100 * sum(y) / len(y), 2),
                            diff=round(100 * (sum(y) - sum(x)) / len(x), 2), ci95=[round(100 * lo, 2), round(100 * hi, 2)],
                            mcnemar_p=round(p, 4), llm_only=gain, rep_only=loss)
-    return dict(claim=name, start=start, n_episodes=len(a), bar_points=bar,
+    return dict(claim=name, start=start, platform=platform, seeds=list(seeds), n_episodes=len(a), bar_points=bar,
                 mean_points=round(100 * diff, 2), ci95_points=[round(100 * low, 2), round(100 * high, 2)],
                 passes=bool(100 * diff >= bar and low > 0), per_seed=per_seed,
                 runs={f"{arm}_s{s}": dict(run=r["run"], retained=r["retained"],
@@ -76,16 +90,23 @@ def main():
         del args[i:i + 2]
     check = "--check" in args
     args = [a for a in args if a != "--check"]
+    platform, seeds, starts = "baidu", (1, 2, 3), ("pre", "tun")
+    if "--platform" in args:
+        i = args.index("--platform"); platform = args[i + 1]; del args[i:i + 2]
+    if "--seeds" in args:
+        i = args.index("--seeds"); seeds = tuple(int(x) for x in args[i + 1].split(",")); del args[i:i + 2]
+    if "--starts" in args:
+        i = args.index("--starts"); starts = tuple(args[i + 1].split(",")); del args[i:i + 2]
     root = args[0] if args else "results"
     if check:   # structure only, no test numbers: run before the one-time read
-        for start in ("pre", "tun"):
+        for start in starts:
             for arm in ("rep", "llm"):
-                for s in (1, 2, 3):
-                    r = run_record(Path(root) / "baidu" / f"yq_m2_{start}_{arm}_s{s}")
+                for s in seeds:
+                    r = run_record(run_dir(root, start, arm, s, platform))
                     print(r["run"], r["retained"], r["digest"], r["n0_digest"], len(r["bits"]), len(r["n0_bits"]),
                           "fallback", r["fallback_rounds"], "rounds", r["rounds"])
         return
-    res = [compare(root, start) for start in ("pre", "tun")]
+    res = [compare(root, start, seeds, platform) for start in starts]
     text = json.dumps(res, indent=1)
     print(text)
     if out:
