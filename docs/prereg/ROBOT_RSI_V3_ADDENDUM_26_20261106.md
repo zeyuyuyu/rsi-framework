@@ -67,3 +67,13 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   unchanged: only a recipe whose gate falls clearly below its start over three rounds becomes scenario 2
   (addendum 27). Extra seeds of scenario 1 are not possible: run seeds above 3 overflow the placement seed
   (addendum 21 am. 4a), so cavin's spare cards go to these pilots and, later, to the seed-0 replicate evaluations.
+* 15:55Z (speed-up of the critical path; no change to any registered quantity): the cavin seed-0 arms run one
+  GPU each at about 7.5 h per round, which puts the once-only read of this study beyond 2026-11-08. Each arm is
+  therefore stopped at its next round boundary (after `round-NN.json` is written) and continued with
+  `--resume` on the same `plan.json` with more rollout GPUs (`llm_harness` 3, `full` 2, `fixed` 2; training stays on one
+  GPU). Only platform fields change (`vla.rollout_gpus`, which the resume check does not compare); rounds, seeds,
+  gate sets, candidates per round and the test are unchanged. As addendum 25 documents for `onebig_s0`, the
+  proposer's random stream is re-seeded from (seed, completed rounds) on resume, and `resume.json` records it.
+  To free the cards, the exploratory `a8_pilot_fail3_s1` / `a8_pilot_fail4_s1` pilots were stopped 1.5 h in
+  (no round scored, nothing read); `fail1_s1` finishes its third round. The Yangquan `fail2` pilots ended null
+  (s1 60/64/62.5, s2 56.5/60/62.5 vs starts near 58-60).
