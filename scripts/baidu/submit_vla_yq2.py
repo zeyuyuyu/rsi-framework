@@ -35,18 +35,22 @@ if os.environ.get("RSI_LLM_RELAY"):    # addendum 17: presigned URL of this run'
     envs.append({"name": "RSI_LLM_RELAY", "value": os.environ["RSI_LLM_RELAY"]})
 if os.environ.get("ARGS"):
     envs.append({"name": "ARGS", "value": os.environ["ARGS"]})
+if os.environ.get("JOB_ENTRY_URL"):
+    envs.append({"name": "JOB_ENTRY_URL", "value": os.environ["JOB_ENTRY_URL"]})
 if os.environ.get("RESUME_RUN"):       # addendum 18: continue a run dir on the CFS after a job hit RUN_TIMEOUT_S
     envs.append({"name": "RESUME_RUN", "value": os.environ["RESUME_RUN"]})
 body = {
     "name": name,
     "jobType": "PyTorchJob",
+    # JOB_ENTRY_URL (optional): presigned GET of an alternative entry script (e.g. run_vla6.sh, multi-GPU rollouts)
     "command": ("bash -c 'set -e; [ -z \"${RSI_SRC_URL:-}\" ] || curl -sS --retry 5 -o /tmp/rsi_src.tgz \"$RSI_SRC_URL\"; "
-                "exec timeout -k 120 194400 bash /mnt/cfs/shitianyu-rsi/jobs/run_vla4.sh'"),
+                "E=/mnt/cfs/shitianyu-rsi/jobs/run_vla4.sh; [ -z \"${JOB_ENTRY_URL:-}\" ] || { curl -sS --retry 5 -o /tmp/run_entry.sh \"$JOB_ENTRY_URL\"; E=/tmp/run_entry.sh; }; "
+                "exec timeout -k 120 194400 bash $E'"),
     "jobSpec": {
         "image": "registry.baidubce.com/inference/vllm-openai:v0.11.0",
         "replicas": 1,
         "resources": [
-            {"name": "baidu.com/a800_80g_cgpu", "quantity": 1},
+            {"name": "baidu.com/a800_80g_cgpu", "quantity": int(os.environ.get("JOB_GPU", "1"))},   # JOB_GPU: cards per job
             {"name": "cpu", "quantity": int(os.environ.get("JOB_CPU", "18"))},
             {"name": "memory", "quantity": int(os.environ.get("JOB_MEM", "160"))},
             {"name": "sharedMemory", "quantity": 32},
