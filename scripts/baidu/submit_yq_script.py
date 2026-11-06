@@ -7,12 +7,12 @@ Appends name<TAB>jobId to jobs_yq.tsv here and to the yq poller's jobs.tsv."""
 import base64, datetime, json, os, sys
 os.environ.setdefault("AIHC_POOL", "aihc-serverless")
 os.environ.setdefault("AIHC_QUEUE", "aihcq-4yv1euenciip")
-sys.path.insert(0, "/home/zeyu/rsi/tools/baidu")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import aihc_job
 aihc_job.HOST = "aihc.yq.baidubce.com"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-POLLER_TSV = "/tmp/claude-1000/-home-zeyu/04cfb8d7-2d31-45ec-83a6-11d2231cafdf/scratchpad/baidu_yq/jobs.tsv"
+POLLER_TSV = os.environ.get("POLLER_TSV", "/home/zeyu/rsi/yq_logs/jobs.tsv")
 if len(sys.argv) < 3:
     raise SystemExit(__doc__)
 suffix, script = sys.argv[1], sys.argv[2]
@@ -35,7 +35,8 @@ body = {
         {"type": "cfs", "sourcePath": "/", "mountPath": "/mnt/cfs",
          "options": {"readOnly": True, "cfsInstanceId": "cfs-n1EUBUrCPv",
                      "cfsMountPoint": "cfs-n1EUBUrCPv.lb-59r8awst.cfs.yq.baidubce.com"}},
-    ],
+    ] + ([{"type": "bos", "sourcePath": "bos-research-team/", "mountPath": "/mnt/bos", "options": {"readOnly": False}}]
+         if os.environ.get("BOS_MOUNT") else []),
 }
 st, out = aihc_job.create(body)
 print(st, json.dumps(out, ensure_ascii=False)[:600])
