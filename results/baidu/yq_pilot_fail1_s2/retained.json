@@ -1,0 +1,46 @@
+{
+  "node": "r02c0",
+  "program": {
+    "author": "seed",
+    "id": "0839159ef469395b",
+    "note": "",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 2.0
+      },
+      "update": {
+        "batch": 64,
+        "clip_high": 0.5,
+        "clip_low": 0.1,
+        "loss_agg": "token",
+        "lr": 0.0001,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "862dbde693fdb6bd3d355811226c5a965efc84627bcff34edb8560e634326fc8",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_pilot_fail1_s2/ckpt-r02c0",
+    "parent_id": "0bfe300d436079d27e583f910794873e15b1f4e186d3b86801f3a1738d0c27e0"
+  }
+}

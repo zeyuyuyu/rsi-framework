@@ -83,3 +83,7 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   comes first) and resumed on the same CFS run directory with three cards (`run_vla6.sh`: rollouts on all cards,
   training on card 0; `NGPU=3 scripts/baidu/resume_oftgb_llm.sh`). Plan, seeds, gate sets, relay slots and the test
   are unchanged; the resume re-seeds the proposer's random stream as before.
+* 17:10Z: all scenario-2 pilots have ended and none degrades. Gate per round (start near 58-60): Yangquan fail1 s1
+  60.5/60.5/64, s2 59/61/57.5; fail2 s1 60/64/62.5, s2 56.5/60/62.5; cavin fail1 s1 59.5/63.5/58.5, fail2 s1
+  58/58.5/67; cavin fail3/fail4 were stopped before any round was scored. No second scenario is registered; addendum
+  27 is not written. The self-repair study stays as registered in addenda 24 and 26.
