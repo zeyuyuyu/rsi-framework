@@ -57,3 +57,13 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   seed 1) as a platform check, on GPUs freed by the finished replicate evaluations. No test is read.
 * 07:45Z: the registered Goal read (`docs/results/GOAL_MAIN_FINAL_20261106.md`) met no bar; the preliminary R3 pass did
   not survive replicate averaging. This does not change anything registered for addenda 24/26.
+* 14:40Z: the four `fail1`/`fail2` pilots (Yangquan seeds 1-2, cavin seed 1) show no degradation over the rounds seen so far
+  (gates stay within noise of their start), so nothing follows from them. Two further gate-only pilots were queued on
+  cavin's idle GPUs (`a8_pilot_fail{3,4}_s1`, src10b, queue 92; seed 1, 3 rounds, fixed proposer, no test read):
+  fail3 = GRPO with large updates on low-diversity groups (temperature 1.0, band [0.3, 0.7], z-scored advantages,
+  lr 1e-4, 800 steps x batch 16, clip [0.4, 0.5], token loss); fail4 = BC with many small-batch steps on few
+  successes (temperature 1.0, per_case 8, lr 1e-4, 800 steps x batch 16, rollout-temperature likelihood, token
+  loss). Every value lies inside the harness edit space, so a meta level could undo it. The registration rule is
+  unchanged: only a recipe whose gate falls clearly below its start over three rounds becomes scenario 2
+  (addendum 27). Extra seeds of scenario 1 are not possible: run seeds above 3 overflow the placement seed
+  (addendum 21 am. 4a), so cavin's spare cards go to these pilots and, later, to the seed-0 replicate evaluations.
