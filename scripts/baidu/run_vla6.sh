@@ -1,7 +1,11 @@
 #!/bin/bash
-# run_vla6.sh = run_vla5.sh with rollouts on every visible GPU (vla.rollout_gpus = all cards of the job; training on GPU 0).
-# Fetched by JOB_ENTRY_URL (submit_vla_yq2.py); run_vla4.sh on the CFS is untouched for running jobs.
-# One robotics RSI run (rsi.run_libero) on one AIHC GPU (vllm-openai:v0.11.0 image, RTX Blackwell).
+# run_vla6.sh = the deployed CFS run_vla4.sh (fetched 2026-11-06, sha 640cf6fff0cfa6e0) with ONE change: rollouts on every
+# visible GPU (vla.rollout_gpus = all cards of the job; training on GPU 0). Fetched by JOB_ENTRY_URL (submit_vla_yq2.py).
+# run_vla4.sh = run_vla3.sh reading its setup, tarballs and source from RSI_JOBS (the Yangquan CFS) and, with
+#   RSI_CFS_LINK=1, pointing /mnt/pfs/shitianyu-rsi at /mnt/cfs/shitianyu-rsi so models, venv and run dirs persist.
+# (run_vla3.sh header follows)
+# run_vla3.sh = run_vla2.sh + RSI_PFS override (node-local run dir), loss_agg in RECEIPT lines, small files to BOS
+# on every heartbeat. Used on the Yangquan A800 pool. One robotics RSI run (rsi.run_libero) on one AIHC GPU.
 # env: PLAN      plan json in the A800 format, BOS-relative ("shitianyu-rsi/plans/x.json") or an absolute path;
 #                vla.checkpoint / python / openvla_root / gpus are rewritten for this node
 #      NAME      run name -> /mnt/pfs/shitianyu-rsi/runs/$NAME (+ small files copied to /mnt/bos/shitianyu-rsi/runs/$NAME)
@@ -16,8 +20,11 @@ if [ -z "${RSI_STAGED:-}" ]; then
 fi
 set -u
 T0=$(date +%s)
+if [ "${RSI_CFS_LINK:-0}" = 1 ]; then         # Yangquan: the pool CFS is our persistent "PFS"
+  mkdir -p /mnt/pfs && { [ -L /mnt/pfs/shitianyu-rsi ] || ln -s /mnt/cfs/shitianyu-rsi /mnt/pfs/shitianyu-rsi; }
+fi
 export TOKENIZERS_PARALLELISM=false PYTHONUNBUFFERED=1 HF_HUB_DISABLE_PROGRESS_BARS=1
-PFS=/mnt/pfs/shitianyu-rsi
+PFS=${RSI_PFS:-/mnt/pfs/shitianyu-rsi}   # node-local on Yangquan (no shared PFS there): no resume across jobs
 BOS=/mnt/bos/shitianyu-rsi
 NAME=${NAME:?NAME required}
 PLAN=${PLAN:?PLAN required}
@@ -35,7 +42,8 @@ stage "0 env"; CUR=env
 log "name=$NAME plan=$PLANF model=$MODEL_ID host=$(hostname) nproc=$(nproc)"
 [ -r "$PLANF" ] || die "plan not readable: $PLANF"
 cp -f "$PLANF" /tmp/plan_in.json || die "plan copy failed"
-cp -f "$BOS/jobs/setup_vla.sh" /tmp/setup_vla.sh || die "setup script unreadable"
+JOBS=${RSI_JOBS:-$BOS/jobs}
+cp -f "$JOBS/setup_vla3.sh" /tmp/setup_vla.sh || die "setup script unreadable"
 VLA_SETUP_SOURCED=1 . /tmp/setup_vla.sh || die "vla setup failed"
 PY=$(command -v python)
 [ "$PY" = "$ENV/bin/python" ] || die "venv not active ($PY)"
@@ -55,12 +63,21 @@ export MUJOCO_GL=$GL PYOPENGL_PLATFORM=$GL
 log "MuJoCo GL backend: $GL"
 
 stage "1 model"; CUR=model
+# Yangquan has no hf-mirror: copy the checkpoint that export_yq.sh staged on BOS, then re-check its digest
+YQM=$BOS/yq/models/$MNAME
+if [ ! -f "$MDIR/.download_done" ] && [ -f "$YQM/.download_done" ]; then
+  log "checkpoint from BOS: $YQM"
+  mkdir -p "$MDIR" && cp -rf "$YQM/." "$MDIR/" || die "checkpoint copy from BOS failed"
+  GOT=$(cd "$MDIR" && for f in $(ls *.safetensors | sort); do echo "$f $(sha256sum "$f" | cut -d' ' -f1)"; done | sha256sum | cut -d' ' -f1)
+  [ "$GOT" = "$(cat "$MDIR/.sha256")" ] || die "checkpoint digest mismatch after BOS copy ($GOT)"
+  log "checkpoint digest ok $GOT"
+fi
 fetch_model "$MODEL_ID" "$MDIR" || die "checkpoint download failed"
 MSHA=$(cat "$MDIR/.sha256" 2>/dev/null)
 if [ "$MSHA" = "${A800_SHA:-unknown}" ]; then echo "MODEL_SHA_MATCH_A800 $MSHA"; else echo "MODEL_SHA_MISMATCH_A800 baidu=$MSHA a800=${A800_SHA:-unknown}"; fi
 
 stage "2 source + plan"; CUR=src
-SRC_TGZ=${RSI_SRC_TGZ:-$BOS/src/rsi_src_vla.tar.gz}   # run_vla5: source override (addendum 17)
+SRC_TGZ=${RSI_SRC_TGZ:-$BOS/src/rsi_src_vla.tar.gz}
 rm -rf /tmp/src && mkdir -p /tmp/src && tar -xzf "$SRC_TGZ" -C /tmp/src || die "src extract failed"
 log "src sha256=$(sha256sum "$SRC_TGZ" | cut -c1-16)"
 (cd /tmp/src && find rsi -name '*.py' | sort | xargs md5sum | md5sum | sed 's/^/  py-tree md5: /')
@@ -113,7 +130,7 @@ for p in sorted(glob.glob(os.path.join(sys.argv[1], "round-[0-9][0-9].json"))):
 for p in sorted(glob.glob(os.path.join(sys.argv[1], "ckpt-*", "receipt.json"))):
     r = json.load(open(p)); e = r.get("extra", {}); cf = e.get("clipfrac") or [0]; s1 = e.get("step1_logratio") or {}
     print("  RECEIPT", os.path.basename(os.path.dirname(p)), r.get("operator"), "items", r.get("items"),
-          "steps", r.get("optimizer_steps"), "ratio", e.get("ratio_mode", "legacy"),
+          "steps", r.get("optimizer_steps"), "ratio", e.get("ratio_mode", "legacy"), "loss_agg", e.get("loss_agg", "token"),
           "clip1 %.3f clipmean %.3f" % (cf[0], sum(cf) / len(cf)),
           "s1out", None if not s1 else round(s1["outside_clip"], 4),
           "loss %.4f>%.4f" % (r.get("loss_first", 0), r.get("loss_last", 0)), "sec", round(r.get("seconds", 0)))
@@ -124,6 +141,8 @@ EOF
       [ -f "$f" ] || continue
       tail -c 2000 "$f" | tr '\r' '\n' | grep -v '^\s*$' | tail -n 2 | cut -c1-240 | sed "s|^|    $(basename "$f"): |"
     done
+    # small files to BOS every beat: the run dir is node-local on Yangquan and dies with the job
+    mkdir -p "$BOS/runs/$RNAME" && (cd "$RUN" 2>/dev/null && find . -type f ! -path './ckpt-*' -size -50M -print0 | xargs -0 -r cp --parents -f -t "$BOS/runs/$RNAME") 2>/dev/null
     echo "  gpu: $(timeout 30 nvidia-smi --query-gpu=memory.used,utilization.gpu --format=csv,noheader 2>&1)  load: $(cut -d' ' -f1-3 /proc/loadavg)"
   done
 }
