@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from aihc_probe import creds  # noqa: E402
 
-HOST = "aihc.bj.baidubce.com"
+HOST = os.environ.get("AIHC_HOST", "aihc.bj.baidubce.com")
 POOL = os.environ.get("AIHC_POOL", "aihc-serverless")
 QUEUE = os.environ.get("AIHC_QUEUE", "aihcq-i7kkoqptnigl")
 LEDGER = os.path.join(HERE, "created_jobs.txt")
