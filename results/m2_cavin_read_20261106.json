@@ -1,0 +1,137 @@
+[
+ {
+  "claim": "M2-A",
+  "start": "pre",
+  "platform": "a800",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 0.3,
+  "ci95_points": [
+   -1.6,
+   2.15
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "rep": 61.4,
+    "llm": 59.0,
+    "diff": -2.4,
+    "ci95": [
+     -6.2,
+     1.4
+    ],
+    "mcnemar_p": 0.2615,
+    "llm_only": 42,
+    "rep_only": 54
+   },
+   "1": {
+    "rep": 58.2,
+    "llm": 61.0,
+    "diff": 2.8,
+    "ci95": [
+     -1.0,
+     6.4
+    ],
+    "mcnemar_p": 0.1702,
+    "llm_only": 52,
+    "rep_only": 38
+   },
+   "2": {
+    "rep": 59.4,
+    "llm": 60.8,
+    "diff": 1.4,
+    "ci95": [
+     -2.8,
+     5.6
+    ],
+    "mcnemar_p": 0.5727,
+    "llm_only": 60,
+    "rep_only": 53
+   },
+   "3": {
+    "rep": 61.0,
+    "llm": 60.4,
+    "diff": -0.6,
+    "ci95": [
+     -4.2,
+     3.2
+    ],
+    "mcnemar_p": 0.8304,
+    "llm_only": 42,
+    "rep_only": 45
+   }
+  },
+  "runs": {
+   "llm_s0": {
+    "run": "a8_m2_pre_llm_s0",
+    "retained": "r06c1",
+    "test": 59.0,
+    "initial_n0": 59.4,
+    "fallback_rounds": 1,
+    "rounds": 6
+   },
+   "llm_s1": {
+    "run": "a8_m2_pre_llm_s1",
+    "retained": "r05c1",
+    "test": 61.0,
+    "initial_n0": 58.8,
+    "fallback_rounds": 0,
+    "rounds": 6
+   },
+   "llm_s2": {
+    "run": "a8_m2_pre_llm_s2",
+    "retained": "r06c1",
+    "test": 60.8,
+    "initial_n0": 58.8,
+    "fallback_rounds": 3,
+    "rounds": 6
+   },
+   "llm_s3": {
+    "run": "a8_m2_pre_llm_s3",
+    "retained": "r06c1",
+    "test": 60.4,
+    "initial_n0": 58.2,
+    "fallback_rounds": 4,
+    "rounds": 6
+   },
+   "rep_s0": {
+    "run": "a8_m2_pre_rep_s0",
+    "retained": "r06c1",
+    "test": 61.4,
+    "initial_n0": 58.0,
+    "fallback_rounds": 0,
+    "rounds": 6
+   },
+   "rep_s1": {
+    "run": "a8_m2_pre_rep_s1",
+    "retained": "r06c0",
+    "test": 58.2,
+    "initial_n0": 59.0,
+    "fallback_rounds": 0,
+    "rounds": 6
+   },
+   "rep_s2": {
+    "run": "a8_m2_pre_rep_s2",
+    "retained": "r06c0",
+    "test": 59.4,
+    "initial_n0": 59.2,
+    "fallback_rounds": 0,
+    "rounds": 6
+   },
+   "rep_s3": {
+    "run": "a8_m2_pre_rep_s3",
+    "retained": "r06c0",
+    "test": 61.0,
+    "initial_n0": 57.8,
+    "fallback_rounds": 0,
+    "rounds": 6
+   }
+  }
+ }
+]
