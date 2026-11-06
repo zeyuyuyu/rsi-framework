@@ -87,3 +87,10 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   60.5/60.5/64, s2 59/61/57.5; fail2 s1 60/64/62.5, s2 56.5/60/62.5; cavin fail1 s1 59.5/63.5/58.5, fail2 s1
   58/58.5/67; cavin fail3/fail4 were stopped before any round was scored. No second scenario is registered; addendum
   27 is not written. The self-repair study stays as registered in addenda 24 and 26.
+* 20:20Z (operational, disclosed): the first three-card continuation jobs of `yq_oftgb_llm_harness_s1` (after
+  round 5, 19:27Z) and `_s3` (after round 6, 19:35Z) used an entry script derived from an older repository copy that
+  lacked the CFS link of the deployed `run_vla4.sh`; they built an environment on local disk and never reached the
+  run directories (s3 failed in setup; s1 was stopped before its engine started; no relay call, no BOS copy). The
+  runs on the CFS are untouched. The entry script was rebuilt from the deployed one with only the GPU line changed
+  (`scripts/baidu/run_vla6.sh`, deployed copy kept as `run_vla4_cfs.sh`), and both continuations were resubmitted.
+  Cost: about 50 minutes of wall time on s1 and s3; no evaluation or training was repeated or lost.
