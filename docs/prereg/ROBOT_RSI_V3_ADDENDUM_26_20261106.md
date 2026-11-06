@@ -53,3 +53,7 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   fail1 = GRPO at lr 1e-4, temperature 2.0, clip [0.1, 0.5], z-scored advantages, token-level loss; fail2 = BC at
   rollout temperature 2.0 cloning up to 8 successes per scene. Only a recipe whose gate falls clearly below its
   start over three rounds would be registered (addendum 27) as scenario 2; otherwise nothing follows from them.
+* 07:51Z: the same two pilot recipes also run on cavin (`a8_pilot_fail{1,2}_s1`, src10b, queue 91; gate-only, 3 rounds,
+  seed 1) as a platform check, on GPUs freed by the finished replicate evaluations. No test is read.
+* 07:45Z: the registered Goal read (`docs/results/GOAL_MAIN_FINAL_20261106.md`) met no bar; the preliminary R3 pass did
+  not survive replicate averaging. This does not change anything registered for addenda 24/26.
