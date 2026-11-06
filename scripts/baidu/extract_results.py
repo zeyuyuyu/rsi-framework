@@ -13,6 +13,8 @@ def extract(log, block, out):
     end = next((i for i, ln in enumerate(block) if "RSI_RESULT_END" in ln), len(block))
     block = block[:end + 1]
     name = re.search(r"name=(\S+)", block[0]).group(1)
+    # a continuation job (resume_oftgb_llm.sh names it <run>_resumeMMDDHHMM) writes the same run directory as <run>
+    name = re.sub(r"_resume\d{8}$", "", name)
     files, current = {}, None
     for ln in block[1:-1]:
         m = re.match(r"----- FILE (\S+)( \(compact\))? -----$", ln)

@@ -1,0 +1,47 @@
+{
+  "node": "r06c1",
+  "program": {
+    "author": "llm",
+    "id": "3ee74602db30b7e4",
+    "note": "{\"why\": \"Draw 16 tries per scene and keep verified tries only from scenes with both outcomes (band 0.1-0.9), so BC concentrates on scenes the policy sometimes fails rather than ones it already solves.\", \"diff\": {\"curation.band\": [0.1, 0.9], \"curation.budget\": 600, \"solver.samples\": 16}}",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 600,
+        "per_case": 2,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 200,
+        "floor": 0.1
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 16,
+        "temperature": 1.3
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 2e-05,
+        "operator": "bc",
+        "ratio": "matched",
+        "steps": 200
+      }
+    },
+    "parent_id": "5e4f3c0c6de47130"
+  },
+  "version": {
+    "id": "5a298f5b9a53b510603f85e27b3c9847492fa0efb5b23c1eba61d44b534a0724",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s3/ckpt-r06c1",
+    "parent_id": "f1c7e16012df9d86cf222bec1993276076fd26ec54f1537412de146f88313018"
+  }
+}
