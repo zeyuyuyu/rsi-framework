@@ -1,0 +1,47 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "5a3cd5885cec103e",
+    "note": "{\"why\": \"Lower the sampling temperature to 1.1 to get cleaner, more on-policy rollouts with higher success, use zscore advantages to amplify weak-signal groups, and train a little longer at a moderate lr, keeping the 0.1-0.9 band so near-deterministic scenes are dropped.\", \"diff\": {\"curation.adv\": \"zscore\", \"curation.band\": [0.1, 0.9], \"solver.temperature\": 1.1, \"update.lr\": 4e-05, \"update.steps\": 150}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 96,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 16,
+        "temperature": 1.1
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 4e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 150
+      }
+    },
+    "parent_id": "b03d5e8d1297ee0c"
+  },
+  "version": {
+    "id": "e831bc21d2edcd5e50d884e7f7b6a7e0cea0e6418fc8b243d8474a1cc9efb9f0",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftl_llm_harness_s2/ckpt-r06c0",
+    "parent_id": "d772e41ef24e75ddf3cf49c4b44ebdb7a587ff4cddd1d38ba4211d30c73aaefe"
+  }
+}

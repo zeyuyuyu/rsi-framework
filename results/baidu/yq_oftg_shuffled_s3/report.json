@@ -1,0 +1,74 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.61,
+      "author": "seed",
+      "gate": 0.59,
+      "node": "n0",
+      "program": "2a8413c825eed0ba",
+      "round": 0
+    },
+    {
+      "audit": 0.62,
+      "author": "seed",
+      "gate": 0.58,
+      "node": "r05c0",
+      "program": "2a8413c825eed0ba",
+      "round": 5
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "shuffled",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 3,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 55600.19975015102,
+  "retained": "r05c0",
+  "seconds": {
+    "attempt": 28891.464104501065,
+    "audit_eval": 1093.0627754633315,
+    "gate_eval": 7396.33099686075,
+    "propose": 0.0028883363120257854,
+    "test_eval": 2496.621772779152,
+    "train": 15720.819796873257
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.594
+        },
+        {
+          "node": "r05c0",
+          "round": 5,
+          "score": 0.606
+        }
+      ],
+      "final": 0.606,
+      "initial": 0.594,
+      "paired": {
+        "ci95": [
+          -0.024,
+          0.048
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 44,
+        "flipped_to_wrong": 38,
+        "mcnemar_p": 0.5811144541766469,
+        "mean_gain": 0.012,
+        "n": 500
+      }
+    }
+  }
+}
