@@ -1,0 +1,20 @@
+\section{Preregistered protocol}
+\label{sec:protocol}
+
+Self-improvement claims are easy to inflate: the loop itself selects versions, evaluation is noisy, and the person running the study sees intermediate numbers. We therefore fixed the protocol before the runs and treat the preregistration documents (released with the code, 26 dated amendments for the VLA study) as part of the result.
+
+\paragraph{What is sealed.} The official LIBERO test states are never used for training, sampling, gating or program selection, and no test file is opened before the study's read-once. Only two sealed pilots per model were allowed before the seed program was frozen in an amendment.
+
+\paragraph{Finals and reference.} The evaluation of one 500-episode test is itself noisy: the \emph{same} initial policy evaluated in different runs scored between 57.2\% and 60.0\% (sd $\approx 0.7$), and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy (the run's own test and two replicate evaluations from the same plan and source tree), and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 evaluations on one platform, 21 on the other). A noise check---the same statistic between two halves of the initial-policy evaluations---is reported with every verdict.
+
+\paragraph{Claims and bars (LIBERO-Goal, OpenVLA-OFT).} Seed-averaged per-episode paired bootstrap (10{,}000 draws), 95\% CI:
+\begin{itemize}[nosep]
+  \item \textbf{R1 improvement}: \texttt{fixed} and \texttt{full} final $-$ reference $\geq +5$ points, CI excludes 0, and at least 2 of 3 seeds individually above 0.
+  \item \textbf{R2 verifier}: \texttt{fixed} $-$ \texttt{shuffled} $\geq +3$.
+  \item \textbf{R3 recursion}: \texttt{fixed} $-$ \texttt{nonrec} $\geq +2$.
+  \item \textbf{R4 meta level}: each meta arm $-$ \texttt{fixed} $\geq +2$, reported with the gate--test gap of the selected programs.
+  \item \textbf{R5 vs one-shot RL}: the best gated arm (chosen by gate, never by test) $-$ \texttt{onebig} $\geq +2$.
+\end{itemize}
+A fourth seed was added to R2, R3 and R5 by amendment before any of their runs ended; the 3-seed statistic is reported alongside. Negative readings are reported as such. The reading script was committed before the read and its output is released.
+
+\paragraph{Two platforms.} Runs were executed on a shared 8$\times$A800 node and on a 16-GPU cloud pool with its own evaluation stack; the two stacks are not bit-identical, so every comparison is paired within a platform, and the platforms serve as replicates of each other.

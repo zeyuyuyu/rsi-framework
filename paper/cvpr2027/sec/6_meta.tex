@@ -1,0 +1,33 @@
+\section{When can a meta level matter?}
+\label{sec:meta}
+
+\subsection{A second null, and its mechanism}
+Because the R4 arms compare only each round's newest edit against the incumbent and let the LLM see no per-task signal, we registered a second meta-level study (``v2'') in which the LLM sees per-task gate rates with their noise, each candidate starts from its parent's statistics, and the comparison is between an \texttt{llm} arm and an identical-program \emph{replica} arm with the same compute, from two starting policies (\texttt{pre}: the 1-demonstration start; \texttt{tun}: a hand-tuned loop). The primary bar was \texttt{llm} $-$ replica $\geq +3$ with CI above 0. It fails on both platforms: $-0.27$ $[-2.53, +2.00]$ on the cloud pool (seeds 1--3) and $+0.30$ $[-1.60, +2.15]$ on the A800 (seeds 0--3). Pooled over seven seed-pairs, any true effect is within about $\pm 2$ points.
+
+The gate records explain why. Over the v2 study the LLM's proposals scored $-1.2$ points against the incumbent at the gate ($n{=}30$) while identical-program replicas scored $+0.6$ (sd 3.4, $n{=}36$): there is no edit effect for a finer gate to resolve. The LLM's diagnoses, logged verbatim, read the loop correctly---it notes the task that is never solved (so GRPO has no signal there), the task that is saturated, and that the remaining gate changes are within noise---and its edits are the ones a practitioner would try (re-weighting those tasks, lowering the learning rate and temperature, z-scoring advantages). None moves success within six rounds. Final retained gates on LIBERO-Goal are 62.8 (\texttt{fixed}), 63.5 (\texttt{full}), 65.0 (\texttt{llm\_harness}) and 61.7 (\texttt{onebig}), all within gate noise of each other: \emph{the object-level loop reaches the same plateau under every procedure in the space}, and a correct diagnosis of a procedure that already works has nothing to repair. We therefore did not run a third meta-level study on the tuned start, and report R4 and v2 as the preregistered nulls they are.
+
+\subsection{Self-repair: starting from a procedure that fails}
+A meta level is distinguishable from RL only where RL's procedure fails and a different procedure would not. The study contains one such case, found before any meta-level run: behaviour cloning on the policy's own temperature-1.6 samples with a unit-temperature likelihood \emph{collapses} when its versions are accepted unconditionally (58.5\% $\to$ 5.5\% in six rounds on the A800; a milder $-6.4$ on the cloud platform). The repair is a one-knob change (the BC temperature, the sampling temperature, or the operator), and all three are in the harness space. Shown that collapsing history in a pre-launch call, the LLM diagnosed it correctly and proposed two of the three repairs unprompted. We registered this as a test (amendments 24 and 26) before any of its runs started.
+
+\paragraph{Design.} Start program: the collapsing BC recipe. Three arms, four seeds (three on the cloud pool, one on the A800): \texttt{fixed} (the gate alone: can it only refuse the collapse?), \texttt{full} (numeric search over the harness space, two candidates per round) and \texttt{llm\_harness} (the LLM over the same space, same compute). Six rounds, fresh paired gates, sealed official test. Bars: \textbf{S1} \texttt{llm\_harness} $-$ \texttt{fixed} $\geq +3$, CI excluding 0 (the meta level changes the procedure to effect); \textbf{S2} \texttt{llm\_harness} $-$ \texttt{full}, reported with its CI (diagnosis against blind search over the same knobs); \textbf{S3} descriptive, against the hand-tuned GRPO loop. Predictions were written down before launch, including the failure case: if S1 fails, the meta level has no demonstrated effect in this study, and the paper says so.
+
+\paragraph{Gate-level record (not a claim).} \Cref{tab:selfrepair} lists what each arm did, from the released round records; the sealed test is read on 2026-11-08 and the registered numbers will replace the placeholders. Three observations hold at the gate level. First, \emph{the gate alone prevents the collapse}: no \texttt{fixed} run falls below its start; one seed is held at the initial policy for all six rounds, the other three accept small BC gains (retained gates 60--64.5\%). Second, \emph{both proposers find a repair}: numeric search switched one seed to GRPO and another to the temperature-matched BC likelihood, and the LLM lowered the sampling temperature and learning rate on the seed that has finished (retained gate 64.5\%; its second seed's accepted LLM programs reach 65.5\% at round 3). Third, at the gate all arms end within noise of each other (60--65.5\%), so S1 and S2 are decided by the sealed test and not by these records.
+
+\begin{table*}[t]
+  \centering
+  \small
+  \caption{\textbf{Self-repair study, gate-level record} (retained version and its gate, \%; the program it runs). Sealed test results: \pending.}
+  \label{tab:selfrepair}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    seed & \texttt{fixed} (gate only) & \texttt{full} (numeric search) & \texttt{llm\_harness} \\
+    \midrule
+    1 (Y) & r6, 60.0; BC unchanged & r5, 62.5; BC unchanged & \textit{running} \\
+    2 (Y) & n0 (all 6 refused) & r6, 65.0; switched to GRPO & \textit{running} (r3: 65.5) \\
+    3 (Y) & r5, 63.0; BC unchanged & r6, 61.0; BC, rollout-temp.\ likelihood & r6, 64.5; BC, $T$ 1.6$\to$1.3, lr 1e-5$\to$2e-5 \\
+    0 (A) & r6, 64.5; BC unchanged & r4, 64.0 (rounds 5--6 refused) & \textit{running} (r2: 65.5) \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+A second failing scenario was sought with six gate-only pilots (four extreme GRPO/BC recipes, both platforms); none degraded under the gate, so no second scenario was registered. This is itself a finding about the gate: within the declared space we could not construct a procedure that the gate lets collapse.
