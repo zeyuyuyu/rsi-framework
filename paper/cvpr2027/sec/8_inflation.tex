@@ -20,4 +20,11 @@ LIBERO is tested on 50 fixed initial states per task. The released SimpleVLA-RL 
   \end{tabular}
 \end{table}
 
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_inflation}
+  \caption{\textbf{Train-on-test inflation.} Left: official vs.\ fresh placements for the SFT start and the RL checkpoint trained on the official states. Right: the RL checkpoint per task; the loss is concentrated on tasks 4 and 6.}
+  \label{fig:inflation}
+\end{figure}
+
 The inflation is $+16.8$ points $[+9.8, +23.4]$ (\cref{tab:inflation}); a replication on 500 further never-seen placements gives $+16.0$ $[+9.2, +22.4]$, and the loss is concentrated on two of the ten tasks. The checkpoint is still far better than its start on fresh placements ($+56$ points), so the method works; the point is that about a fifth of the headline number is memorisation of the test states. Every number in this paper is measured on the official states \emph{without} ever training, sampling or selecting on them, which is why our finals should be compared with the ``fresh'' column of such results rather than the ``official'' one.

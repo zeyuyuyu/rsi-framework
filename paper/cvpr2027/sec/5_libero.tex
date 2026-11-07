@@ -44,7 +44,28 @@
   {\footnotesize $\ast$ Y: \texttt{llm\_harness}; A: \texttt{llm} / \texttt{llm\_harness\_cap}.}
 \end{table*}
 
-\paragraph{Results.} \Cref{tab:goal} gives the registered read and \cref{tab:arms} the per-arm finals. No preregistered bar is met. The loop's typical gain is one to two points: every gated run ends within noise of or above its start (finals 57.1--62.2 against a 58.4--58.9 reference; the two runs below their reference are within $-1.3$ and $-1.7$ points), and the best single seed gains $+3.3$ $[+0.1, +6.6]$. Recursion is the largest ingredient (R3, $+1.7$, CI just including 0; the preliminary single-evaluation read had passed the bar at $+2.4$ and did not survive replicate averaging), the verifier the next (R2, $+1.2$); without the verifier the loop ends exactly at its start (57.8--60.7). One round of plain RL with the same budget matches or beats the loop (R5 $-0.6$; on seed 0 the one-shot policy scores 62.7 against the gated loop's 57.2). All four meta-level arms are within $\pm 1.2$ points of \texttt{fixed} on both platforms.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{fig_claims}
+  \caption{\textbf{Registered claims as a forest plot} (points of success rate, 95\% CI, red tick = preregistered bar). Every point estimate is positive except the meta-level comparisons, and none reaches its bar; the noise check (bottom) shows the harness itself is stable.}
+  \label{fig:claims}
+\end{figure}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_runs}
+  \caption{\textbf{Every run of the LIBERO-Goal study.} Grey tick: the run's own initial-policy test; dot: the replicate-averaged final of the retained policy; dashed/dotted lines: the pooled initial reference per platform. No gated run ends below its reference beyond noise; the one-shot \texttt{onebig} policy of seed 0 is the best single final.}
+  \label{fig:runs}
+\end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_gates}
+  \caption{\textbf{Gate of the retained version by round} (cloud platform, seeds 1--3 thin, mean bold). The gated arms climb 3--5 points at the gate within six rounds; \texttt{shuffled} (verifier removed) stays flat; \texttt{nonrec} (practice from the frozen initial policy) stops after round 3. Gate gains overstate test gains by the winner's curse (\cref{tab:arms}).}
+  \label{fig:gates}
+\end{figure*}
+
+\paragraph{Results.} \Cref{fig:claims} and \cref{tab:goal} give the registered read, \cref{fig:runs} every run, \cref{fig:gates} the gate trajectories, and \cref{tab:arms} the per-arm finals. No preregistered bar is met. The loop's typical gain is one to two points: every gated run ends within noise of or above its start (finals 57.1--62.2 against a 58.4--58.9 reference; the two runs below their reference are within $-1.3$ and $-1.7$ points), and the best single seed gains $+3.3$ $[+0.1, +6.6]$. Recursion is the largest ingredient (R3, $+1.7$, CI just including 0; the preliminary single-evaluation read had passed the bar at $+2.4$ and did not survive replicate averaging), the verifier the next (R2, $+1.2$); without the verifier the loop ends exactly at its start (57.8--60.7). One round of plain RL with the same budget matches or beats the loop (R5 $-0.6$; on seed 0 the one-shot policy scores 62.7 against the gated loop's 57.2). All four meta-level arms are within $\pm 1.2$ points of \texttt{fixed} on both platforms.
 
 \paragraph{What the gate buys.} The gate is what makes the loop safe rather than fast. In always-accept pilot curves on LIBERO-10, every recipe stayed within $\pm 3$ points of its start for 18 on-policy steps, and the behaviour-cloning recipe of \cref{sec:meta} collapsed from 58.5\% to 5.5\% on LIBERO-Goal when its versions were accepted unconditionally. Under the gate the same recipes never fall below their start on the sealed test. The price is that a 200-episode paired gate has a standard deviation of about 3.4 points, so it accepts and rejects many candidates on noise; acceptance rates are reported per run in the released records.
 
