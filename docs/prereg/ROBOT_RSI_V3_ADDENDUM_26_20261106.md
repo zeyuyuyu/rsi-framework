@@ -117,3 +117,7 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   (`--resume`, same plan and source; only `vla.rollout_gpus` changes, as for the earlier continuations). The
   round-5 proposal call is repeated by the resumed process; the proposer's generator is re-seeded from the plan, as
   disclosed above.
+* Follow-up (13:40Z): the six-card job `job-2nwy6hjds1wj` was never scheduled (status `Created` for 22 minutes; the
+  queue gave no reason, most likely no node with six idle cards while the nine single-card addendum-27 jobs run). It
+  was stopped unstarted and the run resumed on three cards as `job-y5zz0zgbmago` (`--resume`, same plan and source;
+  rounds 5-6 therefore run at the original three-card rate). Nothing was computed by the six-card job.
