@@ -35,12 +35,23 @@ const { chromium } = require('/home/zeyu/.npm/_npx/86170c4cd1c5da32/node_modules
     const nxt = bl[bl.indexOf(anchor) + 1];
     console.log('insert after', anchor.type + '#' + anchor.id, '| next block:', nxt ? nxt.type + ':' + nxt.text.slice(0, 20) : 'none');
     if (dry) { console.log('editable blocks:', await page.evaluate(() => document.querySelectorAll('[contenteditable="true"]').length)); process.exit(0); }
-    const el = page.locator(`[data-block-id="${anchor.id}"]`);
-    await el.scrollIntoViewIfNeeded(); await el.click(); await page.waitForTimeout(300);
-    const placed = await page.evaluate((id) => { const b = document.querySelector(`[data-block-id="${id}"]`); const w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT, { acceptNode: n => n.textContent.replace(/\u200b/g, '').length ? 1 : 3 }); let last = null; while (w.nextNode()) last = w.currentNode; if (!last) return false; const r = document.createRange(); r.setStart(last, last.textContent.length); r.collapse(true); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); return true; }, anchor.id);
-    if (!placed) throw new Error('could not place the caret at the end of the anchor');
-    await page.keyboard.press('End'); await page.keyboard.press('Enter'); await page.waitForTimeout(500);
-    const t = await page.evaluate(() => { const s = window.getSelection(); if (!s || !s.anchorNode) return null; const n = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement; const b = n.closest('[data-block-type]'); return b ? b.getAttribute('data-block-type') : null; });
+    const caretType = async () => page.evaluate(() => { const s = window.getSelection(); if (!s || !s.anchorNode) return null; const n = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement; const b = n.closest('[data-block-type]'); return b ? b.getAttribute('data-block-type') : null; });
+    let t;
+    if (nxt && ['ordered', 'bullet'].includes(nxt.type) && nxt.text === '') {
+      // an empty list item already follows the anchor (left by an earlier attempt): Enter on it leaves the list
+      const el2 = page.locator(`[data-block-id="${nxt.id}"]`);
+      await el2.scrollIntoViewIfNeeded(); await el2.click(); await page.waitForTimeout(300);
+      await page.keyboard.press('Enter'); await page.waitForTimeout(500);
+      t = await caretType();
+    } else {
+      const el = page.locator(`[data-block-id="${anchor.id}"]`);
+      await el.scrollIntoViewIfNeeded(); await el.click(); await page.waitForTimeout(300);
+      const placed = await page.evaluate((id) => { const b = document.querySelector(`[data-block-id="${id}"]`); const w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT, { acceptNode: n => n.textContent.replace(/\u200b/g, '').length ? 1 : 3 }); let last = null; while (w.nextNode()) last = w.currentNode; if (!last) return false; const r = document.createRange(); r.setStart(last, last.textContent.length); r.collapse(true); const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); return true; }, anchor.id);
+      if (!placed) throw new Error('could not place the caret at the end of the anchor');
+      await page.keyboard.press('End'); await page.keyboard.press('Enter'); await page.waitForTimeout(500);
+      t = await caretType();
+      if (['ordered', 'bullet'].includes(t)) { await page.keyboard.press('Enter'); await page.waitForTimeout(500); t = await caretType(); }   // anchor was a list item: a second Enter leaves the list
+    }
     if (t !== 'text') throw new Error('Enter after the anchor did not give a text block: ' + t);
     target = null;
   } else if (c.after) {   // insert into the first empty text block after the unique block containing c.after
