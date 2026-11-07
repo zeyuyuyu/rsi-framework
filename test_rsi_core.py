@@ -917,19 +917,25 @@ class ProgramTests(unittest.TestCase):
         prog = d.validate_program({"curriculum": {"cases": 64}})
         seen = {}
         for run_seed in range(4):
-            for r in range(1, 10):
+            for r in range(1, 13):                                                # 12 rounds since addendum 27
                 for it in range(3):
                     s = inner_seed(run_seed, r, it)
                     self.assertNotIn(s, seen)                                     # no shared placements
                     seen[s] = (run_seed, r, it)
-                    if run_seed == 0 and it:
+                    if run_seed == 0 and it and r < 10:
                         self.assertEqual(s, (0 * 1000 + r) * 100 + it)          # pilot-5 seeds unchanged
+                    if r < 10 or it == 0:
+                        self.assertLess(s, 4000)                                  # <= 9-round values untouched
+                    else:
+                        self.assertTrue(4000 < s <= 4191)                         # the rounds 10-12 block
                     for case in d.propose(None, None, prog, r, s):                # raises if past 2**32
                         self.assertLess(case.inputs["init"]["seed"], 2 ** 32)
+        self.assertEqual(inner_seed(3, 12, 15), 4191)                            # top of the block
         with self.assertRaises(ValueError):
             d.propose(None, None, prog, 1, 1001 * 100 + 1)                       # the old seed-1 value
-        with self.assertRaises(ValueError):
-            inner_seed(1, 10, 1)
+        for bad in ((1, 13, 1), (4, 10, 1), (1, 10, 16), (1, 10, 0 - 1)):
+            with self.assertRaises(ValueError):
+                inner_seed(*bad)
 
     def test_libero_fresh_gate_seeds_are_disjoint_and_in_range(self):
         from rsi.core.engine import inner_seed

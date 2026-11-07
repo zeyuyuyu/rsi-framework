@@ -62,17 +62,26 @@ class EngineConfig:
     replica_candidates: bool = False
 
 
+INNER_SEED_EXT_BASE = 4000     # rounds 10-12 (addendum 27): above run seed 3's block, below LIBERO's limit (seed < 4194)
+
+
 def inner_seed(run_seed: int, round_index: int, step: int) -> int:
     """Seed of on-policy step ``step`` of round ``round_index``. Step 0 keeps the round seed (run_seed * 1000 +
     round), so inner_steps=1 runs are unchanged. Later steps use run_seed * 1000 + 100 * round + step: the same
     values as the first formula (round seed * 100 + step) for run seed 0, but small enough for seeds 1-3, where
     round seed * 100 sent LIBERO placement seeds (1e8 + seed * 1e6) past 2**32 and crashed the rollout workers
-    (A800 pilot-6 replica, 10-30). Distinct for every (run seed, round <= 9, step <= 99)."""
+    (A800 pilot-6 replica, 10-30). Distinct for every (run seed, round <= 9, step <= 99).
+    Rounds 10-12 (addendum 27, 12-round runs; the 11-07 launch failed on the old range check) take steps 1-15 of
+    run seeds 0-3 from a block above every <= 9-round value: 4000 + 48 * seed + 16 * (round - 10) + step <= 4191,
+    which keeps the largest LIBERO placement seed (1e8 + 4191e6 + 12e4 + 999) under 2**32. Rounds <= 9 and step 0
+    are unchanged, so no finished run's placements move."""
     if step == 0:
         return run_seed * 1000 + round_index
-    if not (0 < step < 100 and 0 < round_index < 10):
-        raise ValueError(f"inner_seed_out_of_range:round={round_index},step={step}")
-    return run_seed * 1000 + 100 * round_index + step
+    if 0 < step < 100 and 0 < round_index < 10:
+        return run_seed * 1000 + 100 * round_index + step
+    if 0 <= run_seed <= 3 and 10 <= round_index <= 12 and 0 < step < 16:
+        return INNER_SEED_EXT_BASE + 48 * run_seed + 16 * (round_index - 10) + step
+    raise ValueError(f"inner_seed_out_of_range:seed={run_seed},round={round_index},step={step}")
 
 
 def _write(path: Path, data):
@@ -113,8 +122,9 @@ class Engine:
             if any(c.split != "gate" for cs in fresh_gates.values() for c in cs):
                 raise ValueError("gate_split_required")
         self.fresh_gates = {r: list(cs) for r, cs in fresh_gates.items()} if fresh_gates else None
-        if config.inner_steps > 1 and not (config.rounds <= 9 and config.inner_steps <= 99):
-            raise ValueError("inner_steps_need_rounds<=9_and_steps<=99")      # inner_seed's range, checked up front
+        if config.inner_steps > 1 and not ((config.rounds <= 9 and config.inner_steps <= 99) or
+                                           (config.rounds <= 12 and config.inner_steps <= 16 and 0 <= config.seed <= 3)):
+            raise ValueError("inner_steps_need_rounds<=9_and_steps<=99_or_rounds<=12_steps<=16_seed<=3")  # inner_seed's range
         self.domain, self.backend, self.initial = domain, backend, initial
         self.seed_program = Program.make(domain.validate_program(seed_program))
         self.gate, self.audit, self.tests = list(gate), list(audit), dict(tests)

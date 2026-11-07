@@ -57,3 +57,20 @@ about 31 h at the 6-round rate, so no continuation should be needed; if one is, 
 
 Nothing registered before this addendum changes. The Goal read-once (R1-R5) is final; the self-repair read (S1-S3)
 is separate and still sealed. These nine runs are read once, on their own, under the bars above.
+
+## Operational note (2026-11-07 ~07:00Z): six of the nine jobs failed at engine start; fixed and resubmitted
+
+* `yq_oftg_fixed12_s1-3` and `yq_oftg_nonrec12_s1-3` (jobs erf6euws6fpu, rgdn5bgdstkz, zqwpjr9zmomd,
+  7ljxjz1rspzq, sury2q0qpq4e, x17172e4m95q, source `rsi_src_v27`) stopped before the first rollout with
+  `inner_steps_need_rounds<=9_and_steps<=99`: the on-policy inner-step seed formula of 10-30 (`inner_seed`, run seed
+  × 1000 + 100 × round + step) only covers rounds 1-9, and the engine checks that up front. The three `onebig12`
+  runs (1 round × 36 steps) passed the check and kept running. No rollout, update or test happened in the six
+  failed jobs; nothing was read.
+* Fix (code only, this commit): rounds 10-12 take their inner-step seeds (steps 1-15, run seeds 0-3) from a block
+  above every value the old formula can produce, `4000 + 48 × seed + 16 × (round − 10) + step` (≤ 4191, so the
+  largest LIBERO placement seed stays under 2^32). Step 0 and rounds 1-9 are unchanged: no finished run's
+  placements move, and the first nine rounds of a 12-round run use exactly the seeds a 6-round run of the same seed
+  uses for its rounds. Unit test extended to 12 rounds (uniqueness, range, old values fixed).
+* The six runs were resubmitted under the same plans and names on source `rsi_src_v28` (this commit's `rsi/`),
+  one card each as before. `onebig12` keeps running on v27; v27 and v28 differ only in the seed range, which the
+  one-round arm never enters, so the three arms remain comparable. Design, bars and predictions are unchanged.
