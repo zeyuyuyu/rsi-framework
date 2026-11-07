@@ -94,3 +94,9 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   runs on the CFS are untouched. The entry script was rebuilt from the deployed one with only the GPU line changed
   (`scripts/baidu/run_vla6.sh`, deployed copy kept as `run_vla4_cfs.sh`), and both continuations were resubmitted.
   Cost: about 50 minutes of wall time on s1 and s3; no evaluation or training was repeated or lost.
+* 2026-11-07 04:20Z: the three-card continuations run at about 8 h per round (training is single-card and dominates), so
+  the two slowest arms are continued once more at their next round boundary with six cards for rollouts:
+  `a8_oftgb_llm_harness_s0` (after round 3) and `yq_oftgb_llm_harness_s2` (after round 4). Same rule as above: same
+  `plan.json`, `--resume`, only `vla.rollout_gpus` changes; disclosed here before it happens. The round-boundary
+  continuations so far: cavin fixed_s0 (after r5), full_s0 (after r3), llm_s0 (after r2); Yangquan s1 (after r5),
+  s3 (after r6, test only), s2 (at the wall limit, before round 4 was written; round 4 is being redone).
