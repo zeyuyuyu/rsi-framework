@@ -100,3 +100,11 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   `plan.json`, `--resume`, only `vla.rollout_gpus` changes; disclosed here before it happens. The round-boundary
   continuations so far: cavin fixed_s0 (after r5), full_s0 (after r3), llm_s0 (after r2); Yangquan s1 (after r5),
   s3 (after r6, test only), s2 (at the wall limit, before round 4 was written; round 4 is being redone).
+
+## Operational note (2026-11-07 12:21Z): `a8_oftgb_llm_harness_s0` continued on six cards from its round-3 boundary
+
+* Round 3 closed at 12:20Z (`round-03.json`: r03c1 kept, gate 0.62 vs 0.62 parent; r03c0 refused at 0.61). The
+  watcher stopped the process group at the boundary and the queue relaunched the run with `--resume` on GPUs
+  0, 1, 2, 4, 5, 6 (plan unchanged; only `vla.rollout_gpus`, as in the earlier continuations above). The watcher
+  used for this boundary (`scripts/a800/regpu_at_boundary2.sh`) re-queues only when that many cards are actually
+  idle; other work on the box had taken four cards earlier in the day and had finished by the boundary.
