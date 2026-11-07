@@ -155,6 +155,17 @@ elif sys.argv[1] == "goal_main":
         for arm, (engine, proposer) in arms.items():
             write(f"{prefix}_oftg_{arm}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
                   vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
+elif sys.argv[1] == "yq_long12":
+    # addendum 27: the long-horizon recursion test on LIBERO-Goal, Yangquan, seeds 1-3 (12 rounds; onebig = 36 inner steps)
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    gated = {"rounds": 12, "inner_steps": 3, "gate_mode": "fresh_paired"}
+    arms = {"fixed12": ({}, "fixed"), "nonrec12": ({"recursive": False}, "fixed"),
+            "onebig12": ({"rounds": 1, "inner_steps": 36}, "fixed")}
+    for seed in (1, 2, 3):
+        for arm, (engine, proposer) in arms.items():
+            write(f"yq_oftg_{arm}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
+                  vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
 elif sys.argv[1] == "yq_rsi":
     # addendum 17: Yangquan arms beyond addendum 15 -- Goal llm_harness x3 (LLM relayed through BOS, key stays on cavin)
     # and LIBERO-10 fixed vs llm_harness x2 (does a harness-editing meta level make a recipe work where fixed fails?)
