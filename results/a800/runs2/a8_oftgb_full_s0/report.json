@@ -1,0 +1,103 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.565,
+      "author": "seed",
+      "gate": 0.56,
+      "node": "n0",
+      "program": "58f8f217054f933f",
+      "round": 0
+    },
+    {
+      "audit": 0.585,
+      "author": "search",
+      "gate": 0.635,
+      "node": "r02c1",
+      "program": "a0b851d04ddfa08a",
+      "round": 2
+    },
+    {
+      "audit": 0.61,
+      "author": "search",
+      "gate": 0.635,
+      "node": "r03c0",
+      "program": "a0b851d04ddfa08a",
+      "round": 3
+    },
+    {
+      "audit": 0.575,
+      "author": "search",
+      "gate": 0.615,
+      "node": "r04c0",
+      "program": "a0b851d04ddfa08a",
+      "round": 4
+    }
+  ],
+  "config": {
+    "candidates_per_round": 2,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "meta_v2": false,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "replica_candidates": false,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 0,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 33287.216492323205,
+  "retained": "r04c0",
+  "seconds": {
+    "attempt": 41078.72921449505,
+    "audit_eval": 2226.5850904635154,
+    "gate_eval": 9599.835207438096,
+    "meta": 0.0036330316215753555,
+    "propose": 0.01128679420799017,
+    "test_eval": 3020.4219216820784,
+    "train": 21982.999148549046
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.578
+        },
+        {
+          "node": "r02c1",
+          "round": 2,
+          "score": 0.592
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.598
+        },
+        {
+          "node": "r04c0",
+          "round": 4,
+          "score": 0.594
+        }
+      ],
+      "final": 0.594,
+      "initial": 0.578,
+      "paired": {
+        "ci95": [
+          -0.026,
+          0.058
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 62,
+        "flipped_to_wrong": 54,
+        "mcnemar_p": 0.5159130749957945,
+        "mean_gain": 0.016,
+        "n": 500
+      }
+    }
+  }
+}
