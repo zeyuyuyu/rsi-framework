@@ -8,14 +8,15 @@ LIBERO is tested on 50 fixed initial states per task. The released SimpleVLA-RL 
   \small
   \caption{\textbf{Train-on-test inflation} (LIBERO-10, success \%).}
   \label{tab:inflation}
+  \footnotesize
   \begin{tabular}{@{}lccc@{}}
     \toprule
-    checkpoint & official 500 & fresh 500 & gap \\
+    checkpoint & official & fresh & gap \\
     \midrule
     SFT start (never saw the test states) & 14.6 & 20.0 & $-5.4$ \\
     RL, trained on the official states & 87.4 & 76.0 & $+11.4$ \\
     \midrule
-    inflation & & & $+16.8$ $[9.8, 23.4]$ \\
+    inflation (difference of gaps) & & & $+16.8$ $[9.8, 23.4]$ \\
     \bottomrule
   \end{tabular}
 \end{table}
