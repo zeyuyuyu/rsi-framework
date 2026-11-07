@@ -75,28 +75,22 @@ Environments used:
 
 Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
-## Results so far (Qwen2.5-Coder-1.5B unless noted; CRUXEval-O points, paired, seed-averaged, 95% CI)
+## Results so far (2026-11-07)
 
-| claim | comparison | result | status |
-| --- | --- | --- | --- |
-| C1 improvement | full program, final - initial (3 seeds, 4 rounds) | +3.7 [+1.5, +5.9] | met |
-| C2 external feedback | fixed - shuffled feedback | +2.7 [+0.9, +4.5] | met |
-| C3 recursion | fixed - frozen initial generator, 4 rounds | -0.6 [-2.2, +1.1] | not shown |
-| C3 at long horizon | same, 8 rounds (Addendum 3) | +2.8 [+1.2, +4.5] | supported (exploratory) |
-| C4 meta level | full - fixed | +0.8 [-0.7, +2.4] | not shown |
-| C5 iteration | fixed (4 rounds) - one compute-matched round | +0.4 [-1.2, +2.0] | not shown |
+Full map of the studies, protocol and conclusions: **`docs/EXPERIMENTS_AND_RESULTS.md`**. In short:
 
-The independent re-scorer agrees with the engine on 99.6-100% of test records.
+| finding | evidence | strength |
+| --- | --- | --- |
+| the gated loop never degrades a VLA policy | 31/31 LIBERO-Goal runs end within noise of or above their start; the same BC recipe collapses 58.5% → 5.5% without the gate | hard |
+| verified feedback improves code world models | 1.5B CRUXEval-O +2.6 [0.6, 4.6] vs shuffled −0.2; 7B LCB-exec +5.8 [3.4, 8.2] | significant |
+| recursion helps at long horizon (code domain) | 8 rounds: fixed − nonrec +2.8 [1.2, 4.5]; 7B +2.9 / +4.5 | significant, replicated |
+| VLA loop gains are small and below the preregistered bars | loop +1.7 [−0.8, +4.2] (bar +5); recursion +1.7 [−0.3, +3.7] (bar +2); verifier +1.2 (bar +3); one-shot RL at equal compute −0.6 | directional |
+| a meta level does not beat a working fixed procedure | four R4 arms within ±1.2; v2 study −0.27 / +0.30; mechanism: the loop plateaus under every program | null, explained |
+| a published VLA-RL number is inflated by training on the test states | +16.8 [9.8, 23.4], replicated +16.0 | significant |
+| can the meta level repair a failing procedure? | self-repair study, 9/12 runs done, sealed test read 2026-11-08 | pending |
 
-Cross-model and OpenVLA runs are in progress:
-
-* **Qwen2.5-Coder-7B, fixed program:** LiveCodeBench-exec +5.2 and +4.6 in two seeds, both
-  significant.
-* **Granite-3.3-8B:** mixed.
-* **Qwen3-8B:** the gate rejected every round (self-made tasks too easy).
-* **OpenVLA:** the baseline noise floor is 12.4% flipped episodes between identical runs.
-
-Every number traces to a file under `results/` and a pre-registration under `docs/prereg/`.
+Every number traces to a file under `results/` and a pre-registration under `docs/prereg/`; the independent
+re-scorer agrees with the engine on 99.6-100% of code-domain test records.
 
 ## Provenance
 
