@@ -79,12 +79,12 @@ def fig_runs():
                 ax.plot(x, r["test"], "o", color=C.get(arm, "k"), ms=3.5)
                 x += 1
             ticks.append(x - (len(names) + 1) / 2)
-            labels.append(arm.replace("llm_harness_cap", "cap").replace("llm_harness", "harness") + ("\n(A, s0)" if plat == "cavin_s0" else "\n(A)" if plat == "cavin" else "\n(Y)"))
-            x += 1.2 if plat != "cavin_s0" else 2.2
+            labels.append(arm.replace("llm_harness_cap", "cap").replace("llm_harness", "harness") + ("\n(A s0)" if plat == "cavin_s0" else "\n(A)" if plat == "cavin" else "\n(Y)"))
+            x += 1.2 if plat != "cavin_s0" else 3.2
     ax.axhline(58.92, color="0.6", lw=0.8, ls="--")
     ax.axhline(58.44, color="0.6", lw=0.8, ls=":")
     ax.set_xticks(ticks)
-    ax.set_xticklabels(labels, fontsize=6.5, rotation=30, ha="right")
+    ax.set_xticklabels(labels, fontsize=6.5)
     ax.set_ylabel("official test success (%)")
     ax.set_ylim(53, 64)
     ax.text(0.2, 63.6, "dashed: pooled initial reference (Y 58.9); dotted: (A 58.4).  grey tick: the run's own n0 test;  dot: replicate-averaged final", fontsize=6.5, va="top")
@@ -189,7 +189,7 @@ def fig_code():
     ax.set_yticks(ys)
     ax.set_yticklabels(labels, fontsize=6.5)
     ax.axvline(0, color="0.5", lw=0.8)
-    ax.set_xlabel("points on the held-out test (CRUXEval-O unless noted), 95% CI")
+    ax.set_xlabel("points on the held-out test (95% CI)")
     save(fig, "fig_code.pdf")
 
 
@@ -202,9 +202,9 @@ def fig_inflation():
     a1.bar([i - 0.18 for i in x], off, width=0.36, color="#d62728", label="official states")
     a1.bar([i + 0.18 for i in x], fresh, width=0.36, color="#1f77b4", label="fresh placements")
     a1.set_xticks(x)
-    a1.set_xticklabels(["SFT start", "RL ckpt"])
+    a1.set_xticklabels(["SFT\nstart", "RL\nckpt"])
     a1.set_ylabel("LIBERO-10 success (%)")
-    a1.legend(frameon=False, fontsize=6, loc="upper left")
+    a1.set_ylim(0, 100)
     off_t = [78, 84, 98, 88, 80, 96, 90, 86, 82, 92]
     fresh_t = [62, 68, 92, 92, 52, 90, 50, 84, 84, 86]
     xt = list(range(10))
@@ -212,8 +212,9 @@ def fig_inflation():
     a2.bar([i + 0.2 for i in xt], fresh_t, width=0.4, color="#1f77b4")
     a2.set_xticks(xt)
     a2.set_xticklabels([f"t{i}" for i in xt], fontsize=6)
-    a2.set_title("RL checkpoint, per task", fontsize=8)
+    a2.set_xlabel("RL checkpoint, per task")
     a2.set_ylim(0, 100)
+    fig.legend(loc="upper center", ncol=2, frameon=False, fontsize=7, bbox_to_anchor=(0.5, 1.06))
     save(fig, "fig_inflation.pdf")
 
 
