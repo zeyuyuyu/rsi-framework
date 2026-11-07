@@ -18,7 +18,7 @@ A meta level is distinguishable from RL only where RL's procedure fails and a di
   \label{fig:selfrepair}
 \end{figure*}
 
-\paragraph{Gate-level record (not a claim).} \Cref{fig:selfrepair} shows the trajectories and \cref{tab:selfrepair} lists what each arm did, from the released round records; the sealed test is read on 2026-11-08 and the registered numbers will replace the placeholders. Three observations hold at the gate level. First, \emph{the gate alone prevents the collapse}: no \texttt{fixed} run falls below its start; one seed is held at the initial policy for all six rounds, the other three accept small BC gains (retained gates 60--64.5\%). Second, \emph{both proposers find a repair}: numeric search switched one seed to GRPO and another to the temperature-matched BC likelihood, and the LLM lowered the sampling temperature and learning rate on the seed that has finished (retained gate 64.5\%; its second seed's accepted LLM programs reach 65.5\% at round 3). Third, at the gate all arms end within noise of each other (60--65.5\%), so S1 and S2 are decided by the sealed test and not by these records.
+\paragraph{Gate-level record (not a claim).} \Cref{fig:selfrepair} shows the trajectories and \cref{tab:selfrepair} lists what each arm did, from the released round records; the sealed test is read on 2026-11-08 and the registered numbers will replace the placeholders. Three observations hold at the gate level. First, \emph{the gate alone prevents the collapse}: no \texttt{fixed} run falls below its start; one seed is held at the initial policy for all six rounds, the other three accept small BC gains (retained gates 60--64.5\%). Second, \emph{both proposers find a repair}: the LLM's first-round diagnoses on all four seeds name the sampling/likelihood temperature mismatch and the missing failure signal, and its first proposal on every seed is the same---switch to GRPO on mixed-outcome scenes at a lower temperature; the gate kept that switch on three seeds (gates 64.5--65.5\%) and refused it twice on the fourth, where the LLM then repaired BC instead (lower sampling temperature; retained gate 64.5\%). Numeric search switched one seed to GRPO and another to the temperature-matched BC likelihood. Third, at the gate all arms end within noise of each other (60--65.5\%), so S1 and S2 are decided by the sealed test and not by these records.
 
 \begin{table*}[t]
   \centering
@@ -29,10 +29,10 @@ A meta level is distinguishable from RL only where RL's procedure fails and a di
     \toprule
     seed & \texttt{fixed} (gate only) & \texttt{full} (numeric search) & \texttt{llm\_harness} \\
     \midrule
-    1 (Y) & r6, 60.0; BC unchanged & r5, 62.5; BC unchanged & \textit{running} \\
-    2 (Y) & n0 (all 6 refused) & r6, 65.0; switched to GRPO & \textit{running} (r3: 65.5) \\
-    3 (Y) & r5, 63.0; BC unchanged & r6, 61.0; BC, rollout-temp.\ likelihood & r6, 64.5; BC, $T$ 1.6$\to$1.3, lr 1e-5$\to$2e-5 \\
-    0 (A) & r6, 64.5; BC unchanged & r4, 64.0 (rounds 5--6 refused) & \textit{running} (r2: 65.5) \\
+    1 (Y) & r6, 60.0; BC unchanged & r5, 62.5; BC unchanged & \textit{running}; LLM switched to GRPO in round 1, kept (65.5 by r3) \\
+    2 (Y) & n0 (all 6 refused) & r6, 65.0; switched to GRPO & \textit{running}; LLM switched to GRPO in round 1, kept (64.5, 64.0, 65.5) \\
+    3 (Y) & r5, 63.0; BC unchanged & r6, 61.0; BC, rollout-temp.\ likelihood & r6, 64.5; GRPO refused twice, BC repaired: $T$ 1.6$\to$1.3 \\
+    0 (A) & r6, 64.5; BC unchanged & r4, 64.0 (rounds 5--6 refused) & \textit{running}; LLM's GRPO child kept in round 2 (65.5 vs 62.5) \\
     \bottomrule
   \end{tabular}
 \end{table*}

@@ -102,12 +102,12 @@ Start: BC at unit-temperature likelihood on T=1.6 samples, which collapses 58.5%
 
 | seed | fixed (gate only) | full (numeric search) | llm_harness |
 |---|---|---|---|
-| 1 (Y) | r06c0, 60.0, BC unchanged | r05c1, 62.5, BC unchanged | running (round 6) |
-| 2 (Y) | n0 (all 6 refused) | r06c0, 65.0, switched to GRPO | running (round 3: 65.5) |
-| 3 (Y) | r05c0, 63.0, BC unchanged | r06c0, 61.0, BC with rollout-temperature likelihood | r06c1, 64.5, BC with T 1.6→1.3, lr 1e-5→2e-5 |
-| 0 (A) | r06c0, 64.5, BC unchanged | r04c0, 64.0 (rounds 5-6 refused) | running (round 3; round 2: 65.5) |
+| 1 (Y) | r06c0, 60.0, BC unchanged | r05c1, 62.5, BC unchanged | running (round 6); LLM switched to GRPO in round 1, kept |
+| 2 (Y) | n0 (all 6 refused) | r06c0, 65.0, switched to GRPO | running; LLM switched to GRPO in round 1, kept (64.5 / 64.0 / 65.5) |
+| 3 (Y) | r05c0, 63.0, BC unchanged | r06c0, 61.0, BC with rollout-temperature likelihood | r06c1, 64.5; the LLM's GRPO switch was refused twice, it then repaired BC (T 1.6→1.3) |
+| 0 (A) | r06c0, 64.5, BC unchanged | r04c0, 64.0 (rounds 5-6 refused) | running (round 3); LLM's GRPO child kept in round 2 (65.5 vs 62.5) |
 
-Reading so far: the gate alone prevents the collapse; both proposers find a repair; all arms end within gate noise
+Reading so far: the gate alone prevents the collapse; both proposers find a repair (the LLM's first proposal on every seed was the GRPO switch, kept on 3 of 4 seeds; see `docs/CASE_STUDIES.md` for the diagnoses verbatim); all arms end within gate noise
 of each other, so S1/S2 are decided by the sealed test. Six pilots for a second failing scenario (4 extreme recipes,
 both platforms) did not degrade under the gate; no second scenario was registered.
 
@@ -125,9 +125,10 @@ both platforms) did not degrade under the gate; no second scenario was registere
 * Round-boundary continuations with more rollout GPUs (same plan.json, `--resume`; the proposer's random stream is
   re-seeded on resume) for the slowest self-repair arms, and one failed continuation job that touched no data:
   addendum 26 operational notes. Addendum 25: the `onebig_s0` crash/resume and GPU contention.
-* The 2026-11-06 Feishu report's claims "fixed arm refused all six rounds" and "all three LLM seeds switched BC to
-  GRPO" were wrong (only seed 2's fixed arm is held at n0; the GRPO switch came from numeric search on seed 2); the
-  table in section 5 is the corrected record.
+* The 2026-11-06 Feishu report's claim "fixed arm refused all six rounds" was wrong (only seed 2's fixed arm is held at
+  n0). Its claim "all three LLM seeds switched BC to GRPO" holds for seeds 1, 2 and A800 seed 0 (kept by the gate) but
+  not seed 3, where the switch was refused and the LLM repaired BC instead; a first correction on 11-07 overstated
+  this. The table in section 5 and `docs/CASE_STUDIES.md` are the record.
 
 ## 8. Where things live
 
