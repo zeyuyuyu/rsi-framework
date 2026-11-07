@@ -108,3 +108,12 @@ runs used (addendum 21 am. 4a); for the harness space and the BC knobs it is the
   0, 1, 2, 4, 5, 6 (plan unchanged; only `vla.rollout_gpus`, as in the earlier continuations above). The watcher
   used for this boundary (`scripts/a800/regpu_at_boundary2.sh`) re-queues only when that many cards are actually
   idle; other work on the box had taken four cards earlier in the day and had finished by the boundary.
+
+## Operational note (2026-11-07 13:17Z): `yq_oftgb_llm_harness_s2` continued on six cards from its round-4 boundary
+
+* Round 4 closed at about 13:05Z (`round-04.json`: r04c1 kept, gate 0.635; r04c0 refused at 0.615; the round-5
+  LLM call was answered by the relay at 13:05Z). The Yangquan boundary watcher stopped job `job-v3p6ngvem924` (three
+  cards) once the heartbeat listed the round file and resumed the run as `job-2nwy6hjds1wj` with `NGPU=6`
+  (`--resume`, same plan and source; only `vla.rollout_gpus` changes, as for the earlier continuations). The
+  round-5 proposal call is repeated by the resumed process; the proposer's generator is re-seeded from the plan, as
+  disclosed above.
