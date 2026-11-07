@@ -1,0 +1,35 @@
+\section{Experimental setup}
+\label{sec:setup}
+
+\subsection{Benchmarks, policies and starting points}
+\textbf{LIBERO / OpenVLA-OFT.} LIBERO-Goal~\cite{liu2023libero} has ten goal-conditioned tasks in one scene; LIBERO-10 ten long-horizon tasks. The policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), started from a supervised fine-tune on \emph{one} demonstration per task~\cite{li2025simplevlarl} so that there is room to improve (about 59\% on LIBERO-Goal, 19\% on LIBERO-10). Rollouts and GRPO/BC training use the SimpleVLA-RL stack with LoRA ($r{=}32$). The seed program---chosen from sealed pilots and frozen by amendment before any main run---is GRPO with learning rate $3\times10^{-5}$, matched-ratio log-probabilities, episode-balanced loss, 8 samples per scene at temperature 1.5, 160 scenes per inner step, 200 optimiser steps of batch 64; 6 rounds of 3 inner steps; fresh paired gates.
+\textbf{Code world models.} The model predicts the output of a Python program on an input (the CRUXEval-O format~\cite{gu2024cruxeval}); it writes its own programs (3-shot from a pool that starts with 16 hand-written seeds and grows with admitted programs; a program is admitted only if it is deterministic, literal-valued and not a near-duplicate of any held-out problem), the sandbox executes them, and an attempt is verified iff its answer equals the interpreter's. Qwen2.5-Coder 1.5B and 7B~\cite{hui2024qwen25coder}, Qwen3-8B~\cite{yang2025qwen3} and Granite-3.3-8B~\cite{granite2024} are trained with LoRA SFT on at most two verified traces per case; the gate is a 400-program validation set proposed by the \emph{initial} model; tests are CRUXEval-O/I and LiveCodeBench-execution~\cite{jain2024livecodebench}.
+
+\subsection{Arms and baselines}
+The LIBERO-Goal main study runs the eight arms of \cref{sec:controls} with three seeds each (a fourth seed was added to the \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} arms by amendment before any of their runs ended), 31 runs in all, on two GPU platforms: a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. The stacks are not bit-identical, so every comparison is paired within a platform and the platforms serve as replicates. \texttt{onebig} is the plain-RL baseline: the whole six-round rollout and update budget in one round of 18 on-policy inner steps from the initial policy, with the same sampling and update code; it is read both through the gate and as its ungated single candidate. The code-domain study runs \texttt{fixed}, \texttt{shuffled}, \texttt{nonrec}, \texttt{full} and \texttt{onebig} for four rounds, plus an eight-round \texttt{fixed} vs \texttt{nonrec} study on two models.
+
+\subsection{Preregistered protocol}
+\label{sec:protocol}
+Self-improvement claims are easy to inflate: the loop selects versions, evaluation is noisy, and the experimenter sees intermediate numbers. We fixed the protocol before the runs and release the preregistration documents (26 dated amendments for the VLA study) with the code.
+
+\paragraph{Sealing.} The official LIBERO test states are never used for training, sampling, gating or program selection, and no test file is opened before a study's read-once. Only two sealed pilots per model were allowed before the seed program was frozen.
+
+\paragraph{Finals and reference.} A single 500-episode evaluation is itself noisy: the \emph{same} initial policy evaluated in different runs scored between 57.2\% and 60.0\% (sd $\approx 0.7$), and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy (the run's own test and two replicate evaluations from the same plan and source tree), and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 evaluations on the cloud pool, 21 on the A800). A noise check---the same statistic between two halves of the initial-policy evaluations---is reported with every verdict.
+
+\paragraph{Claims and bars.} Seed-averaged per-episode paired bootstrap (10{,}000 draws), 95\% CI:
+\begin{center}\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+claim & comparison & bar \\
+\midrule
+R1 improvement & \texttt{fixed}, \texttt{full} $-$ reference & $\ge +5$, CI $> 0$, $\ge 2/3$ seeds $> 0$ \\
+R2 verifier & \texttt{fixed} $-$ \texttt{shuffled} & $\ge +3$, CI $> 0$ \\
+R3 recursion & \texttt{fixed} $-$ \texttt{nonrec} & $\ge +2$, CI $> 0$ \\
+R4 meta level & each meta arm $-$ \texttt{fixed} & $\ge +2$, CI $> 0$ \\
+R5 vs one-shot RL & best gated arm (by gate) $-$ \texttt{onebig} & $\ge +2$, CI $> 0$ \\
+M2-A meta v2 & \texttt{llm} $-$ identical-program replica & $\ge +3$, CI $> 0$ \\
+S1 self-repair & \texttt{llm\_harness} $-$ \texttt{fixed} (failing start) & $\ge +3$, CI $> 0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Negative readings are reported as such; the reading scripts were committed before each read and their outputs are released.

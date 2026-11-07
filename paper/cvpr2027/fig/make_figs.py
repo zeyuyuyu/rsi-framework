@@ -24,6 +24,37 @@ def save(fig, name):
     print("wrote", name)
 
 
+
+# ---------------------------------------------------------------- 0. teaser: safety (left) + registered claims (right)
+def fig_teaser():
+    d = json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.0, 2.3), gridspec_kw={"width_ratios": [1, 1.5]})
+    g = [58.5]
+    for l in open(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/accepted.jsonl")):
+        g.append(json.loads(l)["gate"] * 100)
+    a1.plot(range(7), g, "-o", color="#d62728", ms=3.5, lw=2, label="same recipe, no gate")
+    for s in (1, 2, 3):
+        pth = os.path.join(ROOT, f"results/baidu/yq_oftgb_fixed_s{s}/report.json")
+        if os.path.exists(pth):
+            a1.plot(range(7), chain(pth), "-", color="#1f77b4", lw=1.3, alpha=0.8, label="with the gate" if s == 1 else None)
+    a1.set_xlabel("round"); a1.set_ylabel("held-out success (%)"); a1.set_ylim(0, 72); a1.legend(frameon=False, fontsize=7, loc="lower left")
+    a1.set_title("(a) the gate makes the loop safe", fontsize=8)
+    rows = [("loop (fixed $-$ start)", d["R1_fixed"], 5), ("verifier (fixed $-$ shuffled)", d["R2_seeds0to3"], 3),
+            ("recursion (fixed $-$ nonrec)", d["R3_seeds0to3"], 2), ("meta: numeric $-$ fixed", d["R4_full_minus_fixed"], 2),
+            ("meta: LLM $-$ fixed", d["R4_harness_minus_fixed_yq"], 2), ("meta: LLM+cap $-$ fixed (A)", d["R4_cap_minus_fixed_cavin"], 2),
+            ("loop $-$ one-shot RL", d["R5_seeds0to3"], 2)]
+    ys = list(range(len(rows)))[::-1]
+    for y, (label, r, bar) in zip(ys, rows):
+        m, (lo, hi) = r["mean_points"], r["ci95_points"]
+        a2.plot([lo, hi], [y, y], color="0.3", lw=1.3); a2.plot(m, y, "o", color="black", ms=4)
+        a2.plot(bar, y, "|", color="#d62728", ms=10, mew=1.6)
+    a2.axvline(0, color="0.6", lw=0.8, ls="--")
+    a2.set_yticks(ys); a2.set_yticklabels([r[0] for r in rows], fontsize=7)
+    a2.set_xlabel("points of test success (95% CI); red tick = preregistered bar", fontsize=7); a2.set_xlim(-3.2, 6.2)
+    a2.set_title("(b) which part of the loop helps (LIBERO-Goal, 31 runs)", fontsize=8)
+    fig.tight_layout()
+    save(fig, "fig_teaser.pdf")
+
 # ---------------------------------------------------------------- 1. forest plot of the registered claims
 def fig_claims():
     d = json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))
@@ -219,6 +250,7 @@ def fig_inflation():
 
 
 if __name__ == "__main__":
+    fig_teaser()
     fig_claims()
     fig_runs()
     fig_gates()

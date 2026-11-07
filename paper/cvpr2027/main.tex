@@ -5,6 +5,8 @@
 \input{preamble}
 \usepackage{booktabs}
 \usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \graphicspath{{fig/}{./}}
@@ -25,17 +27,20 @@ Paper ID \cvprPaperID}
 
 \begin{document}
 \maketitle
+\begin{strip}
+  \centering
+  \includegraphics[width=\textwidth]{fig_teaser}
+  \captionof{figure}{\textbf{What a preregistered decomposition of recursive self-improvement shows on a VLA policy.} (a) The verifier gate is what makes self-training safe: the same behaviour-cloning recipe collapses from 58.5\% to 5.5\% when every new version is accepted, and never falls below its start when each version must beat its parent on fresh paired placements. (b) Taking the loop apart one switch at a time (31 LIBERO-Goal runs, sealed official test, replicate-averaged): every ingredient's point estimate is positive except the meta level's, and none reaches its preregistered bar (red ticks). Recursion and the verifier are the largest contributors; an LLM that edits the training procedure adds nothing once the procedure works.}
+  \label{fig:teaser}
+\end{strip}
 \input{sec/0_abstract}
 \input{sec/1_intro}
 \input{sec/2_related}
-\input{sec/3_framework}
-\input{sec/4_protocol}
-\input{sec/5_libero}
-\input{sec/6_meta}
-\input{sec/7_code}
-\input{sec/8_inflation}
-\input{sec/9_discussion}
-\input{sec/10_conclusion}
+\input{sec/3_method}
+\input{sec/4_setup}
+\input{sec/5_results}
+\input{sec/6_discussion}
+\input{sec/7_conclusion}
 {
     \small
     \bibliographystyle{ieeenat_fullname}
