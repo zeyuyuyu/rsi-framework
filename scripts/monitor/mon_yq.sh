@@ -11,6 +11,8 @@ import json,sys
 t=sys.stdin.read(); i=t.find("{")
 try: d=json.loads(t[i:]); print(d.get("status"))
 except Exception: print("?")'); echo "$name $st"; done)
+  # a describe that timed out ("?") must not erase the last known status, or the next successful poll re-reports an old job
+  cur=$(awk 'NR==FNR {p[$1]=$2; next} {if ($2=="?" && ($1 in p)) print $1" "p[$1]; else print $0}' "$prev" <(echo "$cur"))
   comm -13 <(sort "$prev") <(echo "$cur" | sort) | grep -v -E " (\?|Running|Created|Pending|Queueing)$"
   echo "$cur" > "$prev"; sleep 600
 done
