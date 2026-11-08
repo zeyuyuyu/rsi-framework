@@ -18,9 +18,9 @@
 
 \def\confName{CVPR}
 \def\confYear{2027}
-\newcommand{\pending}{\textcolor{red}{[to be inserted after the registered read of 2026-11-08]}}
+\newcommand{\pending}{\textcolor{red}{[to be inserted after the registered read; the study is still sealed]}}
 
-\title{Which Part of the Loop Helps? A Preregistered Decomposition of Recursive Self-Improvement for Vision-Language-Action Policies}
+\title{Letting a Robot Train Itself: What Helps, What Doesn't, and What Only Looks Like It Helps}
 
 \author{Anonymous CVPR submission\\
 Paper ID \cvprPaperID}
@@ -30,7 +30,7 @@ Paper ID \cvprPaperID}
 \begin{strip}
   \centering
   \includegraphics[width=\textwidth]{fig_teaser}
-  \captionof{figure}{\textbf{What a preregistered decomposition of recursive self-improvement shows on a VLA policy.} (a) The verifier gate is what makes self-training safe: the same behaviour-cloning recipe collapses from 58.5\% to 5.5\% when every new version is accepted, and never falls below its start when each version must beat its parent on fresh paired placements. (b) Taking the loop apart one switch at a time (31 LIBERO-Goal runs, sealed official test, replicate-averaged): every ingredient's point estimate is positive except the meta level's, and none reaches its preregistered bar (red ticks). Recursion and the verifier are the largest contributors; an LLM that edits the training procedure adds nothing once the procedure works.}
+  \captionof{figure}{\textbf{Taking a self-improvement loop apart.} (a) The gate is what makes self-training safe: the same behaviour-cloning recipe falls from 58.5\% to 5.5\% success when every new version is accepted, and never drops below its start when each version has to beat its parent on fresh, paired placements. (b) Switching off one ingredient at a time (31 LIBERO-Goal runs, official test kept sealed, finals averaged over three evaluations): every ingredient's estimate is positive except the meta level's, and none reaches the bar we set in advance (red ticks). Recursion and the verifier matter most; a language model that edits the training recipe adds nothing once the recipe works.}
   \label{fig:teaser}
 \end{strip}
 \input{sec/0_abstract}
