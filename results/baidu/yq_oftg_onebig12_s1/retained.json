@@ -1,0 +1,43 @@
+{
+  "node": "r01c0",
+  "program": {
+    "author": "seed",
+    "id": "2a8413c825eed0ba",
+    "note": "",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 3e-05,
+        "operator": "grpo",
+        "steps": 100
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "10883f0ce85a3dceda4ee932d299435f38cbef86182bc6f91899b8de1393cd8b",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftg_onebig12_s1/ckpt-r01c0",
+    "parent_id": "e1ae6af85c15ed73f6acf9a1e49a8a39761eb4086e0b2e143599670387313263"
+  }
+}
