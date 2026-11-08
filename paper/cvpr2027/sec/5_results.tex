@@ -54,6 +54,7 @@ We organise the results around five questions. Every number below comes from a p
   \small
   \caption{\textbf{Per-arm finals} (\%, mean of the 3-evaluation finals over seeds 1--3; seed-0 runs listed separately). Reference 58.9 (Y) / 58.4 (A).}
   \label{tab:arms}
+  \resizebox{\linewidth}{!}{%
   \begin{tabular}{@{}lcccccc@{}}
     \toprule
     & \texttt{fixed} & \texttt{full} & \texttt{llm$\ast$} & \texttt{nonrec} & \texttt{shuf.} & \texttt{onebig} \\
@@ -62,7 +63,7 @@ We organise the results around five questions. Every number below comes from a p
     A, s1--3 & 59.1 & -- & 60.1 / 60.2 & -- & -- & -- \\
     A, s0 & 57.2 & -- & -- & 54.8 & 57.5 & 62.7 \\
     \bottomrule
-  \end{tabular}\\[2pt]
+  \end{tabular}}\\[2pt]
   {\footnotesize $\ast$ Y: \texttt{llm\_harness}; A: \texttt{llm} / \texttt{llm\_harness\_cap}.}
 \end{table}
 
@@ -89,6 +90,7 @@ We organise the results around five questions. Every number below comes from a p
   \small
   \caption{\textbf{Self-repair study, gate-level record} (retained version and its gate, \%; what the meta level did). Sealed test results: \pending.}
   \label{tab:selfrepair}
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{@{}llll@{}}
     \toprule
     seed & \texttt{fixed} (gate only) & \texttt{full} (numeric search) & \texttt{llm\_harness} \\
@@ -98,7 +100,7 @@ We organise the results around five questions. Every number below comes from a p
     3 (Y) & r5, 63.0; BC unchanged & r6, 61.0; BC, rollout-temp.\ likelihood & r6, 64.5; GRPO refused twice, BC repaired: $T$ 1.6$\to$1.3 \\
     0 (A) & r6, 64.5; BC unchanged & r4, 64.0 (rounds 5--6 refused) & \textit{running}; LLM's GRPO child kept in round 2 (65.5 vs 62.5) \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}}
 \end{table*}
 
 \textbf{Finding 5 (gate-level, not a claim): the gate alone prevents the collapse, and the LLM diagnoses the failure unprompted.} \Cref{fig:selfrepair} and \cref{tab:selfrepair} give the record. No \texttt{fixed} run falls below its start; one seed is held at the initial policy for all six rounds and the other three accept small BC gains (60--64.5\%). The LLM's first-round diagnoses on all four seeds name the mismatch between the sampling and likelihood temperatures and the missing failure signal (verbatim in the released logs), and its first proposal on every seed is the same: switch to GRPO on mixed-outcome scenes at a lower temperature. The gate kept that switch on three seeds (gates 64.5--65.5\%) and refused it twice on the fourth, where the LLM then repaired BC instead (lower sampling temperature; retained gate 64.5\%). Numeric search also finds repairs (a GRPO switch on one seed, the temperature-matched BC likelihood on another). At the gate all arms end within noise of each other (60--65.5\%), so S1 and S2 will be decided by the sealed test. We looked for a second failing scenario with six gate-only pilots (four extreme GRPO/BC recipes, both platforms); none degraded under the gate, so no second scenario was registered.

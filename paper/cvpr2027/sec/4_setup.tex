@@ -16,20 +16,22 @@ Self-improvement claims are easy to inflate: the loop selects versions, evaluati
 
 \paragraph{Finals and reference.} A single 500-episode evaluation is itself noisy: the \emph{same} initial policy evaluated in different runs scored between 57.2\% and 60.0\% (sd $\approx 0.7$), and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy (the run's own test and two replicate evaluations from the same plan and source tree), and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 evaluations on the cloud pool, 21 on the A800). A noise check---the same statistic between two halves of the initial-policy evaluations---is reported with every verdict.
 
-\paragraph{Claims and bars.} Seed-averaged per-episode paired bootstrap (10{,}000 draws), 95\% CI:
-\begin{center}\small
-\begin{tabular}{@{}lll@{}}
+\paragraph{Claims and bars.} Seed-averaged per-episode paired bootstrap (10{,}000 draws), 95\% CI. ``CI $>0$'' means the interval excludes zero.
+\begin{center}\footnotesize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}llr@{}}
 \toprule
-claim & comparison & bar \\
+claim & comparison & bar (points) \\
 \midrule
-R1 improvement & \texttt{fixed}, \texttt{full} $-$ reference & $\ge +5$, CI $> 0$, $\ge 2/3$ seeds $> 0$ \\
-R2 verifier & \texttt{fixed} $-$ \texttt{shuffled} & $\ge +3$, CI $> 0$ \\
-R3 recursion & \texttt{fixed} $-$ \texttt{nonrec} & $\ge +2$, CI $> 0$ \\
-R4 meta level & each meta arm $-$ \texttt{fixed} & $\ge +2$, CI $> 0$ \\
-R5 vs one-shot RL & best gated arm (by gate) $-$ \texttt{onebig} & $\ge +2$, CI $> 0$ \\
-M2-A meta v2 & \texttt{llm} $-$ identical-program replica & $\ge +3$, CI $> 0$ \\
-S1 self-repair & \texttt{llm\_harness} $-$ \texttt{fixed} (failing start) & $\ge +3$, CI $> 0$ \\
+R1 improvement & \texttt{fixed}, \texttt{full} $-$ reference & $\ge +5$, CI $>0$, 2/3 seeds $>0$ \\
+R2 verifier & \texttt{fixed} $-$ \texttt{shuffled} & $\ge +3$, CI $>0$ \\
+R3 recursion & \texttt{fixed} $-$ \texttt{nonrec} & $\ge +2$, CI $>0$ \\
+R4 meta level & each meta arm $-$ \texttt{fixed} & $\ge +2$, CI $>0$ \\
+R5 vs one-shot RL & best gated arm $-$ \texttt{onebig} & $\ge +2$, CI $>0$ \\
+M2-A meta v2 & \texttt{llm} $-$ identical-recipe replica & $\ge +3$, CI $>0$ \\
+S1 self-repair & \texttt{llm\_harness} $-$ \texttt{fixed} (failing start) & $\ge +3$, CI $>0$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{center}
 Negative readings are reported as such; the reading scripts were committed before each read and their outputs are released.
