@@ -1,0 +1,433 @@
+{
+ "mode": {
+  "mode": "final",
+  "pooled_n0_yq": {
+   "n": 47,
+   "mean": 58.93
+  }
+ },
+ "R3_long": {
+  "claim": "R3-long fixed12 - nonrec12 (Yangquan, seeds 1-3)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": 7.84,
+  "ci95_points": [
+   5.22,
+   10.49
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 48.2,
+    "arm": 62.6,
+    "diff": 14.4,
+    "ci95": [
+     10.13,
+     18.73
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 108,
+    "control_only": 36
+   },
+   "2": {
+    "control": 55.4,
+    "arm": 60.33,
+    "diff": 4.93,
+    "ci95": [
+     0.73,
+     9.2
+    ],
+    "mcnemar_p": 0.1055,
+    "arm_only": 79,
+    "control_only": 59
+   },
+   "3": {
+    "control": 54.47,
+    "arm": 58.67,
+    "diff": 4.2,
+    "ci95": [
+     0.2,
+     8.2
+    ],
+    "mcnemar_p": 0.1683,
+    "arm_only": 76,
+    "control_only": 59
+   }
+  }
+ },
+ "R5_long": {
+  "claim": "R5-long fixed12 - onebig12 (Yangquan, seeds 1-3)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": -0.38,
+  "ci95_points": [
+   -2.42,
+   1.64
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 58.6,
+    "arm": 62.6,
+    "diff": 4.0,
+    "ci95": [
+     0.47,
+     7.53
+    ],
+    "mcnemar_p": 0.0966,
+    "arm_only": 55,
+    "control_only": 38
+   },
+   "2": {
+    "control": 60.87,
+    "arm": 60.33,
+    "diff": -0.54,
+    "ci95": [
+     -4.2,
+     2.93
+    ],
+    "mcnemar_p": 0.6849,
+    "arm_only": 46,
+    "control_only": 51
+   },
+   "3": {
+    "control": 63.27,
+    "arm": 58.67,
+    "diff": -4.6,
+    "ci95": [
+     -8.13,
+     -1.0
+    ],
+    "mcnemar_p": 0.0197,
+    "arm_only": 37,
+    "control_only": 61
+   }
+  }
+ },
+ "R5_long_ungated": {
+  "claim": "R5-long sensitivity: fixed12 - onebig12 r01c0 (available seeds)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": -0.38,
+  "ci95_points": [
+   -2.42,
+   1.64
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 58.6,
+    "arm": 62.6,
+    "diff": 4.0,
+    "ci95": [
+     0.47,
+     7.53
+    ],
+    "mcnemar_p": 0.0966,
+    "arm_only": 55,
+    "control_only": 38
+   },
+   "2": {
+    "control": 60.87,
+    "arm": 60.33,
+    "diff": -0.54,
+    "ci95": [
+     -4.2,
+     2.93
+    ],
+    "mcnemar_p": 0.6849,
+    "arm_only": 46,
+    "control_only": 51
+   },
+   "3": {
+    "control": 63.27,
+    "arm": 58.67,
+    "diff": -4.6,
+    "ci95": [
+     -8.13,
+     -1.0
+    ],
+    "mcnemar_p": 0.0197,
+    "arm_only": 37,
+    "control_only": 61
+   }
+  },
+  "missing_seeds": []
+ },
+ "R1_long": {
+  "claim": "R1-long fixed12: final - pooled initial reference",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 5.0,
+  "mean_points": 1.6,
+  "ci95_points": [
+   -0.88,
+   4.13
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 58.93,
+    "arm": 62.6,
+    "diff": 3.67,
+    "ci95": [
+     0.38,
+     6.95
+    ],
+    "mcnemar_p": 0.1606,
+    "arm_only": 50,
+    "control_only": 36
+   },
+   "2": {
+    "control": 58.93,
+    "arm": 60.33,
+    "diff": 1.4,
+    "ci95": [
+     -1.79,
+     4.66
+    ],
+    "mcnemar_p": 0.8323,
+    "arm_only": 46,
+    "control_only": 43
+   },
+   "3": {
+    "control": 58.93,
+    "arm": 58.67,
+    "diff": -0.26,
+    "ci95": [
+     -3.44,
+     2.94
+    ],
+    "mcnemar_p": 0.6646,
+    "arm_only": 40,
+    "control_only": 45
+   }
+  },
+  "seeds_excluding_zero": 1,
+  "bar_note": "prereg v3 R1 for M1: >= +5.0, CI > 0, >= 2 of 3 seeds individually > 0; the +3.0 pilot rule of addendum 11 is also shown",
+  "passes_at_3": false
+ },
+ "fixed12_minus_fixed6": {
+  "claim": "descriptive: fixed12 - fixed (6-round finals, same seeds, no bar)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": -0.09,
+  "ci95_points": [
+   -1.98,
+   1.78
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 59.8,
+    "arm": 62.6,
+    "diff": 2.8,
+    "ci95": [
+     -0.33,
+     6.0
+    ],
+    "mcnemar_p": 0.3019,
+    "arm_only": 43,
+    "control_only": 33
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 60.33,
+    "diff": 0.46,
+    "ci95": [
+     -3.2,
+     4.0
+    ],
+    "mcnemar_p": 1.0,
+    "arm_only": 51,
+    "control_only": 50
+   },
+   "3": {
+    "control": 62.2,
+    "arm": 58.67,
+    "diff": -3.53,
+    "ci95": [
+     -6.73,
+     -0.33
+    ],
+    "mcnemar_p": 0.0503,
+    "arm_only": 33,
+    "control_only": 52
+   }
+  }
+ },
+ "nonrec12_minus_nonrec6": {
+  "claim": "descriptive: nonrec12 - nonrec (6-round finals, same seeds, no bar)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": -6.44,
+  "ci95_points": [
+   -9.0,
+   -3.96
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 59.93,
+    "arm": 48.2,
+    "diff": -11.73,
+    "ci95": [
+     -16.0,
+     -7.53
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 39,
+    "control_only": 100
+   },
+   "2": {
+    "control": 60.4,
+    "arm": 55.4,
+    "diff": -5.0,
+    "ci95": [
+     -9.07,
+     -0.93
+    ],
+    "mcnemar_p": 0.0433,
+    "arm_only": 53,
+    "control_only": 77
+   },
+   "3": {
+    "control": 57.07,
+    "arm": 54.47,
+    "diff": -2.6,
+    "ci95": [
+     -6.53,
+     1.27
+    ],
+    "mcnemar_p": 0.3787,
+    "arm_only": 59,
+    "control_only": 70
+   }
+  }
+ },
+ "noise_check_n0_halves": {
+  "groups": [
+   [
+    "fixed12_s1",
+    "fixed12_s3",
+    "nonrec12_s2",
+    "onebig12_s1",
+    "onebig12_s3"
+   ],
+   [
+    "fixed12_s2",
+    "nonrec12_s1",
+    "nonrec12_s3",
+    "onebig12_s2"
+   ]
+  ],
+  "diff_points": -0.85,
+  "ci95": [
+   -1.83,
+   0.08
+  ]
+ },
+ "runs": {
+  "fixed12_s1": {
+   "retained": "r11c0",
+   "gate": 0.615,
+   "test": 62.6,
+   "n0": 59.2,
+   "rounds": 12,
+   "evals": 3
+  },
+  "fixed12_s2": {
+   "retained": "r10c0",
+   "gate": 0.655,
+   "test": 60.33,
+   "n0": 57.8,
+   "rounds": 12,
+   "evals": 3
+  },
+  "fixed12_s3": {
+   "retained": "r12c0",
+   "gate": 0.65,
+   "test": 58.67,
+   "n0": 58.8,
+   "rounds": 12,
+   "evals": 3
+  },
+  "nonrec12_s1": {
+   "retained": "r07c0",
+   "gate": 0.505,
+   "test": 48.2,
+   "n0": 58.8,
+   "rounds": 12,
+   "evals": 3
+  },
+  "nonrec12_s2": {
+   "retained": "r08c0",
+   "gate": 0.58,
+   "test": 55.4,
+   "n0": 59.4,
+   "rounds": 12,
+   "evals": 3
+  },
+  "nonrec12_s3": {
+   "retained": "r10c0",
+   "gate": 0.64,
+   "test": 54.47,
+   "n0": 59.0,
+   "rounds": 12,
+   "evals": 3
+  },
+  "onebig12_s1": {
+   "retained": "r01c0",
+   "gate": 0.7,
+   "test": 58.6,
+   "n0": 59.8,
+   "rounds": 1,
+   "evals": 3
+  },
+  "onebig12_s2": {
+   "retained": "r01c0",
+   "gate": 0.66,
+   "test": 60.87,
+   "n0": 58.6,
+   "rounds": 1,
+   "evals": 3
+  },
+  "onebig12_s3": {
+   "retained": "r01c0",
+   "gate": 0.6,
+   "test": 63.27,
+   "n0": 59.8,
+   "rounds": 1,
+   "evals": 3
+  }
+ }
+}

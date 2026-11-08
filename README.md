@@ -75,13 +75,15 @@ Environments used:
 
 Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
-## Results so far (2026-11-07)
+## Results so far (2026-11-08)
+
+**New (2026-11-08):** the registered 12-round read (addendum 27) is in: recursion vs no recursion **+7.8 points [+5.2, +10.5]**, bar met, because the non-recursive loop degrades over twelve rounds while the recursive loop holds its 6-round level; the gated loop still ties one-shot RL at equal compute (−0.4). Note: `docs/results/LONG12_READ_20261108.md`.
 
 Full map of the studies, protocol and conclusions: **`docs/EXPERIMENTS_AND_RESULTS.md`**. In short:
 
 | finding | evidence | strength |
 | --- | --- | --- |
-| the gated loop never degrades a VLA policy | 31/31 LIBERO-Goal runs end within noise of or above their start; the same BC recipe collapses 58.5% → 5.5% without the gate | hard |
+| the gated loop does not degrade a VLA policy at six rounds with recursive practice | 31/31 LIBERO-Goal runs end within noise of or above their start; the same BC recipe collapses 58.5% → 5.5% without the gate. Condition (12-round read): with practice from the frozen initial policy the loop drifts 4-11 points below its start over twelve rounds through gate-accepted versions | hard, with the stated condition |
 | verified feedback improves code world models | 1.5B CRUXEval-O +2.6 [0.6, 4.6] vs shuffled −0.2; 7B LCB-exec +5.8 [3.4, 8.2] | significant |
 | recursion helps at long horizon (code domain) | 8 rounds: fixed − nonrec +2.8 [1.2, 4.5]; 7B +2.9 / +4.5 | significant, replicated |
 | VLA loop gains are small and below the preregistered bars | loop +1.7 [−0.8, +4.2] (bar +5); recursion +1.7 [−0.3, +3.7] (bar +2); verifier +1.2 (bar +3); one-shot RL at equal compute −0.6 | directional |
