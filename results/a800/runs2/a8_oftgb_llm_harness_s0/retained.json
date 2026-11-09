@@ -1,0 +1,47 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "29ecab2109ff6fa0",
+    "note": "{\"why\": \"Keep the working GRPO setup but lower lr with more samples at the same temperature for lower-variance advantage estimates, and raise the budget so fewer mixed scenes are discarded.\", \"diff\": {\"curation.budget\": 1000, \"curriculum.cases\": 320, \"update.batch\": 128, \"update.lr\": 3e-05}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 1000,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 320,
+        "floor": 0.1
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 12,
+        "temperature": 1.2
+      },
+      "update": {
+        "batch": 128,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 3e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 400
+      }
+    },
+    "parent_id": "171294554cf91cc3"
+  },
+  "version": {
+    "id": "56b4732863093f3a8cb804247890165c1d0ead8a30a318592d24930ae0115bf9",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_oftgb_llm_harness_s0/ckpt-r06c0",
+    "parent_id": "d82122f082a350a20ed42d5856c6508b89b58117019929cc65d0fa8e8f77e57e"
+  }
+}
