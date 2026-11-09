@@ -1,0 +1,47 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "a0e327feb5b2d0ce",
+    "note": "{\"why\": \"Keep the working grpo setup, but lower temperature a bit to 1.0 for less noisy tries and use a smaller lr with more steps for a steadier update; the budget stays at 300 scenes.\", \"diff\": {\"solver.temperature\": 1.0, \"update.lr\": 2e-05, \"update.steps\": 400}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 300,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 192,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 12,
+        "temperature": 1.0
+      },
+      "update": {
+        "batch": 128,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 2e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 400
+      }
+    },
+    "parent_id": "3627f18559bf636f"
+  },
+  "version": {
+    "id": "8943b7f2319fb879b4b6b6a2d4236fc5a3835d8c3876108c964c21ed9ee132c3",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s2/ckpt-r06c0",
+    "parent_id": "cdf18fdaae3ae122ba3d81608d90e55868cae5010fca13f01cb11355e2a8856b"
+  }
+}
