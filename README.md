@@ -77,6 +77,8 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-09):** the self-repair study is read (addenda 24/26, 12 runs): from a recipe that collapses without the gate, a language-model meta level allowed to edit it brings the loop back to the hand-tuned level, **+2.65 points [+0.73, +4.58]** over the gate alone, under the preregistered +3 bar; blind numeric search over the same knobs is within +1.15 [−0.63, +2.92] of it. The gate alone prevents the collapse and holds the start. Note: `docs/results/SELFREPAIR_READ_20261109.md`.
+
 **New (2026-11-08):** the registered 12-round read (addendum 27) is in: recursion vs no recursion **+7.8 points [+5.2, +10.5]**, bar met, because the non-recursive loop degrades over twelve rounds while the recursive loop holds its 6-round level; the gated loop still ties one-shot RL at equal compute (−0.4). Note: `docs/results/LONG12_READ_20261108.md`.
 
 Full map of the studies, protocol and conclusions: **`docs/EXPERIMENTS_AND_RESULTS.md`**. In short:
@@ -89,7 +91,7 @@ Full map of the studies, protocol and conclusions: **`docs/EXPERIMENTS_AND_RESUL
 | VLA loop gains are small and below the preregistered bars | loop +1.7 [−0.8, +4.2] (bar +5); recursion +1.7 [−0.3, +3.7] (bar +2); verifier +1.2 (bar +3); one-shot RL at equal compute −0.6 | directional |
 | a meta level does not beat a working fixed procedure | four R4 arms within ±1.2; v2 study −0.27 / +0.30; mechanism: the loop plateaus under every program | null, explained |
 | a published VLA-RL number is inflated by training on the test states | +16.8 [9.8, 23.4], replicated +16.0 | significant |
-| can the meta level repair a failing procedure? | self-repair study, 9/12 runs done, sealed test read 2026-11-08 | pending |
+| can the meta level repair a failing procedure? | self-repair study (12 runs): llm_harness − gate-only +2.65 [+0.73, +4.58], bar +3 missed; vs numeric search +1.15 (CI incl. 0); repaired loop ties the hand-tuned loop (+0.3) | significant, under its bar |
 
 Every number traces to a file under `results/` and a pre-registration under `docs/prereg/`; the independent
 re-scorer agrees with the engine on 99.6-100% of code-domain test records.

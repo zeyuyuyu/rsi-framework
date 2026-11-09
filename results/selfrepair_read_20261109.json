@@ -1,0 +1,659 @@
+{
+ "mode": {
+  "mode": "final",
+  "pairing": "within platform: seed 0 cavin, seeds 1-3 Yangquan"
+ },
+ "S1_seeds0to3": {
+  "claim": "S1 llm_harness - fixed (seeds 0-3)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 2.65,
+  "ci95_points": [
+   0.73,
+   4.58
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 57.4,
+    "arm": 60.87,
+    "diff": 3.47,
+    "ci95": [
+     -0.4,
+     7.27
+    ],
+    "mcnemar_p": 0.0594,
+    "arm_only": 67,
+    "control_only": 46
+   },
+   "1": {
+    "control": 56.07,
+    "arm": 60.13,
+    "diff": 4.06,
+    "ci95": [
+     0.53,
+     7.67
+    ],
+    "mcnemar_p": 0.0298,
+    "arm_only": 58,
+    "control_only": 36
+   },
+   "2": {
+    "control": 58.67,
+    "arm": 61.27,
+    "diff": 2.6,
+    "ci95": [
+     -0.67,
+     5.87
+    ],
+    "mcnemar_p": 0.2354,
+    "arm_only": 49,
+    "control_only": 37
+   },
+   "3": {
+    "control": 57.47,
+    "arm": 57.93,
+    "diff": 0.46,
+    "ci95": [
+     -3.27,
+     4.13
+    ],
+    "mcnemar_p": 0.777,
+    "arm_only": 58,
+    "control_only": 54
+   }
+  }
+ },
+ "S1_seeds1to3": {
+  "claim": "S1 llm_harness - fixed (seeds 1-3, Yangquan)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 2.38,
+  "ci95_points": [
+   0.29,
+   4.47
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 56.07,
+    "arm": 60.13,
+    "diff": 4.06,
+    "ci95": [
+     0.53,
+     7.67
+    ],
+    "mcnemar_p": 0.0298,
+    "arm_only": 58,
+    "control_only": 36
+   },
+   "2": {
+    "control": 58.67,
+    "arm": 61.27,
+    "diff": 2.6,
+    "ci95": [
+     -0.67,
+     5.87
+    ],
+    "mcnemar_p": 0.2354,
+    "arm_only": 49,
+    "control_only": 37
+   },
+   "3": {
+    "control": 57.47,
+    "arm": 57.93,
+    "diff": 0.46,
+    "ci95": [
+     -3.27,
+     4.13
+    ],
+    "mcnemar_p": 0.777,
+    "arm_only": 58,
+    "control_only": 54
+   }
+  }
+ },
+ "S2_seeds0to3": {
+  "claim": "S2 llm_harness - full (seeds 0-3, reported with CI, no bar)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 1.15,
+  "ci95_points": [
+   -0.63,
+   2.92
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 58.8,
+    "arm": 60.87,
+    "diff": 2.07,
+    "ci95": [
+     -1.53,
+     5.73
+    ],
+    "mcnemar_p": 0.5467,
+    "arm_only": 53,
+    "control_only": 46
+   },
+   "1": {
+    "control": 56.73,
+    "arm": 60.13,
+    "diff": 3.4,
+    "ci95": [
+     -0.27,
+     7.0
+    ],
+    "mcnemar_p": 0.0315,
+    "arm_only": 59,
+    "control_only": 37
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 61.27,
+    "diff": 1.4,
+    "ci95": [
+     -2.0,
+     4.87
+    ],
+    "mcnemar_p": 0.6785,
+    "arm_only": 49,
+    "control_only": 44
+   },
+   "3": {
+    "control": 60.2,
+    "arm": 57.93,
+    "diff": -2.27,
+    "ci95": [
+     -6.0,
+     1.33
+    ],
+    "mcnemar_p": 0.4597,
+    "arm_only": 54,
+    "control_only": 63
+   }
+  }
+ },
+ "S2_seeds1to3": {
+  "claim": "S2 llm_harness - full (seeds 1-3, Yangquan, no bar)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 0.84,
+  "ci95_points": [
+   -1.2,
+   2.91
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 56.73,
+    "arm": 60.13,
+    "diff": 3.4,
+    "ci95": [
+     -0.27,
+     7.0
+    ],
+    "mcnemar_p": 0.0315,
+    "arm_only": 59,
+    "control_only": 37
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 61.27,
+    "diff": 1.4,
+    "ci95": [
+     -2.0,
+     4.87
+    ],
+    "mcnemar_p": 0.6785,
+    "arm_only": 49,
+    "control_only": 44
+   },
+   "3": {
+    "control": 60.2,
+    "arm": 57.93,
+    "diff": -2.27,
+    "ci95": [
+     -6.0,
+     1.33
+    ],
+    "mcnemar_p": 0.4597,
+    "arm_only": 54,
+    "control_only": 63
+   }
+  }
+ },
+ "full_minus_fixed": {
+  "claim": "secondary: full - fixed (seeds 0-3, no bar)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 1.5,
+  "ci95_points": [
+   -0.33,
+   3.38
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 57.4,
+    "arm": 58.8,
+    "diff": 1.4,
+    "ci95": [
+     -2.47,
+     5.2
+    ],
+    "mcnemar_p": 0.2391,
+    "arm_only": 68,
+    "control_only": 54
+   },
+   "1": {
+    "control": 56.07,
+    "arm": 56.73,
+    "diff": 0.66,
+    "ci95": [
+     -2.67,
+     4.13
+    ],
+    "mcnemar_p": 1.0,
+    "arm_only": 45,
+    "control_only": 45
+   },
+   "2": {
+    "control": 58.67,
+    "arm": 59.87,
+    "diff": 1.2,
+    "ci95": [
+     -1.87,
+     4.33
+    ],
+    "mcnemar_p": 0.4944,
+    "arm_only": 42,
+    "control_only": 35
+   },
+   "3": {
+    "control": 57.47,
+    "arm": 60.2,
+    "diff": 2.73,
+    "ci95": [
+     -0.8,
+     6.4
+    ],
+    "mcnemar_p": 0.2503,
+    "arm_only": 61,
+    "control_only": 48
+   }
+  }
+ },
+ "S3_llm_vs_tuned": {
+  "claim": "S3 descriptive: llm_harness - hand-tuned GRPO fixed (seeds 0-3, no bar)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 0.28,
+  "ci95_points": [
+   -1.43,
+   1.97
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 57.2,
+    "arm": 60.87,
+    "diff": 3.67,
+    "ci95": [
+     0.33,
+     7.0
+    ],
+    "mcnemar_p": 0.1374,
+    "arm_only": 52,
+    "control_only": 37
+   },
+   "1": {
+    "control": 59.8,
+    "arm": 60.13,
+    "diff": 0.33,
+    "ci95": [
+     -3.13,
+     3.8
+    ],
+    "mcnemar_p": 0.6785,
+    "arm_only": 49,
+    "control_only": 44
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 61.27,
+    "diff": 1.4,
+    "ci95": [
+     -2.0,
+     4.8
+    ],
+    "mcnemar_p": 0.6879,
+    "arm_only": 52,
+    "control_only": 47
+   },
+   "3": {
+    "control": 62.2,
+    "arm": 57.93,
+    "diff": -4.27,
+    "ci95": [
+     -8.13,
+     -0.4
+    ],
+    "mcnemar_p": 0.1014,
+    "arm_only": 51,
+    "control_only": 70
+   }
+  }
+ },
+ "S3_fixed_vs_tuned": {
+  "claim": "S3 descriptive: gate-only fixed (BC start) - hand-tuned GRPO fixed (seeds 0-3, no bar)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": -2.37,
+  "ci95_points": [
+   -4.12,
+   -0.62
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 57.2,
+    "arm": 57.4,
+    "diff": 0.2,
+    "ci95": [
+     -3.53,
+     3.93
+    ],
+    "mcnemar_p": 0.6338,
+    "arm_only": 52,
+    "control_only": 58
+   },
+   "1": {
+    "control": 59.8,
+    "arm": 56.07,
+    "diff": -3.73,
+    "ci95": [
+     -7.0,
+     -0.53
+    ],
+    "mcnemar_p": 0.0748,
+    "arm_only": 32,
+    "control_only": 49
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 58.67,
+    "diff": -1.2,
+    "ci95": [
+     -4.33,
+     1.93
+    ],
+    "mcnemar_p": 0.4999,
+    "arm_only": 36,
+    "control_only": 43
+   },
+   "3": {
+    "control": 62.2,
+    "arm": 57.47,
+    "diff": -4.73,
+    "ci95": [
+     -8.2,
+     -1.33
+    ],
+    "mcnemar_p": 0.025,
+    "arm_only": 37,
+    "control_only": 60
+   }
+  }
+ },
+ "noise_check_n0_halves": {
+  "yq": {
+   "groups": [
+    [
+     "fixed_s1",
+     "fixed_s3",
+     "full_s2",
+     "llm_harness_s1",
+     "llm_harness_s3"
+    ],
+    [
+     "fixed_s2",
+     "full_s1",
+     "full_s3",
+     "llm_harness_s2"
+    ]
+   ],
+   "diff_points": -0.44,
+   "ci95": [
+    -1.47,
+    0.56
+   ]
+  },
+  "cavin": {
+   "groups": [
+    [
+     "fixed_s0",
+     "llm_harness_s0"
+    ],
+    [
+     "full_s0"
+    ]
+   ],
+   "diff_points": -0.2,
+   "ci95": [
+    -2.1,
+    1.7
+   ]
+  }
+ },
+ "runs": {
+  "fixed_s0": {
+   "retained": "r06c0",
+   "gate": 0.645,
+   "test": 57.4,
+   "n0": 57.2,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    3,
+    4,
+    6
+   ]
+  },
+  "fixed_s1": {
+   "retained": "r06c0",
+   "gate": 0.6,
+   "test": 56.07,
+   "n0": 58.8,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    4,
+    6
+   ]
+  },
+  "fixed_s2": {
+   "retained": "n0",
+   "gate": null,
+   "test": 58.67,
+   "n0": 58.4,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": []
+  },
+  "fixed_s3": {
+   "retained": "r05c0",
+   "gate": 0.63,
+   "test": 57.47,
+   "n0": 59.8,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    3,
+    4,
+    5
+   ]
+  },
+  "full_s0": {
+   "retained": "r04c0",
+   "gate": 0.615,
+   "test": 58.8,
+   "n0": 57.8,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    2,
+    3,
+    4
+   ]
+  },
+  "full_s1": {
+   "retained": "r05c1",
+   "gate": 0.625,
+   "test": 56.73,
+   "n0": 58.6,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    3,
+    4,
+    5
+   ]
+  },
+  "full_s2": {
+   "retained": "r06c0",
+   "gate": 0.65,
+   "test": 59.87,
+   "n0": 59.0,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "full_s3": {
+   "retained": "r06c0",
+   "gate": 0.61,
+   "test": 60.2,
+   "n0": 58.4,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "llm_harness_s0": {
+   "retained": "r06c0",
+   "gate": 0.685,
+   "test": 60.87,
+   "n0": 58.8,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "llm_harness_s1": {
+   "retained": "r05c1",
+   "gate": 0.655,
+   "test": 60.13,
+   "n0": 58.6,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  "llm_harness_s2": {
+   "retained": "r06c0",
+   "gate": 0.685,
+   "test": 61.27,
+   "n0": 59.0,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "llm_harness_s3": {
+   "retained": "r06c1",
+   "gate": 0.645,
+   "test": 57.93,
+   "n0": 59.0,
+   "rounds": 6,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    3,
+    4,
+    5,
+    6
+   ]
+  }
+ }
+}

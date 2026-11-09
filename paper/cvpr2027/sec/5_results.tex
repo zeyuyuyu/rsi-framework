@@ -83,29 +83,29 @@ We organise the results around five questions. Every number below comes from a p
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{fig_selfrepair}
-  \caption{\textbf{Self-repair study, gate level.} Left: the starting BC recipe collapses when every version is accepted. Right: under the gate the same recipe never falls below its start (\texttt{fixed}); both proposers find repairs that reach 64--65\% at the gate; the arms are within gate noise of each other, so the sealed test decides S1 and S2. Runs still in progress are not shown.}
+  \caption{\textbf{Self-repair study, gate level.} Left: the starting BC recipe collapses when every version is accepted. Right: under the gate the same recipe never falls below its start (\texttt{fixed}); both proposers find repairs; at the gate the LLM arm looks 4--8 points ahead, on the sealed test it is $+2.65$ (\cref{tab:selfrepair}).}
   \label{fig:selfrepair}
 \end{figure*}
 
 \begin{table*}[t]
   \centering
   \small
-  \caption{\textbf{Self-repair study, gate-level record} (retained version and its gate, \%; what the meta level did). Sealed test results: \pending.}
+  \caption{\textbf{Self-repair study}: retained version, its gate / its sealed-test final (\%, three evaluations), and what the meta level did. Registered read: S1 $=$ \texttt{llm\_harness} $-$ \texttt{fixed} $= +2.65$ $[+0.73, +4.58]$, bar $+3$ missed; S2 $=$ \texttt{llm\_harness} $-$ \texttt{full} $= +1.15$ $[-0.63, +2.92]$; S3 $=$ \texttt{llm\_harness} $-$ hand-tuned GRPO loop $= +0.28$ $[-1.43, +1.97]$.}
   \label{tab:selfrepair}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{@{}llll@{}}
     \toprule
     seed & \texttt{fixed} (gate only) & \texttt{full} (numeric search) & \texttt{llm\_harness} \\
     \midrule
-    1 (Y) & r6, 60.0; BC unchanged & r5, 62.5; BC unchanged & \textit{running}; LLM switched to GRPO in round 1, kept (65.5 by r3) \\
-    2 (Y) & n0 (all 6 refused) & r6, 65.0; switched to GRPO & \textit{running}; LLM switched to GRPO in round 1, kept (64.5, 64.0, 65.5) \\
-    3 (Y) & r5, 63.0; BC unchanged & r6, 61.0; BC, rollout-temp.\ likelihood & r6, 64.5; GRPO refused twice, BC repaired: $T$ 1.6$\to$1.3 \\
-    0 (A) & r6, 64.5; BC unchanged & r4, 64.0 (rounds 5--6 refused) & \textit{running}; LLM's GRPO child kept in round 2 (65.5 vs 62.5) \\
+    1 (Y) & r6, 60.0 / 56.1; BC unchanged & r5, 62.5 / 56.7; BC unchanged & r5, 65.5 / 60.1; LLM switched to GRPO in round 1, kept \\
+    2 (Y) & n0 / 58.7; all 6 refused & r6, 65.0 / 59.9; switched to GRPO & r6, 68.5 / 61.3; LLM switched to GRPO in round 1, kept \\
+    3 (Y) & r5, 63.0 / 57.5; BC unchanged & r6, 61.0 / 60.2; BC, rollout-temp.\ likelihood & r6, 64.5 / 57.9; GRPO refused twice, BC repaired: $T$ 1.6$\to$1.3 \\
+    0 (A) & r6, 64.5 / 57.4; BC unchanged & r4, 61.5 / 58.8; BC unchanged (rounds 5--6 refused) & r6, 68.5 / 60.9; LLM's GRPO child kept in round 2, lineage re-tuned by the LLM \\
     \bottomrule
   \end{tabular}}
 \end{table*}
 
-\textbf{Finding 5 (gate-level, not a claim): the gate alone prevents the collapse, and the LLM diagnoses the failure unprompted.} \Cref{fig:selfrepair} and \cref{tab:selfrepair} give the record. No \texttt{fixed} run falls below its start; one seed is held at the initial policy for all six rounds and the other three accept small BC gains (60--64.5\%). The LLM's first-round diagnoses on all four seeds name the mismatch between the sampling and likelihood temperatures and the missing failure signal (verbatim in the released logs), and its first proposal on every seed is the same: switch to GRPO on mixed-outcome scenes at a lower temperature. The gate kept that switch on three seeds (gates 64.5--65.5\%) and refused it twice on the fourth, where the LLM then repaired BC instead (lower sampling temperature; retained gate 64.5\%). Numeric search also finds repairs (a GRPO switch on one seed, the temperature-matched BC likelihood on another). At the gate all arms end within noise of each other (60--65.5\%), so S1 and S2 will be decided by the sealed test. We looked for a second failing scenario with six gate-only pilots (four extreme GRPO/BC recipes, both platforms); none degraded under the gate, so no second scenario was registered.
+\textbf{Finding 5: when the recipe fails, a meta level repairs it to the hand-tuned level and no further; S1 misses its bar.} The registered read (finals averaged over three evaluations, seed-averaged paired bootstrap over seeds 0--3) gives S1 $= +2.65$ points $[+0.73, +4.58]$: positive on three seeds, individually significant on one, CI above zero, but under the $+3$ bar, so the registered claim is not made. S2 $= +1.15$ $[-0.63, +2.92]$ and \texttt{full} $-$ \texttt{fixed} $= +1.50$ $[-0.33, +3.38]$: the diagnosis cannot be told apart from blind search over the same knobs, the case the preregistration named in advance (``the loop repairs itself when the space contains the repair''). S3: the repaired loop ends level with the hand-tuned GRPO loop ($+0.28$ $[-1.43, +1.97]$), while the gate-only loop from the failing recipe ends below it ($-2.37$ $[-4.12, -0.62]$). The record explains the numbers. The gate alone holds the policy at its start (\texttt{fixed} finals 56.1--58.7\% against initial tests of 57.2--59.8\%) and nothing more. The LLM's first-round diagnoses on all four seeds name the mismatch between the sampling and likelihood temperatures and the missing failure signal (verbatim in the released logs), and its first proposal on every seed is the same: switch to GRPO on mixed-outcome scenes at a lower temperature. The gate kept that switch in round 1--2 on three seeds and refused it twice on the fourth, where the LLM repaired BC instead (sampling temperature $1.6 \to 1.3$). Numeric search also reaches a repair, on two seeds and only in round 6. Both repaired arms then gain what the hand-tuned GRPO loop gains, one to two points. The LLM's advantage is therefore speed, not the end result. One more lesson is in the table: retained gates exceed the finals by 5--8 points on the LLM arm and 4--7 on \texttt{fixed}, because an arm that accepts a candidate almost every round carries more winner's curse in its retained gate; gate-level comparisons between arms are biased in favour of the arm that edits more. We looked for a second failing scenario with six gate-only pilots (four extreme GRPO/BC recipes, both platforms); none degraded under the gate, so no second scenario was registered.
 
 \subsection{RQ4: Does the picture transfer to a second domain?}
 \label{sec:rq4}
