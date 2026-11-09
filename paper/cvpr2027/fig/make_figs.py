@@ -249,6 +249,83 @@ def fig_inflation():
     save(fig, "fig_inflation.pdf")
 
 
+# ---------------------------------------------------------------- framework diagram (replaces the TikZ figure; matplotlib only)
+def fig_framework():
+    from matplotlib.patches import FancyBboxPatch
+    fig, ax = plt.subplots(figsize=(11.8, 5.0))
+    ax.set_xlim(-4.3, 19.3); ax.set_ylim(-4.15, 4.45); ax.axis("off")
+    OBJ, GATE, META, CTRL = "#eef2fb", "#fdecec", "#eaf6ea", "#fffbe6"
+
+    def box(x, y, w, h, text, fc, fs=9, bold_first=True, ha="center", **kw):
+        ax.add_patch(FancyBboxPatch((x - w / 2, y - h / 2), w, h, boxstyle="round,pad=0.02,rounding_size=0.12",
+                                    fc=fc, ec="black", lw=0.9, zorder=2))
+        if bold_first:
+            first, _, rest = text.partition("\n")
+            ax.text(x, y + (0.19 if rest else 0), first, ha="center", va="center", fontsize=fs, weight="bold", zorder=3)
+            if rest:
+                ax.text(x, y - 0.21, rest, ha="center", va="center", fontsize=fs - 0.5, zorder=3, linespacing=1.15)
+        else:
+            ax.text(x, y, text, ha=ha, va="center", fontsize=fs, zorder=3, linespacing=1.3, **kw)
+
+    def arrow(p, q, dashed=False, lw=1.3):
+        ax.annotate("", xy=q, xytext=p, zorder=1,
+                    arrowprops=dict(arrowstyle="-|>", lw=lw, color="black", ls="--" if dashed else "-",
+                                    mutation_scale=12, shrinkA=0, shrinkB=0))
+
+    def poly(pts, dashed=False, lw=1.3):
+        for a, b in zip(pts[:-2], pts[1:-1]):
+            ax.plot([a[0], b[0]], [a[1], b[1]], color="black", lw=lw, ls="--" if dashed else "-", zorder=1)
+        arrow(pts[-2], pts[-1], dashed=dashed, lw=lw)
+
+    # object level
+    H = 0.95
+    stages = [(0.0, 2.6, "Propose\nfresh scenes"), (3.3, 2.6, "Attempt\n$K$ tries at $T$"),
+              (6.9, 3.3, "Verify\noracle success flag"), (10.8, 3.7, "Curate\nmixed groups / verified"),
+              (14.8, 3.6, "Update\nLoRA: GRPO / BC / SFT")]
+    for x, w, t in stages:
+        box(x, 3.0, w, H, t, OBJ)
+    for (x1, w1, _), (x2, w2, _) in zip(stages[:-1], stages[1:]):
+        arrow((x1 + w1 / 2, 3.0), (x2 - w2 / 2, 3.0))
+    ax.text(7.2, 3.95, "object level: one inner step, three per round, candidate $\\theta'$ from the retained $\\theta^*$",
+            ha="center", va="center", fontsize=9, style="italic")
+
+    # gate / audit / test
+    box(10.6, 1.0, 5.4, 1.0, "Gate: 200 fresh paired placements\naccept iff gate$(\\theta') \\geq$ gate$(\\theta^*)$", GATE, fs=9)
+    box(14.7, 1.0, 2.4, 1.0, "Audit (200)\nnever decides", GATE)
+    box(17.6, 1.0, 2.8, 1.0, "Test (official 500)\nsealed, read once", "#f8caca")
+    poly([(14.8, 2.52), (14.8, 2.05), (10.6, 2.05), (10.6, 1.5)])
+    ax.text(12.8, 1.85, "candidate $\\theta'$", ha="center", va="top", fontsize=7.5)
+    arrow((13.3, 1.0), (13.5, 1.0), dashed=True)
+    arrow((15.9, 1.0), (16.2, 1.0), dashed=True)
+    # recursion loop back to Propose
+    poly([(7.9, 1.0), (-2.2, 1.0), (-2.2, 3.0), (-1.3, 3.0)])
+    ax.text(-2.45, 2.0, "retained $\\theta^*$:\nthe next round\npractises with it\n(recursion)", ha="right", va="center",
+            fontsize=7.5, linespacing=1.25)
+
+    # meta level
+    box(1.9, -1.0, 4.6, 1.0, "Program $P$ (JSON)\ncurriculum / solver / curation / update", META)
+    box(9.4, -1.0, 6.6, 1.0, "Meta proposer: fixed $\\cdot$ numeric search $\\cdot$ LLM\nreads gate records (never audit or test)", META)
+    arrow((6.1, -1.0), (4.2, -1.0))
+    ax.text(5.15, -0.72, "$c{-}1$ edited\ncopies", ha="center", va="bottom", fontsize=7.5, linespacing=1.1)
+    poly([(1.9, -0.5), (1.9, 0.2), (3.3, 0.2), (3.3, 2.52)])
+    ax.text(3.45, 1.3, "sets every knob of the loop", ha="left", va="bottom", fontsize=7.5)
+    poly([(10.6, 0.5), (10.6, 0.15), (9.4, 0.15), (9.4, -0.5)], dashed=True)
+    ax.text(10.0, 0.07, "gate record", ha="center", va="top", fontsize=7.5)
+    ax.text(6.5, -2.05, "meta level: the program is versioned; a program is kept only when its child wins the gate",
+            ha="center", va="center", fontsize=9, style="italic")
+
+    # controls strip
+    ax.add_patch(FancyBboxPatch((-4.0, -3.95), 22.9, 1.3, boxstyle="round,pad=0.02,rounding_size=0.12",
+                                fc=CTRL, ec="black", lw=0.9, zorder=2))
+    ax.text(-3.8, -3.3, "Controls,\none switch each:", fontsize=9, weight="bold", ha="left", va="center", zorder=3, linespacing=1.2)
+    ax.text(-0.9, -3.05, "$\\mathtt{nonrec}$ = propose with the initial $\\theta_0$;   $\\mathtt{shuffled}$ = permute the success labels;   "
+            "$\\mathtt{onebig}$ = one round with the full budget;", fontsize=8.5, ha="left", va="center", zorder=3)
+    ax.text(-0.9, -3.55, "$\\mathtt{fixed}$ / $\\mathtt{full}$ / $\\mathtt{llm}$ = meta proposer off / numeric search / LLM.",
+            fontsize=8.5, ha="left", va="center", zorder=3)
+    fig.subplots_adjust(0, 0, 1, 1)
+    save(fig, "fig_framework.pdf")
+
+
 if __name__ == "__main__":
     fig_teaser()
     fig_claims()
@@ -257,3 +334,4 @@ if __name__ == "__main__":
     fig_selfrepair()
     fig_code()
     fig_inflation()
+    fig_framework()

@@ -73,35 +73,7 @@ arm & change in \cref{alg:loop} & isolates \\
 
 \begin{figure*}[t]
   \centering
-  \resizebox{\textwidth}{!}{%
-  \begin{tikzpicture}[x=1cm, y=1cm, font=\small,
-      box/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, minimum height=9mm},
-      obj/.style={box, fill=blue!6}, gate/.style={box, fill=red!6}, meta/.style={box, fill=green!8},
-      arr/.style={-{Latex[length=2mm]}, thick}]
-    \node[obj, minimum width=2.6cm] (prop) at (0,3) {\textbf{Propose}\\fresh scenes};
-    \node[obj, minimum width=2.6cm] (att) at (3.3,3) {\textbf{Attempt}\\$K$ tries at $T$};
-    \node[obj, minimum width=2.9cm] (ver) at (6.7,3) {\textbf{Verify}\\oracle success flag};
-    \node[obj, minimum width=3.0cm] (cur) at (10.2,3) {\textbf{Curate}\\mixed groups / verified};
-    \node[obj, minimum width=3.0cm] (upd) at (13.8,3) {\textbf{Update}\\LoRA: GRPO / BC / SFT};
-    \draw[arr] (prop) -- (att); \draw[arr] (att) -- (ver); \draw[arr] (ver) -- (cur); \draw[arr] (cur) -- (upd);
-    \node[font=\small\itshape] at (6.9,4.0) {object level: one inner step, three per round, candidate $\theta'$ from the retained $\theta^\star$};
-    \node[gate, minimum width=4.6cm] (gate) at (10.2,1) {\textbf{Gate}: 200 fresh paired placements\\accept iff gate$(\theta') \ge$ gate$(\theta^\star)$};
-    \node[gate, minimum width=2.6cm] (audit) at (14.0,1) {\textbf{Audit} (200)\\never decides};
-    \node[gate, minimum width=2.6cm, fill=red!15] (test) at (17.0,1) {\textbf{Test} (official 500)\\sealed, read once};
-    \draw[arr] (upd.south) -- ++(0,-0.45) -| node[pos=0.25, below, font=\scriptsize] {candidate $\theta'$} (gate.north);
-    \draw[arr, dashed] (gate.east) -- (audit.west);
-    \draw[arr, dashed] (audit.east) -- (test.west);
-    \draw[arr] (gate.west) -- (-2.2,1) -- (-2.2,3) -- (prop.west);
-    \node[align=right, anchor=east, font=\scriptsize] at (-2.5,2.0) {retained $\theta^\star$:\\the next round\\practises with it\\(\textbf{recursion})};
-    \node[meta, minimum width=4.6cm] (prog) at (1.9,-1) {\textbf{Program} $P$ (JSON)\\curriculum / solver / curation / update};
-    \node[meta, minimum width=5.6cm] (mp) at (8.9,-1) {\textbf{Meta proposer}: fixed $\cdot$ numeric search $\cdot$ LLM\\reads gate records (never audit or test)};
-    \draw[arr] (mp) -- node[above, align=center, font=\scriptsize] {$c{-}1$ edited\\copies} (prog);
-    \draw[arr] (prog.north) -- ++(0,0.7) -| node[pos=0.2, above, font=\scriptsize] {sets every knob of the loop} (att.south);
-    \draw[arr, dashed] (gate.south) -- ++(0,-0.35) -| node[pos=0.25, below, font=\scriptsize] {gate record} (mp.north);
-    \node[font=\small\itshape] at (6.0,-2.1) {meta level: the program is versioned; a program is kept only when its child wins the gate};
-    \node[box, fill=yellow!10, text width=17.5cm, align=left, font=\small] at (7.5,-3.2)
-      {\textbf{Controls, one switch each:}\; \texttt{nonrec} = propose with the initial $\theta_0$;\; \texttt{shuffled} = permute success labels;\; \texttt{onebig} = one round with the full budget;\; \texttt{fixed} / \texttt{full} / \texttt{llm} = meta proposer off / numeric / LLM.};
-  \end{tikzpicture}}
+  \includegraphics[width=\textwidth]{fig_framework}
   \caption{\textbf{The framework.} One engine, every ingredient a switch. The object loop practises on fresh scenes with the latest policy; the gate keeps a candidate only if it does not regress on paired held-out placements; the meta level versions the training program and may let a numeric search or an LLM edit it inside a declared space, seeing only gate records. Controls flip one switch each.}
   \label{fig:framework}
 \end{figure*}
