@@ -681,6 +681,90 @@ class ProgramTests(unittest.TestCase):
         prop3 = LLMMetaProposer(d.edit_space, d.validate_program, ns, broken, "m")
         self.assertEqual(len(prop3.propose(Program.make(p), archive, None, None, 2, random.Random(2))), 2)
 
+    def test_meta_v3_harness_workspace_tools_memory_and_fallback(self):
+        from rsi.meta.harness import HarnessMetaProposer, build_workspace, node_record, records
+        d = LiberoDomain("libero_goal", range(10))
+        p = d.validate_program({"curriculum": {"cases": 64}, "solver": {"temperature": 1.6}, "update": {"lr": 3e-5}})
+        tmp = Path(tempfile.mkdtemp())
+        archive = Archive(tmp / "a.jsonl")
+        archive.add(Node("n0", 0, Version("i", "/b"), Program.make(p), None, gate=0.6, audit=0.123457, accepted=True))
+        inner = [dict(step=0, trained=True, signal=dict(mixed_fraction=0.55, task_rates={"0": 0.0, "1": 0.9}),
+                      curation=dict(attempts=480, verified_attempts=264, items=101, cases=60))]
+        q = json.loads(json.dumps(p)); q["update"]["lr"] = 5e-5
+        archive.add(Node("r01c0", 1, Version("v1", "/c"), Program.make(p), "n0", gate=0.635, parent_gate=0.61,
+                         audit=0.987653, accepted=True,
+                         signal=dict(mixed_fraction=0.55, inner=inner, gate_tasks={"0": 0.0, "1": 0.95},
+                                     parent_gate_tasks={"0": 0.05, "1": 0.9}),
+                         receipt=dict(optimizer_steps=100, details=dict(loss_first=0.06, loss_last=0.03))))
+        archive.add(Node("r01c1", 1, Version("v2", "/d"), Program.make(q, None, "llm", json.dumps(dict(why="faster"))),
+                         "n0", gate=0.58, parent_gate=0.61, signal=dict(inner=inner),
+                         receipt=dict(optimizer_steps=100, details=dict(loss_first=0.06, loss_last=0.09))))
+        rows = records(archive)
+        self.assertEqual(rows[1]["loss_last"], 0.03)                 # the receipt's loss reaches the meta level
+        self.assertAlmostEqual(rows[1]["gate_change"], 0.025)       # against the parent on the same gate set
+        self.assertEqual(rows[2]["changes"], {"update.lr": 5e-5})
+        self.assertEqual(rows[2]["why"], "faster")
+        mem = tmp / "mem"; (mem / "prior").mkdir(parents=True)
+        (mem / "playbook.md").write_text("lesson: bc at unit temperature collapses\n")
+        (mem / "prior" / "INDEX.tsv").write_text("run\tsuite\nold_run\tlibero_goal\n")
+        (mem / "prior" / "old_run.tsv").write_text("round\tnode\n1\tr01c0\n")
+        ns = NumericSearch(d.harness_space, d.validate_program, d.coupling)
+        good = json.loads(json.dumps(p)); good["update"]["lr"] = 2e-5
+        bad = json.loads(json.dumps(p)); bad["update"]["operator"] = "bc"
+        seen, script = [], [
+            json.dumps(dict(calls=[dict(tool="read", path="run/overview.tsv"), dict(tool="grep", pattern="collapses",
+                                                                                   path="memory"),
+                                   dict(tool="ls", path="memory/prior"), dict(tool="rm", path="x"),
+                                   dict(tool="read", path="run/nodes/r01c1.json")])),      # 5th call is cut
+            "not json at all",
+            json.dumps(dict(diagnosis="lr edit lost 3 points", note="tried lr 5e-5: no",
+                            proposals=[dict(why="x", procedure=bad), dict(why="slower", procedure=good)]))]
+        def client(prompt, temperature, max_tokens):
+            seen.append(prompt)
+            return script[len(seen) - 1], dict(prompt_tokens=10, completion_tokens=5)
+        out_dir = tmp / "run"; out_dir.mkdir()
+        prop = HarnessMetaProposer(d.harness_space, d.validate_program, ns, client, "m", out_dir, memory_dir=mem,
+                                   context=dict(rounds=6, inner_steps=3, gate_per_task=20, n_tasks=10, children=2))
+        out = prop.propose(Program.make(p), archive, None, None, 2, random.Random(0))
+        self.assertEqual([o.author for o in out], ["llm", "search"])            # the invalid proposal fell back
+        self.assertEqual(out[0].params["update"]["lr"], 2e-5)
+        self.assertEqual(len(seen), 3)
+        self.assertIn("memory/playbook.md:1:lesson: bc at unit temperature collapses", seen[1])
+        self.assertIn("unknown tool: rm", seen[1])
+        self.assertIn("old_run.tsv", seen[1])
+        self.assertNotIn('"faster"', seen[1])                                    # the fifth call of a turn is not run
+        self.assertIn("not a JSON object", seen[2])
+        for prompt in seen:                                                      # audit never reaches the LLM
+            for secret in ("0.123457", "0.987653", "audit"):
+                self.assertNotIn(secret, prompt)
+        self.assertIn("tried lr 5e-5: no", (out_dir / "meta-notes.md").read_text())
+        log = [json.loads(l) for l in (out_dir / "meta-llm.jsonl").read_text().splitlines()]
+        self.assertEqual((len(log), len(log[0]["turns"]), log[0]["usage"]["prompt_tokens"]), (1, 3, 30))
+        ws = build_workspace(archive, Program.make(p), prop.memory_files, prop._notes())
+        self.assertIn("tried lr 5e-5: no", ws.read("memory/notes.md"))           # the note is there next round
+        self.assertIn("update.lr=5e-05\t1\t-0.030", ws.read("run/ledger.tsv"))
+        self.assertIn("no such file", ws.read("run/nodes/zz.json"))
+        from rsi.meta.harness import parse_reply
+        tags = ('<invoke name="read">\n<parameter name="path">run/overview.tsv</parameter>\n</invoke>\n' * 3 +
+                '<invoke name="grep"><parameter name="pattern">bc</parameter><parameter name="path">memory</parameter>'
+                '</invoke><invoke name="rm"><parameter name="path">x</parameter></invoke>')
+        self.assertEqual(parse_reply(tags)[1], [dict(tool="read", path="run/overview.tsv"),      # repeats collapse
+                                                dict(tool="grep", pattern="bc", path="memory")])
+        self.assertEqual(parse_reply('{"proposals": [], "calls": [{"tool": "ls"}]}')[1], [])     # a final answer ends
+        messy = ('<invoke name="x">\n</invoke>\n```json\n{"calls": [{"tool": "ls", "path": "run"}]}\n```\nOops {no}\n'
+                 '{"calls": [{"tool": "ls", "path": "memory"}]}')
+        self.assertEqual(parse_reply(messy)[1], [dict(tool="ls", path="run")])                   # first whole object
+        self.assertEqual(parse_reply('text {"a": 1} then {"playbook": "x"}', "playbook")[0], {"playbook": "x"})
+        prop2 = HarnessMetaProposer(d.harness_space, d.validate_program, ns, client, "m", out_dir, max_calls=3)
+        out2 = prop2.propose(Program.make(p), archive, None, None, 1, random.Random(1))   # the run's call cap is spent
+        self.assertEqual((len(seen), [o.author for o in out2]), (3, ["search"]))
+        def broken(prompt, temperature, max_tokens):
+            raise RuntimeError("llm_call_failed:URLError")
+        out_dir3 = tmp / "run3"; out_dir3.mkdir()
+        prop3 = HarnessMetaProposer(d.harness_space, d.validate_program, ns, broken, "m", out_dir3)
+        self.assertEqual([o.author for o in prop3.propose(Program.make(p), archive, None, None, 2, random.Random(2))],
+                         ["search", "search"])
+
     def test_harness_components_validate_and_reach_curation_and_train_spec(self):
         from unittest import mock
         from rsi.backends.openvla import backend as vb

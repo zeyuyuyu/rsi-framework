@@ -10,7 +10,9 @@ from rsi.meta.proposers import OpenAICompatClient
 d = Path(sys.argv[1])
 # 2026-11-03: CommonStack key deactivated (401) -> OpenRouter, same model id (user-approved; addenda 18 and 21 am. 2)
 client = OpenAICompatClient("https://openrouter.ai/api/v1", "anthropic/claude-sonnet-5-5", "/data0/home/zeyuwang/.orkey",
-                           timeout=120, retries=1)   # 11-04 flapping proxy: short tries, many of them (am. 5)
+                           timeout=400, retries=1)   # 11-04 flapping proxy: short tries, many of them (am. 5)
+# 2026-11-10 (addendum 29): 120 s -> 400 s. Meta level v3 allows 12000 reply tokens (reasoning counts inside the cap),
+# and a try that times out would be paid for and repeated.
 
 
 def put(url, obj):
@@ -49,7 +51,7 @@ while True:
                 except Exception as e:
                     out = dict(error=str(e)[:200])
                     print(time.strftime("%FT%TZ", time.gmtime()), run, k, "retry", attempt, out["error"][:80], flush=True)
-                    if time.time() - t > 1380:     # each try hangs at most 120 s (11-04): stop at 23 min
+                    if time.time() - t > 1380:     # stop at 23 min (+ one try of at most 400 s; the node waits 30 min)
                         break
                     time.sleep(10)
             st = put(urls["resp_put"][k], out)

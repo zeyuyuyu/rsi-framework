@@ -8,7 +8,7 @@
 Plan keys: model_name, vla (VLAConfig fields + model_family: openvla | oft, default openvla),
 suite, tasks, heldout_per_task,
 test_inits_per_task, program (overrides), engine (EngineConfig fields), budget_scale (onebig),
-meta {proposer: fixed|numeric|llm (+ base_url, model, key_file, max_calls)}.
+meta {proposer: fixed|numeric|llm|llm3 (+ base_url, model, key_file, max_calls; llm3: memory, memory_sha256)}.
 """
 
 import argparse
@@ -155,6 +155,25 @@ def main():
                                             inner_steps=plan["engine"].get("inner_steps", 1),
                                             gate_per_task=plan["heldout_per_task"] // 2,
                                             n_tasks=len(domain.tasks)) if meta_space == "v2" else None))
+    elif kind == "llm3":                # addendum 29: meta level v3, the LLM behind a harness (workspace, memory, tools)
+        from .meta.harness import HarnessMetaProposer, memory_digest
+        m = plan["meta"]
+        memory = Path(__file__).parent / "meta" / "memory" / m["memory"] if m.get("memory") else None
+        if memory is not None and memory_digest(memory) != m["memory_sha256"]:
+            raise ValueError("meta_memory_digest_mismatch")       # the memory is frozen before launch
+        e = plan["engine"]
+        proposer = HarnessMetaProposer(space, validate,
+                                       NumericSearch(domain.harness_space if meta_space == "v2" else space, validate,
+                                                     domain.coupling),
+                                       (RelayClient(os.environ["RSI_LLM_RELAY"], out / "relay-state.json")
+                                        if m.get("relay") else
+                                        OpenAICompatClient(m["base_url"], m["model"], m["key_file"], timeout=400)),
+                                       m["model"], out, memory_dir=memory, max_calls=m.get("max_calls", 60),
+                                       max_turns=m.get("max_turns", 6), space_doc=doc,
+                                       context=dict(rounds=e["rounds"], inner_steps=e.get("inner_steps", 1),
+                                                    gate_per_task=plan["heldout_per_task"] // 2,
+                                                    n_tasks=len(domain.tasks),
+                                                    children=e.get("candidates_per_round", 1)))
     else:
         raise ValueError(f"unknown_proposer:{kind}")
     cfg = EngineConfig(**plan.get("engine", {}))

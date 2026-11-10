@@ -15,6 +15,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   m2         addendum 21: meta level v2 on Yangquan (pre/tun start x replica/llm x seeds 1-3)
   goal_main  LIBERO-Goal main arms (5 arms x seeds 1-3, fresh paired gates) with the operator addendum 11 picks
   yq_spatial_main  addendum 28: fixed / nonrec / shuffled / onebig x seeds 1-3 on LIBERO-Spatial (Yangquan)
+  yq_spatial_repair  addendum 29: BC start, fixed / full / meta3 x seeds 1-3, and meta3 from the tuned program
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
@@ -178,6 +179,35 @@ elif sys.argv[1] == "yq_spatial_main":
         for arm, (engine, proposer) in arms.items():
             write(f"yq_ofts_{arm}_s{seed}", model_name="oft-sft-libero-spatial-traj1", suite="libero_spatial",
                   vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
+elif sys.argv[1] == "yq_spatial_repair":
+    # addendum 29: self-repair on LIBERO-Spatial with meta level v3 (the LLM behind a harness: workspace, memory,
+    # tools). From the collapsing BC start of addendum 12/24: fixed (gate only) | full (numeric search) | meta3, seeds
+    # 1-3; plus meta3 from the tuned Spatial program (paired with addendum 28's yq_ofts_fixed). Both search arms are
+    # capped at the start's work per inner step (budget: seed).
+    sys.path.insert(0, os.path.dirname(os.path.dirname(HERE)))
+    from rsi.meta.harness import memory_digest
+    mem = os.path.join(os.path.dirname(os.path.dirname(HERE)), "rsi", "meta", "memory", "v3")
+    assert os.path.exists(os.path.join(mem, "playbook.md")), "distil the playbook first"
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    gated = {"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired"}
+    harness_fields = {"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"},
+                      "curation": {"adv": "center"}}
+    bc_start = merge({"solver": {"temperature": 1.6}, "curriculum": {"cases": 64},
+                      "update": {"operator": "bc", "steps": 100, "batch": 64, "lr": 1e-5},
+                      "curation": {"rule": "verified"}}, harness_fields)
+    tuned = merge(merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}}), harness_fields)
+    meta3 = {"proposer": "llm3", "space": "v2", "budget": "seed", "relay": True,
+             "model": "anthropic/claude-sonnet-5-5", "memory": "v3", "memory_sha256": memory_digest(mem),
+             "max_calls": 60, "max_turns": 6}
+    two = dict(gated, candidates_per_round=2)
+    kw = dict(model_name="oft-sft-libero-spatial-traj1", suite="libero_spatial", vla=vla)
+    for seed in (1, 2, 3):
+        write(f"yq_oftsb_fixed_s{seed}", engine=dict(gated, seed=seed), meta={"proposer": "fixed"},
+              program=bc_start, **kw)
+        write(f"yq_oftsb_full_s{seed}", engine=dict(two, seed=seed),
+              meta={"proposer": "numeric", "space": "harness", "budget": "seed"}, program=bc_start, **kw)
+        write(f"yq_oftsb_meta3_s{seed}", engine=dict(two, seed=seed, meta_v2=True), meta=meta3, program=bc_start, **kw)
+        write(f"yq_ofts_meta3_s{seed}", engine=dict(two, seed=seed, meta_v2=True), meta=meta3, program=tuned, **kw)
 elif sys.argv[1] == "yq_rsi":
     # addendum 17: Yangquan arms beyond addendum 15 -- Goal llm_harness x3 (LLM relayed through BOS, key stays on cavin)
     # and LIBERO-10 fixed vs llm_harness x2 (does a harness-editing meta level make a recipe work where fixed fails?)

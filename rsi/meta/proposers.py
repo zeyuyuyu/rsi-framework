@@ -215,6 +215,8 @@ def llm_history(archive, limit=12):
                               mixed_share=None if sig.get("mixed_fraction") is None
                               else round(sig["mixed_fraction"], 3),
                               items=cur.get("items")))
+        # Defect found 2026-11-10 (addendum 29): receipts store the loss under "details", never "extra", so
+        # loss_first / loss_last were null in every v1/v2 call. Left as it ran; meta level v3 (harness.py) reads both.
         extra = (n.receipt or {}).get("extra") or {}
         rows.append(dict(round=n.round, node=n.node_id, author=n.program.author,
                          changes=program_diff(parent.program.params if parent else {}, n.program.params),

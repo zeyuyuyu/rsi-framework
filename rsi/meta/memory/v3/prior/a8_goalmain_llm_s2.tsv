@@ -1,0 +1,14 @@
+round	node	author	kept	gate	parent_gate	gate_change	sampled_success_per_step	mixed_share_per_step	loss_first	loss_last	changes_vs_parent
+0	n0	seed	yes	0.600							{}
+1	r01c0	seed	no	0.605	0.590	0.015	0.552/0.540/0.577	0.517/0.600/0.533	0.0968	-0.0797	{}
+1	r01c1	llm	yes	0.615	0.590	0.025	0.597/0.551/0.590	0.672/0.690/0.695	-0.0250	0.0501	{"curation.budget": 600, "curriculum.allocation": "progress", "curriculum.cases": 128, "solver.samples": 12, "solver.temperature": 1.2, "update.lr": 2e-05}
+2	r02c0	llm	yes	0.630	0.615	0.015	0.564/0.666/0.624	0.672/0.595/0.646	0.0320	-0.0494	{}
+2	r02c1	llm	no	0.625	0.615	0.010	0.564/0.671/0.646	0.672/0.586/0.611	0.0497	-0.0145	{"curation.budget": 800, "update.lr": 3e-05, "update.steps": 250}
+3	r03c0	llm	yes	0.625	0.580	0.045	0.651/0.609/0.597	0.667/0.625/0.651	0.0152	0.0079	{}
+3	r03c1	llm	no	0.605	0.580	0.025	0.619/0.595/0.613	0.789/0.605/0.695	-0.0386	0.0309	{"solver.samples": 16, "solver.temperature": 1.0, "update.batch": 128, "update.lr": 3e-05}
+4	r04c0	llm	no	0.565	0.590	-0.025	0.569/0.609/0.596	0.585/0.656/0.667	0.1106	0.0664	{}
+4	r04c1	llm	no	0.585	0.590	-0.005	0.570/0.616/0.580	0.664/0.661/0.702	0.0100	-0.0909	{"curation.budget": 800, "curriculum.cases": 256, "update.steps": 150}
+5	r05c0	llm	no	0.595	0.585	0.010	0.596/0.592/0.600	0.614/0.628/0.641	-0.1107	0.0427	{}
+5	r05c1	llm	yes	0.635	0.585	0.050	0.596/0.596/0.624	0.614/0.630/0.586	0.0303	0.0009	{"update.batch": 128, "update.lr": 1e-05, "update.steps": 200}
+6	r06c0	llm	no	0.625	0.635	-0.010	0.638/0.524/0.592	0.531/0.669/0.531	0.0425	0.0115	{}
+6	r06c1	llm	yes	0.650	0.635	0.015	0.647/0.547/0.605	0.615/0.714/0.575	0.0097	-0.0272	{"curation.budget": 800, "curriculum.cases": 200, "update.steps": 300}
