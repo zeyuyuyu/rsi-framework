@@ -1,0 +1,58 @@
+{
+  "model_name": "oft-sft-libero-spatial-traj1",
+  "vla": {
+    "model_family": "oft",
+    "checkpoint": "/data0/home/zeyuwang/rsi/models/oft/Openvla-oft-SFT-libero-spatial-traj1",
+    "python": "/data0/home/zeyuwang/miniconda3/envs/openvla/bin/python",
+    "openvla_root": "/data0/home/zeyuwang/rsi/simplevla_rl",
+    "rollout_gpus": [
+      0
+    ],
+    "train_gpus": [
+      0
+    ],
+    "greedy_procs_per_gpu": 4,
+    "sample_procs_per_gpu": 3,
+    "admit_max_used_mib": 8000,
+    "ratio_mode": "matched",
+    "loss_agg": "episode"
+  },
+  "suite": "libero_spatial",
+  "tasks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "heldout_per_task": 40,
+  "test_inits_per_task": 50,
+  "engine": {
+    "rounds": 12,
+    "inner_steps": 3,
+    "gate_mode": "fresh_paired",
+    "seed": 0,
+    "recursive": false
+  },
+  "meta": {
+    "proposer": "fixed"
+  },
+  "program": {
+    "curriculum": {
+      "cases": 64
+    },
+    "solver": {
+      "temperature": 1.6
+    },
+    "update": {
+      "steps": 100,
+      "batch": 64,
+      "lr": 3e-05
+    }
+  }
+}

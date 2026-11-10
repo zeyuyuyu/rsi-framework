@@ -1,0 +1,43 @@
+{
+  "node": "r01c0",
+  "program": {
+    "author": "seed",
+    "id": "2a8413c825eed0ba",
+    "note": "",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 3e-05,
+        "operator": "grpo",
+        "steps": 100
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "789a43639b90a6567a80b44b79381bf0c55d7e10ee610bbb7c6c4b8dbed7e0af",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_spatmain_onebig_s0/ckpt-r01c0",
+    "parent_id": "f4a419db6f3961da02f368a8d73b7e8846b911b465e9ce3feb0639b179d2957c"
+  }
+}
