@@ -1,0 +1,131 @@
+{
+ "block": "goal_long12",
+ "reference": {
+  "yq": {
+   "evaluations": 4,
+   "success": 60.02
+  }
+ },
+ "FL1": {
+  "claim": "FL1 fixed12 - n0 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 5.0,
+  "mean_points": 3.54,
+  "ci95_points": [
+   1.72,
+   5.42
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 60.02,
+    "arm": 60.9,
+    "diff": 0.88
+   },
+   "2": {
+    "control": 60.02,
+    "arm": 66.9,
+    "diff": 6.88
+   },
+   "3": {
+    "control": 60.02,
+    "arm": 62.9,
+    "diff": 2.88
+   }
+  },
+  "complete": true
+ },
+ "FL3": {
+  "claim": "FL3 fixed12 - nonrec12 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": 7.3,
+  "ci95_points": [
+   5.47,
+   9.2
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 52.7,
+    "arm": 60.9,
+    "diff": 8.2
+   },
+   "2": {
+    "control": 59.5,
+    "arm": 66.9,
+    "diff": 7.4
+   },
+   "3": {
+    "control": 56.6,
+    "arm": 62.9,
+    "diff": 6.3
+   }
+  },
+  "complete": true
+ },
+ "FL5": {
+  "claim": "FL5 fixed12 - onebig12 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": -2.73,
+  "ci95_points": [
+   -4.3,
+   -1.2
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 66.8,
+    "arm": 60.9,
+    "diff": -5.9
+   },
+   "2": {
+    "control": 65.5,
+    "arm": 66.9,
+    "diff": 1.4
+   },
+   "3": {
+    "control": 66.6,
+    "arm": 62.9,
+    "diff": -3.7
+   }
+  },
+  "complete": true
+ },
+ "noise_reference_halves": {
+  "yq": {
+   "diff": -0.75,
+   "ci95": [
+    -2.2,
+    0.7
+   ]
+  }
+ },
+ "runs": {
+  "yq_oftg_fixed12_s1": 60.9,
+  "yq_oftg_fixed12_s2": 66.9,
+  "yq_oftg_fixed12_s3": 62.9,
+  "yq_oftg_nonrec12_s1": 52.7,
+  "yq_oftg_nonrec12_s2": 59.5,
+  "yq_oftg_nonrec12_s3": 56.6,
+  "yq_oftg_onebig12_s1": 66.8,
+  "yq_oftg_onebig12_s2": 65.5,
+  "yq_oftg_onebig12_s3": 66.6
+ }
+}
