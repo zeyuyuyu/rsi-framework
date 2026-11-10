@@ -114,3 +114,19 @@ and fresh evaluations of the Spatial main runs; `yq_ofts_nonrec12`; `yq_oftsb_fu
 
 Every registered read, bar and run stands. The official test remains the endpoint of prereg v3 and of addenda 27-29;
 the fresh-scene test is an additional registered endpoint, reported beside it in every table.
+
+## Operational notes (appended 2026-11-10 17:15Z; no design change)
+
+* Registered as 7aa7764 at 17:06:51Z, pushed 17:06:55Z, before the first action below.
+* Stopped while still waiting in the queue (status Created, never started), to be resubmitted under the same names
+  and plans: `yq_oftsb_full_s1-3` (job-2ip8kewtmsqc, job-mt68wtwe23ag, job-gr8sajq84v2y) and `yq_ofts_meta3_s1-3`
+  (job-mq6tvlzyelsc, job-e6pnli6w5441, job-4wftsmvpoygl). Their relay slots are unused and are kept.
+* Submitted at 17:07:36-17:07:40Z, one card each, source `rsi_src_v30`: `yq_ofts_fixed12_s1` job-5d0iaxdoo28y,
+  `yq_ofts_fixed12_s2` job-wumqqydmldl6, `yq_ofts_fixed12_s3` job-l3do0ww1n6fw. They wait for cards with the four
+  addendum-29 runs still queued (`yq_oftsb_fixed_s2-3`, `yq_oftsb_meta3_s2-3`).
+* `scripts/baidu/close_yq.sh` submits, for every finished Yangquan run of addenda 28-30, the two replicate test
+  evaluations and the fresh-scene evaluation that are still missing (at most six jobs per call).
+* A bounded-slack gate (accept a child that is within one noise standard deviation of its lineage's best) was
+  considered and not registered: on the finished Goal runs of the A800 node the strict gate refused 15 of 24 rounds,
+  11 of them for dips within 3 points, but the mean gate change of a round there is −0.5 ± 0.6, so there is no gain
+  for a looser gate to keep; on the running Spatial seed-0 run the strict gate has accepted four of four rounds.
