@@ -103,3 +103,11 @@ No registered read, bar or run changes. These 16 runs are read once, on their ow
 * Object curve. The checkpoint download on the A800 node was restarted at 04:42Z (`~/rsi/models/oft/dl_object.sh`,
   mirror, two workers, eight attempts); 3.0 GB of about 15 GB at 05:01Z. The run is queued once the four shards
   match the digest of the Yangquan copy (6653744e6ecc3a95).
+* Object curve, continued (appended 2026-11-10 08:55Z). The first download (`snapshot_download`) hung for 30 minutes at
+  3.8 GB; a second script that cut every attempt at 600 s lost its partial files on each restart; a relay of the
+  Yangquan copy through BOS (four jobs, 58 chunks) was too slow and dropped connections (2 chunks arrived). The
+  third script (`dl_object3.sh`: curl per file, resume, stall detection, two files at a time) finished at 08:45Z.
+  All 19 files have the sizes of the Yangquan copy, and the digest of the four shards is
+  6653744e6ecc3a95a6010f29083a8c2c033023ed6e497330c72e504d5dc85d39, equal to the Yangquan listing's prefix.
+  `a8_ofto_curve_grpo_s0` was queued at 08:55Z exactly as registered in addendum 13 (order 99, `src3`, one card,
+  sealed, always-accept); it starts when a card frees, after `a8_spatrep_full_s0`.
