@@ -52,6 +52,10 @@ def main():
     parser.add_argument("--test-eval", metavar="RUN_DIR")
     # with --test-eval: score this node of the run instead of the retained one (its ckpt-<node> must exist)
     parser.add_argument("--node")
+    # addendum 30: score a version on the sealed fresh-scene test (domain.fresh_test), never on the official test.
+    # RUN_DIR is an ended run (its retained node, or --node); with --node n0 it may be "none" (the initial policy)
+    parser.add_argument("--fresh-eval", metavar="RUN_DIR")
+    parser.add_argument("--fresh-per-task", type=int, default=100)
     # continue an interrupted run in place (Engine.run(resume=True); the stored plan must match)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
@@ -115,6 +119,30 @@ def main():
                     s.write(json.dumps(asdict(r)) + "\n")
         (out / "test_eval.json").write_text(json.dumps(dict(run=str(run), node=node, version=asdict(version),
                                                             test_success=scores), indent=2))
+        print(json.dumps(scores))
+        return
+    if args.fresh_eval:
+        if args.node == "n0":
+            run, node, version = args.fresh_eval, "n0", initial
+        else:
+            run = Path(args.fresh_eval)
+            report = json.loads((run / "report.json").read_text())   # written only when the run has ended
+            node = args.node or report["retained"]
+            version = initial if node == "n0" else \
+                Version(**json.loads((run / f"ckpt-{node}" / "receipt.json").read_text())["version"])
+        cases = domain.fresh_test(args.fresh_per_task)
+        out.mkdir(parents=True)
+        scores = []
+        for rep in range(1, args.replicates + 1):
+            records = domain.evaluate(backend, version, cases)
+            scores.append(sum(r.score for r in records) / len(records))
+            # the name starts with test- so the job's result block carries the per-episode bits (run_vla4.sh)
+            with (out / f"test-libero_fresh-{node}-rep{rep}.jsonl").open("w") as s:
+                for r in records:
+                    s.write(json.dumps(asdict(r)) + "\n")
+        (out / "test_eval.json").write_text(json.dumps(dict(run=str(run), node=node, version=asdict(version),
+                                                            set="libero_fresh_sealed", per_task=args.fresh_per_task,
+                                                            fresh_success=scores), indent=2))
         print(json.dumps(scores))
         return
     program = domain.default_program()

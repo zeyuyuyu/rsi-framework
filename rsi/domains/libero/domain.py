@@ -20,6 +20,11 @@ from ...core.types import Attempt, Case, EvalRecord
 TRAIN_SEED_BASE = 100_000_000
 HELDOUT_SEED_BASE = 900_000_000
 FRESH_GATE_SEED_BASE = 950_000_000     # per-round gate sets of gate_mode fresh_paired; disjoint from the above
+# Sealed fresh-scene test (addendum 30): sampled placements no run has trained on, gated on or audited. A training
+# seed is TRAIN_SEED_BASE + S * 1e6 + round * 1e4 + 100 * task + k with an offset inside its 1e6 block of at most
+# 120,999; held-out seeds sit at offsets below 40,000 of block 900 and fresh gates in blocks 950-951. Offsets from
+# 500,000 of block 970 are therefore used by nothing else.
+FRESH_TEST_SEED_BASE = 970_500_000
 
 DEFAULT_PROGRAM = {
     "curriculum": {"cases": 160, "allocation": "uniform", "floor": 0.05},
@@ -240,6 +245,19 @@ class LiberoDomain:
                                 split, dict(task_id=t, init=dict(kind="random", seed=s)),
                                 f"libero:{self.suite}:task{t}:sampled{s}"))
         return [c for c in out if c.split == "gate"], [c for c in out if c.split == "audit"]
+
+    def fresh_test(self, per_task=100):
+        """Sealed fresh-scene test (addendum 30): per_task sampled placements per task, the same for every run."""
+        if not 0 < per_task <= 1000:
+            raise ValueError("fresh_test_per_task_out_of_range")
+        out = []
+        for t in self.tasks:
+            for k in range(per_task):
+                s = FRESH_TEST_SEED_BASE + 1000 * t + k
+                cid = f"{self.suite}-t{t}-freshtest{k}"
+                out.append(Case(cid, cid, "test", dict(task_id=t, init=dict(kind="random", seed=s)),
+                                f"libero:{self.suite}:task{t}:sampled{s}"))
+        return out
 
     def _allocation(self, cur):
         n = int(cur["cases"])

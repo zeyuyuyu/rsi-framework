@@ -681,6 +681,25 @@ class ProgramTests(unittest.TestCase):
         prop3 = LLMMetaProposer(d.edit_space, d.validate_program, ns, broken, "m")
         self.assertEqual(len(prop3.propose(Program.make(p), archive, None, None, 2, random.Random(2))), 2)
 
+    def test_fresh_sealed_test_is_disjoint_from_every_other_placement(self):
+        from rsi.core.engine import inner_seed
+        from rsi.domains.libero import domain as dom
+        d = LiberoDomain("libero_spatial", range(10))
+        fresh = d.fresh_test(100)
+        self.assertEqual((len(fresh), len({c.id for c in fresh}), {c.split for c in fresh}), (1000, 1000, {"test"}))
+        seeds = {c.inputs["init"]["seed"] for c in fresh}
+        gate, audit = d.heldout(40)
+        other = {c.inputs["init"]["seed"] for c in gate + audit}
+        other |= {c.inputs["init"]["seed"] for cs in d.fresh_gates(12, 20).values() for c in cs}
+        self.assertFalse(seeds & other)
+        self.assertTrue(all(500_000 <= (s - dom.TRAIN_SEED_BASE) % 1_000_000 < 510_000 for s in seeds))
+        # every training placement of run seeds 0-3 (rounds <= 12, steps <= 15, <= 400 scenes) has an offset < 130,000
+        worst = max(inner_seed(3, r, st) for r in range(1, 10) for st in range(0, 16))
+        self.assertLess(worst, 4192)
+        self.assertLess(12 * 10_000 + 100 * 9 + 400, 130_000)
+        self.assertFalse(seeds & {c.inputs["init"]["seed"] for c in d.official_test(50) if "seed" in c.inputs["init"]})
+        self.assertEqual({c.id for c in d.fresh_test(100)}, {c.id for c in fresh})       # the same set for every run
+
     def test_meta_v3_harness_workspace_tools_memory_and_fallback(self):
         from rsi.meta.harness import HarnessMetaProposer, build_workspace, node_record, records
         d = LiberoDomain("libero_goal", range(10))
