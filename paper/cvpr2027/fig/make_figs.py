@@ -198,13 +198,16 @@ def fig_code():
     want = [("q15", "cruxeval_o", "main", "C1 fixed: final - initial", "1.5B fixed"),
             ("q15", "cruxeval_o", "main", "C1 shuffled: final - initial", "1.5B shuffled"),
             ("q15", "cruxeval_o", "main", "C2 fixed - shuffled", "1.5B fixed$-$shuffled"),
-            ("q15", "cruxeval_o", "long8", "C3 fixed - nonrec", "1.5B fixed$-$nonrec, 8 rds"),
-            ("q7b", "cruxeval_o", "long8", "C3 fixed - nonrec", "7B fixed$-$nonrec, 8 rds"),
-            ("q7b", "lcb_exec", "main", "C1 fixed: final - initial", "7B fixed (LCB-exec)"),
-            ("q7b", "lcb_exec", "long8", "C3 fixed - nonrec", "7B fixed$-$nonrec, 8 rds (LCB)"),
-            ("qw3", "cruxeval_i", "main", "C1 fixed: final - initial", "Qwen3-8B fixed (CRUX-I)"),
-            ("g8b", "cruxeval_i", "main", "C1 fixed: final - initial", "Granite-8B fixed (CRUX-I)")]
-    fig, ax = plt.subplots(figsize=(3.4, 2.6))
+            ("q15", "cruxeval_o", "long8", "C3 fixed - nonrec", "1.5B fixed$-$nonrec\n8 rounds"),
+            ("q7b", "cruxeval_o", "long8", "C3 fixed - nonrec", "7B fixed$-$nonrec\n8 rounds"),
+            ("q7b", "lcb_exec", "main", "C1 fixed: final - initial", "7B fixed\nLCB-exec"),
+            ("q7b", "lcb_exec", "long8", "C3 fixed - nonrec", "7B fixed$-$nonrec\n8 rounds, LCB"),
+            ("qw3", "cruxeval_i", "main", "C1 fixed: final - initial", "Qwen3-8B fixed\nCRUX-I"),
+            ("g8b", "cruxeval_i", "main", "C1 fixed: final - initial", "Granite-8B fixed\nCRUX-I")]
+    # the figure is included at one column width: draw it at that physical width (no tight box), so the label
+    # font is the printed font (the tight box had been scaled down to about 4 pt)
+    fig, ax = plt.subplots(figsize=(3.3, 3.0))
+    fig.subplots_adjust(left=0.37, right=0.98, bottom=0.15, top=0.99)
     ys, labels = [], []
     for i, (model, suite, study, claim, label) in enumerate(want):
         hit = [c for c in cells if c[0] == model and c[1] == suite and c[2] == study and c[3] == claim]
@@ -218,10 +221,12 @@ def fig_code():
         ax.barh(y, m, color=col, alpha=0.75, height=0.6)
         ax.plot([lo, hi], [y, y], color="black", lw=1)
     ax.set_yticks(ys)
-    ax.set_yticklabels(labels, fontsize=6.5)
+    ax.set_yticklabels(labels, fontsize=7, linespacing=0.95)
     ax.axvline(0, color="0.5", lw=0.8)
     ax.set_xlabel("points on the held-out test (95% CI)")
-    save(fig, "fig_code.pdf")
+    fig.savefig(os.path.join(HERE, "fig_code.pdf"))
+    plt.close(fig)
+    print("wrote", "fig_code.pdf")
 
 
 # ---------------------------------------------------------------- 6. train-on-test inflation
@@ -310,7 +315,7 @@ def fig_framework():
     poly([(1.9, -0.5), (1.9, 0.2), (3.3, 0.2), (3.3, 2.52)])
     ax.text(3.45, 1.3, "sets every knob of the loop", ha="left", va="bottom", fontsize=7.5)
     poly([(10.6, 0.5), (10.6, 0.15), (9.4, 0.15), (9.4, -0.5)], dashed=True)
-    ax.text(10.0, 0.07, "gate record", ha="center", va="top", fontsize=7.5)
+    ax.text(9.55, -0.17, "gate record", ha="left", va="center", fontsize=7.5)
     ax.text(6.5, -2.05, "meta level: the program is versioned; a program is kept only when its child wins the gate",
             ha="center", va="center", fontsize=9, style="italic")
 
