@@ -82,3 +82,24 @@ read D at rounds 5-6, bar +3; main arms on Object only through their own addendu
 ## What is not changed
 
 No registered read, bar or run changes. These 16 runs are read once, on their own, under the bars above.
+
+## Operational notes (appended 2026-11-10 05:15Z; no design change)
+
+* Times. The header says "~04:50Z"; the exact commit time of this addendum is 04:41:02Z (250b68b, pushed before any
+  submission). The first job was submitted at 04:42:40Z. The reader `scripts/report/spatial_read.py`, the twelve
+  Yangquan plans and the replicate-script change were committed at 04:42:48Z (f16c162), eight seconds after that first
+  submission and hours before any run has a test; it was pushed at 04:48Z.
+* Yangquan. `yq_ofts_fixed_s1` (job-x0wgqyvb472k, 04:42:40Z) went first as a canary. It reached the main run at
+  04:57:10Z (environment setup took 861 s) and its GPU filled without an error, so the other eleven runs were
+  submitted at 05:11:45-05:12:04Z: fixed s2 job-mueiz2a9wzdh, s3 job-knec13gc1jtx; nonrec s1-3 job-cyd12lbtsq8w,
+  job-ithyujrhi4pn, job-2l28f81b9w33; shuffled s1-3 job-o4m19x87e23o, job-1z3anphyu3fu, job-morrsb5yx2wf; onebig s1-3
+  job-zulxqty6nb2a, job-2t1obyt9uny9, job-srbg9gqisnfu. Source `rsi_src_v28`, one card each.
+* A800 node. Queue orders 95-98: `a8_spatmain_fixed_s0` launched 04:42:57Z on GPU 0; nonrec, shuffled and onebig at
+  04:43:57Z on GPUs 1, 2 and 4. The shuffled entry was queued a second time after the first ssh call timed out
+  before writing anything; one entry exists.
+* Checkpoints. A listing job on the Yangquan file system (job-66p7yw2ii31p, 04:39Z) showed the Spatial checkpoint
+  complete (4 shards, digest aef94c5a595fbdf9). An earlier listing job (job-lsrw0vzb48ch) failed because it read a
+  path that does not exist in script jobs; it touched nothing.
+* Object curve. The checkpoint download on the A800 node was restarted at 04:42Z (`~/rsi/models/oft/dl_object.sh`,
+  mirror, two workers, eight attempts); 3.0 GB of about 15 GB at 05:01Z. The run is queued once the four shards
+  match the digest of the Yangquan copy (6653744e6ecc3a95).
