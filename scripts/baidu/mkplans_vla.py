@@ -15,6 +15,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   m2         addendum 21: meta level v2 on Yangquan (pre/tun start x replica/llm x seeds 1-3)
   goal_main  LIBERO-Goal main arms (5 arms x seeds 1-3, fresh paired gates) with the operator addendum 11 picks
   yq_spatial_main  addendum 28: fixed / nonrec / shuffled / onebig x seeds 1-3 on LIBERO-Spatial (Yangquan)
+  yq_spatial_nogate  addendum 31: the BC recipe without the gate (always accept), seeds 1-3
   yq_spatial_long12  addendum 30: fixed12 / nonrec12 / onebig12 x seeds 1-3 on LIBERO-Spatial
   yq_spatial_repair  addendum 29: BC start, fixed / full / meta3 x seeds 1-3, and meta3 from the tuned program
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
@@ -169,6 +170,19 @@ elif sys.argv[1] == "yq_long12":
         for arm, (engine, proposer) in arms.items():
             write(f"yq_oftg_{arm}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
                   vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
+elif sys.argv[1] == "yq_spatial_nogate":
+    # addendum 31: the same BC recipe trained WITHOUT the framework's gate (every round's child is kept), seeds 1-3:
+    # the "plain training" baseline of the Spatial self-repair study. Only the start and the final policy are tested.
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    bc_start = merge({"solver": {"temperature": 1.6}, "curriculum": {"cases": 64},
+                      "update": {"operator": "bc", "steps": 100, "batch": 64, "lr": 1e-5},
+                      "curation": {"rule": "verified"}},
+                     {"update": {"ratio": "matched", "loss_agg": "episode", "bc_temp": "unit"}, "curation": {"adv": "center"}})
+    for seed in (1, 2, 3):
+        write(f"yq_oftsb_nogate_s{seed}", model_name="oft-sft-libero-spatial-traj1", suite="libero_spatial", vla=vla,
+              engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "min_gate_gain": -1.0,
+                      "test_all_accepted": False, "seed": seed},
+              meta={"proposer": "fixed"}, program=bc_start)
 elif sys.argv[1] == "yq_spatial_long12":
     # addendum 30: the 12-round horizon of addendum 27 on LIBERO-Spatial (the Spatial main program, rounds doubled)
     prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
