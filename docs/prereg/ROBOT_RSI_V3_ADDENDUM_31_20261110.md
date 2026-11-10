@@ -53,3 +53,11 @@ one-shot RL) stays as registered and is reported as it comes out.
 `scripts/a800/mkoft_spatial_repair.py <order> nogate`), paired with `a8_spatrep_fixed_s0` and `a8_spatrep_meta3_s0`
 of addendum 29. **N1 and N2 stay registered on the Yangquan seeds 1-3**; the four-seed statistic with seed 0 is
 reported alongside, each seed paired within its platform.
+
+## Operational notes (appended 2026-11-10 19:30Z; no design change)
+
+* Registered as 13edb67 at 19:21:56Z; amendment 1 committed as c4b9c5b at 19:26:02Z (its heading says 19:35Z; the
+  commit time is the record). Both were pushed before anything below.
+* A800 node, queued at 19:26Z, not yet started: `a8_spatrep_nogate_s0` (order 88, one card, `src12`). It starts when a
+  card frees. The Yangquan runs `yq_oftsb_nogate_s1-3` are submitted with the other long runs once tonight's
+  evaluations are in the queue.

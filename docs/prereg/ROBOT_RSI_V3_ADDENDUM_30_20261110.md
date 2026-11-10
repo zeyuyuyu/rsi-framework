@@ -145,3 +145,9 @@ Queue record: the three `yq_ofts_fixed12` jobs submitted at 17:07Z were stopped 
 cards freed tonight go to evaluations (Goal 12-round fresh-scene evaluations, submitted 19:21Z:
 `yq_oftg_{fixed12,nonrec12,onebig12}_s1-3_fresh`, `yq_fresh_n0_goal_1-4`; then the replicates and fresh-scene
 evaluations of the Spatial main runs). The stopped runs are resubmitted under the same names and plans right after.
+* (19:30Z) Amendment 1 was committed as c4b9c5b at 19:26:02Z (its heading says 19:35Z; the commit time is the
+  record). Queued on the A800 node at 19:26Z, not yet started: `a8_spatmain_fixed12_s0` (order 89, two cards) and
+  `a8_spatmain_nonrec12_s0` (order 90, two cards). A watcher on the node (`close_runs_1111b.sh`) queues the two
+  replicate test evaluations and the fresh-scene evaluation of every seed-0 run when its `report.json` appears, four
+  fresh-scene evaluations of the initial Spatial policy, and the fresh-scene evaluations of the four finished Goal
+  seed-0 runs with four of the initial Goal policy.

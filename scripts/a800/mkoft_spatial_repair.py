@@ -38,8 +38,9 @@ plan = {"model_name": "oft-sft-libero-spatial-traj1", "vla": vla, "suite": "libe
 plan_path = f"{H}/rsi/plans2/{name}.json"
 json.dump(plan, open(plan_path, "w"), indent=2)
 python = f"{H}/rsi/bin/py_llmproxy.sh" if arm == "meta3" else f"{H}/miniconda3/envs/vllm/bin/python"
+RUN_SRC = f"{H}/rsi/src12" if arm == "nogate" else SRC      # addendum 31: registered on the addendum-30 tree
 job = dict(name=name, ngpus=ngpus, module="rsi.run_libero", plan=plan_path, out=f"{H}/rsi/runs2/{name}",
            gpu_fields={"vla.rollout_gpus": "all", "vla.train_gpus": "first"}, args=[],
-           python=python, pythonpath=f"{SRC}:{H}/rsi/pylib", cwd=SRC)
+           python=python, pythonpath=f"{RUN_SRC}:{H}/rsi/pylib", cwd=RUN_SRC)
 json.dump(job, open(f"{Q}/pending/{order:02d}_{name}.json", "w"), indent=1)
 print("queued", name, "ngpus", ngpus, meta.get("memory_sha256", "")[:16])
