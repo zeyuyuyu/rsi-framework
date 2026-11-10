@@ -77,6 +77,15 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**Running (2026-11-10), no result yet:** two studies registered and launched, 32 runs. (1) LIBERO-Spatial main study
+(addendum 28): the four Goal arms (fixed, nonrec, shuffled, onebig) on a second suite, 16 runs. (2) Meta level v3 and
+self-repair on Spatial (addendum 29): the meta-level LLM now works behind a harness (a workspace with every candidate
+of the run, a frozen memory of 32 earlier runs with a playbook it distilled itself, its own notes, and ls / read / grep
+tools; `rsi/meta/harness.py`), tested from the collapsing BC recipe against a gate-only loop and blind numeric
+search, 15 runs. Bars and predictions are in `docs/prereg/ROBOT_RSI_V3_ADDENDUM_28_20261110.md` and
+`..._ADDENDUM_29_20261110.md`; per-round gate records (not results) and the to-do list are in
+`docs/STATUS_TODO_20261110.md`; run records under `results/` are synced every two hours.
+
 **New (2026-11-09):** the self-repair study is read (addenda 24/26, 12 runs): from a recipe that collapses without the gate, a language-model meta level allowed to edit it brings the loop back to the hand-tuned level, **+2.65 points [+0.73, +4.58]** over the gate alone, under the preregistered +3 bar; blind numeric search over the same knobs is within +1.15 [−0.63, +2.92] of it. The gate alone prevents the collapse and holds the start. Note: `docs/results/SELFREPAIR_READ_20261109.md`.
 
 **New (2026-11-08):** the registered 12-round read (addendum 27) is in: recursion vs no recursion **+7.8 points [+5.2, +10.5]**, bar met, because the non-recursive loop degrades over twelve rounds while the recursive loop holds its 6-round level; the gated loop still ties one-shot RL at equal compute (−0.4). Note: `docs/results/LONG12_READ_20261108.md`.
