@@ -60,6 +60,12 @@ class EngineConfig:
     # Compute-matched fixed control (addendum 21): fill the round with copies of the incumbent program, so a fixed
     # arm trains as many children per round as a meta arm (they differ only in the training seed).
     replica_candidates: bool = False
+    # Addendum 32 (guard-rail gate). None: off. With a number d (gate_mode fresh_paired only) the initial policy is
+    # scored on every round's fresh gate set too, and a child must also reach initial_gate - d. Used with
+    # min_gate_gain = -d the gate then refuses clear regressions (against the parent or against the start) instead
+    # of discarding a round for a dip inside gate noise: on the 12-round Goal runs the strict gate threw away a
+    # third of the rounds and the gated loop ended 2.7 points below ungated RL on fresh scenes (addendum 30, FL5).
+    gate_floor: float | None = None
 
 
 INNER_SEED_EXT_BASE = 4000     # rounds 10-12 (addendum 27): above run seed 3's block, below LIBERO's limit (seed < 4194)
@@ -116,6 +122,8 @@ class Engine:
             raise ValueError(f"unknown_gate_mode:{config.gate_mode}")
         if (config.gate_mode == "fresh_paired") != (fresh_gates is not None):
             raise ValueError("fresh_gates_iff_fresh_paired")
+        if config.gate_floor is not None and config.gate_mode != "fresh_paired":
+            raise ValueError("gate_floor_needs_fresh_paired")
         if fresh_gates is not None:
             if sorted(fresh_gates) != list(range(1, config.rounds + 1)):
                 raise ValueError("fresh_gates_must_cover_every_round")
@@ -288,7 +296,10 @@ class Engine:
                 if c.split != "test":
                     raise ValueError("test_split_required")
                 heldout.setdefault(suite.leakage_key(c), f"test:{name}")
-        plan = dict(protocol="rsi_two_level_v1", config=asdict(cfg), initial=asdict(self.initial),
+        plan_config = asdict(cfg)
+        if plan_config.get("gate_floor") is None:      # absent when off, so runs made before addendum 32 still resume
+            plan_config.pop("gate_floor", None)
+        plan = dict(protocol="rsi_two_level_v1", config=plan_config, initial=asdict(self.initial),
                     seed_program=asdict(self.seed_program), domain=self.domain.name,
                     proposer=getattr(self.proposer, "name", type(self.proposer).__name__),
                     gate_ids=[c.id for c in self.gate], audit_ids=[c.id for c in self.audit],
@@ -339,6 +350,10 @@ class Engine:
                     gate_cases = self.fresh_gates[r]
                     parent_gate, precs = self._score(parent.version, gate_cases, "gate_eval")
                     parent_tasks = _per_task(gate_cases, precs) if cfg.meta_v2 else None
+                initial_gate = None
+                if cfg.gate_floor is not None:
+                    initial_gate = parent_gate if parent is root else \
+                        self._score(self.initial, gate_cases, "gate_eval")[0]
                 for k, program in enumerate(programs):
                     tag = f"r{r:02d}c{k}"
                     if rates0 is not None:
@@ -405,6 +420,8 @@ class Engine:
                 bar = parent.gate if parent_gate is None else parent_gate
                 accepted = (best is not None and
                             self.sign * best.gate >= self.sign * bar + cfg.min_gate_gain)
+                if accepted and initial_gate is not None:      # guard rail against slow drift below the start
+                    accepted = self.sign * best.gate >= self.sign * initial_gate - cfg.gate_floor
                 if accepted:
                     best.audit, _ = self._score(best.version, self.audit, "audit_eval")
                     archive.mark_accepted(best)
@@ -416,6 +433,7 @@ class Engine:
                 _write(self.out / f"round-{r:02d}.json", dict(
                     round=r, parent=parent.node_id, accepted=accepted,
                     **({"parent_gate": parent_gate} if parent_gate is not None else {}),
+                    **({"initial_gate": initial_gate} if initial_gate is not None else {}),
                     candidates=[dict(node=n.node_id, gate=n.gate, program=n.program.id,
                                      author=n.program.author, curation=n.curation,
                                      signal=n.signal) for n in candidates],

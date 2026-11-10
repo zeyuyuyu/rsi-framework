@@ -236,6 +236,42 @@ class EngineTests(unittest.TestCase):
                    config=EngineConfig(rounds=3, gate_mode="fresh_paired"), proposer=FixedProgram(),
                    fresh_gates=fresh)
 
+    def test_guard_rail_gate_keeps_noise_sized_dips_and_refuses_regressions_and_drift(self):
+        class Drift(ToyBackend):           # the child of round r has its parent's skill + deltas[r]
+            deltas = {1: -0.05, 2: -0.05, 3: -0.5, 4: 0.1}
+
+            def train(self, parent, items, output, update, seed):
+                r = super().train(parent, items, output, update, seed)
+                self.skill[r.version.id] = self.skill[parent.id] + self.deltas[int(output.name[6:8])]
+                return r
+
+        def run(name, **cfg):
+            fresh = {r: [Case(f"g{r}-{i}", f"g{r}-{i}", "gate", {"d": (i + 0.5) / 20}, "toy") for i in range(20)]
+                     for r in (1, 2, 3, 4)}
+            domain, backend = ToyDomain(), Drift()
+            Engine(domain, backend, Version("init", "/b"), domain.default_program(), gate=heldout("gate", 20),
+                   audit=heldout("audit", 20), tests={}, out=self.tmp / name, proposer=FixedProgram(),
+                   config=EngineConfig(rounds=4, gate_mode="fresh_paired", **cfg), fresh_gates=fresh).run()
+            rounds = [json.loads((self.tmp / name / f"round-{r:02d}.json").read_text()) for r in (1, 2, 3, 4)]
+            return rounds, json.loads((self.tmp / name / "plan.json").read_text())
+
+        strict, plan = run("strict")
+        self.assertEqual([r["accepted"] for r in strict], [False, False, False, True])   # every dip is refused
+        self.assertNotIn("gate_floor", plan["config"])                                   # unchanged plans when off
+        self.assertNotIn("initial_gate", strict[0])
+        guard, plan = run("guard", min_gate_gain=-0.06, gate_floor=0.06)
+        # round 1: -5 points, inside the slack: kept. round 2: -5 against its parent but -10 against the start:
+        # refused by the floor. round 3: a collapse: refused. round 4: a gain: kept.
+        self.assertEqual([r["accepted"] for r in guard], [True, False, False, True])
+        self.assertEqual(plan["config"]["gate_floor"], 0.06)
+        self.assertAlmostEqual(guard[1]["initial_gate"], 0.25)
+        self.assertAlmostEqual(guard[1]["parent_gate"], 0.20)
+        self.assertAlmostEqual(guard[1]["candidates"][0]["gate"], 0.15)
+        with self.assertRaises(ValueError):                                              # needs the fresh sets
+            Engine(ToyDomain(), ToyBackend(), Version("init", "/b"), ToyDomain().default_program(),
+                   gate=heldout("gate", 20), audit=heldout("audit", 20), tests={}, out=self.tmp / "z",
+                   config=EngineConfig(rounds=2, gate_floor=0.05), proposer=FixedProgram())
+
     def test_test_suites_use_their_own_evaluator(self):
         class Constant:
             higher_is_better = True

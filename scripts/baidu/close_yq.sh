@@ -6,7 +6,7 @@
 cd "$(dirname "$0")/../.." || exit 1
 L=/home/zeyu/rsi/yq_logs; max=${1:-6}; n=0
 bash scripts/baidu/collect_yq.sh "$L" 120 | grep "^fetched" | cut -c1-100
-for d in results/baidu/yq_ofts_*_s[0-9] results/baidu/yq_oftsb_*_s[0-9]; do
+for d in results/baidu/yq_ofts_*_s[0-9] results/baidu/yq_oftsb_*_s[0-9] results/baidu/yq_oftg_guard12_s[0-9] results/baidu/yq_oftgb_nogate_s[0-9]; do
   run=$(basename "$d"); [ -f "$d/report.json" ] || continue
   job=zw-rsi-$(echo "$run" | tr _ -)
   if ! grep -q -P "^${job}-rep\t" scripts/baidu/jobs_yq.tsv; then
