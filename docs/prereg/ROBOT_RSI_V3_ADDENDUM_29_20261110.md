@@ -155,3 +155,14 @@ Start program `bc_start`: the collapsing recipe of addenda 12 and 24 with the su
 
 No registered read, bar or run changes. Addendum 28's sixteen runs are read on their own; this study reuses its
 `fixed` runs only as the hand-tuned reference of S3 and R4. No LLM provider or model changes.
+
+## Operational notes (appended 2026-11-10 05:45Z; no design change)
+
+* Registered as 66e8ff7 at 05:34:25Z, pushed 05:34:27Z, before the first launch (05:36:09Z).
+* A800 node, source `src11`: `a8_spatrep_fixed_s0` launched 05:36:09Z on GPU 5; `a8_spatrep_meta3_s0` launched
+  05:36:09Z on GPUs 6 and 7 (two cards). `a8_spatrep_full_s0` is queued when a card frees.
+* Yangquan, source `rsi_src_v29`: `yq_oftsb_meta3_s1` job-tbz439hnaxty (05:36:12Z, two cards, 80 relay slots) runs
+  first as the canary of the v3 code path; the other four meta3 runs are submitted once its first meta call has
+  been answered. Submitted at 05:36:43-05:36:53Z: `yq_oftsb_fixed_s1-3` job-n0gmy4g8pbzk, job-l5wvnxsm74f2,
+  job-wcqpu0wzg4je (one card each); `yq_oftsb_full_s1-3` job-2ip8kewtmsqc, job-mt68wtwe23ag, job-gr8sajq84v2y (two
+  cards each). Those that find no free card wait in the queue behind the twelve addendum-28 runs.
