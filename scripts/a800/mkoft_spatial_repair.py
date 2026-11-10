@@ -1,5 +1,5 @@
 """A800: addendum-29 seed-0 arms of the self-repair study on LIBERO-Spatial (OFT 1-traj SFT, the collapsing BC start
-of addenda 12/24, fresh paired gates). arms: fixed (gate only) | full (numeric search, harness space, capped at the
+of addenda 12/24, fresh paired gates). arms: fixed (gate only) | nogate (plain training, addendum 31) | full (numeric search, harness space, capped at the
 start's work) | meta3 (meta level v3: the LLM behind a harness with workspace, memory and tools; same cap).
 Runs from src11 (repo rsi/ of the addendum-29 commit, with rsi/meta/memory/v3). The meta3 arm reads the gateway key
 from ~/.orkey on cavin (mode 600; never in a plan or log) and calls through py_llmproxy.sh like the earlier LLM arms.
@@ -14,6 +14,8 @@ order, arm = int(sys.argv[1]), sys.argv[2]
 ngpus = int(sys.argv[3]) if len(sys.argv) > 3 else 1
 seed = 0
 ARMS = {"fixed": ({}, {"proposer": "fixed"}),
+        # addendum 31 amendment 1: plain training, every round's child kept, only the start and the end tested
+        "nogate": ({"min_gate_gain": -1.0, "test_all_accepted": False}, {"proposer": "fixed"}),
         "full": ({"candidates_per_round": 2}, {"proposer": "numeric", "space": "harness", "budget": "seed"}),
         "meta3": ({"candidates_per_round": 2, "meta_v2": True},
                   {"proposer": "llm3", "space": "v2", "budget": "seed", "base_url": "https://openrouter.ai/api/v1",

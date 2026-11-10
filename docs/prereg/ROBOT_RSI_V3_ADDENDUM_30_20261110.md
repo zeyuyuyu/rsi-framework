@@ -130,3 +130,18 @@ the fresh-scene test is an additional registered endpoint, reported beside it in
   considered and not registered: on the finished Goal runs of the A800 node the strict gate refused 15 of 24 rounds,
   11 of them for dips within 3 points, but the mean gate change of a round there is −0.5 ± 0.6, so there is no gain
   for a looser gate to keep; on the running Spatial seed-0 run the strict gate has accepted four of four rounds.
+
+## Amendment 1 (2026-11-10 19:35Z, before any 12-round Spatial run has started): a seed-0 block on the A800 node
+
+The A800 node's cards free up tonight as the addendum-28 seed-0 runs end, and the instruction for this stage is to
+keep every card busy. Two runs are added there, two cards each (rollouts on both, training on the first), source
+`src12` (the repository's `rsi/` at this addendum): `a8_spatmain_fixed12_s0` and `a8_spatmain_nonrec12_s0`
+(`scripts/a800/mkoft_spatial_long12.py`). As with addendum 23/25, pairing is within a platform; **the registered
+statistics stay the Yangquan three-seed ones (R3-long-spatial, R1-long-spatial, FL1, FL3)**, and the four-seed
+statistic with seed 0 is reported alongside. Their replicates and fresh-scene evaluations run on the node.
+
+Queue record: the three `yq_ofts_fixed12` jobs submitted at 17:07Z were stopped at 19:20Z while still waiting
+(never started), together with `yq_oftsb_fixed_s2-3` and `yq_oftsb_meta3_s2-3` of addendum 29, so that the first
+cards freed tonight go to evaluations (Goal 12-round fresh-scene evaluations, submitted 19:21Z:
+`yq_oftg_{fixed12,nonrec12,onebig12}_s1-3_fresh`, `yq_fresh_n0_goal_1-4`; then the replicates and fresh-scene
+evaluations of the Spatial main runs). The stopped runs are resubmitted under the same names and plans right after.

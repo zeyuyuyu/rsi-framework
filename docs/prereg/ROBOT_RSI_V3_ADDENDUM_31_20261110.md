@@ -46,3 +46,10 @@ per round.
 
 No registered read, bar or run changes. The equal-compute comparison on a working recipe (R5, F5: loop against
 one-shot RL) stays as registered and is reported as it comes out.
+
+## Amendment 1 (2026-11-10 19:35Z, before any run of this addendum has started): seed 0 on the A800 node
+
+`a8_spatrep_nogate_s0` is added on the A800 node (one card, source `src12`,
+`scripts/a800/mkoft_spatial_repair.py <order> nogate`), paired with `a8_spatrep_fixed_s0` and `a8_spatrep_meta3_s0`
+of addendum 29. **N1 and N2 stay registered on the Yangquan seeds 1-3**; the four-seed statistic with seed 0 is
+reported alongside, each seed paired within its platform.
