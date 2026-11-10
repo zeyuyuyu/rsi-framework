@@ -14,6 +14,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   oftg_rep   addendum 11 amendment 2: a further seed replica of one oftg_pilot curve (oftg_rep <seed> <grpo|bc>)
   m2         addendum 21: meta level v2 on Yangquan (pre/tun start x replica/llm x seeds 1-3)
   goal_main  LIBERO-Goal main arms (5 arms x seeds 1-3, fresh paired gates) with the operator addendum 11 picks
+  yq_spatial_main  addendum 28: fixed / nonrec / shuffled / onebig x seeds 1-3 on LIBERO-Spatial (Yangquan)
   infl       train-on-test inflation replication on Baidu: SFT start and SimpleVLA-RL RL checkpoint, plans with
              500 fresh placements (heldout_per_task 50) and base-version receipts for --heldout-eval
   oft_main   prereg v3 main arms on LIBERO-10, seeds 1-3, 6 rounds, seed program frozen by addendum 1:
@@ -165,6 +166,17 @@ elif sys.argv[1] == "yq_long12":
     for seed in (1, 2, 3):
         for arm, (engine, proposer) in arms.items():
             write(f"yq_oftg_{arm}_s{seed}", model_name="oft-sft-libero-goal-traj1", suite="libero_goal",
+                  vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
+elif sys.argv[1] == "yq_spatial_main":
+    # addendum 28: the object-level arms on LIBERO-Spatial, Yangquan, seeds 1-3 (the Goal main program, suite changed)
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    gated = {"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired"}
+    arms = {"fixed": ({}, "fixed"), "nonrec": ({"recursive": False}, "fixed"),
+            "shuffled": ({"feedback": "shuffled"}, "fixed"), "onebig": ({"rounds": 1, "inner_steps": 18}, "fixed")}
+    for seed in (1, 2, 3):
+        for arm, (engine, proposer) in arms.items():
+            write(f"yq_ofts_{arm}_s{seed}", model_name="oft-sft-libero-spatial-traj1", suite="libero_spatial",
                   vla=vla, engine=dict(gated, seed=seed, **engine), meta={"proposer": proposer}, program=prog)
 elif sys.argv[1] == "yq_rsi":
     # addendum 17: Yangquan arms beyond addendum 15 -- Goal llm_harness x3 (LLM relayed through BOS, key stays on cavin)
