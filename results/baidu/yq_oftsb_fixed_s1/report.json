@@ -1,0 +1,102 @@
+{
+  "accepted_chain": [
+    {
+      "audit": 0.555,
+      "author": "seed",
+      "gate": 0.605,
+      "node": "n0",
+      "program": "58f8f217054f933f",
+      "round": 0
+    },
+    {
+      "audit": 0.605,
+      "author": "seed",
+      "gate": 0.565,
+      "node": "r01c0",
+      "program": "58f8f217054f933f",
+      "round": 1
+    },
+    {
+      "audit": 0.61,
+      "author": "seed",
+      "gate": 0.595,
+      "node": "r02c0",
+      "program": "58f8f217054f933f",
+      "round": 2
+    },
+    {
+      "audit": 0.61,
+      "author": "seed",
+      "gate": 0.595,
+      "node": "r03c0",
+      "program": "58f8f217054f933f",
+      "round": 3
+    }
+  ],
+  "config": {
+    "candidates_per_round": 1,
+    "feedback": "true",
+    "gate_mode": "fresh_paired",
+    "inner_steps": 3,
+    "meta_v2": false,
+    "min_gate_gain": 0.0,
+    "recursive": true,
+    "replica_candidates": false,
+    "rounds": 6,
+    "seal_tests": false,
+    "seed": 1,
+    "test_all_accepted": true,
+    "wall_seconds": 1209600
+  },
+  "elapsed": 60042.94450262375,
+  "retained": "r03c0",
+  "seconds": {
+    "attempt": 33015.121996564325,
+    "audit_eval": 2445.783942673821,
+    "gate_eval": 8045.769558803644,
+    "propose": 0.0028185276314616203,
+    "test_eval": 5734.941888558678,
+    "train": 10799.367762270384
+  },
+  "status": "complete",
+  "tests": {
+    "libero_official": {
+      "curve": [
+        {
+          "node": "n0",
+          "round": 0,
+          "score": 0.606
+        },
+        {
+          "node": "r01c0",
+          "round": 1,
+          "score": 0.596
+        },
+        {
+          "node": "r02c0",
+          "round": 2,
+          "score": 0.566
+        },
+        {
+          "node": "r03c0",
+          "round": 3,
+          "score": 0.588
+        }
+      ],
+      "final": 0.588,
+      "initial": 0.606,
+      "paired": {
+        "ci95": [
+          -0.05,
+          0.014
+        ],
+        "ci_excludes_zero": false,
+        "flipped_to_correct": 29,
+        "flipped_to_wrong": 38,
+        "mcnemar_p": 0.3284320626971899,
+        "mean_gain": -0.018,
+        "n": 500
+      }
+    }
+  }
+}
