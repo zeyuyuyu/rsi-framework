@@ -166,3 +166,18 @@ No registered read, bar or run changes. Addendum 28's sixteen runs are read on t
   been answered. Submitted at 05:36:43-05:36:53Z: `yq_oftsb_fixed_s1-3` job-n0gmy4g8pbzk, job-l5wvnxsm74f2,
   job-wcqpu0wzg4je (one card each); `yq_oftsb_full_s1-3` job-2ip8kewtmsqc, job-mt68wtwe23ag, job-gr8sajq84v2y (two
   cards each). Those that find no free card wait in the queue behind the twelve addendum-28 runs.
+* **First live meta calls (round 1, before any training).** `a8_spatrep_meta3_s0` at 05:48Z: two turns, read the
+  playbook, `run/nodes/n0.json` and `run/tasks.tsv`, proposed BC to GRPO on mixed groups with lr 1e-4 and token loss;
+  accepted by validation, no fallback. `yq_oftsb_meta3_s1`: the same reads and the same proposal, no fallback.
+* **Relay outage, 05:36Z to 06:09Z.** The relay on the A800 node died at 05:36Z with a JSON error: it read the
+  canary's slot file while it was still being copied. No answer was lost, because the canary's first call was only
+  posted at about 05:57Z; it then waited 777 s and was answered at 06:09:47Z when the relay was restarted (the node
+  waits up to 30 min per call). Fixes: the relay skips a run file it cannot parse and reads it again on the next
+  pass; the submit script copies the slot file under another name and renames it. My first restart attempt did
+  nothing because its process check matched its own command line; the second counted the Python process only.
+* **Remaining Yangquan runs**, submitted after the canary's answer, two cards each: `yq_oftsb_meta3_s2`
+  job-d5ze9tuhjfu3 (06:12:51Z), `yq_oftsb_meta3_s3` job-olfjuwpc1f42 (06:14:04Z), `yq_ofts_meta3_s1`
+  job-mq6tvlzyelsc (06:15:07Z), `yq_ofts_meta3_s2` job-e6pnli6w5441 (06:15:43Z), `yq_ofts_meta3_s3`
+  job-4wftsmvpoygl (06:16:45Z). All twelve Yangquan runs of this study are now submitted; those without a free card
+  wait in the queue.
+* `a8_spatrep_full_s0` queued on the A800 node at 06:18Z (order 93, one card); it starts when a card frees.

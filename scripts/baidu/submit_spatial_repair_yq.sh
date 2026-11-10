@@ -15,8 +15,9 @@ case "$run" in
       mkdir -p "$L/relay"
       python3 scripts/baidu/mk_relay_urls.py "$run" "$L/relay" 80 6 > "$L/$run.nodeurl" || { echo "relay urls failed"; exit 1; }
       chmod 600 "$L/$run.nodeurl"
-      timeout 60 scp -q -o ConnectTimeout=20 "$L/relay/$run.json" cavin:rsi/relay/runs/ || { echo "relay file copy failed"; rm -f "$L/$run.nodeurl"; exit 1; }
-      timeout 30 ssh -o ConnectTimeout=20 cavin "chmod 600 ~/rsi/relay/runs/$run.json"
+      # copy under another suffix, then rename: the relay must never read a half-written run file
+      timeout 60 scp -q -o ConnectTimeout=20 "$L/relay/$run.json" "cavin:rsi/relay/runs/$run.json.part" || { echo "relay file copy failed"; rm -f "$L/$run.nodeurl"; exit 1; }
+      timeout 30 ssh -o ConnectTimeout=20 cavin "chmod 600 ~/rsi/relay/runs/$run.json.part && mv ~/rsi/relay/runs/$run.json.part ~/rsi/relay/runs/$run.json" || { echo "relay file rename failed"; rm -f "$L/$run.nodeurl"; exit 1; }
     fi
     export RSI_LLM_RELAY="$(cat $L/$run.nodeurl)";;
 esac

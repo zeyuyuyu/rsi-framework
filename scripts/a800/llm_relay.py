@@ -25,7 +25,10 @@ def put(url, obj):
 while True:
     for f in sorted(d.glob("*.json")):
         run = f.stem
-        urls = json.loads(f.read_text())
+        try:
+            urls = json.loads(f.read_text())
+        except ValueError:        # a run file that is still being copied: an empty read killed the relay on
+            continue              # 2026-11-10 05:36Z (addendum 29); it is read again on the next pass
         donef = d / f"{run}.done"
         done = set(json.loads(donef.read_text())) if donef.exists() else set()
         for k, get_url in enumerate(urls["req_get"]):
