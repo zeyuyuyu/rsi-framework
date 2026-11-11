@@ -181,3 +181,14 @@ No registered read, bar or run changes. Addendum 28's sixteen runs are read on t
   job-4wftsmvpoygl (06:16:45Z). All twelve Yangquan runs of this study are now submitted; those without a free card
   wait in the queue.
 * `a8_spatrep_full_s0` queued on the A800 node at 06:18Z (order 93, one card); it starts when a card frees.
+* **`a8_spatrep_meta3_s0` interrupted and resumed (2026-11-11 01:21Z).** In round 5 the run released GPU 6 between
+  a rollout and the following update, and a process of another project under the same account
+  (`llm_wm.py`, 77 GB, started about 21:17Z) took the card. The update call created at 21:42:45Z never started: the
+  backend waited for the card for 3.6 hours (no worker process, an empty call directory). The other process was not
+  touched. The run's own process group was stopped (exit 143) and the run re-queued with `--resume` on one card
+  (queue order 60): rounds 1-4 stand, round 5 is run again from the round-4 policy, which re-draws that round's
+  meta-level call (selection on an infrastructure stall only; the round had produced no gate score). The partial
+  round-5 files are in `resume-05/`; the note the meta level wrote for the aborted round 5 stays in its notes file.
+* Queue changes of 2026-11-10/11 (addenda 30-32): `yq_oftsb_fixed_s2-3` and `yq_oftsb_meta3_s2-3` were stopped while
+  waiting (never started) at 19:20Z and are resubmitted by the conductor under the same names and plans;
+  `yq_oftsb_fixed_s1` finished at 22:2xZ and has its replicates and fresh-scene evaluation.
