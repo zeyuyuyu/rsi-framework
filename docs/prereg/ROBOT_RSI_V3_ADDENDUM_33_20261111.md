@@ -129,3 +129,5 @@ The A800 node has an idle card. The comparison gets one more within-platform pai
 - **Readers**: their changes for A0 are committed before any result of this run exists.
 
 Predictions: unchanged.
+- 2026-11-11 16:45:17Z: `a8_spatmain_guard_s0` was queued on the A800 node, after amendment 2 (0fe16fa, 16:44:39Z). It launched at 16:45:24Z on GPU 2 with src13 (v32, sha 4e36b3f6ee34c4d2). The plan diff against `a8_spatmain_fixed_s0` was checked on the node: exactly the three engine keys.
+- 16:53:40Z: the platform-A reader changes were committed (b710950), before any result of that run. The earlier blocks are unchanged (byte-for-byte regression as before).
