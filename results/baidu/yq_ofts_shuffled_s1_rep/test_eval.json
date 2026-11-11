@@ -1,0 +1,13 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_shuffled_s1",
+  "node": "r06c0",
+  "version": {
+    "id": "681cacca7a10d64799d7aab57b86ee6917e877fc8fcb324bceaeb799e0084ad3",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_shuffled_s1/ckpt-r06c0",
+    "parent_id": "84473dc08202332ea460f14902c73ae10887835b71c88c79c47ef56a9afb2f17"
+  },
+  "test_success": [
+    0.588,
+    0.584
+  ]
+}
