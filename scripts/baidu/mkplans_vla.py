@@ -16,6 +16,7 @@ usage: mkplans_vla.py oft_base | oft_pilot | oft_pilot2 | oft_pilot3 | oft_pilot
   goal_main  LIBERO-Goal main arms (5 arms x seeds 1-3, fresh paired gates) with the operator addendum 11 picks
   yq_spatial_main  addendum 28: fixed / nonrec / shuffled / onebig x seeds 1-3 on LIBERO-Spatial (Yangquan)
   yq_goal_guard  addendum 32: guard-rail gate on the 12-round Goal loop; BC recipe without a gate on Goal
+  yq_spatial_guard  addendum 33: guard-rail gate on the 6-round Spatial loop, seeds 1-3
   yq_spatial_nogate  addendum 31: the BC recipe without the gate (always accept), seeds 1-3
   yq_spatial_long12  addendum 30: fixed12 / nonrec12 / onebig12 x seeds 1-3 on LIBERO-Spatial
   yq_spatial_repair  addendum 29: BC start, fixed / full / meta3 x seeds 1-3, and meta3 from the tuned program
@@ -191,6 +192,16 @@ elif sys.argv[1] == "yq_goal_guard":
               engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "min_gate_gain": -1.0,
                       "test_all_accepted": False, "seed": seed},
               meta={"proposer": "fixed"}, program=bc_start)
+elif sys.argv[1] == "yq_spatial_guard":
+    # addendum 33: the guard-rail gate of addendum 32 on the 6-round LIBERO-Spatial loop, seeds 1-3: addendum 28's
+    # yq_ofts_fixed plan with min_gate_gain -0.05 and gate_floor 0.05; only the initial and the retained policy tested.
+    prog = merge(OFT_PROGRAM, {"curriculum": {"cases": 64}, "update": {"lr": 3e-5}})
+    vla = dict(VLA, ratio_mode="matched", loss_agg="episode")
+    for seed in (1, 2, 3):
+        write(f"yq_ofts_guard_s{seed}", model_name="oft-sft-libero-spatial-traj1", suite="libero_spatial", vla=vla,
+              engine={"rounds": 6, "inner_steps": 3, "gate_mode": "fresh_paired", "min_gate_gain": -0.05,
+                      "gate_floor": 0.05, "test_all_accepted": False, "seed": seed},
+              meta={"proposer": "fixed"}, program=prog)
 elif sys.argv[1] == "yq_spatial_nogate":
     # addendum 31: the same BC recipe trained WITHOUT the framework's gate (every round's child is kept), seeds 1-3:
     # the "plain training" baseline of the Spatial self-repair study. Only the start and the final policy are tested.

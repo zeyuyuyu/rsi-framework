@@ -13,7 +13,7 @@ Blocks and bars (addendum 30):
   spatial repair  FS1 meta3 - fixed(BC) >= +3 (CI > 0)   FS2 meta3 - full (CI)   meta3 - n0 and fixed(BC) - n0 (CI)
   long12          FL1 fixed12 - n0 >= +5 (CI > 0)   FL3 fixed12 - nonrec12 >= +2 (CI > 0)   fixed12 - onebig12 if run
 usage: python3 scripts/report/fresh_read.py <block> [results root] [--check] [--json out.json]
-       block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate
+       block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate | spatial_guard
 --check prints which evaluations exist and no number."""
 import json
 import sys
@@ -95,6 +95,11 @@ BLOCKS = {
                          name=lambda arm, s: f"yq_oftg_{arm}_s{s}",
                          claims=[("G1", "n0", "guard12", 5.0), ("G2", "fixed12", "guard12", 2.0),
                                  ("G3", "onebig12", "guard12", None)]),
+    # addendum 33 (block added before any of its runs existed; the blocks above are unchanged)
+    "spatial_guard": dict(suite="spatial", arms=("guard", "onebig", "fixed"), seeds=(1, 2, 3),
+                          name=lambda arm, s: f"yq_ofts_{arm}_s{s}",
+                          claims=[("GS3", "onebig", "guard", 0.0), ("GS2", "fixed", "guard", 2.0),
+                                  ("GS1", "n0", "guard", 3.0)]),
     "goal_nogate": dict(suite="goal", arms=("nogate", "fixed", "llm_harness"), seeds=(1, 2, 3),
                         name=lambda arm, s: f"yq_oftgb_{arm}_s{s}",
                         claims=[("NG1", "nogate", "fixed", 10.0), ("NG2", "nogate", "llm_harness", 10.0),
