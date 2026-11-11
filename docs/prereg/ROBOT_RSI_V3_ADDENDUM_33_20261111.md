@@ -88,3 +88,19 @@ Predictions: as above. Platform B may differ in level, which the within-platform
 - 2026-11-11 15:52Z: `yq_ofts_guard_s1-3` were submitted to Yangquan after this addendum was committed (82e1511). `yq_ofts_fixed12_s2` and `yq_ofts_nonrec12_s3`, still `Created`, were withdrawn and resubmitted unchanged behind them.
 - 15:57Z: the Beijing smoke test `bj_fresh_n0_spatial_1` was submitted. It is a reference evaluation of the initial policy, not a run of either arm.
 - ~16:25Z: after amendment 1 (2934dcb), `bj_ofts_guard_s1-3`, `bj_ofts_onebig_s1-3` and `bj_fresh_n0_spatial_2-4` were submitted to Beijing.
+
+## Correction of the times above (2026-11-11 16:00Z)
+
+The approximate times written in the header, in amendment 1 and in the operational notes were wrong. They were estimated, not read from the clock, and all three are later than what happened. The exact order, from the git commit times and the job ledgers (`scripts/baidu/jobs_yq.tsv`, `scripts/baidu/jobs.tsv`), is below.
+
+| time (UTC) | event |
+|---|---|
+| 15:52:14 | this addendum committed (82e1511) |
+| 15:52:52-15:52:57 | `yq_ofts_guard_s1-3` submitted to Yangquan |
+| 15:52:59-15:53:01 | the two 12-round runs resubmitted |
+| 15:57:06 | the Beijing smoke test `bj_fresh_n0_spatial_1` (reference evaluation only) submitted |
+| 15:57:19 | amendment 1 committed (2934dcb) |
+| 15:57:40-15:57:59 | `bj_ofts_guard_s1-3` and `bj_ofts_onebig_s1-3` submitted |
+| 15:58:08-15:58:16 | `bj_fresh_n0_spatial_2-4` submitted |
+
+Every run of an arm was submitted after the text that registers it. At this correction no Yangquan or Beijing job of this addendum had started, so nothing had been seen.
