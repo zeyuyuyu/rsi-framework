@@ -84,3 +84,11 @@ A800 node is unaffected.
 
 No registered read, bar or run changes. The strict gate's results stand as read; the guard-rail gate is a new,
 separately named arm.
+
+## Operational notes
+
+- 2026-11-11 01:52Z: `yq_oftg_guard12_s1-3` submitted by hand, ahead of the order above, because two Yangquan cards
+  were idle and nothing was queued (jobs `job-46g4mwxzzj65`, `job-8w8ooykxt485`, `job-x05nk03gups9`; source v32,
+  one card each). The evaluations still owed for the Spatial main study keep their place: the conductor
+  (`scripts/baidu/conductor_1111c.sh`, which replaced `conductor_1111b.sh` at the same minute) submits them first
+  and skips any run that already has a job. No design, read or bar changes.
