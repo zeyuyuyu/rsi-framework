@@ -8,3 +8,11 @@ import json,sys
 t=sys.stdin.read(); i=t.find("{")
 try: d=json.loads(t[i:]); print(d.get("status"))
 except Exception: print("?")'); echo "$st $name"; done | sort | awk '{c[$1]++; if ($1!="Running" && $1!="Succeeded") print} END {for (k in c) printf "%s=%d ", k, c[k]; print ""}'
+# Beijing (addendum 33 amendment 1): job statuses + the Beijing conductor's last lines
+echo "==== Beijing"
+grep -P "^zw-rsi-bj-(ofts|fresh-n0-spatial)-" scripts/baidu/jobs.tsv | awk -F'\t' '{a[$1]=$2} END {for (k in a) print k"\t"a[k]}' | sort | while IFS=$'\t' read name job; do st=$(AIHC_HOST=aihc.bj.baidubce.com AIHC_QUEUE=aihcq-i7kkoqptnigl timeout 40 python3 scripts/baidu/aihc_job.py describe "$job" 2>/dev/null | python3 -c '
+import json,sys
+t=sys.stdin.read(); i=t.find("{")
+try: d=json.loads(t[i:]); print(d.get("status"))
+except Exception: print("?")'); echo "$st $name"; done | sort | awk '{c[$1]++; if ($1!="Running" && $1!="Succeeded") print} END {for (k in c) printf "%s=%d ", k, c[k]; print ""}'
+tail -n 2 /home/zeyu/rsi/bj_logs/conductor_bj.log 2>/dev/null

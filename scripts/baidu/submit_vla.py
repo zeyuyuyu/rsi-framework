@@ -10,11 +10,12 @@ import aihc_job
 HERE = os.path.dirname(os.path.abspath(__file__))
 plan, model = sys.argv[1], sys.argv[2]
 sha = sys.argv[3] if len(sys.argv) > 3 else "unknown"
-name = "zw-rsi-" + plan.replace("_", "-")
+run_name = os.environ.get("RUN_NAME", plan)      # replicate / fresh-eval jobs: another run dir, the run's own plan
+name = "zw-rsi-" + run_name.replace("_", "-")
 resume = os.environ.get("RESUME_RUN", "")
 if resume:
     name += "-resume"
-envs = [{"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"}, {"name": "NAME", "value": plan},
+envs = [{"name": "PLAN", "value": f"shitianyu-rsi/plans/{plan}.json"}, {"name": "NAME", "value": run_name},
         {"name": "MODEL_ID", "value": model}, {"name": "A800_SHA", "value": sha},
         {"name": "RUN_TIMEOUT_S", "value": os.environ.get("RUN_TIMEOUT_S", "93600")},
         {"name": "NVIDIA_DRIVER_CAPABILITIES", "value": "all"}]
@@ -50,7 +51,7 @@ body = {
                      "pfsL3MountPoint": "pfs-QnoasGJTsB.lb-36miyvr1.pfs.bj.baidubce.com", "readOnly": False}},
     ],
 }
-json.dump(body, open(os.path.join(HERE, f"body_{plan}.json"), "w"), indent=1)
+json.dump(body, open(os.path.join(HERE, f"body_{run_name}.json"), "w"), indent=1)
 st, out = aihc_job.create(body)
 print(st, json.dumps(out)[:600])
 if st == 200 and isinstance(out, dict) and out.get("jobId"):
