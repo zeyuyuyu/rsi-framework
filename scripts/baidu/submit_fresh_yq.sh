@@ -15,5 +15,9 @@ else
   plan=$1; name=${1}_fresh; export ARGS="--fresh-eval /mnt/pfs/shitianyu-rsi/runs/$1"
   case "$1" in yq_ofts*) suite=spatial;; yq_oftg_*|yq_oftgb_*) suite=goal;; *) echo "suite of $1?"; exit 1;; esac
 fi
+# a second call for the same evaluation is a no-op (FORCE=1 to resubmit after a failure)
+if [ "${FORCE:-0}" != 1 ] && grep -q -P "^zw-rsi-$(echo "$name" | tr _ -)\t" scripts/baidu/jobs_yq.tsv; then
+  echo "already submitted: $name"; exit 0
+fi
 RUN_NAME="$name" python3 scripts/baidu/submit_vla_yq2.py "$plan" "Haozhan72/Openvla-oft-SFT-libero-$suite-traj1" | tail -1 | cut -c1-120
 tail -n 1 scripts/baidu/jobs_yq.tsv

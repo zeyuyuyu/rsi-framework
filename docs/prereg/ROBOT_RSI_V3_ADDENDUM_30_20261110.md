@@ -151,3 +151,9 @@ evaluations of the Spatial main runs). The stopped runs are resubmitted under th
   replicate test evaluations and the fresh-scene evaluation of every seed-0 run when its `report.json` appears, four
   fresh-scene evaluations of the initial Spatial policy, and the fresh-scene evaluations of the four finished Goal
   seed-0 runs with four of the initial Goal policy.
+- 2026-11-11 02:24Z: four of the twelve Goal main fresh-scene evaluations (`yq_oftg_fixed_s1-3`, `yq_oftg_nonrec_s1`)
+  submitted by hand onto four idle Yangquan cards, ahead of the conductor (jobs `job-n1eptjods790`,
+  `job-5izbsljvpe70`, `job-vr8bo8ym7d1u`, `job-cd8a8pjvkljp`). `submit_fresh_yq.sh` now skips an evaluation that
+  already has a job, so the conductor's later calls for these four do nothing. On the A800 node the four fresh-scene
+  evaluations of the initial Spatial policy finished (02:18Z) and those of the initial Goal policy started. Nothing
+  has been read.
