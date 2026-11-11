@@ -192,3 +192,4 @@ No registered read, bar or run changes. Addendum 28's sixteen runs are read on t
 * Queue changes of 2026-11-10/11 (addenda 30-32): `yq_oftsb_fixed_s2-3` and `yq_oftsb_meta3_s2-3` were stopped while
   waiting (never started) at 19:20Z and are resubmitted by the conductor under the same names and plans;
   `yq_oftsb_fixed_s1` finished at 22:2xZ and has its replicates and fresh-scene evaluation.
+- 2026-11-11 05:52Z: since about 04:43Z a process from another project under the same account (`nsr/run_gen.sh 5,6`, a Qwen3-32B generation job) holds about 42-44 GB on A800 GPUs 5 and 6. `a8_spatrep_full_s0` (GPU 5) has been waiting in GPU admission since its round-4 rollout call (04:45Z). It resumes by itself when GPU 5 frees, and nothing has been killed. `a8_spatmain_fixed12_s0` (GPUs 0 and 6, addendum 30) falls back to GPU 0 alone after its 600 s admission wait, which changes only its speed. No design change.
