@@ -15,5 +15,5 @@ sec=$(git diff --cached --name-only; git ls-files --others --exclude-standard re
 git add results && n=$(git diff --cached --name-only | wc -l) && echo "changed files: $n"
 if [ "$n" -gt 0 ]; then git commit -q -m "Sync run records (A800 + Baidu, $label)
 
-Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>" && git log --oneline -1; fi
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" && git log --oneline -1; fi
 for i in 1 2 3; do git push origin main 2>&1 | tail -1 && break; sleep 20; done; git status -sb | head -1
