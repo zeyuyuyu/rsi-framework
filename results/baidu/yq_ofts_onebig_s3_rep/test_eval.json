@@ -1,0 +1,13 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_onebig_s3",
+  "node": "r01c0",
+  "version": {
+    "id": "794223e6c4edba71cdf67092d8a444b7ea9998487445ae0436ca6df3ae3c1fe3",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_onebig_s3/ckpt-r01c0",
+    "parent_id": "61cf30cd343ecf6ee396fa56dc950fe5f82f47d7af4f0d2c253cade2932d11ee"
+  },
+  "test_success": [
+    0.608,
+    0.61
+  ]
+}

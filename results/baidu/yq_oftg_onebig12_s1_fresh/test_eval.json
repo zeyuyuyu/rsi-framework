@@ -1,0 +1,14 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_oftg_onebig12_s1",
+  "node": "r01c0",
+  "version": {
+    "id": "10883f0ce85a3dceda4ee932d299435f38cbef86182bc6f91899b8de1393cd8b",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftg_onebig12_s1/ckpt-r01c0",
+    "parent_id": "e1ae6af85c15ed73f6acf9a1e49a8a39761eb4086e0b2e143599670387313263"
+  },
+  "set": "libero_fresh_sealed",
+  "per_task": 100,
+  "fresh_success": [
+    0.668
+  ]
+}

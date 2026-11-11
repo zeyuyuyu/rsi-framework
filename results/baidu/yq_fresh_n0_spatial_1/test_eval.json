@@ -1,0 +1,14 @@
+{
+  "run": "none",
+  "node": "n0",
+  "version": {
+    "id": "base:oft-sft-libero-spatial-traj1",
+    "location": "/mnt/pfs/shitianyu-rsi/models/Openvla-oft-SFT-libero-spatial-traj1",
+    "parent_id": null
+  },
+  "set": "libero_fresh_sealed",
+  "per_task": 100,
+  "fresh_success": [
+    0.596
+  ]
+}
