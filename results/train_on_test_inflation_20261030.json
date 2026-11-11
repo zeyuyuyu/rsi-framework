@@ -1,0 +1,15 @@
+{
+  "source": "docs/results/TRAIN_ON_TEST_INFLATION_20261030.md (A800 node, official 500 states and the first 500 fresh placements)",
+  "suite": "libero_10",
+  "episodes_per_cell": 500,
+  "cells": {
+    "sft": {"official": 14.6, "fresh": 20.0},
+    "rl": {"official": 87.4, "fresh": 76.0}
+  },
+  "rl_per_task": {
+    "official": [78, 84, 98, 88, 80, 96, 90, 86, 82, 92],
+    "fresh": [62, 68, 92, 92, 52, 90, 50, 84, 84, 86]
+  },
+  "inflation_points": 16.8,
+  "ci95_points": [9.8, 23.4]
+}

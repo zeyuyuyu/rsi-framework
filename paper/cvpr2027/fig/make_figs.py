@@ -1,190 +1,279 @@
-"""Figures for the CVPR 2027 draft, all from released run records. Run from the repository root:
-    python paper/cvpr2027/fig/make_figs.py
-Writes PDFs next to this file."""
+"""Figures for the CVPR 2027 draft. Every data figure is drawn by this script from the run records under results/;
+no measured number is typed in here. Run from the repository root:
+    python paper/cvpr2027/fig/make_figs.py            # writes the PDFs next to this file
+    python paper/cvpr2027/fig/make_figs.py --check    # redraws into a temporary folder and compares with the PDFs here
+The PDFs carry no timestamp, so the same records and the same matplotlib give the same bytes."""
 import glob
 import json
 import os
 import re
+import sys
+import tempfile
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-plt.rcParams.update({"font.size": 8, "axes.titlesize": 9, "axes.labelsize": 8, "legend.fontsize": 7,
-                     "pdf.fonttype": 42, "axes.spines.top": False, "axes.spines.right": False})
-C = {"fixed": "#1f77b4", "full": "#ff7f0e", "llm": "#2ca02c", "llm_harness": "#2ca02c", "llm_harness_cap": "#17becf",
-     "nonrec": "#9467bd", "shuffled": "#d62728", "onebig": "#8c564b"}
+OUT = HERE
+
+# ---------------------------------------------------------------- style shared by every figure
+INK, INK2, MUTED, GRID, AXIS = "#0b0b0b", "#52514e", "#8a8983", "#e9e8e3", "#b5b4ae"
+plt.rcParams.update({
+    "font.family": "sans-serif", "font.sans-serif": ["Liberation Sans", "Arial", "Helvetica", "DejaVu Sans"],
+    "mathtext.fontset": "custom", "mathtext.rm": "Liberation Sans", "mathtext.it": "Liberation Sans:italic",
+    "mathtext.bf": "Liberation Sans:bold", "mathtext.tt": "Liberation Mono", "mathtext.cal": "Liberation Sans:italic",
+    "font.size": 7.5, "axes.titlesize": 7.5, "axes.labelsize": 7.5, "xtick.labelsize": 7, "ytick.labelsize": 7,
+    "legend.fontsize": 7, "text.color": INK, "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
+    "axes.edgecolor": AXIS, "axes.linewidth": 0.6, "xtick.major.width": 0.6, "ytick.major.width": 0.6,
+    "xtick.major.size": 2.5, "ytick.major.size": 2.5, "grid.color": GRID, "grid.linewidth": 0.6,
+    "axes.axisbelow": True, "axes.spines.top": False, "axes.spines.right": False, "legend.frameon": False,
+    "legend.handlelength": 1.8, "lines.solid_capstyle": "round", "lines.solid_joinstyle": "round",
+    "pdf.fonttype": 42,
+    # the layout engine fills the canvas, so a figure drawn 7 in wide is printed at its drawn size and font
+    "figure.constrained_layout.use": True, "figure.constrained_layout.w_pad": 0.03,
+    "figure.constrained_layout.h_pad": 0.03, "figure.constrained_layout.wspace": 0.03,
+    "figure.constrained_layout.hspace": 0.02,
+})
+# One colour per arm, the same in every figure. The order is the palette's validated order (adjacent colours stay
+# apart under protan/deutan simulation); arms are always drawn in this order and always carry a text label too.
+ARMS = ["fixed", "full", "llm_harness", "llm_harness_cap", "llm", "onebig", "nonrec", "shuffled"]
+C = dict(zip(ARMS, ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]))
+TITLE = {"fixed": "Gated loop", "full": "+ meta: numeric", "llm_harness": "+ meta: LLM",
+         "nonrec": "No recursion", "shuffled": "Verifier removed"}
+RING = dict(mec="white", mew=0.7)           # white ring keeps a marker readable where it crosses a line
+REF = dict(color=MUTED, lw=0.7, ls=(0, (3, 2)), zorder=1)   # a reference level (not a grid line)
 
 
-def save(fig, name):
-    fig.savefig(os.path.join(HERE, name), bbox_inches="tight")
+def save(fig, name, tight=True):
+    fig.savefig(os.path.join(OUT, name), bbox_inches="tight" if tight else None, pad_inches=0.02,
+                metadata={"CreationDate": None})
     plt.close(fig)
     print("wrote", name)
 
 
+def ygrid(ax):
+    ax.grid(axis="y")
+    ax.spines["left"].set_visible(False)
+    ax.tick_params(axis="y", length=0)
+
+
+def panel_title(ax, title, code=None):
+    """Bold plain-language title, with the arm's name in the paper under it."""
+    ax.set_title(title, loc="left", fontweight="bold", pad=12 if code else 4)
+    if code:
+        ax.annotate(code, (0, 1), xycoords="axes fraction", xytext=(0, 3), textcoords="offset points",
+                    ha="left", va="bottom", fontsize=6.5, color=MUTED, family="Liberation Mono")
+
+
+def chain(path):
+    """Gate score (%) of the retained version after rounds 0..6, and the rounds in which a new version was accepted."""
+    g = {c["round"]: c["gate"] for c in json.load(open(path))["accepted_chain"]}
+    out, cur = [], g[0]
+    for k in range(0, 7):
+        cur = g.get(k, cur)
+        out.append(cur * 100)
+    return out, [k for k in range(1, 7) if k in g]
+
+
+def read_final():
+    return json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))
+
 
 # ---------------------------------------------------------------- 0. teaser: safety (left) + registered claims (right)
 def fig_teaser():
-    d = json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.0, 2.3), gridspec_kw={"width_ratios": [1, 1.5]})
-    g = [58.5]
-    for l in open(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/accepted.jsonl")):
-        g.append(json.loads(l)["gate"] * 100)
-    a1.plot(range(7), g, "-o", color="#d62728", ms=3.5, lw=2, label="same recipe, no gate")
+    d = read_final()
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.0, 2.25), gridspec_kw={"width_ratios": [1, 1.25], "wspace": 0.06})
+    nogate, _ = chain(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/report.json"))
+    ygrid(a1)
     for s in (1, 2, 3):
         pth = os.path.join(ROOT, f"results/baidu/yq_oftgb_fixed_s{s}/report.json")
         if os.path.exists(pth):
-            a1.plot(range(7), chain(pth), "-", color="#1f77b4", lw=1.3, alpha=0.8, label="with the gate" if s == 1 else None)
-    a1.set_xlabel("round"); a1.set_ylabel("held-out success (%)"); a1.set_ylim(0, 72); a1.legend(frameon=False, fontsize=7, loc="lower left")
-    a1.set_title("(a) the gate makes the loop safe", fontsize=8)
-    rows = [("loop (fixed $-$ start)", d["R1_fixed"], 5), ("verifier (fixed $-$ shuffled)", d["R2_seeds0to3"], 3),
-            ("recursion (fixed $-$ nonrec)", d["R3_seeds0to3"], 2), ("meta: numeric $-$ fixed", d["R4_full_minus_fixed"], 2),
-            ("meta: LLM $-$ fixed", d["R4_harness_minus_fixed_yq"], 2), ("meta: LLM+cap $-$ fixed (A)", d["R4_cap_minus_fixed_cavin"], 2),
-            ("loop $-$ one-shot RL", d["R5_seeds0to3"], 2)]
+            a1.plot(range(7), chain(pth)[0], "-", color=C["fixed"], lw=1.2)
+    a1.plot(range(7), nogate, "-o", color=INK, ms=4, lw=1.8, **RING)
+    a1.text(6.1, 66, "with the gate (3 seeds)", ha="right", va="bottom", fontsize=7, color=INK2)   # direct labels:
+    a1.text(3.95, 24, "same recipe,\nno gate", ha="right", va="center", fontsize=7, color=INK2)   # two series
+    a1.set_xlabel("Round"); a1.set_ylabel("Held-out success (%)"); a1.set_ylim(0, 72); a1.set_xticks(range(7))
+    panel_title(a1, "(a) The gate makes the loop safe")
+    rows = [("loop (fixed − start)", d["R1_fixed"]), ("verifier (fixed − shuffled)", d["R2_seeds0to3"]),
+            ("recursion (fixed − nonrec)", d["R3_seeds0to3"]), ("meta: numeric − fixed", d["R4_full_minus_fixed"]),
+            ("meta: LLM − fixed", d["R4_harness_minus_fixed_yq"]), ("meta: LLM+cap − fixed (A)", d["R4_cap_minus_fixed_cavin"]),
+            ("loop − one-shot RL", d["R5_seeds0to3"])]
     ys = list(range(len(rows)))[::-1]
-    for y, (label, r, bar) in zip(ys, rows):
+    a2.axvline(0, color=MUTED, lw=0.7, zorder=1)
+    for y, (label, r) in zip(ys, rows):
         m, (lo, hi) = r["mean_points"], r["ci95_points"]
-        a2.plot([lo, hi], [y, y], color="0.3", lw=1.3); a2.plot(m, y, "o", color="black", ms=4)
-        a2.plot(bar, y, "|", color="#d62728", ms=10, mew=1.6)
-    a2.axvline(0, color="0.6", lw=0.8, ls="--")
-    a2.set_yticks(ys); a2.set_yticklabels([r[0] for r in rows], fontsize=7)
-    a2.set_xlabel("points of test success (95% CI); red tick = preregistered bar", fontsize=7); a2.set_xlim(-3.2, 6.2)
-    a2.set_title("(b) which part of the loop helps (LIBERO-Goal, 31 runs)", fontsize=8)
-    fig.tight_layout()
+        a2.plot([lo, hi], [y, y], color=INK2, lw=1.3, zorder=2)
+        a2.plot(m, y, "o", color=INK, ms=4.4, zorder=3, **RING)
+        a2.plot(r["bar_points"], y, "|", color=C["shuffled"], ms=9, mew=1.5, zorder=2)
+    a2.set_yticks(ys); a2.set_yticklabels([r[0] for r in rows], color=INK)
+    a2.tick_params(axis="y", length=0); a2.spines["left"].set_visible(False)
+    a2.grid(axis="x"); a2.set_ylim(-0.6, len(rows) - 0.15)
+    a2.annotate("bar set in advance", (rows[0][1]["bar_points"], ys[0]), xytext=(6, 7), textcoords="offset points",
+                ha="right", va="bottom", fontsize=6.5, color=INK2)
+    a2.set_xlabel("Difference in test success (points, 95% CI)"); a2.set_xlim(-3.2, 6.2)
+    panel_title(a2, "(b) Which part of the loop helps (LIBERO-Goal, 31 runs)")
     save(fig, "fig_teaser.pdf")
+
 
 # ---------------------------------------------------------------- 1. forest plot of the registered claims
 def fig_claims():
-    d = json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))
+    d = read_final()
     m2 = json.load(open(os.path.join(ROOT, "results/m2_read_20261104.json")))
     m2c = json.load(open(os.path.join(ROOT, "results/m2_cavin_read_20261106.json")))
-    rows = [("R1  fixed $-$ ref. (Y, seeds 1-3)", d["R1_fixed"], 5),
-            ("R1  full $-$ ref. (Y, seeds 1-3)", d["R1_full"], 5),
-            ("R2  fixed $-$ shuffled (Y, 0-3)", d["R2_seeds0to3"], 3),
-            ("R3  fixed $-$ nonrec (Y, 0-3)", d["R3_seeds0to3"], 2),
-            ("R4  full $-$ fixed (Y)", d["R4_full_minus_fixed"], 2),
-            ("R4  llm_harness $-$ fixed (Y)", d["R4_harness_minus_fixed_yq"], 2),
-            ("R4  llm $-$ fixed (A)", d["R4_llm_minus_fixed_cavin"], 2),
-            ("R4  llm_harness_cap $-$ fixed (A)", d["R4_cap_minus_fixed_cavin"], 2),
-            ("R5  best gated $-$ onebig (Y, 0-3)", d["R5_seeds0to3"], 2),
-            ("M2-A  llm $-$ replica, v2 (Y)", m2[0], 3),
-            ("M2-A  llm $-$ replica, v2 (A)", m2c[0], 3),
-            ("noise  n0 half $-$ half (Y)", {"mean_points": d["noise_check_n0_halves"]["yq"]["diff_points"], "ci95_points": d["noise_check_n0_halves"]["yq"]["ci95"]}, None)]
+    noise = d["noise_check_n0_halves"]["yq"]
+    rows = [("R1  fixed − ref. (Y, seeds 1-3)", d["R1_fixed"], 5),
+            ("R1  full − ref. (Y, seeds 1-3)", d["R1_full"], 5),
+            ("R2  fixed − shuffled (Y, 0-3)", d["R2_seeds0to3"], 3),
+            ("R3  fixed − nonrec (Y, 0-3)", d["R3_seeds0to3"], 2),
+            ("R4  full − fixed (Y)", d["R4_full_minus_fixed"], 2),
+            ("R4  llm_harness − fixed (Y)", d["R4_harness_minus_fixed_yq"], 2),
+            ("R4  llm − fixed (A)", d["R4_llm_minus_fixed_cavin"], 2),
+            ("R4  llm_harness_cap − fixed (A)", d["R4_cap_minus_fixed_cavin"], 2),
+            ("R5  best gated − onebig (Y, 0-3)", d["R5_seeds0to3"], 2),
+            ("M2-A  llm − replica, v2 (Y)", m2[0], 3),
+            ("M2-A  llm − replica, v2 (A)", m2c[0], 3),
+            ("noise  n0 half − half (Y)", {"mean_points": noise["diff_points"], "ci95_points": noise["ci95"]}, None)]
     rows = [r for r in rows if r[1] is not None]
     fig, ax = plt.subplots(figsize=(3.4, 3.3))
     ys = list(range(len(rows)))[::-1]
+    ax.axvline(0, color=MUTED, lw=0.7, zorder=1)
     for y, (label, r, bar) in zip(ys, rows):
         m, (lo, hi) = r["mean_points"], r["ci95_points"]
-        ax.plot([lo, hi], [y, y], color="0.3", lw=1.2)
-        ax.plot(m, y, "o", color="black", ms=4)
+        ax.plot([lo, hi], [y, y], color=INK2, lw=1.2, zorder=2)
+        ax.plot(m, y, "o", color=INK, ms=4.2, zorder=3, **RING)
         if bar is not None:
-            ax.plot(bar, y, "|", color="#d62728", ms=9, mew=1.5)
-    ax.axvline(0, color="0.6", lw=0.8, ls="--")
+            ax.plot(bar, y, "|", color=C["shuffled"], ms=9, mew=1.5, zorder=2)
     ax.set_yticks(ys)
-    ax.set_yticklabels([r[0] for r in rows])
-    ax.set_xlabel("points (95% CI); red tick = preregistered bar")
+    ax.set_yticklabels([r[0] for r in rows], color=INK)
+    ax.tick_params(axis="y", length=0); ax.spines["left"].set_visible(False); ax.grid(axis="x")
+    ax.set_xlabel("Points (95% CI); red tick = bar set in advance")
     ax.set_xlim(-3.5, 6.5)
     save(fig, "fig_claims.pdf")
 
 
 # ---------------------------------------------------------------- 2. every run: n0 -> replicate-averaged final
 def fig_runs():
-    d = json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))["runs"]
-    ref = {"yq": 58.92, "cavin": 58.44, "cavin_s0": 58.44}
-    order = ["fixed", "full", "llm_harness", "llm", "llm_harness_cap", "nonrec", "shuffled", "onebig"]
-    fig, ax = plt.subplots(figsize=(7.0, 2.2))
-    x = 0
-    ticks, labels = [], []
-    for plat in ["yq", "cavin", "cavin_s0"]:
-        runs = d.get(plat, {})
-        for arm in order:
-            names = sorted(n for n in runs if re.match(arm + r"_s\d$", n))
+    d = read_final()
+    runs = d["runs"]
+    ref = {"yq": d["mode"]["pooled_n0_yq"]["mean"], "cavin": d["mode"]["pooled_n0_cavin"]["mean"]}
+    ref["cavin_s0"] = ref["cavin"]
+    sections = [("yq", "Cloud pool (Y), seeds 1–3"), ("cavin", "A800 (A), seeds 1–3"), ("cavin_s0", "A800 (A), seed 0")]
+    short = {"llm_harness": "llm\nharness", "llm_harness_cap": "llm\nharness cap"}
+    fig, ax = plt.subplots(figsize=(7.0, 2.3))
+    ygrid(ax)
+    x, ticks, labels = 0.0, [], []
+    for plat, head in sections:
+        x0 = x
+        for arm in ARMS:
+            names = sorted(n for n in runs.get(plat, {}) if re.fullmatch(arm + r"_s\d", n))
             if not names:
                 continue
-            for n in names:
-                r = runs[n]
-                ax.plot([x, x], [r["n0"], r["test"]], color=C.get(arm, "k"), lw=1, alpha=0.6)
-                ax.plot(x, r["n0"], "_", color="0.5", ms=6)
-                ax.plot(x, r["test"], "o", color=C.get(arm, "k"), ms=3.5)
-                x += 1
-            ticks.append(x - (len(names) + 1) / 2)
-            labels.append(arm.replace("llm_harness_cap", "cap").replace("llm_harness", "harness") + ("\n(A s0)" if plat == "cavin_s0" else "\n(A)" if plat == "cavin" else "\n(Y)"))
-            x += 1.2 if plat != "cavin_s0" else 3.2
-    ax.axhline(58.92, color="0.6", lw=0.8, ls="--")
-    ax.axhline(58.44, color="0.6", lw=0.8, ls=":")
-    ax.set_xticks(ticks)
-    ax.set_xticklabels(labels, fontsize=6.5)
-    ax.set_ylabel("official test success (%)")
-    ax.set_ylim(53, 64)
-    ax.text(0.2, 63.6, "dashed: pooled initial reference (Y 58.9); dotted: (A 58.4).  grey tick: the run's own n0 test;  dot: replicate-averaged final", fontsize=6.5, va="top")
+            xs = [x + 0.75 * i for i in range(len(names))]
+            for xi, n in zip(xs, names):
+                r = runs[plat][n]
+                ax.plot([xi, xi], [r["n0"], r["test"]], color=C[arm], lw=1.1, zorder=2)
+                ax.plot(xi, r["n0"], "_", color=INK2, ms=5.5, mew=1.1, zorder=3)
+                ax.plot(xi, r["test"], "o", color=C[arm], ms=4.4, zorder=4, **RING)
+            ticks.append((xs[0] + xs[-1]) / 2)
+            labels.append(short.get(arm, arm))
+            x = xs[-1] + (1.9 if len(names) > 1 else 2.6)
+        x1 = x - (1.9 if plat != "cavin_s0" else 2.6)
+        ax.plot([x0 - 0.7, x1 + 0.7], [ref[plat]] * 2, **REF)
+        ax.text((x0 + x1) / 2, 1.0, head, transform=ax.get_xaxis_transform(), ha="center", va="bottom",
+                fontsize=7, fontweight="bold")
+        x += 1.6
+    ax.set_xticks(ticks); ax.set_xticklabels(labels, fontsize=6.5, linespacing=0.95)
+    ax.tick_params(axis="x", length=0)
+    ax.set_ylabel("Official test success (%)")
+    ax.set_ylim(54.2, 63.4); ax.set_yticks(range(56, 64, 2)); ax.set_xlim(-1.3, x - 1.6 - 1.2)
+    fig.legend(handles=[Line2D([], [], color=INK2, lw=0, marker="_", ms=5.5, mew=1.1, label="initial policy, the run's own test"),
+                       Line2D([], [], color=INK2, lw=0, marker="o", ms=4.4, **RING, label="retained policy, mean of 3 evaluations"),
+                       Line2D([], [], **{k: v for k, v in REF.items() if k != "zorder"},
+                              label=f"pooled initial reference (Y {ref['yq']:.1f}, A {ref['cavin']:.1f})")],
+              loc="outside lower center", ncol=3, columnspacing=1.8, handletextpad=0.5)
     save(fig, "fig_runs.pdf")
 
 
 # ---------------------------------------------------------------- 3. retained-gate trajectories on LIBERO-Goal (Y)
-def chain(path):
-    r = json.load(open(path))
-    ch = r["accepted_chain"]
-    g = {c["round"]: c["gate"] for c in ch}
-    out, cur = [], g[0]
-    for k in range(0, 7):
-        cur = g.get(k, cur)
-        out.append(cur * 100)
-    return out
-
-
 def fig_gates():
     arms = ["fixed", "full", "llm_harness", "nonrec", "shuffled"]
-    fig, axes = plt.subplots(1, 5, figsize=(7.0, 1.7), sharey=True)
+    fig, axes = plt.subplots(1, 5, figsize=(7.0, 2.0), sharey=True, gridspec_kw={"wspace": 0.05})
     for ax, arm in zip(axes, arms):
-        ys = []
+        ygrid(ax)
+        col, rec = C[arm], []
         for s in (1, 2, 3):
             p = os.path.join(ROOT, f"results/baidu/yq_oftg_{arm}_s{s}/report.json")
-            if not os.path.exists(p):
-                continue
-            y = chain(p)
-            ys.append(y)
-            ax.plot(range(7), y, color=C[arm], lw=0.8, alpha=0.45)
-        if ys:
-            mean = [sum(v[k] for v in ys) / len(ys) for k in range(7)]
-            ax.plot(range(7), mean, color=C[arm], lw=2)
-        ax.set_title(arm, fontsize=8)
-        ax.set_xlabel("round")
-        ax.set_xticks(range(0, 7, 2))
-    axes[0].set_ylabel("gate of retained\nversion (%)")
+            if os.path.exists(p):
+                rec.append(chain(p))
+        if rec:
+            mean = [sum(y[k] for y, _ in rec) / len(rec) for k in range(7)]
+            ax.axhline(mean[0], **REF)
+            for y, acc in rec:
+                ax.plot(range(7), y, color=col, lw=0.8, alpha=0.7, zorder=2)
+                ax.plot(acc, [y[k] for k in acc], "o", color=col, ms=2.6, mec="white", mew=0.4, zorder=3)
+            ax.plot(range(7), mean, "-", color=col, lw=2.0, zorder=4)
+            ax.plot([6], mean[-1:], "o", color=col, ms=4.6, zorder=5, **RING)
+            ax.annotate(f"{mean[-1] - mean[0]:+.1f} pts".replace("-", "−"), (1, 1), xycoords="axes fraction",
+                        xytext=(0, 3), textcoords="offset points", ha="right", va="bottom", fontsize=7.5, fontweight="bold")
+        panel_title(ax, TITLE[arm], arm)
+        ax.set_xlabel("Round")
+        ax.set_xticks(range(7))
+        ax.set_ylim(56, 69); ax.set_yticks(range(56, 70, 4))
+    axes[0].set_ylabel("Gate success of the\nretained policy (%)")
+    fig.legend(handles=[Line2D([], [], color=INK2, lw=0.8, marker="o", ms=2.6, mec="white", mew=0.4,
+                               label="one seed (dot: a new version was accepted)"),
+                        Line2D([], [], color=INK2, lw=2.0, label="mean of 3 seeds"),
+                        Line2D([], [], **{k: v for k, v in REF.items() if k != "zorder"}, label="mean at round 0")],
+               loc="outside lower center", ncol=3, columnspacing=1.8, handletextpad=0.5)
     save(fig, "fig_gates.pdf")
 
 
 # ---------------------------------------------------------------- 4. self-repair: collapse without the gate vs gated arms
 def fig_selfrepair():
-    fig, axes = plt.subplots(1, 4, figsize=(7.0, 1.8), sharey=True)
-    # panel 0: always-accept BC curve (no gate), A800 seed 1
-    ax = axes[0]
-    g, a = [58.5], [58.5]
-    for l in open(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/accepted.jsonl")):
-        r = json.loads(l)
-        g.append(r["gate"] * 100)
-        a.append(r["audit"] * 100)
-    ax.plot(range(7), g, "-o", color="#d62728", ms=3, label="gate")
-    ax.plot(range(7), a, "--s", color="#d62728", ms=3, alpha=0.6, label="audit")
-    ax.set_title("same BC recipe, no gate", fontsize=8)
-    ax.legend(frameon=False)
-    ax.set_ylabel("success on held-out\nplacements (%)")
-    for ax, arm, title in zip(axes[1:], ["fixed", "full", "llm_harness"], ["fixed (gate only)", "full (numeric search)", "llm_harness"]):
+    fig = plt.figure(figsize=(7.0, 1.95))
+    gs = fig.add_gridspec(1, 5, width_ratios=[1, 0.06, 1, 1, 1], wspace=0.05)
+    ax = fig.add_subplot(gs[0])
+    # the always-accept run of the same recipe (no gate), A800 seed 1: gate and audit of every round's version
+    ch = sorted(json.load(open(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/report.json")))["accepted_chain"],
+                key=lambda c: c["round"])
+    ygrid(ax)
+    ax.plot([c["round"] for c in ch], [c["audit"] * 100 for c in ch], "-o", color=MUTED, lw=1.1, ms=3.6, mfc="white",
+            mec=INK2, mew=0.8, label="audit")
+    ax.plot([c["round"] for c in ch], [c["gate"] * 100 for c in ch], "-o", color=INK, lw=1.8, ms=4, label="gate", **RING)
+    panel_title(ax, "No gate", "every version accepted")
+    ax.legend(loc="lower left", handlelength=1.6)
+    ax.set_ylabel("Success on held-out\nplacements (%)")
+    ax.set_ylim(0, 72); ax.set_yticks(range(0, 80, 20)); ax.set_xlabel("Round"); ax.set_xticks(range(7))
+    first = None
+    for i, arm in enumerate(["fixed", "full", "llm_harness"]):
+        ax = fig.add_subplot(gs[2 + i], sharey=first)
+        first = first or ax
+        ygrid(ax)
+        rec = []
         for s in (1, 2, 3):
             p = os.path.join(ROOT, f"results/baidu/yq_oftgb_{arm}_s{s}/report.json")
             if os.path.exists(p):
-                ax.plot(range(7), chain(p), "-", color=C[arm], lw=1.2, alpha=0.8, label=f"Y s{s}")
+                rec.append(chain(p)[0])
+                ax.plot(range(7), rec[-1], "-", color=C[arm], lw=1.2, zorder=3)
         p = os.path.join(ROOT, f"results/a800/runs2/a8_oftgb_{arm}_s0/report.json")
         if os.path.exists(p):
-            ax.plot(range(7), chain(p), "--", color="black", lw=1.0, alpha=0.8, label="A s0")
-        ax.set_title(title, fontsize=8)
-        ax.legend(frameon=False, fontsize=5.5)
-    for ax in axes:
-        ax.set_xlabel("round")
-        ax.set_xticks(range(0, 7, 2))
-    axes[0].set_ylim(0, 70)
+            rec.append(chain(p)[0])
+            ax.plot(range(7), rec[-1], "-o", color=C[arm], lw=0.9, ms=3.2, mfc="white", mec=C[arm], mew=0.9, zorder=4)
+        if rec:
+            ax.axhline(sum(y[0] for y in rec) / len(rec), **REF)
+        panel_title(ax, TITLE[arm] if arm != "fixed" else "Gated, same recipe", arm)
+        ax.set_xlabel("Round"); ax.set_xticks(range(7))
+        if i:
+            ax.tick_params(axis="y", labelleft=False)
+    first.set_ylim(53, 72); first.set_yticks(range(55, 75, 5))
+    first.set_ylabel("Gate success of the\nretained policy (%)")
+    fig.legend(handles=[Line2D([], [], color=INK2, lw=1.2, label="cloud pool, seeds 1–3"),
+                        Line2D([], [], color=INK2, lw=0.9, marker="o", ms=3.2, mfc="white", mec=INK2, mew=0.9, label="A800, seed 0"),
+                        Line2D([], [], **{k: v for k, v in REF.items() if k != "zorder"}, label="mean at round 0")],
+               loc="outside lower center", ncol=3, columnspacing=1.8, handletextpad=0.5)
     save(fig, "fig_selfrepair.pdf")
 
 
@@ -206,7 +295,7 @@ def fig_code():
             ("g8b", "cruxeval_i", "main", "C1 fixed: final - initial", "Granite-8B fixed\nCRUX-I")]
     # the figure is included at one column width: draw it at that physical width (no tight box), so the label
     # font is the printed font (the tight box had been scaled down to about 4 pt)
-    fig, ax = plt.subplots(figsize=(3.3, 3.0))
+    fig, ax = plt.subplots(figsize=(3.3, 3.0), layout="none")
     fig.subplots_adjust(left=0.37, right=0.98, bottom=0.15, top=0.99)
     ys, labels = [], []
     for i, (model, suite, study, claim, label) in enumerate(want):
@@ -217,47 +306,45 @@ def fig_code():
         y = -len(ys)
         ys.append(y)
         labels.append(label + ("" if ns >= 3 else " ($n$=%d)" % ns))
-        col = "#d62728" if "shuffled" in claim and "fixed" not in claim else ("#9467bd" if "nonrec" in claim else "#1f77b4")
+        col = C["shuffled"] if "shuffled" in claim and "fixed" not in claim else (C["nonrec"] if "nonrec" in claim else C["fixed"])
         ax.barh(y, m, color=col, alpha=0.75, height=0.6)
         ax.plot([lo, hi], [y, y], color="black", lw=1)
     ax.set_yticks(ys)
     ax.set_yticklabels(labels, fontsize=7, linespacing=0.95)
     ax.axvline(0, color="0.5", lw=0.8)
     ax.set_xlabel("points on the held-out test (95% CI)")
-    fig.savefig(os.path.join(HERE, "fig_code.pdf"))
-    plt.close(fig)
-    print("wrote", "fig_code.pdf")
+    save(fig, "fig_code.pdf", tight=False)
 
 
 # ---------------------------------------------------------------- 6. train-on-test inflation
 def fig_inflation():
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(3.4, 1.9), gridspec_kw={"width_ratios": [1, 2.2]})
-    off = [14.6, 87.4]
-    fresh = [20.0, 76.0]
-    x = [0, 1]
-    a1.bar([i - 0.18 for i in x], off, width=0.36, color="#d62728", label="official states")
-    a1.bar([i + 0.18 for i in x], fresh, width=0.36, color="#1f77b4", label="fresh placements")
-    a1.set_xticks(x)
-    a1.set_xticklabels(["SFT\nstart", "RL\nckpt"])
-    a1.set_ylabel("LIBERO-10 success (%)")
-    a1.set_ylim(0, 100)
-    off_t = [78, 84, 98, 88, 80, 96, 90, 86, 82, 92]
-    fresh_t = [62, 68, 92, 92, 52, 90, 50, 84, 84, 86]
-    xt = list(range(10))
-    a2.bar([i - 0.2 for i in xt], off_t, width=0.4, color="#d62728")
-    a2.bar([i + 0.2 for i in xt], fresh_t, width=0.4, color="#1f77b4")
-    a2.set_xticks(xt)
-    a2.set_xticklabels([f"t{i}" for i in xt], fontsize=6)
-    a2.set_xlabel("RL checkpoint, per task")
-    a2.set_ylim(0, 100)
-    fig.legend(loc="upper center", ncol=2, frameon=False, fontsize=7, bbox_to_anchor=(0.5, 1.06))
+    d = json.load(open(os.path.join(ROOT, "results/train_on_test_inflation_20261030.json")))
+    sets = [("official", "official test states", C["fixed"]), ("fresh", "fresh placements", C["full"])]
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(3.4, 1.9), sharey=True, gridspec_kw={"width_ratios": [1.25, 2.0], "wspace": 0.04})
+    ygrid(a1); ygrid(a2)
+    for j, (key, label, col) in enumerate(sets):
+        for i, ck in enumerate(["sft", "rl"]):
+            v = d["cells"][ck][key]
+            a1.bar(i + (j - 0.5) * 0.4, v, width=0.34, color=col, label=label if i == 0 else None)
+            a1.text(i + (j - 0.5) * 0.4, v + 2, f"{v:.1f}", ha="center", va="bottom", fontsize=6, color=INK2)
+    a1.set_xticks([0, 1]); a1.set_xticklabels(["SFT\nstart", "RL\ncheckpoint"]); a1.tick_params(axis="x", length=0)
+    a1.set_xlim(-0.6, 1.6); a1.set_ylabel("LIBERO-10 success (%)"); a1.set_ylim(0, 104); a1.set_yticks(range(0, 101, 20))
+    off, fresh = d["rl_per_task"]["official"], d["rl_per_task"]["fresh"]
+    for t, (o, f) in enumerate(zip(off, fresh)):
+        a2.plot([t, t], [o, f], color=AXIS, lw=1.3, zorder=2)
+    a2.plot(range(len(off)), off, "o", color=sets[0][2], ms=4.4, zorder=3, **RING)
+    a2.plot(range(len(fresh)), fresh, "o", color=sets[1][2], ms=4.4, zorder=4, **RING)
+    a2.set_xticks(range(len(off))); a2.set_xlim(-0.6, len(off) - 0.4); a2.tick_params(axis="x", length=0)
+    a2.set_xlabel("Task (RL checkpoint)")
+    fig.legend(handles=[Line2D([], [], lw=0, marker="o", color=col, ms=4.4, **RING, label=label) for _, label, col in sets],
+               loc="outside upper center", ncol=2, columnspacing=1.6, handletextpad=0.2)
     save(fig, "fig_inflation.pdf")
 
 
 # ---------------------------------------------------------------- framework diagram (replaces the TikZ figure; matplotlib only)
 def fig_framework():
     from matplotlib.patches import FancyBboxPatch
-    fig, ax = plt.subplots(figsize=(11.8, 5.0))
+    fig, ax = plt.subplots(figsize=(11.8, 5.0), layout="none")
     ax.set_xlim(-4.3, 19.3); ax.set_ylim(-4.15, 4.45); ax.axis("off")
     OBJ, GATE, META, CTRL = "#eef2fb", "#fdecec", "#eaf6ea", "#fffbe6"
 
@@ -331,12 +418,15 @@ def fig_framework():
     save(fig, "fig_framework.pdf")
 
 
+FIGS = [fig_teaser, fig_claims, fig_runs, fig_gates, fig_selfrepair, fig_code, fig_inflation, fig_framework]
+
 if __name__ == "__main__":
-    fig_teaser()
-    fig_claims()
-    fig_runs()
-    fig_gates()
-    fig_selfrepair()
-    fig_code()
-    fig_inflation()
-    fig_framework()
+    if "--check" in sys.argv:
+        OUT = tempfile.mkdtemp(prefix="figcheck_")
+    for f in FIGS:
+        f()
+    if "--check" in sys.argv:
+        bad = [n for n in sorted(os.listdir(OUT))
+               if not os.path.exists(os.path.join(HERE, n)) or open(os.path.join(OUT, n), "rb").read() != open(os.path.join(HERE, n), "rb").read()]
+        print("check:", "every PDF here is what this script draws from the records" if not bad else "DIFFERENT: " + ", ".join(bad))
+        sys.exit(1 if bad else 0)

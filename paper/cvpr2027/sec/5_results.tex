@@ -33,7 +33,7 @@ We organise the results around five questions. Every number below comes from a p
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{fig_runs}
-  \caption{\textbf{Every run of the LIBERO-Goal study.} Grey tick: the run's own initial-policy test; dot: the replicate-averaged final of the retained policy; dashed/dotted lines: the pooled initial reference per platform. No gated run ends below its reference beyond noise; the one-shot \texttt{onebig} policy of seed 0 is the best single final.}
+  \caption{\textbf{Every run of the LIBERO-Goal study.} Tick: the run's own initial-policy test; dot: the final of the retained policy (mean of three evaluations); dashed line: the pooled initial reference of that platform. No gated run ends below its reference beyond noise; the one-shot \texttt{onebig} policy of seed 0 is the best single final.}
   \label{fig:runs}
 \end{figure*}
 
@@ -45,7 +45,7 @@ We organise the results around five questions. Every number below comes from a p
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{fig_gates}
-  \caption{\textbf{Gate of the retained version by round} (cloud platform, seeds 1--3 thin, mean bold). The gated arms climb 3--5 points at the gate within six rounds; \texttt{shuffled} (verifier removed) stays flat; \texttt{nonrec} (practice from the frozen initial policy) stops after round 3. Gate gains overstate test gains by the winner's curse (\cref{tab:arms}).}
+  \caption{\textbf{Gate success of the retained policy by round} (cloud platform; thin lines are seeds 1--3, the thick line their mean). A dot marks a round that accepted a new version; every round is scored on 200 newly drawn placements, so a retained version's score can fall from one round to the next. The number in each panel is the change of the mean from round 0 to round 6. The gated arms climb 4--5 points at the gate within six rounds; \texttt{shuffled} (verifier removed) stays flat; \texttt{nonrec} (practice from the frozen initial policy) stops after round 3. Gate gains overstate test gains by the winner's curse (\cref{tab:arms}).}
   \label{fig:gates}
 \end{figure*}
 
@@ -83,7 +83,7 @@ We organise the results around five questions. Every number below comes from a p
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{fig_selfrepair}
-  \caption{\textbf{Self-repair study, gate level.} Left: the starting BC recipe collapses when every version is accepted. Right: under the gate the same recipe never falls below its start (\texttt{fixed}); both proposers find repairs; at the gate the LLM arm looks 4--8 points ahead, on the sealed test it is $+2.65$ (\cref{tab:selfrepair}).}
+  \caption{\textbf{Self-repair study, gate level.} Left: the starting BC recipe collapses when every version is accepted. Right (narrower scale): under the gate the same recipe stays at its starting level (\texttt{fixed}); both proposers find repairs; at the gate the LLM arm looks 4--8 points ahead, on the sealed test it is $+2.65$ (\cref{tab:selfrepair}).}
   \label{fig:selfrepair}
 \end{figure*}
 

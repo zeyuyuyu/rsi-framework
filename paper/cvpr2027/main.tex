@@ -27,7 +27,7 @@ Paper ID \cvprPaperID}
 \begin{strip}
   \centering
   \includegraphics[width=\textwidth]{fig_teaser}
-  \captionof{figure}{\textbf{Taking a self-improvement loop apart.} (a) The gate is what makes self-training safe: the same behaviour-cloning recipe falls from 58.5\% to 5.5\% success when every new version is accepted, and never drops below its start when each version has to beat its parent on fresh, paired placements. (b) Switching off one ingredient at a time (31 LIBERO-Goal runs, official test kept sealed, finals averaged over three evaluations): every ingredient's estimate is positive except the meta level's, and none reaches the bar we set in advance (red ticks). Recursion and the verifier matter most; a language model that edits the training recipe adds nothing once the recipe works.}
+  \captionof{figure}{\textbf{Taking a self-improvement loop apart.} (a) The gate is what makes self-training safe: the same behaviour-cloning recipe falls from 58.5\% to 5.5\% success when every new version is accepted, and stays at its starting level (55--63\%) when each version has to beat its parent on fresh, paired placements. (b) Switching off one ingredient at a time (31 LIBERO-Goal runs, official test kept sealed, finals averaged over three evaluations): every ingredient's estimate is positive except the meta level's, and none reaches the bar we set in advance (red ticks). Recursion and the verifier matter most; a language model that edits the training recipe adds nothing once the recipe works.}
   \label{fig:teaser}
 \end{strip}
 \input{sec/0_abstract}
