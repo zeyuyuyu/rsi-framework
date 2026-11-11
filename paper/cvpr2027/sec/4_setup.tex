@@ -1,11 +1,58 @@
 \section{Experimental setup}
+\begin{table*}[t]
+  \centering
+  \small
+  \caption{\textbf{What the loop and its ingredients add, on two suites and two sealed tests} (points, 95\% CI, seed-averaged paired bootstrap; bold: registered bar met). Official: the benchmark's 500 fixed states, three-evaluation finals against the pooled initial reference. Fresh: 1{,}000 sampled placements, disjoint from every practice, gate and audit set and registered before any evaluation on them. Goal: twelve rounds, seeds 1--3; Spatial: six rounds, seeds 0--3 (start vs.\ official reference: seeds 1--3).}
+  \label{tab:long}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    & & \multicolumn{2}{c}{LIBERO-Goal, 12 rounds} & & \multicolumn{2}{c}{LIBERO-Spatial, 6 rounds} \\
+    \cmidrule{3-4}\cmidrule{6-7}
+    comparison & bar & official & fresh scenes & & official & fresh scenes \\
+    \midrule
+    loop $-$ start & $+5$ / $+3$$^\dagger$ & $+1.60$ {\scriptsize $[-0.88, +4.13]$} & $+3.54$ {\scriptsize $[+1.72, +5.42]$} & & $-0.01$ {\scriptsize $[-2.15, +2.13]$} & {\boldmath$+5.65$ {\scriptsize $[+4.28, +7.04]$}} \\
+    recursion: loop $-$ \texttt{nonrec} & $+2$ & {\boldmath$+7.84$ {\scriptsize $[+5.22, +10.49]$}} & {\boldmath$+7.30$ {\scriptsize $[+5.47, +9.20]$}} & & {\boldmath$+5.73$ {\scriptsize $[+4.12, +7.38]$}} & {\boldmath$+4.55$ {\scriptsize $[+3.38, +5.73]$}} \\
+    verifier: loop $-$ \texttt{shuffled} & $+3$ & -- & -- & & $+1.67$ {\scriptsize $[+0.18, +3.13]$} & {\boldmath$+6.05$ {\scriptsize $[+4.80, +7.32]$}} \\
+    vs.\ plain RL: loop $-$ \texttt{onebig} & $+2$ & $-0.38$ {\scriptsize $[-2.42, +1.64]$} & $-2.73$ {\scriptsize $[-4.30, -1.20]$} & & $-0.45$ {\scriptsize $[-1.83, +0.93]$} & $+0.38$ {\scriptsize $[-0.60, +1.38]$} \\
+    \bottomrule
+  \end{tabular}}\\[2pt]
+  {\footnotesize $^\dagger$ $+5$ on the official test and on Goal's fresh scenes; $+3$ on Spatial's fresh scenes (registered before any Spatial run ended), where $+5.65$ also clears $+5$.}
+\end{table*}
+
+\begin{table*}[t]
+  \centering
+  \small
+  \caption{\textbf{Registered claims on LIBERO-Goal} (official 500-episode test, 3-evaluation finals, pooled initial reference, seed-averaged paired bootstrap). Platform Y = cloud pool, A = A800.}
+  \label{tab:goal}
+  \begin{tabular}{@{}llrrcc@{}}
+    \toprule
+    claim & comparison & points & 95\% CI & bar & seeds \\
+    \midrule
+    R1 & \texttt{fixed} $-$ ref. (Y) & $+1.71$ & $[-0.76, +4.23]$ & $+5$ & 1--3 \\
+    R1 & \texttt{full} $-$ ref. (Y) & $+1.28$ & $[-1.37, +3.99]$ & $+5$ & 1--3 \\
+    R2 & \texttt{fixed} $-$ \texttt{shuffled} (Y) & $+1.22$ & $[-0.37, +2.85]$ & $+3$ & 0--3 \\
+    R3 & \texttt{fixed} $-$ \texttt{nonrec} (Y) & $+1.72$ & $[-0.28, +3.68]$ & $+2$ & 0--3 \\
+    R4 & \texttt{full} $-$ \texttt{fixed} (Y) & $-0.42$ & $[-2.40, +1.56]$ & $+2$ & 1--3 \\
+    R4 & \texttt{llm\_harness} $-$ \texttt{fixed} (Y) & $-0.73$ & $[-2.58, +1.07]$ & $+2$ & 1--3 \\
+    R4 & \texttt{llm} $-$ \texttt{fixed} (A) & $+1.04$ & $[-0.84, +3.00]$ & $+2$ & 1--3 \\
+    R4 & \texttt{llm\_harness\_cap} $-$ \texttt{fixed} (A) & $+1.16$ & $[-0.76, +3.16]$ & $+2$ & 1--3 \\
+    R5 & best gated $-$ \texttt{onebig} (Y) & $-0.58$ & $[-2.12, +0.95]$ & $+2$ & 0--3 \\
+    \midrule
+    noise & half vs.\ half of the n0 evaluations (Y / A) & $+0.64$ / $+0.54$ & $[-0.07, +1.36]$ / $[-0.24, +1.35]$ & & \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
 \label{sec:setup}
 
 \subsection{Benchmarks, policies and starting points}
-\textbf{LIBERO / OpenVLA-OFT.} LIBERO-Goal~\cite{liu2023libero} has ten goal-conditioned tasks in one scene; LIBERO-10 ten long-horizon tasks. The policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), started from a supervised fine-tune on \emph{one} demonstration per task~\cite{li2025simplevlarl} so that there is room to improve (about 59\% on LIBERO-Goal, 19\% on LIBERO-10). Rollouts and GRPO/BC training use the SimpleVLA-RL stack with LoRA ($r{=}32$). The seed program---chosen from sealed pilots and frozen by amendment before any main run---is GRPO with learning rate $3\times10^{-5}$, matched-ratio log-probabilities, episode-balanced loss, 8 samples per scene at temperature 1.5, 160 scenes per inner step, 200 optimiser steps of batch 64; 6 rounds of 3 inner steps; fresh paired gates.
+\textbf{LIBERO / OpenVLA-OFT.} LIBERO-Goal~\cite{liu2023libero} has ten goal-conditioned tasks in one scene, LIBERO-Spatial ten pick-and-place tasks that differ in the spatial layout of the same objects, and LIBERO-10 ten long-horizon tasks. The policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), started from a supervised fine-tune on \emph{one} demonstration per task~\cite{li2025simplevlarl} so that there is room to improve (about 59\% on LIBERO-Goal, 60\% on LIBERO-Spatial, 19\% on LIBERO-10). Rollouts and GRPO/BC training use the SimpleVLA-RL stack with LoRA ($r{=}32$). The seed program---chosen from sealed pilots and frozen by amendment before any main run---is GRPO with learning rate $3\times10^{-5}$, matched-ratio log-probabilities, episode-balanced loss, 8 samples per scene at temperature 1.5, 160 scenes per inner step, 200 optimiser steps of batch 64; 6 rounds of 3 inner steps; fresh paired gates.
 
 \subsection{Arms and baselines}
 The LIBERO-Goal main study runs the eight arms of \cref{sec:controls} with three seeds each (a fourth seed was added to the \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} arms by amendment before any of their runs ended), 31 runs in all, on two GPU platforms: a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. The stacks are not bit-identical, so every comparison is paired within a platform and the platforms serve as replicates. \texttt{onebig} is the plain-RL baseline: the whole six-round rollout and update budget in one round of 18 on-policy inner steps from the initial policy, with the same sampling and update code; it is read both through the gate and as its ungated single candidate.
+
+A second study on LIBERO-Spatial, registered before any of its runs, repeats the four object-level arms (\texttt{fixed}, \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig}) with four seeds under the Goal bars (sixteen runs); a twelve-round extension on Goal (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}) and a self-repair study (\cref{sec:rq3}) complete the design.
 
 \subsection{Preregistered protocol}
 \label{sec:protocol}

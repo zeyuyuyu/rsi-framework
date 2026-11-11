@@ -8,10 +8,10 @@ We answer both by experiment. Our framework (\cref{sec:method}) has the three le
 
 \paragraph{What we found.} Each level contributes something that training without it does not (\cref{fig:teaser}, \cref{tab:long,tab:goal}).
 \begin{enumerate}[nosep,leftmargin=*]
-  \item \textbf{Recursion improves the policy.} After twelve rounds the recursive loop is $+3.5$ points $[+1.7, +5.4]$ above its start on the sealed unseen scenes, on every seed; fed by the frozen initial policy it falls below its start, so recursion is worth $+7.3$ $[+5.5, +9.2]$ (\cref{sec:rq1}).
+  \item \textbf{Recursion improves the policy.} On 1{,}000 sealed unseen scenes the loop is $+5.7$ points $[+4.3, +7.0]$ above its start on LIBERO-Spatial, on every seed and over its registered bar, and $+3.5$ $[+1.7, +5.4]$ on LIBERO-Goal after twelve rounds; with shuffled verifier labels, or with practice from the frozen initial policy, it ends 4.6 to 7.3 points lower (\cref{sec:rq1}).
   \item \textbf{The gate protects it.} A recipe that collapses from 58.5\% to 5.5\% when every version is accepted stays at its starting level under the gate, and no gated run of 31 ends below its start beyond noise (\cref{sec:rq2}).
   \item \textbf{The meta level repairs the training procedure.} From the collapsing recipe, a language model reading the loop's records names the fault in round one on every seed and lifts the loop $+2.7$ $[+0.7, +4.6]$ over the gate alone, to the hand-tuned level; numeric search finds a repair on half the seeds and only in the last round (\cref{sec:rq3}).
-  \item \textbf{The limits are real.} The improvement and repair margins miss our registered bars ($+5$, $+3$); on a recipe that already works the meta level adds nothing, because every recipe reaches the same plateau; and one round of plain RL at equal compute is 2.7 points ahead of a strictly gated loop on unseen scenes, because the gate discards rounds for noise (\cref{sec:rl}).
+  \item \textbf{The limits are real.} On the benchmark's fixed test states the gain over the start is smaller (zero on Spatial); the Goal improvement and the repair margin miss their bars ($+5$, $+3$); the meta level adds nothing to a working recipe; and one round of plain RL at equal compute ties the loop, and leads a strictly gated loop by 2.7 points on Goal's unseen scenes (\cref{sec:rl}).
   \item \textbf{A published VLA-RL score owes about a fifth of itself to its test states} ($+16.8$ points; \cref{sec:rq4}).
 \end{enumerate}
 

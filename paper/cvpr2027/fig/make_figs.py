@@ -88,7 +88,7 @@ def fig_teaser():
     """(a) two practice attempts of the initial policy on one LIBERO-Spatial placement, frames as the policy saw them
     (frames/frames.json says where they come from); (b) the BC recipe with and without the gate (LIBERO-Goal)."""
     meta = json.load(open(os.path.join(HERE, "frames", "frames.json")))
-    fig = plt.figure(figsize=(3.3, 3.55), layout="none")
+    fig = plt.figure(figsize=(3.3, 3.42), layout="none")
     gs = fig.add_gridspec(2, 4, hspace=0.06, wspace=0.04, left=0.075, right=0.995, top=0.885, bottom=0.515)
     gp = fig.add_gridspec(1, 1, left=0.115, right=0.43, top=0.385, bottom=0.095)
     gc = fig.add_gridspec(1, 1, left=0.69, right=0.975, top=0.385, bottom=0.095)
@@ -127,15 +127,16 @@ def fig_teaser():
     ax.set_ylim(0, 74); ax.set_yticks(range(0, 80, 20)); ax.set_xticks(range(0, 7, 2)); ax.set_xlim(-0.2, 6.2)
     ax.set_title("(b) The gate protects\nself-training", loc="left", fontsize=7.5, fontweight="bold", pad=3, x=-0.33)
     # (c) what recursion and the meta level add, sealed tests
-    long12 = json.load(open(os.path.join(ROOT, "results/fresh_goal_long12_20261110.json")))
+    sp = json.load(open(os.path.join(ROOT, "results/fresh_spatial_main_20261111.json")))
     rep = json.load(open(os.path.join(ROOT, "results/selfrepair_read_20261109.json")))
-    rows = [("recursion", "vs frozen-policy\npractice", long12["FL3"], C["fixed"]),
-            ("RSI loop", "vs its start", long12["FL1"], C["fixed"]),
+    rows = [("RSI loop", "vs its start", sp["F1"], C["fixed"]),
+            ("verifier", "real vs shuffled", sp["F2"], C["fixed"]),
+            ("recursion", "vs frozen-policy\npractice", sp["F3"], C["fixed"]),
             ("meta level", "vs gate alone,\nfailing recipe", rep["S1_seeds0to3"], C["llm_harness"])]
     ax = fig.add_subplot(gc[0, 0])
     ax.axvline(0, color=MUTED, lw=0.7, zorder=1)
     ax.grid(axis="x"); ax.spines["left"].set_visible(False); ax.tick_params(axis="y", length=0)
-    ys = [2, 1, 0]
+    ys = [3, 2, 1, 0]
     for y, (name, sub, r, col) in zip(ys, rows):
         m, (lo, hi) = r["mean_points"], r["ci95_points"]
         ax.plot([lo, hi], [y, y], color=col, lw=2.2, solid_capstyle="round", zorder=2)
@@ -144,7 +145,7 @@ def fig_teaser():
     ax.set_yticks(ys); ax.set_yticklabels([f"{n}\n{s_}" for n, s_, _, _ in rows], fontsize=5.6, linespacing=0.95)
     for t in ax.get_yticklabels():
         t.set_color(INK)
-    ax.set_xlim(-1, 12); ax.set_xticks([0, 5, 10]); ax.set_ylim(-0.6, 2.6)
+    ax.set_xlim(-1, 10.5); ax.set_xticks([0, 5, 10]); ax.set_ylim(-0.6, 3.6)
     ax.set_xlabel("Points, sealed tests\n(95% CI)", labelpad=1, fontsize=6.2, linespacing=0.95)
     ax.set_title("(c) Recursion improves,\nthe meta level repairs", loc="left", fontsize=7.5, fontweight="bold", pad=3, x=-0.62)
     save(fig, "fig_teaser.pdf", tight=False)
