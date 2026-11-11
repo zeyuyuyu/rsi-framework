@@ -104,3 +104,8 @@ The approximate times written in the header, in amendment 1 and in the operation
 | 15:58:08-15:58:16 | `bj_fresh_n0_spatial_2-4` submitted |
 
 Every run of an arm was submitted after the text that registers it. At this correction no Yangquan or Beijing job of this addendum had started, so nothing had been seen.
+- 2026-11-11 16:13:51Z: the Beijing reader changes were committed (ced132d), while all ten Beijing jobs were still `Created`.
+  - `fresh_read.py` gained the `spatial_guard_bj` and `spatial_guard_pooled` blocks.
+  - `spatial_guard_read.py` now covers both platforms, with the pooled GS3 as primary when complete.
+  - `spatial_read.pooled_n0` gained a `bj` branch.
+  - The earlier blocks are unchanged: `fresh_read.py spatial_main` and `spatial_read.py --mode final --pooled` reproduce their committed outputs byte for byte. The new code paths were exercised on a scratch root built from already-read runs only.
