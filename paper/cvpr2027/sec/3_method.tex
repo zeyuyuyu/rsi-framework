@@ -1,7 +1,7 @@
 \section{Framework}
 \label{sec:method}
 
-\Cref{fig:framework} shows the framework. In plain terms: a policy practises on freshly sampled scenes, a verifier marks each attempt, the verified attempts update the policy, and a gate decides whether the updated policy replaces the current one. Above this sits an optional meta level that may edit the training recipe. The rest of this section states that picture precisely, together with the switches the experiments flip.
+\Cref{fig:framework} shows the framework. A policy practises on freshly sampled scenes, a verifier marks each attempt, the verified attempts update the policy, and a gate decides whether the updated policy replaces the current one. An optional meta level above may edit the training recipe.
 
 \subsection{Setting and notation}
 A policy $\pi_\theta$ acts in scenes $s \sim \mathcal{S}$ (object placements of a task); an attempt $\tau \sim \pi_\theta(\cdot \mid s)$ is a trajectory, and an external oracle $v(s, \tau) \in \{0, 1\}$ the policy cannot influence labels it (the simulator's success flag). A \emph{program} $P$ is a JSON document with four sections---\texttt{curriculum} (which scenes to practise, how many, how allocated across tasks), \texttt{solver} (attempts per scene $K$, temperature $T$), \texttt{curation} (which attempts become training items) and \texttt{update} (the operator and its hyperparameters)---and $\mathcal{P}$ is a declared edit space of allowed values. A \emph{version} is a pair $(\theta, P)$. The framework keeps an archive of versions; the one it currently trusts is the \emph{retained} version $(\theta^\star, P^\star)$.
@@ -34,9 +34,7 @@ One \emph{inner step} runs program $P$ from policy $\theta$: propose scenes, att
 \end{algorithm}
 
 \subsection{Gate, audit and sealed test}
-Three disjoint evaluation sets are drawn per run from seeds that never overlap the official benchmark states. The \emph{gate} (20 placements per task, 200 episodes, greedy decoding, environment re-seeded per episode so that versions are compared on identical placements) decides: a candidate is kept iff its gate success is at least the parent's on the same placements. In the \emph{fresh-paired} mode used in every main run a new gate set is drawn every round and the parent is re-evaluated on it, so acceptance is always a paired comparison on placements never seen before, and a version cannot overfit a fixed gate. The \emph{audit} (200 more) is recorded but never decides anything; it exposes gate overfitting. The \emph{test} is the official benchmark (50 initial states per task, 500 episodes) and is \emph{sealed}: no process in the loop can read it, and it is opened once, after every decision in every run of a study has been made. Because the loop practises on sampled placements while the official states are a fixed list, we add a second sealed test, registered before any of its evaluations existed: 1000 freshly sampled placements per suite that no run trained, gated or audited on, the same for every run.
-
-This is the \emph{selection recursion}: the system's own verification result decides its next version, and the kept version decides who generates the next practice.
+Three disjoint evaluation sets are drawn per run from seeds that never overlap the official benchmark states. The \emph{gate} (20 placements per task, 200 episodes, greedy decoding, environment re-seeded per episode so that versions are compared on identical placements) decides: a candidate is kept iff its gate success is at least the parent's on the same placements. In the \emph{fresh-paired} mode used in every main run, a new gate set is drawn every round and the parent is re-evaluated on it, so acceptance is always a paired comparison on placements never seen before and a version cannot overfit a fixed gate. Because the gate's verdict decides the next version, and that version generates the next practice, the loop is recursive in selection as well as in data. The \emph{audit} (200 more episodes) is recorded but never decides anything; it exposes gate overfitting. The \emph{test} is the official benchmark (50 initial states per task, 500 episodes) and is \emph{sealed}: no process in the loop can read it, and it is opened once, after every decision in every run of a study has been made. Because the loop practises on sampled placements while the official states are a fixed list, a second sealed test, registered before any of its evaluations, scores each retained policy on 1{,}000 freshly sampled placements that no run trained, gated or audited on.
 
 \subsection{Meta level}
 \label{sec:meta}
@@ -45,11 +43,11 @@ The meta level versions the program and lets it be improved under the same gate.
   \item \texttt{fixed}: no change (the meta level is off).
   \item \texttt{numeric}: random mutation of declared knobs, biased toward knobs whose past changes raised the gate.
   \item \texttt{llm}: a language model (Claude Sonnet) reads the current program, the edit space with a neutral description of what each option computes, and, for every past candidate, its program diff, gate score, acceptance and per-step statistics (sampled success, share of mixed scenes, item counts, first/last training loss). It must write a diagnosis, then return one new program.
-  \item \texttt{llm+harness}: the same model behind a harness of its own, following~\cite{lee2026metaharness,chen2026evotrainer}. Instead of one prompt with a truncated summary it gets a \emph{workspace} of files (the full record of every candidate of the run, per-task gate tables, an evidence ledger that pools gate changes per edited field), a frozen \emph{memory} of earlier runs (their gate-side records and a playbook the model distilled from them before launch), its own notes from earlier rounds, and three tools (list, read, search) used over several turns before it answers. The prompt states the measured gate noise. Building it exposed a defect in the plain \texttt{llm} proposer: the training loss it was told to watch never reached it (a field-name error), in every run reported for it below.
+  \item \texttt{llm+harness}: the same model inside a harness, following~\cite{lee2026metaharness,chen2026evotrainer}: a \emph{workspace} of files (the full record of every candidate of the run, per-task gate tables, an evidence ledger that pools gate changes per edited field), a frozen \emph{memory} of earlier runs with a playbook the model distilled before launch, its own notes from earlier rounds, and list, read and search tools used over several turns. The prompt states the measured gate noise. Building it exposed a defect in the plain \texttt{llm} proposer: the training loss it was told to watch never reached it (a field-name error), in every run reported for it below.
 \end{itemize}
-The edit space has two sizes. The \emph{knob} space has ten hyperparameters (scenes, allocation, samples, temperature, curation rule and budget, operator, learning rate, steps, batch). The \emph{harness} space adds nine components of the procedure itself: the ratio computation of the policy gradient (legacy or matched), the loss aggregation (token or episode), the BC likelihood temperature (unit or rollout), advantage normalisation, the curation band, the per-scene cap, the allocation floor and the two clip bounds. Each corresponds to a change that was made by hand during development after diagnosing round records; the LLM is never told which option is better, so rediscovering them is a test of the meta level. This is the \emph{procedure recursion}.
+The \emph{knob} space has ten hyperparameters (scenes, allocation, samples, temperature, curation rule and budget, operator, learning rate, steps, batch); the \emph{harness} space adds nine components of the procedure (policy-gradient ratio, loss aggregation, BC likelihood temperature, advantage normalisation, curation band, per-scene cap, allocation floor, two clip bounds). Each corresponds to a change made by hand during development after diagnosing round records; the LLM is never told which option is better, so rediscovering them is a test of the meta level.
 
-\paragraph{Attribution guard.} The meta level never sees the audit or test, the policy weights, the scenes or the episodes; it only chooses values inside $\mathcal{P}$, every proposal passes the same validator as a numeric mutation, invalid proposals and failed calls fall back to numeric search and are counted, and a \emph{compute cap} scales any proposal so that no candidate does more rollouts or optimiser work per step than the starting program. All practice data still comes from the policy's own attempts and all verdicts from the oracle; the LLM is a source of procedure choices, not of data.
+\paragraph{Attribution guard.} The meta level never sees the audit, the test, the weights or the episodes; it only chooses values inside $\mathcal{P}$, every proposal passes the same validator as a numeric mutation, failures fall back to numeric search and are counted, and an optional \emph{compute cap} keeps any candidate within the starting program's rollout and optimiser budget. All practice data comes from the policy's own attempts and all verdicts from the oracle; the LLM chooses procedure, not data.
 
 \subsection{Every control is a switch}
 \label{sec:controls}
@@ -58,6 +56,7 @@ The edit space has two sizes. The \emph{knob} space has ten hyperparameters (sce
 \centering\footnotesize
 \caption{\textbf{Controls.} Each arm flips one switch of \cref{alg:loop}.}
 \label{tab:controls}
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lll@{}}
 \toprule
 arm & change in \cref{alg:loop} & isolates \\
@@ -65,7 +64,7 @@ arm & change in \cref{alg:loop} & isolates \\
 \texttt{fixed} & none (proposer off) & gated recursive loop \\
 \texttt{nonrec} & $\theta_{\text{gen}} = \theta_0$ & data recursion \\
 \texttt{shuffled} & labels permuted per scene & the verifier \\
-\texttt{onebig} & $R{=}1$, $3R$ inner steps & gate + iteration vs one-shot RL \\
+\texttt{onebig} & $R{=}1$, $3R$ inner steps & gate + rounds vs one-shot RL \\
 \texttt{full} & numeric proposer, $c{=}2$ & meta level (equal compute) \\
 \texttt{llm}$\ast$ & LLM proposer, $c{=}2$ & meta level (equal compute) \\
 \bottomrule

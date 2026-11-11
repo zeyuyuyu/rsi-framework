@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import tempfile
+from decimal import Decimal, ROUND_HALF_UP
 
 import matplotlib
 matplotlib.use("Agg")
@@ -89,7 +90,8 @@ def fig_teaser():
     meta = json.load(open(os.path.join(HERE, "frames", "frames.json")))
     fig = plt.figure(figsize=(3.3, 3.55), layout="none")
     gs = fig.add_gridspec(2, 4, hspace=0.06, wspace=0.04, left=0.075, right=0.995, top=0.885, bottom=0.515)
-    gp = fig.add_gridspec(1, 1, left=0.155, right=0.985, top=0.415, bottom=0.095)
+    gp = fig.add_gridspec(1, 1, left=0.115, right=0.43, top=0.385, bottom=0.095)
+    gc = fig.add_gridspec(1, 1, left=0.69, right=0.975, top=0.385, bottom=0.095)
     fig.text(0.01, 0.985, "(a) Practice: the policy’s own attempts, labelled by the simulator", ha="left", va="top",
              fontsize=7.5, fontweight="bold")
     fig.text(0.01, 0.945, f"“{meta['task']}”", ha="left", va="top", fontsize=6.2, color=INK2, style="italic")
@@ -110,20 +112,41 @@ def fig_teaser():
                 ax.text(0.96, 0.05, txt, transform=ax.transAxes, ha="right", va="bottom", fontsize=5.2, color="white",
                         fontweight="bold", bbox=dict(boxstyle="round,pad=0.25,rounding_size=0.3",
                                                      fc="#1f8a4c" if good else "#c4314b", ec="none"))
+    # (b) the gate: same recipe with and without it
     ax = fig.add_subplot(gp[0, 0])
     nogate, _ = chain(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/report.json"))
     ygrid(ax)
     for sd in (1, 2, 3):
         pth = os.path.join(ROOT, f"results/baidu/yq_oftgb_fixed_s{sd}/report.json")
         if os.path.exists(pth):
-            ax.plot(range(7), chain(pth)[0], "-", color=C["fixed"], lw=1.2)
-    ax.plot(range(7), nogate, "-o", color=INK, ms=3.6, lw=1.6, **RING)
-    ax.text(6.05, 66, "with the gate (3 seeds)", ha="right", va="bottom", fontsize=6.3, color=INK2)
-    ax.text(3.9, 22, "every version\naccepted", ha="right", va="center", fontsize=6.3, color=INK2)
-    ax.set_xlabel("Round", labelpad=1); ax.set_ylabel("Held-out\nsuccess (%)", labelpad=2)
-    ax.set_ylim(0, 74); ax.set_yticks(range(0, 80, 20)); ax.set_xticks(range(7)); ax.set_xlim(-0.2, 6.2)
-    ax.set_title("(b) Same training recipe, with and without the gate", loc="left", fontsize=7.5, fontweight="bold",
-                 pad=3, x=-0.17)
+            ax.plot(range(7), chain(pth)[0], "-", color=C["fixed"], lw=1.1)
+    ax.plot(range(7), nogate, "-o", color=INK, ms=3.0, lw=1.4, **RING)
+    ax.text(6.1, 64, "gated", ha="right", va="bottom", fontsize=6, color=INK2)
+    ax.text(3.7, 20, "every version\naccepted", ha="right", va="center", fontsize=6, color=INK2)
+    ax.set_xlabel("Round", labelpad=1); ax.set_ylabel("Held-out success (%)", labelpad=2)
+    ax.set_ylim(0, 74); ax.set_yticks(range(0, 80, 20)); ax.set_xticks(range(0, 7, 2)); ax.set_xlim(-0.2, 6.2)
+    ax.set_title("(b) The gate protects\nself-training", loc="left", fontsize=7.5, fontweight="bold", pad=3, x=-0.33)
+    # (c) what recursion and the meta level add, sealed tests
+    long12 = json.load(open(os.path.join(ROOT, "results/fresh_goal_long12_20261110.json")))
+    rep = json.load(open(os.path.join(ROOT, "results/selfrepair_read_20261109.json")))
+    rows = [("recursion", "vs frozen-policy\npractice", long12["FL3"], C["fixed"]),
+            ("RSI loop", "vs its start", long12["FL1"], C["fixed"]),
+            ("meta level", "vs gate alone,\nfailing recipe", rep["S1_seeds0to3"], C["llm_harness"])]
+    ax = fig.add_subplot(gc[0, 0])
+    ax.axvline(0, color=MUTED, lw=0.7, zorder=1)
+    ax.grid(axis="x"); ax.spines["left"].set_visible(False); ax.tick_params(axis="y", length=0)
+    ys = [2, 1, 0]
+    for y, (name, sub, r, col) in zip(ys, rows):
+        m, (lo, hi) = r["mean_points"], r["ci95_points"]
+        ax.plot([lo, hi], [y, y], color=col, lw=2.2, solid_capstyle="round", zorder=2)
+        ax.plot(m, y, "o", color=col, ms=4.2, zorder=3, **RING)
+        ax.text(hi + 0.4, y, "+" + str(Decimal(str(m)).quantize(Decimal("0.1"), ROUND_HALF_UP)), ha="left", va="center", fontsize=6.3, color=INK, fontweight="bold")
+    ax.set_yticks(ys); ax.set_yticklabels([f"{n}\n{s_}" for n, s_, _, _ in rows], fontsize=5.6, linespacing=0.95)
+    for t in ax.get_yticklabels():
+        t.set_color(INK)
+    ax.set_xlim(-1, 12); ax.set_xticks([0, 5, 10]); ax.set_ylim(-0.6, 2.6)
+    ax.set_xlabel("Points, sealed tests\n(95% CI)", labelpad=1, fontsize=6.2, linespacing=0.95)
+    ax.set_title("(c) Recursion improves,\nthe meta level repairs", loc="left", fontsize=7.5, fontweight="bold", pad=3, x=-0.62)
     save(fig, "fig_teaser.pdf", tight=False)
 
 

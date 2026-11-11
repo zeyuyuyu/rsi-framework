@@ -9,11 +9,11 @@ The LIBERO-Goal main study runs the eight arms of \cref{sec:controls} with three
 
 \subsection{Preregistered protocol}
 \label{sec:protocol}
-Self-improvement claims are easy to inflate: the loop selects versions, evaluation is noisy, and the experimenter sees the intermediate numbers. We therefore fixed the protocol before the runs and release the preregistration documents (27 dated amendments for the VLA study) with the code.
+We fixed the protocol before the runs and release the preregistration documents and every dated amendment with the code.
 
 \paragraph{Sealing.} The official LIBERO test states are never used for training, sampling, gating or program selection, and no test file is opened before a study's read-once. Only two sealed pilots per model were allowed before the seed program was frozen.
 
-\paragraph{Finals and reference.} A single 500-episode evaluation is itself noisy: the \emph{same} initial policy evaluated in different runs scored between 57.2\% and 60.0\% (sd $\approx 0.7$), and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy (the run's own test and two replicate evaluations from the same plan and source tree), and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 evaluations on the cloud pool, 21 on the A800). A noise check---the same statistic between two halves of the initial-policy evaluations---is reported with every verdict.
+\paragraph{Finals and reference.} The \emph{same} initial policy scored between 57.2\% and 60.0\% in different runs, and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy, and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 on the cloud pool, 21 on the A800). A noise check (the same statistic between two halves of the initial-policy evaluations) accompanies every verdict.
 
 \paragraph{Claims and bars.} Seed-averaged per-episode paired bootstrap (10{,}000 draws), 95\% CI. ``CI $>0$'' means the interval excludes zero.
 \begin{center}\footnotesize
