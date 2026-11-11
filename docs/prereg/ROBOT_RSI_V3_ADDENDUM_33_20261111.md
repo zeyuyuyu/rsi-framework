@@ -64,3 +64,21 @@ The two Spatial 12-round runs of addendum 30 that have not started (`yq_ofts_fix
 ## What is not changed
 
 No registered read, bar or run changes. The strict-gate and plain-RL arms stand as read.
+
+## Amendment 1 (2026-11-11 ~16:20Z, before any run of this addendum has started): a replicate on the Beijing pool
+
+The Beijing Baidu pool (8 RTX 96 GB cards) is idle. The same comparison is replicated there as a second platform (B):
+- **Runs**: `bj_ofts_guard_s{1,2,3}` and `bj_ofts_onebig_s{1,2,3}`, with the plans of `yq_ofts_guard_s<seed>` and `yq_ofts_onebig_s<seed>` copied byte for byte.
+- **Code**: both arms use source v32, sha 4e36b3f6ee34c4d2, through `RSI_SRC_TGZ` and the Beijing `run_vla.sh`. The object-level code that `onebig` runs is unchanged between v28 and v32.
+- **Reference**: the in-run n0 tests, plus four fresh-scene evaluations of the initial policy (`bj_fresh_n0_spatial_{1..4}`). The first of these is also the smoke test of the Beijing stack.
+- **Finals**: as on Yangquan. Each run gets its own test, two replicate evaluations and one fresh-scene evaluation.
+
+Platforms are not bit-identical, so every pair is formed within a platform.
+- **Primary GS3**: seed-averaged over all complete within-platform pairs (Y seeds 1-3, B seeds 1-3), with the same bars.
+- **If Beijing is not complete by 2026-11-15 12:00Z**: GS3 is read on Yangquan alone, as registered above, and Beijing is reported when done.
+- **Reported either way**: the per-platform estimates.
+- **Not on B**: GS2, because there is no strict-gate arm on Beijing.
+- **GS1 on B**: against the Beijing reference.
+- **Readers**: the reader changes for the Beijing platform are committed before any Beijing test result exists.
+
+Predictions: as above. Platform B may differ in level, which the within-platform pairing removes.
