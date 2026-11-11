@@ -1,0 +1,5 @@
+{
+  "error": "RuntimeError",
+  "message": "parallel_worker_failed:['/mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g0.txt', '/mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g1.txt', '/mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g2.txt', '/mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g3.txt', '/mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g4.txt']",
+  "status": "failed"
+}

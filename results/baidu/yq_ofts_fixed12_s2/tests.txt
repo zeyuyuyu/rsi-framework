@@ -1,0 +1,116 @@
+----- latest worker logs (failure context) -----
+--- /mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g0.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Warning : can't import libero: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+Traceback (most recent call last):
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 294, in <module>
+    main(sys.argv[1])
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 227, in main
+    env, description = lu.get_libero_env(task, "openvla", resolution=256)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/vlacode/simplevla_rl/verl/utils/libero_utils.py", line 29, in get_libero_env
+    env = OffScreenRenderEnv(**env_args)
+          ^^^^^^^^^^^^^^^^^^
+NameError: name 'OffScreenRenderEnv' is not defined
+--- /mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g1.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Warning : can't import libero: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+Traceback (most recent call last):
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 294, in <module>
+    main(sys.argv[1])
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 227, in main
+    env, description = lu.get_libero_env(task, "openvla", resolution=256)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/vlacode/simplevla_rl/verl/utils/libero_utils.py", line 29, in get_libero_env
+    env = OffScreenRenderEnv(**env_args)
+          ^^^^^^^^^^^^^^^^^^
+NameError: name 'OffScreenRenderEnv' is not defined
+--- /mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g2.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Warning : can't import libero: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+Traceback (most recent call last):
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 294, in <module>
+    main(sys.argv[1])
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 227, in main
+    env, description = lu.get_libero_env(task, "openvla", resolution=256)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/vlacode/simplevla_rl/verl/utils/libero_utils.py", line 29, in get_libero_env
+    env = OffScreenRenderEnv(**env_args)
+          ^^^^^^^^^^^^^^^^^^
+NameError: name 'OffScreenRenderEnv' is not defined
+--- /mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g3.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Warning : can't import libero: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+Traceback (most recent call last):
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 294, in <module>
+    main(sys.argv[1])
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 227, in main
+    env, description = lu.get_libero_env(task, "openvla", resolution=256)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/vlacode/simplevla_rl/verl/utils/libero_utils.py", line 29, in get_libero_env
+    env = OffScreenRenderEnv(**env_args)
+          ^^^^^^^^^^^^^^^^^^
+NameError: name 'OffScreenRenderEnv' is not defined
+--- /mnt/pfs/shitianyu-rsi/runs/yq_ofts_fixed12_s2.work/00001-rollout-1794376115/log-g4.txt
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /mnt/pfs/shitianyu-rsi/envs/vla312-r3/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Warning : can't import libero: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+Detected robot platform from environment: LIBERO
+Using LIBERO constants:
+  NUM_ACTIONS_CHUNK = 8
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+/tmp/libero/LIBERO/libero/libero/benchmark/__init__.py:164: UserWarning: Environment variable TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD detected, since the`weights_only` argument was not explicitly passed to `torch.load`, forcing weights_only=False.
+  init_states = torch.load(init_states_path)
+[Warning]: datasets path /tmp/libero/datasets does not exist!
+Traceback (most recent call last):
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 294, in <module>
+    main(sys.argv[1])
+  File "/tmp/src/rsi/backends/openvla_oft/rollout_worker.py", line 227, in main
+    env, description = lu.get_libero_env(task, "openvla", resolution=256)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/vlacode/simplevla_rl/verl/utils/libero_utils.py", line 29, in get_libero_env
+    env = OffScreenRenderEnv(**env_args)
+          ^^^^^^^^^^^^^^^^^^
+NameError: name 'OffScreenRenderEnv' is not defined
