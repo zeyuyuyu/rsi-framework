@@ -116,12 +116,13 @@ BLOCKS = {
                              claims=[("GS3", "onebig", "guard", 0.0), ("GS1", "n0", "guard", 3.0)]),
     # amendment 2: platform A (the A800 node, seed 0) joins; the pooled block covers every within-platform pair, and
     # --exclude A,B drops a platform that is not complete by 2026-11-15 12:00Z. GS2 has no B pair (no strict arm there).
-    "spatial_guard_a8": dict(suite="spatial", arms=("guard", "onebig", "fixed"), seeds=(0,), platforms=("a800",),
+    # amendment 3: a second A pair (seed 1, no strict-gate arm); --exclude also takes one pair's label (e.g. A1)
+    "spatial_guard_a8": dict(suite="spatial", arms=("guard", "onebig", "fixed"), seeds=(0, 1), platforms=("a800",),
                              plat=lambda s: "a800", name=lambda arm, s: f"a8_spatmain_{arm}_s{s}", noninf={"GS3": -2.0},
-                             claims=[("GS3", "onebig", "guard", 0.0), ("GS2", "fixed", "guard", 2.0),
+                             claims=[("GS3", "onebig", "guard", 0.0), ("GS2", "fixed", "guard", 2.0, (0,)),
                                      ("GS1", "n0", "guard", 3.0)]),
     "spatial_guard_pooled": dict(suite="spatial", arms=("guard", "onebig", "fixed"),
-                                 seeds=("Y1", "Y2", "Y3", "A0", "B1", "B2", "B3"), platforms=("yq", "a800", "bj"),
+                                 seeds=("Y1", "Y2", "Y3", "A0", "A1", "B1", "B2", "B3"), platforms=("yq", "a800", "bj"),
                                  plat=lambda s: PLAT_OF[s[0]], name=lambda arm, s: GUARD_RUN[s[0]].format(arm=arm, n=s[1:]),
                                  noninf={"GS3": -2.0},
                                  claims=[("GS3", "onebig", "guard", 0.0),
@@ -144,7 +145,7 @@ def main():
     check = "--check" in args
     args = [a for a in args if a != "--check"]
     block, root = dict(BLOCKS[args[0]]), (args[1] if len(args) > 1 else "results")
-    keep = lambda seeds: tuple(s for s in seeds if not (isinstance(s, str) and s[0] in excl))
+    keep = lambda seeds: tuple(s for s in seeds if not (isinstance(s, str) and (s[0] in excl or s in excl)))
     block["seeds"] = keep(block["seeds"])
     runs = {(arm, s): run_fresh(root, block["name"](arm, s)) for arm in block["arms"] for s in block["seeds"]}
     refs = {p: reference(root, p, block["suite"]) for p in block.get("platforms", ("yq", "a800"))}
