@@ -92,6 +92,22 @@ Two consequences for the claims: recursion is necessary to keep a gated loop fro
 and the 6-round safety finding ("no gated run ends below its start") is narrowed to six rounds / recursive practice.
 One-shot RL at equal compute still ties the loop.
 
+### 4.1c LIBERO-Spatial main study (addenda 28 and 30, read 2026-11-11): on unseen scenes the loop, its verifier and its recursion all pass; plain RL ties
+
+Sixteen runs (fixed, nonrec, shuffled, onebig; Yangquan seeds 1-3 + A800 seed 0), three-evaluation finals.
+Full note: `docs/results/SPATIAL_MAIN_READ_20261111.md`.
+
+| claim | comparison | fresh scenes (1,000) | official test (500) |
+|---|---|---|---|
+| F1 / R1 | fixed − start | **+5.65 [+4.28, +7.04]**, passes (bar +3; also over +5) | −0.01 [−2.15, +2.13], fails (+5) |
+| F2 / R2 | fixed − shuffled | **+6.05 [+4.80, +7.32]**, passes (+3) | +1.67 [+0.18, +3.13], CI > 0, under +3 |
+| F3 / R3 | fixed − nonrec | **+4.55 [+3.38, +5.73]**, passes (+2) | **+5.73 [+4.12, +7.38]**, passes (+2) |
+| F5 / R5 | fixed − onebig | +0.38 [−0.60, +1.38], tie | −0.45 [−1.83, +0.93], tie |
+
+Reading: on unseen scenes the loop lifts a Spatial policy by 5.7 points on every seed, and both of its defining
+ingredients are needed (shuffled labels: 6.1 lower; frozen-policy practice: 4.6 lower). Recursion passes on both tests
+already at six rounds. The official fixed states show no gain over the start; the two tests part only there.
+
 ### 4.2 Meta level v2: null on both platforms
 
 M2-A llm − replica: −0.27 [−2.53, +2.00] (Yangquan), +0.30 [−1.60, +2.15] (A800); M2-B +0.47 [−1.80, +2.73].
@@ -161,13 +177,14 @@ both platforms) did not degrade under the gate; no second scenario was registere
 
 ## 6. What the evidence supports, by strength
 
+* **Registered passes on unseen scenes:** LIBERO-Spatial loop − start +5.65, verifier +6.05, recursion +4.55 (fresh scenes); recursion on Spatial's official test +5.73; Goal 12-round recursion +7.30 (fresh) / +7.84 (official).
 * **Significant (CI excludes 0):** the gated loop does not degrade at six rounds with recursive practice (31/31 runs; the same recipe collapses to 5.5%
   without the gate); verified feedback improves code world models (+2.6 to +5.8); recursion helps at 8 rounds in the
   code domain (+2.8, replicated on 7B); one VLA seed +3.3 [+0.1, +6.6]; train-on-test inflation +16.8.
 * **Significant but under its bar:** self-repair S1, llm_harness − fixed from a failing recipe, +2.65 [+0.73, +4.58] (bar +3).
 * **Directional (positive point estimate, CI includes 0, bar missed):** VLA loop +1.7, recursion +1.7, verifier +1.2; self-repair S2 (LLM − numeric search) +1.15.
 * **Null:** meta level on a working recipe (±1.2; v2 −0.3 / +0.3, mechanism in 4.2); loop vs one-shot RL (−0.6); self-repaired loop vs the hand-tuned loop (S3 +0.3).
-* **Pending:** the LIBERO-Spatial main study (addendum 28, 16 runs launched 2026-11-10; the Goal arms on a second suite) and the self-repair study on Spatial with meta level v3 (addendum 29, 15 runs). Every earlier registered read is done (2026-11-09).
+* **Pending:** the self-repair study on Spatial with meta level v3 (addendum 29, 15 runs). Every earlier registered read is done (2026-11-09).
 
 ## 7. Operational disclosures that affect reading
 

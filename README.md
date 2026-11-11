@@ -77,6 +77,8 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-11): LIBERO-Spatial main study read (16 runs).** On 1,000 sealed unseen scenes the self-improvement loop lifts the policy by **+5.65 points [+4.28, +7.04]** over its start (every seed, registered bar met); with shuffled verifier labels it ends 6.05 lower and with practice from the frozen initial policy 4.55 lower (both pass their bars). Recursion also passes on the official test (+5.73 [+4.12, +7.38]); on the official fixed states the loop shows no gain over its start (−0.01). One round of plain RL at equal compute ties the loop on both tests. Note: `docs/results/SPATIAL_MAIN_READ_20261111.md`.
+
 **Running (2026-11-10), no result yet:** two studies registered and launched, 32 runs. (1) LIBERO-Spatial main study
 (addendum 28): the four Goal arms (fixed, nonrec, shuffled, onebig) on a second suite, 16 runs. (2) Meta level v3 and
 self-repair on Spatial (addendum 29): the meta-level LLM now works behind a harness (a workspace with every candidate
