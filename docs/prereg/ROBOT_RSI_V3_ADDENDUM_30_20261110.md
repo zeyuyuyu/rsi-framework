@@ -157,3 +157,4 @@ evaluations of the Spatial main runs). The stopped runs are resubmitted under th
   already has a job, so the conductor's later calls for these four do nothing. On the A800 node the four fresh-scene
   evaluations of the initial Spatial policy finished (02:18Z) and those of the initial Goal policy started. Nothing
   has been read.
+- 2026-11-11 04:11Z: the A800 seed-0 12-round Spatial pair started. `a8_spatmain_fixed12_s0` runs on two cards (04:01Z). `a8_spatmain_nonrec12_s0` was queued for two cards as well, but only one card had come free and the next one was hours away, so its queue entry was changed to one card and it started on GPU 1. The card count only decides how the rollouts are spread across GPUs (`vla.rollout_gpus`); training runs on the first card either way, and plan, seeds and placements are unchanged. The one-card run is slower (about 2.8 h a round). No design change.
