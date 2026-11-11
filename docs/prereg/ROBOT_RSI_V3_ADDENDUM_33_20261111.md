@@ -82,3 +82,9 @@ Platforms are not bit-identical, so every pair is formed within a platform.
 - **Readers**: the reader changes for the Beijing platform are committed before any Beijing test result exists.
 
 Predictions: as above. Platform B may differ in level, which the within-platform pairing removes.
+
+## Operational notes
+
+- 2026-11-11 15:52Z: `yq_ofts_guard_s1-3` were submitted to Yangquan after this addendum was committed (82e1511). `yq_ofts_fixed12_s2` and `yq_ofts_nonrec12_s3`, still `Created`, were withdrawn and resubmitted unchanged behind them.
+- 15:57Z: the Beijing smoke test `bj_fresh_n0_spatial_1` was submitted. It is a reference evaluation of the initial policy, not a run of either arm.
+- ~16:25Z: after amendment 1 (2934dcb), `bj_ofts_guard_s1-3`, `bj_ofts_onebig_s1-3` and `bj_fresh_n0_spatial_2-4` were submitted to Beijing.
