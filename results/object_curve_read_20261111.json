@@ -1,0 +1,104 @@
+{
+ "table": {
+  "n0": {
+   "gate": 113,
+   "audit": 110,
+   "S": 0.5575
+  },
+  "r01c0": {
+   "gate": 140,
+   "audit": 132,
+   "S": 0.68
+  },
+  "r02c0": {
+   "gate": 141,
+   "audit": 153,
+   "S": 0.735
+  },
+  "r03c0": {
+   "gate": 151,
+   "audit": 148,
+   "S": 0.7475
+  },
+  "r04c0": {
+   "gate": 155,
+   "audit": 157,
+   "S": 0.78
+  },
+  "r05c0": {
+   "gate": 162,
+   "audit": 166,
+   "S": 0.82
+  },
+  "r06c0": {
+   "gate": 165,
+   "audit": 162,
+   "S": 0.8175
+  }
+ },
+ "D": {
+  "D_points": 26.12,
+  "ci95_points": [
+   22.0,
+   30.5
+  ],
+  "p_le_0": 0.0,
+  "episodes": 400
+ },
+ "bar_points": 3.0,
+ "passes_bar": true,
+ "gate_only": {
+  "D_points": 25.25,
+  "ci95_points": [
+   19.5,
+   31.25
+  ],
+  "p_le_0": 0.0,
+  "episodes": 200
+ },
+ "audit_only": {
+  "D_points": 27.0,
+  "ci95_points": [
+   21.0,
+   33.0
+  ],
+  "p_le_0": 0.0,
+  "episodes": 200
+ },
+ "r05_only": {
+  "D_points": 26.25,
+  "ci95_points": [
+   22.0,
+   30.75
+  ],
+  "p_le_0": 0.0,
+  "episodes": 400
+ },
+ "r06_only": {
+  "D_points": 26.0,
+  "ci95_points": [
+   21.75,
+   30.5
+  ],
+  "p_le_0": 0.0,
+  "episodes": 400
+ },
+ "flips_vs_n0": {
+  "r05c0 gate": {
+   "up": 50,
+   "down": 1
+  },
+  "r05c0 audit": {
+   "up": 56,
+   "down": 0
+  },
+  "r06c0 gate": {
+   "up": 52,
+   "down": 0
+  },
+  "r06c0 audit": {
+   "up": 53,
+   "down": 1
+  }
+ }
+}

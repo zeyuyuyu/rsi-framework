@@ -108,6 +108,13 @@ Reading: on unseen scenes the loop lifts a Spatial policy by 5.7 points on every
 ingredients are needed (shuffled labels: 6.1 lower; frozen-policy practice: 4.6 lower). Recursion passes on both tests
 already at six rounds. The official fixed states show no gain over the start; the two tests part only there.
 
+### 4.1d LIBERO-Object curve (addendum 13, read 2026-11-11): plain GRPO self-practice +26 points (one seed)
+
+`a8_ofto_curve_grpo_s0` (A800 node, always-accept GRPO, 6 rounds). On 400 sampled gate + audit placements, success rises from 55.8% to 82.0% (r05) and 81.8% (r06).
+- **D (rounds 5-6 − n0) = +26.12 [+22.00, +30.50]**, so the +3 bar is reached by a wide margin.
+- Gate only +25.25, audit only +27.00 (the audit half decides nothing).
+- This is object-level evidence on a third suite, one seed, not an RSI claim. The official test stays sealed. Note: `docs/results/M1_OBJECT_20261111.md`.
+
 ### 4.2 Meta level v2: null on both platforms
 
 M2-A llm − replica: −0.27 [−2.53, +2.00] (Yangquan), +0.30 [−1.60, +2.15] (A800); M2-B +0.47 [−1.80, +2.73].

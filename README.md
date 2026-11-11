@@ -77,6 +77,8 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-11): LIBERO-Object curve read (addendum 13, one seed).** Plain GRPO self-practice lifts a LIBERO-Object policy from 55.8% to 82.0% on 400 sampled placements: D = **+26.1 points [+22.0, +30.5]**, with gate and audit halves alike. This is object-level evidence on a third suite, not an RSI claim; the official test stays sealed. Note: `docs/results/M1_OBJECT_20261111.md`.
+
 **New (2026-11-11): LIBERO-Spatial main study read (16 runs).** On 1,000 sealed unseen scenes the self-improvement loop lifts the policy by **+5.65 points [+4.28, +7.04]** over its start (every seed, registered bar met); with shuffled verifier labels it ends 6.05 lower and with practice from the frozen initial policy 4.55 lower (both pass their bars). Recursion also passes on the official test (+5.73 [+4.12, +7.38]); on the official fixed states the loop shows no gain over its start (−0.01). One round of plain RL at equal compute ties the loop on both tests. Note: `docs/results/SPATIAL_MAIN_READ_20261111.md`.
 
 **Running (2026-11-10), no result yet:** two studies registered and launched, 32 runs. (1) LIBERO-Spatial main study
