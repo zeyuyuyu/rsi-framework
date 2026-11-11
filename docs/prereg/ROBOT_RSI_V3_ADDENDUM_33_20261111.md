@@ -131,3 +131,16 @@ The A800 node has an idle card. The comparison gets one more within-platform pai
 Predictions: unchanged.
 - 2026-11-11 16:45:17Z: `a8_spatmain_guard_s0` was queued on the A800 node, after amendment 2 (0fe16fa, 16:44:39Z). It launched at 16:45:24Z on GPU 2 with src13 (v32, sha 4e36b3f6ee34c4d2). The plan diff against `a8_spatmain_fixed_s0` was checked on the node: exactly the three engine keys.
 - 16:53:40Z: the platform-A reader changes were committed (b710950), before any result of that run. The earlier blocks are unchanged (byte-for-byte regression as before).
+
+## Amendment 3 (2026-11-11, before either run is queued; commit time in git): a second pair on the A800 node
+
+The A800 node has another idle card (GPU 4, free since 17:17Z) and an empty queue. One more within-platform pair is added there.
+- **Runs**: `a8_spatmain_onebig_s1` (plain RL) and `a8_spatmain_guard_s1`, seed 1. Their plans are those of `a8_spatmain_onebig_s0` and `a8_spatmain_guard_s0`, with only `engine.seed` set to 1.
+- **Code**: both runs use src13 (v32, sha 4e36b3f6ee34c4d2), so there is no source difference inside this pair. `onebig_s1` is queued first. `guard_s1` waits in the queue for the next free card.
+- **Seed numbering**: seed 1 is the seed number of Y1 and B1, so the training-placement sequence is the same as those runs'. As with Beijing (amendment 1), the pair is formed within its platform, reported per platform, and pooled with the others as one more within-platform pair. LIBERO run seeds are limited to 0-3, so no new seed number is available.
+- **Finals**: as A0.
+- **GS2**: A1 has no strict-gate arm, so GS2 on A stays A0 only.
+- **Analysis**: GS3 primary pools every complete within-platform pair: Y1-3, A0-1, and B1-3. Platform A's pairs count only if complete by 2026-11-15 12:00Z; one A pair can count without the other.
+- **Readers**: their changes are committed before any result of these runs exists.
+
+Predictions: unchanged.
