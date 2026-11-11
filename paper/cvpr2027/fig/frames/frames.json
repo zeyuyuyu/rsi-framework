@@ -1,0 +1,48 @@
+{
+ "run": "a8_spatmain_fixed_s0",
+ "call": "00004-rollout-1794287711",
+ "suite": "libero_spatial",
+ "task_id": 0,
+ "task": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+ "placement_seed": 101010000,
+ "policy": "initial OpenVLA-OFT (Openvla-oft-SFT-libero-spatial-traj1)",
+ "mode": "sample, temperature 1.6",
+ "episodes": [
+  {
+   "id": "libero_spatial-t0-r1-s101010000-a0",
+   "success": true,
+   "steps": 170,
+   "chunks": 22,
+   "frame_index": [
+    0,
+    7,
+    14,
+    21
+   ],
+   "files": [
+    "a0_0.png",
+    "a0_1.png",
+    "a0_2.png",
+    "a0_3.png"
+   ]
+  },
+  {
+   "id": "libero_spatial-t0-r1-s101010000-a2",
+   "success": false,
+   "steps": 512,
+   "chunks": 64,
+   "frame_index": [
+    0,
+    21,
+    42,
+    63
+   ],
+   "files": [
+    "a2_0.png",
+    "a2_1.png",
+    "a2_2.png",
+    "a2_3.png"
+   ]
+  }
+ ]
+}

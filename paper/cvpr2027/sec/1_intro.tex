@@ -9,7 +9,7 @@ This paper answers both questions by experiment. We built a framework (\cref{sec
 
 Self-improvement results are easy to inflate: the loop selects versions, evaluation is noisy, and the experimenter sees the intermediate numbers. So we fixed the rules before playing (\cref{sec:setup}). Every comparison, bar and statistic was written down and committed to a public repository before the corresponding runs started; every later change is a dated amendment that says what had been seen; the official test was never used for training, sampling or selection and was opened once per study; and every final score is the average of three evaluations, because a single one carries about $\pm1.5$ points of noise.
 
-\paragraph{What we found.} \Cref{fig:teaser} summarises the results.
+\paragraph{What we found.} \Cref{fig:teaser} shows the setting and the clearest result; \cref{tab:goal} lists every registered comparison.
 \begin{enumerate}[nosep,leftmargin=*]
   \item \textbf{The gate makes self-training safe, with a condition.} Across 31 six-round runs with an OpenVLA-OFT policy on LIBERO-Goal, no gated run ends below its start beyond evaluation noise, while the same recipe collapses from 58.5\% to 5.5\% when every version is accepted; over twelve rounds the protection holds only when practice is recursive (\cref{sec:rq1}, \cref{sec:rq2}).
   \item \textbf{Beyond safety the gains are small, and no single ingredient clears its bar at six rounds.} The loop gains one to two points. Recursion contributes $+1.7$ points $[-0.3, +3.7]$ and the verifier $+1.2$ $[-0.4, +2.9]$; one round of plain RL with the same budget does as well. At twelve rounds recursion separates by $+7.8$ $[+5.2, +10.5]$, but because the loop without it drifts below its start while the recursive loop holds its level; plain RL still ties (\cref{sec:rq2}).
@@ -19,3 +19,10 @@ Self-improvement results are easy to inflate: the loop selects versions, evaluat
 \end{enumerate}
 
 \paragraph{Contributions.} (i) A self-improvement framework for VLA policies in which every control is a switch inside one engine, with behaviour cloning and GRPO as interchangeable update rules, and a language-model meta level that edits a declared recipe space under an attribution guard. (ii) A preregistered, sealed-test protocol for self-improvement claims, with every amendment public. (iii) The first controlled decomposition of such a loop on a VLA benchmark, including its negative results and the mechanism behind them. (iv) A measurement of train-on-test inflation in a published VLA-RL result. Code, preregistrations and all run records are released.
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_framework}
+  \caption{\textbf{The framework.} One engine, every ingredient a switch. The object loop practises on fresh scenes with the latest policy; the gate keeps a candidate only if it does not regress on paired held-out placements; the meta level versions the training program and may let a numeric search or an LLM edit it inside a declared space, seeing only gate records. Controls flip one switch each.}
+  \label{fig:framework}
+\end{figure*}

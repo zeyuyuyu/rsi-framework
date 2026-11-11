@@ -82,40 +82,49 @@ def read_final():
     return json.load(open(os.path.join(ROOT, "results/goal_read_final_20261106.json")))
 
 
-# ---------------------------------------------------------------- 0. teaser: safety (left) + registered claims (right)
+# ---------------------------------------------------------------- 0. teaser (one column): real attempts + the safety result
 def fig_teaser():
-    d = read_final()
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(7.0, 2.25), gridspec_kw={"width_ratios": [1, 1.25], "wspace": 0.06})
+    """(a) two practice attempts of the initial policy on one LIBERO-Spatial placement, frames as the policy saw them
+    (frames/frames.json says where they come from); (b) the BC recipe with and without the gate (LIBERO-Goal)."""
+    meta = json.load(open(os.path.join(HERE, "frames", "frames.json")))
+    fig = plt.figure(figsize=(3.3, 3.55), layout="none")
+    gs = fig.add_gridspec(2, 4, hspace=0.06, wspace=0.04, left=0.075, right=0.995, top=0.885, bottom=0.515)
+    gp = fig.add_gridspec(1, 1, left=0.155, right=0.985, top=0.415, bottom=0.095)
+    fig.text(0.01, 0.985, "(a) Practice: the policy’s own attempts, labelled by the simulator", ha="left", va="top",
+             fontsize=7.5, fontweight="bold")
+    fig.text(0.01, 0.945, f"“{meta['task']}”", ha="left", va="top", fontsize=6.2, color=INK2, style="italic")
+    fig.text(0.01, 0.912, "one practice placement, two attempts by the initial policy", ha="left", va="top",
+             fontsize=6.2, color=INK2)
+    for row, ep in enumerate(meta["episodes"]):
+        good = ep["success"]
+        for k, f in enumerate(ep["files"]):
+            ax = fig.add_subplot(gs[row, k])
+            ax.imshow(plt.imread(os.path.join(HERE, "frames", f)), interpolation="lanczos")
+            ax.set_xticks([]); ax.set_yticks([])
+            for sp in ax.spines.values():
+                sp.set_visible(True); sp.set_color("white"); sp.set_linewidth(0.6)
+            if k == 0:
+                ax.set_ylabel("success" if good else "failure", fontsize=7, color=INK, labelpad=2)
+            if k == 3:
+                txt = f"{ep['steps']} steps" if good else f"time limit ({ep['steps']} steps)"
+                ax.text(0.96, 0.05, txt, transform=ax.transAxes, ha="right", va="bottom", fontsize=5.2, color="white",
+                        fontweight="bold", bbox=dict(boxstyle="round,pad=0.25,rounding_size=0.3",
+                                                     fc="#1f8a4c" if good else "#c4314b", ec="none"))
+    ax = fig.add_subplot(gp[0, 0])
     nogate, _ = chain(os.path.join(ROOT, "results/a800/runs2/a8_oftg_curve_bc_s1/report.json"))
-    ygrid(a1)
-    for s in (1, 2, 3):
-        pth = os.path.join(ROOT, f"results/baidu/yq_oftgb_fixed_s{s}/report.json")
+    ygrid(ax)
+    for sd in (1, 2, 3):
+        pth = os.path.join(ROOT, f"results/baidu/yq_oftgb_fixed_s{sd}/report.json")
         if os.path.exists(pth):
-            a1.plot(range(7), chain(pth)[0], "-", color=C["fixed"], lw=1.2)
-    a1.plot(range(7), nogate, "-o", color=INK, ms=4, lw=1.8, **RING)
-    a1.text(6.1, 66, "with the gate (3 seeds)", ha="right", va="bottom", fontsize=7, color=INK2)   # direct labels:
-    a1.text(3.95, 24, "same recipe,\nno gate", ha="right", va="center", fontsize=7, color=INK2)   # two series
-    a1.set_xlabel("Round"); a1.set_ylabel("Held-out success (%)"); a1.set_ylim(0, 72); a1.set_xticks(range(7))
-    panel_title(a1, "(a) The gate makes the loop safe")
-    rows = [("loop (fixed − start)", d["R1_fixed"]), ("verifier (fixed − shuffled)", d["R2_seeds0to3"]),
-            ("recursion (fixed − nonrec)", d["R3_seeds0to3"]), ("meta: numeric − fixed", d["R4_full_minus_fixed"]),
-            ("meta: LLM − fixed", d["R4_harness_minus_fixed_yq"]), ("meta: LLM+cap − fixed (A)", d["R4_cap_minus_fixed_cavin"]),
-            ("loop − one-shot RL", d["R5_seeds0to3"])]
-    ys = list(range(len(rows)))[::-1]
-    a2.axvline(0, color=MUTED, lw=0.7, zorder=1)
-    for y, (label, r) in zip(ys, rows):
-        m, (lo, hi) = r["mean_points"], r["ci95_points"]
-        a2.plot([lo, hi], [y, y], color=INK2, lw=1.3, zorder=2)
-        a2.plot(m, y, "o", color=INK, ms=4.4, zorder=3, **RING)
-        a2.plot(r["bar_points"], y, "|", color=C["shuffled"], ms=9, mew=1.5, zorder=2)
-    a2.set_yticks(ys); a2.set_yticklabels([r[0] for r in rows], color=INK)
-    a2.tick_params(axis="y", length=0); a2.spines["left"].set_visible(False)
-    a2.grid(axis="x"); a2.set_ylim(-0.6, len(rows) - 0.15)
-    a2.annotate("bar set in advance", (rows[0][1]["bar_points"], ys[0]), xytext=(6, 7), textcoords="offset points",
-                ha="right", va="bottom", fontsize=6.5, color=INK2)
-    a2.set_xlabel("Difference in test success (points, 95% CI)"); a2.set_xlim(-3.2, 6.2)
-    panel_title(a2, "(b) Which part of the loop helps (LIBERO-Goal, 31 runs)")
-    save(fig, "fig_teaser.pdf")
+            ax.plot(range(7), chain(pth)[0], "-", color=C["fixed"], lw=1.2)
+    ax.plot(range(7), nogate, "-o", color=INK, ms=3.6, lw=1.6, **RING)
+    ax.text(6.05, 66, "with the gate (3 seeds)", ha="right", va="bottom", fontsize=6.3, color=INK2)
+    ax.text(3.9, 22, "every version\naccepted", ha="right", va="center", fontsize=6.3, color=INK2)
+    ax.set_xlabel("Round", labelpad=1); ax.set_ylabel("Held-out\nsuccess (%)", labelpad=2)
+    ax.set_ylim(0, 74); ax.set_yticks(range(0, 80, 20)); ax.set_xticks(range(7)); ax.set_xlim(-0.2, 6.2)
+    ax.set_title("(b) Same training recipe, with and without the gate", loc="left", fontsize=7.5, fontweight="bold",
+                 pad=3, x=-0.17)
+    save(fig, "fig_teaser.pdf", tight=False)
 
 
 # ---------------------------------------------------------------- 1. forest plot of the registered claims

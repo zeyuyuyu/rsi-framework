@@ -72,10 +72,3 @@ arm & change in \cref{alg:loop} & isolates \\
 \end{tabular}\\[2pt]
 {\footnotesize $\ast$ \texttt{llm}: knob space; \texttt{llm\_harness}: harness space; \texttt{llm\_harness\_cap}: harness space under the compute cap.}
 \end{table}
-
-\begin{figure*}[t]
-  \centering
-  \includegraphics[width=\textwidth]{fig_framework}
-  \caption{\textbf{The framework.} One engine, every ingredient a switch. The object loop practises on fresh scenes with the latest policy; the gate keeps a candidate only if it does not regress on paired held-out placements; the meta level versions the training program and may let a numeric search or an LLM edit it inside a declared space, seeing only gate records. Controls flip one switch each.}
-  \label{fig:framework}
-\end{figure*}

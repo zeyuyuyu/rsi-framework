@@ -24,12 +24,12 @@ Paper ID \cvprPaperID}
 
 \begin{document}
 \maketitle
-\begin{strip}
+\begin{figure}[t]
   \centering
-  \includegraphics[width=\textwidth]{fig_teaser}
-  \captionof{figure}{\textbf{Taking a self-improvement loop apart.} (a) The gate is what makes self-training safe: the same behaviour-cloning recipe falls from 58.5\% to 5.5\% success when every new version is accepted, and stays at its starting level (55--63\%) when each version has to beat its parent on fresh, paired placements. (b) Switching off one ingredient at a time (31 LIBERO-Goal runs, official test kept sealed, finals averaged over three evaluations): every ingredient's estimate is positive except the meta level's, and none reaches the bar we set in advance (red ticks). Recursion and the verifier matter most; a language model that edits the training recipe adds nothing once the recipe works.}
+  \includegraphics[width=\linewidth]{fig_teaser}
+  \caption{\textbf{A robot policy that trains on its own attempts.} (a) One practice placement of a LIBERO-Spatial task and two attempts by the initial OpenVLA-OFT policy, shown as its camera saw them. The simulator's success check labels each attempt, and the loop trains on such labelled attempts. (b) LIBERO-Goal, behaviour cloning on the policy's own samples. When every new version is accepted, success on the round's 200 held-out placements falls from 58.5\% to 7\% within six rounds. When a version is kept only if it does not regress on fresh paired placements, the same recipe stays at its starting level.}
   \label{fig:teaser}
-\end{strip}
+\end{figure}
 \input{sec/0_abstract}
 \input{sec/1_intro}
 \input{sec/2_related}
