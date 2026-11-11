@@ -53,6 +53,8 @@ def run_fresh(root, name):
 
 
 PREFIX = {"a800": "a8", "yq": "yq", "bj": "bj"}
+PLAT_OF = {"Y": "yq", "A": "a800", "B": "bj"}                                   # addendum 33 platform letters
+GUARD_RUN = {"Y": "yq_ofts_{arm}_s{n}", "A": "a8_spatmain_{arm}_s{n}", "B": "bj_ofts_{arm}_s{n}"}
 
 
 def reference(root, platform, suite):
@@ -112,10 +114,18 @@ BLOCKS = {
     "spatial_guard_bj": dict(suite="spatial", arms=("guard", "onebig"), seeds=(1, 2, 3), platforms=("bj",),
                              plat=lambda s: "bj", name=lambda arm, s: f"bj_ofts_{arm}_s{s}", noninf={"GS3": -2.0},
                              claims=[("GS3", "onebig", "guard", 0.0), ("GS1", "n0", "guard", 3.0)]),
-    "spatial_guard_pooled": dict(suite="spatial", arms=("guard", "onebig"), seeds=("Y1", "Y2", "Y3", "B1", "B2", "B3"),
-                                 platforms=("yq", "bj"), plat=lambda s: {"Y": "yq", "B": "bj"}[s[0]],
-                                 name=lambda arm, s: f"{'yq' if s[0] == 'Y' else 'bj'}_ofts_{arm}_s{s[1]}",
-                                 noninf={"GS3": -2.0}, claims=[("GS3", "onebig", "guard", 0.0)]),
+    # amendment 2: platform A (the A800 node, seed 0) joins; the pooled block covers every within-platform pair, and
+    # --exclude A,B drops a platform that is not complete by 2026-11-15 12:00Z. GS2 has no B pair (no strict arm there).
+    "spatial_guard_a8": dict(suite="spatial", arms=("guard", "onebig", "fixed"), seeds=(0,), platforms=("a800",),
+                             plat=lambda s: "a800", name=lambda arm, s: f"a8_spatmain_{arm}_s{s}", noninf={"GS3": -2.0},
+                             claims=[("GS3", "onebig", "guard", 0.0), ("GS2", "fixed", "guard", 2.0),
+                                     ("GS1", "n0", "guard", 3.0)]),
+    "spatial_guard_pooled": dict(suite="spatial", arms=("guard", "onebig", "fixed"),
+                                 seeds=("Y1", "Y2", "Y3", "A0", "B1", "B2", "B3"), platforms=("yq", "a800", "bj"),
+                                 plat=lambda s: PLAT_OF[s[0]], name=lambda arm, s: GUARD_RUN[s[0]].format(arm=arm, n=s[1:]),
+                                 noninf={"GS3": -2.0},
+                                 claims=[("GS3", "onebig", "guard", 0.0),
+                                         ("GS2", "fixed", "guard", 2.0, ("Y1", "Y2", "Y3", "A0"))]),
     "goal_nogate": dict(suite="goal", arms=("nogate", "fixed", "llm_harness"), seeds=(1, 2, 3),
                         name=lambda arm, s: f"yq_oftgb_{arm}_s{s}",
                         claims=[("NG1", "nogate", "fixed", 10.0), ("NG2", "nogate", "llm_harness", 10.0),
@@ -128,9 +138,14 @@ def main():
     out = None
     if "--json" in args:
         i = args.index("--json"); out = args[i + 1]; del args[i:i + 2]
+    excl = set()
+    if "--exclude" in args:      # addendum 33: platform letters (A, B) left out of a pooled block by the deadline rule
+        i = args.index("--exclude"); excl = set(args[i + 1].split(",")); del args[i:i + 2]
     check = "--check" in args
     args = [a for a in args if a != "--check"]
-    block, root = BLOCKS[args[0]], (args[1] if len(args) > 1 else "results")
+    block, root = dict(BLOCKS[args[0]]), (args[1] if len(args) > 1 else "results")
+    keep = lambda seeds: tuple(s for s in seeds if not (isinstance(s, str) and s[0] in excl))
+    block["seeds"] = keep(block["seeds"])
     runs = {(arm, s): run_fresh(root, block["name"](arm, s)) for arm in block["arms"] for s in block["seeds"]}
     refs = {p: reference(root, p, block["suite"]) for p in block.get("platforms", ("yq", "a800"))}
     if check:
@@ -146,16 +161,20 @@ def main():
     ref = {p: [sum(v) / len(v) for v in zip(*[e[1] for e in evs])] for p, evs in refs.items() if evs}
     plat = block.get("plat", lambda s: "a800" if s == 0 else "yq")
     res = dict(block=args[0], reference={p: dict(evaluations=len(refs[p]), success=pct(r)) for p, r in ref.items()})
-    for label, ctrl, arm, bar in block["claims"]:
+    if excl:
+        res["excluded_platforms"] = sorted(excl)
+    for claim in block["claims"]:
+        label, ctrl, arm, bar = claim[:4]
+        seeds = keep(claim[4]) if len(claim) > 4 else block["seeds"]   # a claim may cover only some platforms
         pairs = []
-        for s in block["seeds"]:
+        for s in seeds:
             y = runs.get((arm, s))
             x = ref.get(plat(s)) if ctrl == "n0" else (runs.get((ctrl, s)) or [None, None])[1]
             if y and x:
                 pairs.append((s, x, y[1]))
         if pairs:
             res[label] = paired(pairs, bar, f"{label} {arm} - {ctrl} (fresh sealed test)")
-            res[label]["complete"] = len(pairs) == len(block["seeds"])
+            res[label]["complete"] = len(pairs) == len(seeds)
             if label in block.get("noninf", {}):   # addendum 33: superiority (CI > 0) and non-inferiority (CI > margin)
                 lo = res[label]["ci95_points"][0]
                 res[label].update(superior=bool(lo > 0.0), non_inferior_margin=block["noninf"][label],

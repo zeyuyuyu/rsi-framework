@@ -3,16 +3,17 @@ follow the registered rule (per-episode mean of three evaluations of the retaine
 paired bootstrap, 10,000 draws. Reference: the pooled in-run n0 tests of the Spatial checkpoint on the platform
 (spatial_read.pooled_n0). Every pair is formed within a platform.
 
-Yangquan (Y), seeds 1-3: yq_ofts_guard_s<seed> against addendum 28's yq_ofts_onebig_s<seed> (one round, 18 steps,
-the whole budget: plain RL) and yq_ofts_fixed_s<seed> (strict gate), both read 2026-11-11.
-Beijing (B, amendment 1), seeds 1-3: bj_ofts_guard_s<seed> against bj_ofts_onebig_s<seed>. No strict-gate arm.
+Platforms and runs (guard against plain RL "onebig" and against the strict gate "fixed"):
+  Y  Yangquan, seeds 1-3:    yq_ofts_guard_s<seed>  vs yq_ofts_onebig_s<seed>, yq_ofts_fixed_s<seed> (read 2026-11-11)
+  A  A800 node, seed 0 (amendment 2): a8_spatmain_guard_s0 vs a8_spatmain_onebig_s0, a8_spatmain_fixed_s0 (read 11-11)
+  B  Beijing, seeds 1-3 (amendment 1): bj_ofts_guard_s<seed> vs bj_ofts_onebig_s<seed> (no strict-gate arm)
   GS3  guard - onebig: superiority if the CI lower bound > 0; non-inferiority (margin 2 points) if it is > -2.
-       Primary: the six within-platform pairs (Y1-3, B1-3) when every Beijing final exists; otherwise Yangquan
-       alone. --yq-primary forces Yangquan alone (Beijing complete only after 2026-11-15 12:00Z). The
-       per-platform estimates are reported either way.
-  GS2  guard - fixed >= +2.0, CI > 0 (Yangquan only)
-  GS1  guard - reference, R1 rule (>= +5.0, CI > 0, >= 2 of 3 seeds > 0), per platform against its own reference
-usage: python3 scripts/report/spatial_guard_read.py [results root] [--check] [--yq-primary] [--json out.json]
+       Primary: every complete within-platform pair (Y, plus A and B when complete). --exclude A,B drops a platform
+       that is not complete by 2026-11-15 12:00Z; --yq-primary is --exclude A,B. Per-platform estimates either way.
+  GS2  guard - fixed >= +2.0, CI > 0, on Y (+ A)
+  GS1  guard - reference per platform: R1 rule on Y and B (>= +5.0, CI > 0, >= 2 of 3 seeds > 0); on A (one seed)
+       the same difference, descriptive
+usage: python3 scripts/report/spatial_guard_read.py [results root] [--check] [--exclude A,B] [--yq-primary] [--json out]
 --check prints readiness and no test number."""
 import json
 import sys
@@ -23,9 +24,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import goal_read as G                                  # noqa: E402
 import spatial_read as SR                              # noqa: E402
 
-SEEDS = (1, 2, 3)
-PLATS = dict(Y=("yq", dict(new="yq_ofts_guard", rl="yq_ofts_onebig", strict="yq_ofts_fixed")),
-             B=("bj", dict(new="bj_ofts_guard", rl="bj_ofts_onebig")))
+PLATS = dict(Y=dict(plat="yq", sub="baidu", seeds=(1, 2, 3),
+                    names=dict(new="yq_ofts_guard", rl="yq_ofts_onebig", strict="yq_ofts_fixed")),
+             A=dict(plat="a800", sub="a800/runs2", seeds=(0,),
+                    names=dict(new="a8_spatmain_guard", rl="a8_spatmain_onebig", strict="a8_spatmain_fixed")),
+             B=dict(plat="bj", sub="baidu", seeds=(1, 2, 3), names=dict(new="bj_ofts_guard", rl="bj_ofts_onebig")))
 
 
 def gs3(pairs, label):
@@ -41,23 +44,27 @@ def main():
     out = None
     if "--json" in args:
         i = args.index("--json"); out = args[i + 1]; del args[i:i + 2]
+    excl = set()
+    if "--exclude" in args:
+        i = args.index("--exclude"); excl = set(args[i + 1].split(",")); del args[i:i + 2]
+    if "--yq-primary" in args:
+        excl |= {"A", "B"}
     check = "--check" in args
-    yq_primary = "--yq-primary" in args
     args = [a for a in args if a not in ("--check", "--yq-primary")]
     root = args[0] if args else "results"
     G.MODE = "final"
     runs, missing = {}, {}
-    for P, (_, names) in PLATS.items():
-        for k, n in names.items():
-            for s in SEEDS:
+    for P, spec in PLATS.items():
+        for k, n in spec["names"].items():
+            for s in spec["seeds"]:
                 try:
-                    runs[(P, k, s)] = G.record(Path(root) / "baidu" / f"{n}_s{s}")
+                    runs[(P, k, s)] = G.record(Path(root) / spec["sub"] / f"{n}_s{s}")
                 except SystemExit as e:   # not finished, or fewer than three final evaluations
                     missing[(P, k, s)] = str(e)
-    y_missing = [v for (P, _, _), v in missing.items() if P == "Y"]
-    b_complete = not any(P == "B" for P, _, _ in missing)
-    if y_missing and not check:
-        raise SystemExit("Yangquan not complete:\n" + "\n".join(y_missing))
+    if any(P == "Y" for P, _, _ in missing) and not check:
+        raise SystemExit("Yangquan not complete:\n" + "\n".join(v for (P, _, _), v in missing.items() if P == "Y"))
+    complete = {P: not any(m[0] == P for m in missing) for P in PLATS}
+    used = [P for P in PLATS if complete[P] and P not in excl]          # Y is always complete outside --check
     digests = {r["digest"] for r in runs.values()} | {r["n0_digest"] for r in runs.values()}
     if len(digests) > 1:
         raise SystemExit(f"episode id lists differ across runs: {sorted(digests)}")
@@ -65,35 +72,39 @@ def main():
         if k == "new" and r["rounds"] != 6:
             raise SystemExit(f"{r['run']}: {r['rounds']} rounds, expected 6")
     digest = next(iter(digests)) if digests else None
-    refs = {P: SR.pooled_n0(root, plat, digest) for P, (plat, _) in PLATS.items()}
+    refs = {P: SR.pooled_n0(root, spec["plat"], digest) for P, spec in PLATS.items()}
     if check:
-        for P, (plat, _) in PLATS.items():
-            print(f"pooled n0 reference: {plat} {len(refs[P][1])} evaluations (mean withheld in --check)")
+        for P, spec in PLATS.items():
+            print(f"pooled n0 reference: {spec['plat']} {len(refs[P][1])} evaluations (mean withheld in --check)")
         for (P, k, s), r in sorted(runs.items()):
             print(f"{r['run']:28s} retained={r['retained']:6s} gate={r['retained_gate']} rounds={r['rounds']} evals={r['n_evals']}")
         for (P, k, s), m in sorted(missing.items()):
-            print(f"{PLATS[P][1][k]}_s{s:<17d} not ready: {m.splitlines()[0]}")
-        print(f"Beijing complete: {b_complete}; GS3 primary would be {'pooled Y+B' if b_complete and not yq_primary else 'Yangquan alone'}")
+            print(f"{PLATS[P]['names'][k]}_s{s:<17d} not ready: {m.splitlines()[0]}")
+        print(f"complete: {complete}; excluded: {sorted(excl)}; GS3 primary would pool {used}")
         return
-    pair = lambda P, ctrl, arm: [(f"{P}{s}", runs[(P, ctrl, s)]["bits"], runs[(P, arm, s)]["bits"]) for s in SEEDS]
-    res = {"mode": dict(mode="final", **{f"pooled_n0_{PLATS[P][0]}": dict(n=len(refs[P][1]), mean=G.pct(refs[P][0]))
-                                         for P in PLATS if refs[P][1]})}
-    res["GS3_yq"] = gs3(pair("Y", "rl", "new"), "GS3 guard - onebig (plain RL at equal compute), Yangquan; official test")
-    if b_complete:
-        res["GS3_bj"] = gs3(pair("B", "rl", "new"), "GS3 guard - onebig, Beijing; official test")
-        res["GS3_pooled"] = gs3(pair("Y", "rl", "new") + pair("B", "rl", "new"),
-                                "GS3 guard - onebig, within-platform pairs Y1-3 + B1-3; official test")
-    else:
-        res["bj_not_ready"] = sorted(f"{PLATS[P][1][k]}_s{s}" for (P, k, s) in missing if P == "B")
-    primary = "GS3_pooled" if b_complete and not yq_primary else "GS3_yq"
-    res["GS3"] = dict(res[primary], primary_source=primary)
-    res["GS2"] = G.paired(pair("Y", "strict", "new"), 2.0, "GS2 guard - fixed (strict gate), Yangquan; official test")
+    pair = lambda P, ctrl, arm: [(f"{P}{s}", runs[(P, ctrl, s)]["bits"], runs[(P, arm, s)]["bits"]) for s in PLATS[P]["seeds"]]
+    res = {"mode": dict(mode="final", **{f"pooled_n0_{PLATS[P]['plat']}": dict(n=len(refs[P][1]), mean=G.pct(refs[P][0]))
+                                         for P in PLATS if refs[P][1]}),
+           "platforms_pooled": used, "excluded": sorted(excl), "complete": complete}
     for P in PLATS:
-        recs = {s: runs[(P, "new", s)] for s in SEEDS if (P, "new", s) in runs}
-        if len(recs) == len(SEEDS):
-            key = "GS1" if P == "Y" else "GS1_bj"
-            res[key] = G.r1(recs, f"guard (Spatial, {PLATS[P][0]})", ref=refs[P][0])
-            res[key]["claim"] = f"{key} guard: final - pooled initial reference, {PLATS[P][0]} (official test)"
+        if complete[P]:
+            res[f"GS3_{PLATS[P]['plat']}"] = gs3(pair(P, "rl", "new"), f"GS3 guard - onebig, platform {P}; official test")
+    res["GS3"] = gs3([p for P in used for p in pair(P, "rl", "new")],
+                     f"GS3 guard - onebig (plain RL at equal compute), within-platform pairs {'+'.join(used)}; official test")
+    strict = [P for P in used if "strict" in PLATS[P]["names"]]
+    res["GS2"] = G.paired([p for P in strict for p in pair(P, "strict", "new")], 2.0,
+                          f"GS2 guard - fixed (strict gate), within-platform pairs {'+'.join(strict)}; official test")
+    for P in PLATS:
+        recs = {s: runs[(P, "new", s)] for s in PLATS[P]["seeds"] if (P, "new", s) in runs}
+        if len(recs) != len(PLATS[P]["seeds"]):
+            continue
+        key = "GS1" if P == "Y" else f"GS1_{PLATS[P]['plat']}"
+        if len(recs) >= 3:
+            res[key] = G.r1(recs, f"guard (Spatial, {PLATS[P]['plat']})", ref=refs[P][0])
+        else:   # one seed: the R1 seed-count rule cannot apply, so the difference is descriptive
+            res[key] = G.paired([(f"{P}{s}", refs[P][0], r["bits"]) for s, r in recs.items()], 5.0, "")
+            res[key]["descriptive_one_seed"] = True
+        res[key]["claim"] = f"{key} guard: final - pooled initial reference, {PLATS[P]['plat']} (official test)"
     res["runs"] = {r["run"]: dict(retained=r["retained"], gate=r["retained_gate"], test=G.pct(r["bits"]), n0=G.pct(r["n0_bits"]),
                                   rounds=r["rounds"], evals=r["n_evals"],
                                   accepted_rounds=sorted({rnd for rnd, _, _, acc in r["cands"] if acc}))
