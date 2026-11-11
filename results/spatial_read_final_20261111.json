@@ -1,0 +1,743 @@
+{
+ "mode": {
+  "mode": "final",
+  "pooled_n0_yq": {
+   "n": 12,
+   "mean": 60.23
+  },
+  "pooled_n0_cavin": {
+   "n": 5,
+   "mean": 58.92,
+   "runs": [
+    "a8_spatmain_fixed_s0",
+    "a8_spatmain_llm_harness_cap_s1",
+    "a8_spatmain_nonrec_s0",
+    "a8_spatmain_onebig_s0",
+    "a8_spatmain_shuffled_s0"
+   ]
+  }
+ },
+ "R1_fixed": {
+  "claim": "R1 fixed (Spatial, Yangquan seeds 1-3): final - initial",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 5.0,
+  "mean_points": -0.01,
+  "ci95_points": [
+   -2.15,
+   2.13
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 60.23,
+    "arm": 60.53,
+    "diff": 0.3,
+    "ci95": [
+     -2.22,
+     2.77
+    ],
+    "mcnemar_p": 0.6655,
+    "arm_only": 22,
+    "control_only": 26
+   },
+   "2": {
+    "control": 60.23,
+    "arm": 60.67,
+    "diff": 0.44,
+    "ci95": [
+     -2.38,
+     3.27
+    ],
+    "mcnemar_p": 0.8991,
+    "arm_only": 30,
+    "control_only": 32
+   },
+   "3": {
+    "control": 60.23,
+    "arm": 59.47,
+    "diff": -0.76,
+    "ci95": [
+     -3.42,
+     1.87
+    ],
+    "mcnemar_p": 0.3581,
+    "arm_only": 25,
+    "control_only": 33
+   }
+  },
+  "seeds_excluding_zero": 0,
+  "bar_note": "prereg v3 R1 for M1: >= +5.0, CI > 0, >= 2 of 3 seeds individually > 0; the +3.0 pilot rule of addendum 11 is also shown",
+  "passes_at_3": false
+ },
+ "R1_fixed_seed0_cavin": {
+  "claim": "R1 fixed: final - initial (seed 0, cavin; shown alongside, not the registered statistic)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 500,
+  "bar_points": 5.0,
+  "mean_points": 1.95,
+  "ci95_points": [
+   -0.28,
+   4.08
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 58.92,
+    "arm": 60.87,
+    "diff": 1.95,
+    "ci95": [
+     -0.28,
+     4.08
+    ],
+    "mcnemar_p": 0.1641,
+    "arm_only": 26,
+    "control_only": 16
+   }
+  }
+ },
+ "R2_seeds0to3": {
+  "claim": "R2-spatial fixed - shuffled (seeds 0-3; seed 0 on cavin)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 1.67,
+  "ci95_points": [
+   0.18,
+   3.13
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 57.4,
+    "arm": 60.87,
+    "diff": 3.47,
+    "ci95": [
+     0.73,
+     6.13
+    ],
+    "mcnemar_p": 0.0248,
+    "arm_only": 42,
+    "control_only": 23
+   },
+   "1": {
+    "control": 58.53,
+    "arm": 60.53,
+    "diff": 2.0,
+    "ci95": [
+     -0.73,
+     4.67
+    ],
+    "mcnemar_p": 0.155,
+    "arm_only": 36,
+    "control_only": 24
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 60.67,
+    "diff": 0.8,
+    "ci95": [
+     -1.93,
+     3.47
+    ],
+    "mcnemar_p": 0.7877,
+    "arm_only": 29,
+    "control_only": 26
+   },
+   "3": {
+    "control": 59.07,
+    "arm": 59.47,
+    "diff": 0.4,
+    "ci95": [
+     -2.27,
+     3.07
+    ],
+    "mcnemar_p": 0.4426,
+    "arm_only": 34,
+    "control_only": 27
+   }
+  }
+ },
+ "R2_seeds1to3": {
+  "claim": "R2-spatial fixed - shuffled (seeds 1-3, Yangquan)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 1.07,
+  "ci95_points": [
+   -0.53,
+   2.71
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 58.53,
+    "arm": 60.53,
+    "diff": 2.0,
+    "ci95": [
+     -0.73,
+     4.67
+    ],
+    "mcnemar_p": 0.155,
+    "arm_only": 36,
+    "control_only": 24
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 60.67,
+    "diff": 0.8,
+    "ci95": [
+     -1.93,
+     3.47
+    ],
+    "mcnemar_p": 0.7877,
+    "arm_only": 29,
+    "control_only": 26
+   },
+   "3": {
+    "control": 59.07,
+    "arm": 59.47,
+    "diff": 0.4,
+    "ci95": [
+     -2.27,
+     3.07
+    ],
+    "mcnemar_p": 0.4426,
+    "arm_only": 34,
+    "control_only": 27
+   }
+  }
+ },
+ "R3_seeds0to3": {
+  "claim": "R3-spatial fixed - nonrec (seeds 0-3; seed 0 on cavin)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": 5.73,
+  "ci95_points": [
+   4.12,
+   7.38
+  ],
+  "passes": true,
+  "per_seed": {
+   "0": {
+    "control": 55.6,
+    "arm": 60.87,
+    "diff": 5.27,
+    "ci95": [
+     2.67,
+     8.0
+    ],
+    "mcnemar_p": 0.0018,
+    "arm_only": 40,
+    "control_only": 16
+   },
+   "1": {
+    "control": 48.67,
+    "arm": 60.53,
+    "diff": 11.86,
+    "ci95": [
+     8.4,
+     15.47
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 77,
+    "control_only": 20
+   },
+   "2": {
+    "control": 57.0,
+    "arm": 60.67,
+    "diff": 3.67,
+    "ci95": [
+     0.47,
+     6.8
+    ],
+    "mcnemar_p": 0.0568,
+    "arm_only": 44,
+    "control_only": 27
+   },
+   "3": {
+    "control": 57.33,
+    "arm": 59.47,
+    "diff": 2.14,
+    "ci95": [
+     -0.87,
+     5.07
+    ],
+    "mcnemar_p": 0.3961,
+    "arm_only": 38,
+    "control_only": 30
+   }
+  }
+ },
+ "R3_seeds1to3": {
+  "claim": "R3-spatial fixed - nonrec (seeds 1-3, Yangquan)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": 5.89,
+  "ci95_points": [
+   3.96,
+   7.82
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 48.67,
+    "arm": 60.53,
+    "diff": 11.86,
+    "ci95": [
+     8.4,
+     15.47
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 77,
+    "control_only": 20
+   },
+   "2": {
+    "control": 57.0,
+    "arm": 60.67,
+    "diff": 3.67,
+    "ci95": [
+     0.47,
+     6.8
+    ],
+    "mcnemar_p": 0.0568,
+    "arm_only": 44,
+    "control_only": 27
+   },
+   "3": {
+    "control": 57.33,
+    "arm": 59.47,
+    "diff": 2.14,
+    "ci95": [
+     -0.87,
+     5.07
+    ],
+    "mcnemar_p": 0.3961,
+    "arm_only": 38,
+    "control_only": 30
+   }
+  }
+ },
+ "R5_seeds0to3": {
+  "claim": "R5-spatial fixed - onebig (seeds 0-3; seed 0 on cavin)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": -0.45,
+  "ci95_points": [
+   -1.83,
+   0.93
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 60.2,
+    "arm": 60.87,
+    "diff": 0.67,
+    "ci95": [
+     -1.87,
+     3.2
+    ],
+    "mcnemar_p": 0.4709,
+    "arm_only": 27,
+    "control_only": 21
+   },
+   "1": {
+    "control": 61.27,
+    "arm": 60.53,
+    "diff": -0.74,
+    "ci95": [
+     -3.4,
+     1.93
+    ],
+    "mcnemar_p": 0.7838,
+    "arm_only": 25,
+    "control_only": 28
+   },
+   "2": {
+    "control": 61.4,
+    "arm": 60.67,
+    "diff": -0.73,
+    "ci95": [
+     -3.53,
+     2.0
+    ],
+    "mcnemar_p": 0.7948,
+    "arm_only": 28,
+    "control_only": 31
+   },
+   "3": {
+    "control": 60.47,
+    "arm": 59.47,
+    "diff": -1.0,
+    "ci95": [
+     -3.73,
+     1.73
+    ],
+    "mcnemar_p": 0.9007,
+    "arm_only": 31,
+    "control_only": 33
+   }
+  }
+ },
+ "R5_seeds1to3": {
+  "claim": "R5-spatial fixed - onebig (seeds 1-3, Yangquan)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": -0.82,
+  "ci95_points": [
+   -2.47,
+   0.82
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 61.27,
+    "arm": 60.53,
+    "diff": -0.74,
+    "ci95": [
+     -3.4,
+     1.93
+    ],
+    "mcnemar_p": 0.7838,
+    "arm_only": 25,
+    "control_only": 28
+   },
+   "2": {
+    "control": 61.4,
+    "arm": 60.67,
+    "diff": -0.73,
+    "ci95": [
+     -3.53,
+     2.0
+    ],
+    "mcnemar_p": 0.7948,
+    "arm_only": 28,
+    "control_only": 31
+   },
+   "3": {
+    "control": 60.47,
+    "arm": 59.47,
+    "diff": -1.0,
+    "ci95": [
+     -3.73,
+     1.73
+    ],
+    "mcnemar_p": 0.9007,
+    "arm_only": 31,
+    "control_only": 33
+   }
+  }
+ },
+ "R5_ungated": {
+  "claim": "R5-spatial ungated: fixed - onebig r01c0 (available seeds)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 2.0,
+  "mean_points": -0.45,
+  "ci95_points": [
+   -1.83,
+   0.93
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 60.2,
+    "arm": 60.87,
+    "diff": 0.67,
+    "ci95": [
+     -1.87,
+     3.2
+    ],
+    "mcnemar_p": 0.4709,
+    "arm_only": 27,
+    "control_only": 21
+   },
+   "1": {
+    "control": 61.27,
+    "arm": 60.53,
+    "diff": -0.74,
+    "ci95": [
+     -3.4,
+     1.93
+    ],
+    "mcnemar_p": 0.7838,
+    "arm_only": 25,
+    "control_only": 28
+   },
+   "2": {
+    "control": 61.4,
+    "arm": 60.67,
+    "diff": -0.73,
+    "ci95": [
+     -3.53,
+     2.0
+    ],
+    "mcnemar_p": 0.7948,
+    "arm_only": 28,
+    "control_only": 31
+   },
+   "3": {
+    "control": 60.47,
+    "arm": 59.47,
+    "diff": -1.0,
+    "ci95": [
+     -3.73,
+     1.73
+    ],
+    "mcnemar_p": 0.9007,
+    "arm_only": 31,
+    "control_only": 33
+   }
+  },
+  "missing_seeds": []
+ },
+ "noise_check_n0_halves": {
+  "yq": {
+   "groups": [
+    [
+     "fixed_s1",
+     "fixed_s3",
+     "nonrec_s2",
+     "onebig_s1",
+     "onebig_s3",
+     "shuffled_s2"
+    ],
+    [
+     "fixed_s2",
+     "nonrec_s1",
+     "nonrec_s3",
+     "onebig_s2",
+     "shuffled_s1",
+     "shuffled_s3"
+    ]
+   ],
+   "diff_points": -0.0,
+   "ci95": [
+    -0.53,
+    0.53
+   ]
+  },
+  "cavin": {
+   "groups": [
+    [
+     "fixed_s0",
+     "onebig_s0"
+    ],
+    [
+     "nonrec_s0",
+     "shuffled_s0"
+    ]
+   ],
+   "diff_points": 0.0,
+   "ci95": [
+    -1.2,
+    1.2
+   ]
+  }
+ },
+ "runs": {
+  "yq": {
+   "fixed_s1": {
+    "retained": "r06c0",
+    "gate": 0.655,
+    "test": 60.53,
+    "n0": 60.2,
+    "rounds": 6,
+    "evals": 3
+   },
+   "fixed_s2": {
+    "retained": "r06c0",
+    "gate": 0.665,
+    "test": 60.67,
+    "n0": 60.4,
+    "rounds": 6,
+    "evals": 3
+   },
+   "fixed_s3": {
+    "retained": "r06c0",
+    "gate": 0.68,
+    "test": 59.47,
+    "n0": 59.8,
+    "rounds": 6,
+    "evals": 3
+   },
+   "nonrec_s1": {
+    "retained": "r06c0",
+    "gate": 0.6,
+    "test": 48.67,
+    "n0": 60.2,
+    "rounds": 6,
+    "evals": 3
+   },
+   "nonrec_s2": {
+    "retained": "r05c0",
+    "gate": 0.62,
+    "test": 57.0,
+    "n0": 61.0,
+    "rounds": 6,
+    "evals": 3
+   },
+   "nonrec_s3": {
+    "retained": "r05c0",
+    "gate": 0.6,
+    "test": 57.33,
+    "n0": 60.0,
+    "rounds": 6,
+    "evals": 3
+   },
+   "onebig_s1": {
+    "retained": "r01c0",
+    "gate": 0.64,
+    "test": 61.27,
+    "n0": 60.6,
+    "rounds": 1,
+    "evals": 3
+   },
+   "onebig_s2": {
+    "retained": "r01c0",
+    "gate": 0.64,
+    "test": 61.4,
+    "n0": 61.2,
+    "rounds": 1,
+    "evals": 3
+   },
+   "onebig_s3": {
+    "retained": "r01c0",
+    "gate": 0.64,
+    "test": 60.47,
+    "n0": 60.2,
+    "rounds": 1,
+    "evals": 3
+   },
+   "shuffled_s1": {
+    "retained": "r06c0",
+    "gate": 0.65,
+    "test": 58.53,
+    "n0": 59.6,
+    "rounds": 6,
+    "evals": 3
+   },
+   "shuffled_s2": {
+    "retained": "r04c0",
+    "gate": 0.59,
+    "test": 59.87,
+    "n0": 59.6,
+    "rounds": 6,
+    "evals": 3
+   },
+   "shuffled_s3": {
+    "retained": "r05c0",
+    "gate": 0.615,
+    "test": 59.07,
+    "n0": 60.0,
+    "rounds": 6,
+    "evals": 3
+   }
+  },
+  "cavin_s0": {
+   "fixed_s0": {
+    "retained": "r06c0",
+    "gate": 0.67,
+    "test": 60.87,
+    "n0": 59.4,
+    "rounds": 6,
+    "evals": 3
+   },
+   "nonrec_s0": {
+    "retained": "r06c0",
+    "gate": 0.595,
+    "test": 55.6,
+    "n0": 59.4,
+    "rounds": 6,
+    "evals": 3
+   },
+   "onebig_s0": {
+    "retained": "r01c0",
+    "gate": 0.655,
+    "test": 60.2,
+    "n0": 58.6,
+    "rounds": 1,
+    "evals": 3
+   },
+   "shuffled_s0": {
+    "retained": "r06c0",
+    "gate": 0.58,
+    "test": 57.4,
+    "n0": 58.6,
+    "rounds": 6,
+    "evals": 3
+   }
+  }
+ },
+ "pooled_goal_spatial_descriptive": {
+  "R2": {
+   "claim": "R2 fixed - shuffled (Goal + Spatial pooled, descriptive, no bar)",
+   "n_episodes": 1000,
+   "mean_points": 1.44,
+   "ci95_points": [
+    0.35,
+    2.55
+   ]
+  },
+  "R3": {
+   "claim": "R3 fixed - nonrec (Goal + Spatial pooled, descriptive, no bar)",
+   "n_episodes": 1000,
+   "mean_points": 3.73,
+   "ci95_points": [
+    2.39,
+    5.02
+   ]
+  },
+  "R5": {
+   "claim": "R5 fixed - onebig (Goal + Spatial pooled, descriptive, no bar)",
+   "n_episodes": 1000,
+   "mean_points": -0.34,
+   "ci95_points": [
+    -1.38,
+    0.66
+   ]
+  }
+ }
+}
