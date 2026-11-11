@@ -13,7 +13,10 @@ Blocks and bars (addendum 30):
   spatial repair  FS1 meta3 - fixed(BC) >= +3 (CI > 0)   FS2 meta3 - full (CI)   meta3 - n0 and fixed(BC) - n0 (CI)
   long12          FL1 fixed12 - n0 >= +5 (CI > 0)   FL3 fixed12 - nonrec12 >= +2 (CI > 0)   fixed12 - onebig12 if run
 usage: python3 scripts/report/fresh_read.py <block> [results root] [--check] [--json out.json]
-       block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate | spatial_guard
+       block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate |
+              spatial_guard | spatial_guard_bj | spatial_guard_pooled
+Beijing (platform B, addendum 33 amendment 1): runs results/baidu/bj_ofts_<arm>_s<seed>_fresh, reference
+bj_fresh_n0_<suite>_<k>; pairs are formed within a platform.
 --check prints which evaluations exist and no number."""
 import json
 import sys
@@ -49,9 +52,12 @@ def run_fresh(root, name):
     return bits_of(base / f"{name}_fresh")
 
 
+PREFIX = {"a800": "a8", "yq": "yq", "bj": "bj"}
+
+
 def reference(root, platform, suite):
     base = Path(root) / ("a800/runs2" if platform == "a800" else "baidu")
-    evals = [b for k in range(1, 9) for b in [bits_of(base / f"{'a8' if platform == 'a800' else 'yq'}_fresh_n0_{suite}_{k}")] if b]
+    evals = [b for k in range(1, 9) for b in [bits_of(base / f"{PREFIX[platform]}_fresh_n0_{suite}_{k}")] if b]
     return evals
 
 
@@ -97,9 +103,19 @@ BLOCKS = {
                                  ("G3", "onebig12", "guard12", None)]),
     # addendum 33 (block added before any of its runs existed; the blocks above are unchanged)
     "spatial_guard": dict(suite="spatial", arms=("guard", "onebig", "fixed"), seeds=(1, 2, 3),
-                          name=lambda arm, s: f"yq_ofts_{arm}_s{s}",
+                          name=lambda arm, s: f"yq_ofts_{arm}_s{s}", noninf={"GS3": -2.0},
                           claims=[("GS3", "onebig", "guard", 0.0), ("GS2", "fixed", "guard", 2.0),
                                   ("GS1", "n0", "guard", 3.0)]),
+    # addendum 33 amendment 1: the Beijing replicate (platform B) and the pooled within-platform GS3. Added before
+    # any Beijing result existed. Primary GS3 = spatial_guard_pooled when all six B evaluations exist by
+    # 2026-11-15 12:00Z, otherwise spatial_guard (Yangquan alone). No strict-gate arm on B, so no GS2 there.
+    "spatial_guard_bj": dict(suite="spatial", arms=("guard", "onebig"), seeds=(1, 2, 3), platforms=("bj",),
+                             plat=lambda s: "bj", name=lambda arm, s: f"bj_ofts_{arm}_s{s}", noninf={"GS3": -2.0},
+                             claims=[("GS3", "onebig", "guard", 0.0), ("GS1", "n0", "guard", 3.0)]),
+    "spatial_guard_pooled": dict(suite="spatial", arms=("guard", "onebig"), seeds=("Y1", "Y2", "Y3", "B1", "B2", "B3"),
+                                 platforms=("yq", "bj"), plat=lambda s: {"Y": "yq", "B": "bj"}[s[0]],
+                                 name=lambda arm, s: f"{'yq' if s[0] == 'Y' else 'bj'}_ofts_{arm}_s{s[1]}",
+                                 noninf={"GS3": -2.0}, claims=[("GS3", "onebig", "guard", 0.0)]),
     "goal_nogate": dict(suite="goal", arms=("nogate", "fixed", "llm_harness"), seeds=(1, 2, 3),
                         name=lambda arm, s: f"yq_oftgb_{arm}_s{s}",
                         claims=[("NG1", "nogate", "fixed", 10.0), ("NG2", "nogate", "llm_harness", 10.0),
@@ -116,7 +132,7 @@ def main():
     args = [a for a in args if a != "--check"]
     block, root = BLOCKS[args[0]], (args[1] if len(args) > 1 else "results")
     runs = {(arm, s): run_fresh(root, block["name"](arm, s)) for arm in block["arms"] for s in block["seeds"]}
-    refs = {p: reference(root, p, block["suite"]) for p in ("yq", "a800")}
+    refs = {p: reference(root, p, block["suite"]) for p in block.get("platforms", ("yq", "a800"))}
     if check:
         for (arm, s), b in sorted(runs.items()):
             print(f"{block['name'](arm, s):30s} fresh evaluation: {'yes, %d episodes' % len(b[1]) if b else 'missing'}")
@@ -128,7 +144,7 @@ def main():
     if any(len(b[1]) != N for b in runs.values() if b):
         raise SystemExit("an evaluation does not have 1000 episodes")
     ref = {p: [sum(v) / len(v) for v in zip(*[e[1] for e in evs])] for p, evs in refs.items() if evs}
-    plat = lambda s: "a800" if s == 0 else "yq"
+    plat = block.get("plat", lambda s: "a800" if s == 0 else "yq")
     res = dict(block=args[0], reference={p: dict(evaluations=len(refs[p]), success=pct(r)) for p, r in ref.items()})
     for label, ctrl, arm, bar in block["claims"]:
         pairs = []
@@ -140,6 +156,11 @@ def main():
         if pairs:
             res[label] = paired(pairs, bar, f"{label} {arm} - {ctrl} (fresh sealed test)")
             res[label]["complete"] = len(pairs) == len(block["seeds"])
+            if label in block.get("noninf", {}):   # addendum 33: superiority (CI > 0) and non-inferiority (CI > margin)
+                lo = res[label]["ci95_points"][0]
+                res[label].update(superior=bool(lo > 0.0), non_inferior_margin=block["noninf"][label],
+                                  non_inferior=bool(lo > block["noninf"][label]))
+                res[label].pop("passes", None)
         else:
             res[label] = dict(claim=f"{label} {arm} - {ctrl}", missing=True)
     res["noise_reference_halves"] = {}

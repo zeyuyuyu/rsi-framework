@@ -33,6 +33,8 @@ def pooled_n0(root, platform, digest):
     directories hold no n0 test of their own and are skipped by name)."""
     if platform == "yq":
         runs = [p for p in (Path(root) / "baidu").glob("yq_ofts_*")]
+    elif platform == "bj":   # addendum 33 amendment 1 (Beijing); the yq and a800 branches are unchanged
+        runs = [p for p in (Path(root) / "baidu").glob("bj_ofts_*")]
     else:
         runs = [p for p in (Path(root) / "a800" / "runs2").glob("a8_spatmain_*")]
     lists, names = [], []
