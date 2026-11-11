@@ -144,3 +144,5 @@ The A800 node has another idle card (GPU 4, free since 17:17Z) and an empty queu
 - **Readers**: their changes are committed before any result of these runs exists.
 
 Predictions: unchanged.
+- 2026-11-11 17:22:08Z / 17:22:09Z: `a8_spatmain_onebig_s1` and then `a8_spatmain_guard_s1` were queued on the A800 node, after amendment 3 (403f133, 17:21:47Z). The plan diffs against the seed-0 plans were checked on the node: `engine.seed` only.
+- 17:29:46Z: the reader changes for A1 were committed (a7a1c07), with the same regression check.
