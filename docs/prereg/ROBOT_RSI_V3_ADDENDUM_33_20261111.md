@@ -109,3 +109,23 @@ Every run of an arm was submitted after the text that registers it. At this corr
   - `spatial_guard_read.py` now covers both platforms, with the pooled GS3 as primary when complete.
   - `spatial_read.pooled_n0` gained a `bj` branch.
   - The earlier blocks are unchanged: `fresh_read.py spatial_main` and `spatial_read.py --mode final --pooled` reproduce their committed outputs byte for byte. The new code paths were exercised on a scratch root built from already-read runs only.
+
+## Amendment 2 (2026-11-11, before the run is queued; commit time in git): a seed on the A800 node (platform A)
+
+The A800 node has an idle card. The comparison gets one more within-platform pair there:
+- **Run**: `a8_spatmain_guard_s0`, seed 0. Its plan is `a8_spatmain_fixed_s0`'s plan with the same three changes that separate `yq_ofts_guard` from `yq_ofts_fixed`: `min_gate_gain -0.05`, `gate_floor 0.05` and `test_all_accepted false`. Everything else is byte for byte the same, including the node's vla settings.
+- **Controls**: `a8_spatmain_onebig_s0` (GS3) and `a8_spatmain_fixed_s0` (GS2). Both were read on 2026-11-11, as on Yangquan.
+- **Code**: source v32 (tarball sha 4e36b3f6ee34c4d2), unpacked as `src13` on the node. The two controls ran on the node's `src5`. src5 and v32 differ in seven files:
+  - All differences except the guard rail are features behind flags that this plan does not set: harness / v2 / budget cap / replica controls / llm3 meta levels, the fresh-scene evaluation mode, the round 10-12 seed extension and extra program validation.
+  - The training backend (`rsi/backends/openvla_oft`) is identical.
+  - The changed merge order of run-level update defaults (`backends/openvla/backend.py`, `core/curation.py`) gives the same result here, because the program's `update` holds only `steps`, `batch` and `lr`.
+  - The object level is therefore unchanged, as for Yangquan's v28 controls.
+- **Finals**: as for the other A800 Spatial runs: the in-run test of the retained policy, `<run>_rep` (two replicates) and `<run>_fresh`.
+- **Analysis**:
+  - GS3 primary is seed-averaged over all complete within-platform pairs: Y1-3, A0, and B1-3 if Beijing is complete. A0 and B are each included only if complete by 2026-11-15 12:00Z.
+  - GS2 uses Y1-3 and A0.
+  - GS1 is computed per platform against its own reference. On A that is the pooled in-run n0 tests of `a8_spatmain_*` (official test) and `a8_fresh_n0_spatial_*` (fresh-scene test).
+  - The per-platform estimates are reported either way.
+- **Readers**: their changes for A0 are committed before any result of this run exists.
+
+Predictions: unchanged.
