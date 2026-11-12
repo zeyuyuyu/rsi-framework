@@ -42,3 +42,24 @@ Reader: `fresh_read.py spatial_long12_a8` and `scripts/report/spatial_long12_a8_
   - No round of this run had completed, and no gate or test result exists.
   - The run is requeued with `--resume` (queue order 118) and starts when a card frees, on the same plan and source.
 - The read deadline is unchanged (2026-11-15 12:00Z). If the run cannot complete by then, it is reported as not read.
+
+## Amendment 1 (2026-11-12 ~23:00Z, before any run named here exists): Yangquan seeds 1-3
+
+Yangquan now runs only four of our jobs, on six cards. Two changes follow.
+
+**Addendum 30's onebig12 runs are submitted.** Addendum 30 registered `yq_ofts_onebig12_s{1,2,3}` "only if three cards are free", and that condition now holds.
+- Plans: as written by `mkplans_vla.py yq_spatial_long12` (1 round × 36 inner steps).
+- Source: v30, like the `fixed12` / `nonrec12` runs they are compared with.
+- FL5 (fixed12 − onebig12) is read as addendum 30 registered it.
+
+**New runs `yq_ofts_guard12_s{1,2,3}`.** These are the `yq_ofts_fixed12_s<seed>` plans with the guard-rail fields `min_gate_gain -0.05`, `gate_floor 0.05`, `test_all_accepted false`, as addendum 32 did on Goal, on source v32. The claims are the Spatial counterparts of addendum 32 Part A, on seeds 1-3, with fresh scenes primary and the official test beside them. A0 (the runs above) is reported alongside when complete.
+
+| claim | comparison | bar (fresh primary; official beside) |
+|---|---|---|
+| G2s | guard12 − fixed12 | ≥ +2, CI > 0 |
+| G1s | guard12 − initial | ≥ +5, CI > 0 (official: R1 rule) |
+| G3s | guard12 − onebig12 | CI reported; non-inferior if lower bound > −2 |
+
+- **When**: read once, when the nine Yangquan runs (fixed12, onebig12 and guard12 × 3 seeds) have finals and fresh-scene evaluations, if that is before 2026-11-15 12:00Z. Otherwise they are reported as not read.
+- **Predictions**: G1s +5 to +7; G2s 0 to +3; G3s between −2 and +1. These are the same ranges as on Goal.
+- **Readers**: committed before any result of these runs exists.
