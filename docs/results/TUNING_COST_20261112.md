@@ -71,3 +71,12 @@ Counting the tuning:
 ## Addition, fixed before it exists (2026-11-12 ~18:55Z)
 
 The A800 meta run `a8_oftgb_llm_harness_s0` has no fresh-scene evaluation, so the fresh row above uses seeds 1-3. One is queued now: `a8_oftgb_llm_harness_s0_fresh` (src12, as for every A800 fresh evaluation), to use a free card. When it exists, the four-seed fresh comparison (seeds 0-3, within platform, against `a8_goalmain_onebig_s0` / `a8_goalmain_fixed_s0` fresh) is reported **beside** the three-seed one, whatever it shows. The three-seed numbers above stay as they are.
+
+**Result of the addition (2026-11-12 ~19:55Z).** `a8_oftgb_llm_harness_s0_fresh` finished at 19:35Z. Fresh scenes, seeds 0-3, within platform:
+
+| comparison | 3 seeds (1-3, above) | 4 seeds (0-3) |
+|---|---|---|
+| meta level − one-shot RL on the tuned recipe | +2.20 [+0.47, +3.87] | **+2.17 [+0.75, +3.60]** |
+| meta level − hand-tuned gated loop | +1.57 [−0.03, +3.17] | +2.98 [+1.60, +4.40] |
+
+Seed 0 alone: +2.1 against RL, +7.2 against the tuned loop. The paper keeps citing the three-seed value, as this note said it would. The four-seed value agrees with it.

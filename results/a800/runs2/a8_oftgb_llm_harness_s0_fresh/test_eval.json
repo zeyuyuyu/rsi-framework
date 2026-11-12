@@ -1,0 +1,14 @@
+{
+  "run": "/data0/home/zeyuwang/rsi/runs2/a8_oftgb_llm_harness_s0",
+  "node": "r06c0",
+  "version": {
+    "id": "56b4732863093f3a8cb804247890165c1d0ead8a30a318592d24930ae0115bf9",
+    "location": "/data0/home/zeyuwang/rsi/runs2/a8_oftgb_llm_harness_s0/ckpt-r06c0",
+    "parent_id": "d82122f082a350a20ed42d5856c6508b89b58117019929cc65d0fa8e8f77e57e"
+  },
+  "set": "libero_fresh_sealed",
+  "per_task": 100,
+  "fresh_success": [
+    0.67
+  ]
+}

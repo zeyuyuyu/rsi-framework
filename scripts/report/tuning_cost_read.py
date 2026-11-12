@@ -58,6 +58,15 @@ def main():
                                         "meta level from the failing recipe - one-shot RL on the tuned recipe (fresh scenes, seeds 1-3)")
         res["M_vs_tuned_fresh"] = F.paired([(s, ft[s][1], fm[s][1]) for s in (1, 2, 3)], None,
                                            "meta level from the failing recipe - hand-tuned gated loop (fresh scenes, seeds 1-3)")
+    # addition fixed before it existed (TUNING_COST note, 2026-11-12 ~18:55Z): seed 0 on the A800 node, reported
+    # beside the three-seed rows whatever it shows; pairs stay within platform
+    fm0 = F.run_fresh(root, "a8_oftgb_llm_harness_s0")
+    fr0, ft0 = F.run_fresh(root, "a8_goalmain_onebig_s0"), F.run_fresh(root, "a8_goalmain_fixed_s0")
+    if fm0 and fr0 and ft0 and "M_vs_RL_fresh" in res:
+        res["M_vs_RL_fresh_4seed"] = F.paired([(0, fr0[1], fm0[1])] + [(s, fr[s][1], fm[s][1]) for s in (1, 2, 3)], None,
+                                              "meta level from the failing recipe - one-shot RL on the tuned recipe (fresh scenes, seeds 0-3)")
+        res["M_vs_tuned_fresh_4seed"] = F.paired([(0, ft0[1], fm0[1])] + [(s, ft[s][1], fm[s][1]) for s in (1, 2, 3)], None,
+                                                 "meta level from the failing recipe - hand-tuned gated loop (fresh scenes, seeds 0-3)")
     for d in (res.get("M_vs_RL_official"), res.get("M_vs_tuned_official")):
         d.pop("passes", None)
     res["finals_official"] = {f"s{s}": dict(meta=G.pct(meta[s]["bits"]), rl=G.pct(rl[s]["bits"]), tuned_loop=G.pct(tuned[s]["bits"]))
