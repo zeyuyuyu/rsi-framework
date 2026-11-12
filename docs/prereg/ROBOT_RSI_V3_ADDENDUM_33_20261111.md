@@ -146,3 +146,20 @@ The A800 node has another idle card (GPU 4, free since 17:17Z) and an empty queu
 Predictions: unchanged.
 - 2026-11-11 17:22:08Z / 17:22:09Z: `a8_spatmain_onebig_s1` and then `a8_spatmain_guard_s1` were queued on the A800 node, after amendment 3 (403f133, 17:21:47Z). The plan diffs against the seed-0 plans were checked on the node: `engine.seed` only.
 - 17:29:46Z: the reader changes for A1 were committed (a7a1c07), with the same regression check.
+
+## Amendment 4 (2026-11-12 ~17Z, before any GS test number has been read; commit time in git): Beijing out of the primary read; a registered replication on the A800 node
+
+Two facts, both about compute and neither about any outcome:
+- **Beijing**: none of the ten Beijing jobs has started in about 25 hours. The shared 8-card queue has been occupied by other users' jobs. Under amendment 1 the primary GS3 read would wait for Beijing until 2026-11-15 12:00Z.
+- **A800 node**: four cards are idle and the queue is empty. Both A800 pairs (A0, A1) are complete with their finals.
+
+Changes (claims, bars and statistics unchanged):
+1. **Primary GS3**: seed-averaged over the within-platform pairs Y1-3, A0 and A1. It is read once, as soon as all five have their finals and fresh-scene evaluations. GS2 stays on Y1-3 and A0. GS1 is per platform, as before.
+2. **Beijing (B1-3)**: no longer part of the primary read. Its jobs stay queued. If they complete, B is read once as a replication and reported beside the primary, never pooled into it afterwards.
+3. **Replication A2, A3**: `a8_spatmain_onebig_s{2,3}` and `a8_spatmain_guard_s{2,3}`, on src13 (v32). The plans are the seed-0 plans with only `engine.seed` changed. As with A1 (amendment 3), seeds 2 and 3 share their training-placement sequences with Y2 and Y3, and every pair is formed within its platform.
+   - The two pairs are read once, when complete, as a registered replication of GS3 (guard − onebig, same bars), and reported beside the primary.
+   - They are not pooled into the primary after it has been read.
+   - If they are not complete by 2026-11-15 12:00Z, they are reported as not read.
+4. **Readers**: changed before any primary or replication number exists. At this commit the only outputs on real data have been `--check` (no test number). Shown in the monitors so far: gate scores of the running loops, which every round prints.
+
+Predictions: unchanged, and the same for the replication.
