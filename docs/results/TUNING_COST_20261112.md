@@ -67,3 +67,7 @@ Counting the tuning:
   - What the meta level replaced is the pilot sweep, not the choice of space.
   - Blind numeric search over the same space comes within +1.15 [−0.63, +2.92] of the LLM (S2). The space carries much of the repair.
 - The pilot sweep served the study as well, for example choosing the suite. A practitioner tuning RL from scratch would need a sweep of the same kind, but its size is ours, not a general constant.
+
+## Addition, fixed before it exists (2026-11-12 ~18:55Z)
+
+The A800 meta run `a8_oftgb_llm_harness_s0` has no fresh-scene evaluation, so the fresh row above uses seeds 1-3. One is queued now: `a8_oftgb_llm_harness_s0_fresh` (src12, as for every A800 fresh evaluation), to use a free card. When it exists, the four-seed fresh comparison (seeds 0-3, within platform, against `a8_goalmain_onebig_s0` / `a8_goalmain_fixed_s0` fresh) is reported **beside** the three-seed one, whatever it shows. The three-seed numbers above stay as they are.
