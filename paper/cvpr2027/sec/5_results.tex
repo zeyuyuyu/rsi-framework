@@ -14,7 +14,7 @@
   \label{fig:selfrepair}
 \end{figure*}
 
-We report what each level of the architecture contributes (\cref{fig:framework}): recursive practice (\cref{sec:rq1}), the gate (\cref{sec:rq2}) and the meta level (\cref{sec:rq3}), then how the loop compares with plain RL (\cref{sec:rl}). Every number comes from a preregistered read of a sealed test unless it is marked \emph{gate-level}.
+We report what each level of the architecture contributes (\cref{fig:framework}): recursive practice (\cref{sec:rq1}), the gate (\cref{sec:rq2}) and the meta level (\cref{sec:rq3}), then how it compares with plain RL on a recipe tuned for it (\cref{sec:rl}). Every number comes from a preregistered read of a sealed test unless it is marked \emph{gate-level}.
 
 \subsection{Does recursive self-improvement make the policy better?}
 \label{sec:rq1}
@@ -55,10 +55,10 @@ We report what each level of the architecture contributes (\cref{fig:framework})
 
 \textbf{Finding 5: on a recipe that already works, the meta level finds nothing to repair.} All four meta-level arms of the main study land within $\pm 1.2$ points of \texttt{fixed} (R4, \cref{tab:goal}). A second registered study gives the model per-task gate rates and compares it with a \emph{replica} arm training the identical recipe: $-0.27$ $[-2.53, +2.00]$ and $+0.30$ $[-1.60, +2.15]$ on the two platforms. The model's diagnoses are correct and its edits are those a practitioner would try, but its proposals scored $-1.2$ points against the incumbent at the gate ($n{=}30$) where replicas scored $+0.6$ (sd 3.4, $n{=}36$): \emph{every recipe in the space reaches the same plateau}, so there is nothing for a correct diagnosis to fix.
 
-\subsection{Against plain RL at equal compute}
+\subsection{Against plain RL on a recipe tuned for it}
 \label{sec:rl}
 
-\textbf{Finding 6: a strictly gated loop ties plain RL on a recipe that works, and can trail it.} One round of plain RL with the whole budget (\texttt{onebig}) ties the loop on Spatial on both tests ($-0.45$, $+0.38$) and on Goal at six rounds (R5 $-0.58$), ties the twelve-round Goal loop on the official test ($-0.38$) and is $2.7$ points ahead of it on the fresh scenes (\cref{tab:long}). The cost is the gate's strictness: the twelve-round runs kept 6, 9 and 9 of 12 rounds, mostly refusing dips within the gate's noise. A guard-rail gate that refuses only drops beyond 5 points keeps 65 of 66 rounds: on Goal the gap falls to $-1.1$ $[-2.6, +0.5]$ (official $+0.5$) and the loop clears its $+5$ bar ($+5.2$ $[+3.4, +7.1]$); on Spatial it is non-inferior to plain RL on both tests ($+0.5$ $[-0.4, +1.4]$, $+0.2$), not superior. Counting the tuning changes the picture. The recipe both sides use was chosen by 21 pilot runs ($\geq$213 GPU-hours, about 13 one-shot runs); started from the failing recipe instead, the meta level ends level with one-shot RL on the tuned recipe on the official test ($+0.05$) and $+2.2$ $[+0.5, +3.9]$ ahead on the fresh scenes, with twice one run's training and no pilots (descriptive).
+\textbf{Finding 6: on a recipe already tuned for RL the loop ties plain RL; counting the tuning, it reaches RL without it.} This comparison favours RL: both sides use a recipe chosen by 21 pilot runs ($\geq$213 GPU-hours) whose cost is charged to neither. Under that handicap one round of plain RL (\texttt{onebig}) ties the loop on Spatial ($-0.45$, $+0.38$) and on Goal at six rounds (R5 $-0.58$), and is $2.7$ points ahead of the twelve-round Goal loop on the fresh scenes ($-0.38$ official; \cref{tab:long}) because its strict gate kept only 6, 9 and 9 of 12 rounds. A guard-rail gate that refuses only drops beyond 5 points keeps 65 of 66 rounds: on Goal the gap falls to $-1.1$ $[-2.6, +0.5]$ (official $+0.5$) and the loop clears its $+5$ bar ($+5.2$ $[+3.4, +7.1]$); on Spatial it is non-inferior to plain RL on both tests ($+0.5$ $[-0.4, +1.4]$, $+0.2$), not superior. Charging the tuning reverses the comparison: started from the failing recipe, the meta level ends level with one-shot RL on the tuned recipe on the official test ($+0.05$) and $+2.2$ $[+0.5, +3.9]$ ahead on the fresh scenes, with twice one run's training and no pilots (descriptive).
 
 \subsection{How much of a published VLA-RL number is the test set?}
 \label{sec:rq4}
