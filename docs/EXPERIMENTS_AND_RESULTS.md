@@ -137,6 +137,15 @@ Reading:
 - Both predictions missed on seeds 1-3: no seed fell under 30%, and N1 is under +25.
 - N2 (meta3) is part B. It waits for `yq_oftsb_meta3_s2/s3`.
 
+### 4.1i LIBERO-Goal, 12 rounds with the guard-rail gate (addendum 32 Part A, read 2026-11-12)
+
+Fresh scenes are primary for this read. Full note: `docs/results/GOAL_GUARD12_READ_20261112.md`.
+- **G1** guard12 − start: **+5.21 [+3.35, +7.12], passes** (official +2.45, fails).
+- **G2** guard12 − strict gate: +1.67 [0.00, +3.30], under +2.
+- **G3** guard12 − plain RL: −1.07 [−2.63, +0.53]. The gap is down from −2.7 with the strict gate, but non-inferiority is not shown on fresh scenes. On the official test G3 is +0.51 [−1.42, +2.47], non-inferior.
+
+The loop kept 35 of 36 rounds.
+
 ### 4.1g Counting the tuning (descriptive, 2026-11-12): from a failing recipe the meta level reaches RL on the hand-tuned recipe without its pilot sweep
 
 The meta level is started from the BC recipe that fails. It is compared with one-shot RL on the hand-tuned GRPO recipe (Goal, within platform). Full note: `docs/results/TUNING_COST_20261112.md`.
@@ -230,6 +239,7 @@ both platforms) did not degrade under the gate; no second scenario was registere
 ## 6. What the evidence supports, by strength
 
 * **Registered passes on unseen scenes:** LIBERO-Spatial loop − start +5.65, verifier +6.05, recursion +4.55 (fresh scenes); recursion on Spatial's official test +5.73; Goal 12-round recursion +7.30 (fresh) / +7.84 (official).
+* **Registered pass, Goal 12 rounds with the guard-rail gate:** loop − start +5.21 on fresh scenes (G1). Against plain RL it is −1.07 [−2.63, +0.53] on fresh scenes (tie) and +0.51 on the official test (non-inferior).
 * **Registered passes against plain training (Goal, same recipe):** gate only − plain training +13.60 (official) / +15.47 (fresh) at equal training compute; gate + meta +15.98 / +19.80. Plain training ends 15-16 points below its start. Spatial (addendum 31 part A): gate only − plain training +13.00 on the official test (passes), +8.37 on fresh scenes (under +10).
 * **Significant (CI excludes 0):** the gated loop does not degrade at six rounds with recursive practice (31/31 runs; the same recipe collapses to 5.5%
   without the gate); verified feedback improves code world models (+2.6 to +5.8); recursion helps at 8 rounds in the

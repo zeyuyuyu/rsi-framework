@@ -77,6 +77,12 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-12): the guard-rail gate on Goal, 12 rounds (addendum 32 Part A).**
+- The loop that refuses only clear regressions keeps 35 of 36 rounds and ends **+5.2 [+3.4, +7.1]** above its start on unseen scenes, passing its registered bar. The strict gate reached +3.5.
+- Against one round of plain RL at equal compute it is −1.1 [−2.6, +0.5] on unseen scenes, down from −2.7, and +0.5 [−1.4, +2.5] on the official test (non-inferior).
+
+Note: `docs/results/GOAL_GUARD12_READ_20261112.md`.
+
 **New (2026-11-12): counting the tuning (descriptive).** The recipe that plain RL and the main loops use was chosen by 21 pilot runs (≥ 213 GPU-hours on record, about 13 one-shot RL runs). Started instead from a recipe that fails, the framework's meta level ends level with one-shot RL on the hand-tuned recipe on the official test (+0.05 [−1.6, +1.7]) and 2.2 points [+0.5, +3.9] ahead on unseen scenes. It uses twice one run's training and no pilots. Not a registered claim, and the edit space is ours. Note: `docs/results/TUNING_COST_20261112.md`.
 
 **New (2026-11-12): the same comparison on LIBERO-Spatial (addendum 31, part A).**
