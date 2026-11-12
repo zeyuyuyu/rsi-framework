@@ -1,0 +1,351 @@
+{
+ "mode": {
+  "mode": "final",
+  "part": "A",
+  "pooled_n0_yq": {
+   "n": 12,
+   "mean": 60.23
+  },
+  "pooled_n0_a800": {
+   "n": 5,
+   "mean": 58.92
+  }
+ },
+ "N1": {
+  "claim": "N1 gate only - plain training (official test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 10.0,
+  "mean_points": 13.0,
+  "ci95_points": [
+   10.44,
+   15.6
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 44.2,
+    "arm": 58.8,
+    "diff": 14.6,
+    "ci95": [
+     10.6,
+     18.6
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 100,
+    "control_only": 25
+   },
+   "2": {
+    "control": 45.93,
+    "arm": 59.0,
+    "diff": 13.07,
+    "ci95": [
+     9.47,
+     16.73
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 88,
+    "control_only": 19
+   },
+   "3": {
+    "control": 45.6,
+    "arm": 56.93,
+    "diff": 11.33,
+    "ci95": [
+     7.73,
+     15.0
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 80,
+    "control_only": 27
+   }
+  }
+ },
+ "N1_4seed": {
+  "claim": "N1 gate only - plain training, seeds 0-3 within platform (official test; alongside, amendment 1)",
+  "seeds": [
+   "A0",
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 10.0,
+  "mean_points": 23.23,
+  "ci95_points": [
+   20.9,
+   25.58
+  ],
+  "passes": true,
+  "per_seed": {
+   "A0": {
+    "control": 1.2,
+    "arm": 55.13,
+    "diff": 53.93,
+    "ci95": [
+     49.67,
+     58.13
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 273,
+    "control_only": 2
+   },
+   "1": {
+    "control": 44.2,
+    "arm": 58.8,
+    "diff": 14.6,
+    "ci95": [
+     10.6,
+     18.6
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 100,
+    "control_only": 25
+   },
+   "2": {
+    "control": 45.93,
+    "arm": 59.0,
+    "diff": 13.07,
+    "ci95": [
+     9.47,
+     16.73
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 88,
+    "control_only": 19
+   },
+   "3": {
+    "control": 45.6,
+    "arm": 56.93,
+    "diff": 11.33,
+    "ci95": [
+     7.73,
+     15.0
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 80,
+    "control_only": 27
+   }
+  }
+ },
+ "N3": {
+  "claim": "N3 plain training: final - pooled initial reference (no bar)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 5.0,
+  "mean_points": -14.99,
+  "ci95_points": [
+   -18.24,
+   -11.87
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 60.23,
+    "arm": 44.2,
+    "diff": -16.03,
+    "ci95": [
+     -19.85,
+     -12.33
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 16,
+    "control_only": 101
+   },
+   "2": {
+    "control": 60.23,
+    "arm": 45.93,
+    "diff": -14.3,
+    "ci95": [
+     -18.15,
+     -10.57
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 18,
+    "control_only": 95
+   },
+   "3": {
+    "control": 60.23,
+    "arm": 45.6,
+    "diff": -14.63,
+    "ci95": [
+     -18.52,
+     -10.93
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 23,
+    "control_only": 97
+   }
+  },
+  "seeds_excluding_zero": 0,
+  "bar_note": "prereg v3 R1 for M1: >= +5.0, CI > 0, >= 2 of 3 seeds individually > 0; the +3.0 pilot rule of addendum 11 is also shown",
+  "passes_at_3": false
+ },
+ "N1_fresh": {
+  "claim": "N1 gate only - plain training (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 10.0,
+  "mean_points": 8.37,
+  "ci95_points": [
+   6.67,
+   10.07
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 50.9,
+    "arm": 58.9,
+    "diff": 8.0
+   },
+   "2": {
+    "control": 53.2,
+    "arm": 63.9,
+    "diff": 10.7
+   },
+   "3": {
+    "control": 53.1,
+    "arm": 59.5,
+    "diff": 6.4
+   }
+  }
+ },
+ "N1_fresh_4seed": {
+  "claim": "N1 gate only - plain training, seeds 0-3 within platform (fresh sealed test; alongside)",
+  "seeds": [
+   "A0",
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 10.0,
+  "mean_points": 21.9,
+  "ci95_points": [
+   20.32,
+   23.47
+  ],
+  "passes": true,
+  "per_seed": {
+   "A0": {
+    "control": 1.8,
+    "arm": 64.3,
+    "diff": 62.5
+   },
+   "1": {
+    "control": 50.9,
+    "arm": 58.9,
+    "diff": 8.0
+   },
+   "2": {
+    "control": 53.2,
+    "arm": 63.9,
+    "diff": 10.7
+   },
+   "3": {
+    "control": 53.1,
+    "arm": 59.5,
+    "diff": 6.4
+   }
+  }
+ },
+ "N3_fresh": {
+  "claim": "N3 plain training - initial reference (fresh sealed test, no bar)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": -7.15,
+  "ci95_points": [
+   -9.21,
+   -5.08
+  ],
+  "passes": null,
+  "per_seed": {
+   "1": {
+    "control": 59.55,
+    "arm": 50.9,
+    "diff": -8.65
+   },
+   "2": {
+    "control": 59.55,
+    "arm": 53.2,
+    "diff": -6.35
+   },
+   "3": {
+    "control": 59.55,
+    "arm": 53.1,
+    "diff": -6.45
+   }
+  }
+ },
+ "runs": {
+  "fixed_s1": {
+   "retained": "r03c0",
+   "gate": 0.595,
+   "test": 58.8,
+   "n0": 60.6,
+   "evals": 3
+  },
+  "fixed_s2": {
+   "retained": "r06c0",
+   "gate": 0.675,
+   "test": 59.0,
+   "n0": 59.4,
+   "evals": 3
+  },
+  "fixed_s3": {
+   "retained": "r05c0",
+   "gate": 0.585,
+   "test": 56.93,
+   "n0": 60.6,
+   "evals": 3
+  },
+  "nogate_s1": {
+   "retained": "r06c0",
+   "gate": 0.49,
+   "test": 44.2,
+   "n0": 59.2,
+   "evals": 3
+  },
+  "nogate_s2": {
+   "retained": "r06c0",
+   "gate": 0.49,
+   "test": 45.93,
+   "n0": 59.4,
+   "evals": 3
+  },
+  "nogate_s3": {
+   "retained": "r06c0",
+   "gate": 0.495,
+   "test": 45.6,
+   "n0": 59.4,
+   "evals": 3
+  },
+  "fixed_s0 (A800)": {
+   "retained": "r06c0",
+   "test": 55.13,
+   "evals": 3
+  },
+  "nogate_s0 (A800)": {
+   "retained": "r06c0",
+   "test": 1.2,
+   "evals": 3
+  }
+ }
+}

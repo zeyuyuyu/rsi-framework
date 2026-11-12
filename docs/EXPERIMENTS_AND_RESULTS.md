@@ -122,6 +122,21 @@ Reading:
 - Plain training of this recipe loses 12-20 points on every seed, while the gated loop holds its start.
 - Both predictions missed. No seed fell under 30%, and the gaps sit under the predicted +25.
 
+### 4.1f LIBERO-Spatial, the framework against plain training (addendum 31 part A, read 2026-11-12): N1 passes on the official test
+
+Same BC recipe, Yangquan seeds 1-3, with seed 0 on the A800 node reported alongside. Full note: `docs/results/SPATIAL_NOGATE_PARTA_20261112.md`.
+
+| claim | official test (registered bar) | fresh scenes (beside it) |
+|---|---|---|
+| N1 gate only − plain training (equal training compute) | **+13.00 [+10.44, +15.60]**, passes (+10) | +8.37 [+6.67, +10.07], under +10 |
+| N3 plain training − start | −14.99 [−18.24, −11.87] | −7.15 [−9.21, −5.08] |
+| N1 with seed 0 (alongside) | +23.23 [+20.90, +25.58] | +21.90 [+20.32, +23.47] |
+
+Reading:
+- On seeds 1-3 plain training loses 14-16 points on the official test. On the A800 seed it collapses to 1.2%.
+- Both predictions missed on seeds 1-3: no seed fell under 30%, and N1 is under +25.
+- N2 (meta3) is part B. It waits for `yq_oftsb_meta3_s2/s3`.
+
 ### 4.1d LIBERO-Object curve (addendum 13, read 2026-11-11): plain GRPO self-practice +26 points (one seed)
 
 `a8_ofto_curve_grpo_s0` (A800 node, always-accept GRPO, 6 rounds). On 400 sampled gate + audit placements, success rises from 55.8% to 82.0% (r05) and 81.8% (r06).
@@ -199,7 +214,7 @@ both platforms) did not degrade under the gate; no second scenario was registere
 ## 6. What the evidence supports, by strength
 
 * **Registered passes on unseen scenes:** LIBERO-Spatial loop − start +5.65, verifier +6.05, recursion +4.55 (fresh scenes); recursion on Spatial's official test +5.73; Goal 12-round recursion +7.30 (fresh) / +7.84 (official).
-* **Registered passes against plain training (Goal, same recipe):** gate only − plain training +13.60 (official) / +15.47 (fresh) at equal training compute; gate + meta +15.98 / +19.80. Plain training ends 15-16 points below its start.
+* **Registered passes against plain training (Goal, same recipe):** gate only − plain training +13.60 (official) / +15.47 (fresh) at equal training compute; gate + meta +15.98 / +19.80. Plain training ends 15-16 points below its start. Spatial (addendum 31 part A): gate only − plain training +13.00 on the official test (passes), +8.37 on fresh scenes (under +10).
 * **Significant (CI excludes 0):** the gated loop does not degrade at six rounds with recursive practice (31/31 runs; the same recipe collapses to 5.5%
   without the gate); verified feedback improves code world models (+2.6 to +5.8); recursion helps at 8 rounds in the
   code domain (+2.8, replicated on 7B); one VLA seed +3.3 [+0.1, +6.6]; train-on-test inflation +16.8.

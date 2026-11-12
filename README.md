@@ -77,6 +77,13 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-12): the same comparison on LIBERO-Spatial (addendum 31, part A).**
+- At equal training compute, the gate alone ends **+13.0 [+10.4, +15.6]** above plain training on the official test (registered bar +10 met). On the fresh scenes it is +8.4 [+6.7, +10.1], under the bar.
+- Plain training loses 15 points. On one seed (A800 node) it collapses to 1.2%.
+- N2, the meta-level arm, is read when its runs finish.
+
+Note: `docs/results/SPATIAL_NOGATE_PARTA_20261112.md`.
+
 **New (2026-11-12): the framework against plain training on LIBERO-Goal (addendum 32, 9 runs).**
 - Trained without the framework's gate, the same recipe ends 15.2 points below its start on the official test and 16.3 below on 1,000 unseen scenes. The recipe is iterated self-training on verified successes, run on three seeds.
 - At equal training compute, the gate alone ends **+13.6 [+10.5, +16.8]** (official) and **+15.5 [+13.2, +17.8]** (fresh) above plain training. With the meta level the gap is +16.0 / +19.8. All four pass the registered +10 bar.
