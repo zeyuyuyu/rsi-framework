@@ -77,6 +77,12 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-12): the guard-rail gate against one-shot RL on LIBERO-Spatial (addendum 33).** On five within-platform pairs, the loop with the guard-rail gate is **non-inferior** to one round of plain RL at equal training compute on both tests:
+- fresh scenes: +0.48 [−0.44, +1.44];
+- official test: +0.21 [−0.95, +1.39].
+
+It is not superior. Note: `docs/results/SPATIAL_GUARD_READ_20261112.md`.
+
 **New (2026-11-12): the guard-rail gate on Goal, 12 rounds (addendum 32 Part A).**
 - The loop that refuses only clear regressions keeps 35 of 36 rounds and ends **+5.2 [+3.4, +7.1]** above its start on unseen scenes, passing its registered bar. The strict gate reached +3.5.
 - Against one round of plain RL at equal compute it is −1.1 [−2.6, +0.5] on unseen scenes, down from −2.7, and +0.5 [−1.4, +2.5] on the official test (non-inferior).

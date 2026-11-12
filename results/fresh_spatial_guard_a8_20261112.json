@@ -1,0 +1,106 @@
+{
+ "block": "spatial_guard_a8",
+ "reference": {
+  "a800": {
+   "evaluations": 4,
+   "success": 59.15
+  }
+ },
+ "GS3": {
+  "claim": "GS3 guard - onebig (fresh sealed test)",
+  "seeds": [
+   0,
+   1
+  ],
+  "n_episodes": 1000,
+  "bar_points": 0.0,
+  "mean_points": -0.05,
+  "ci95_points": [
+   -1.6,
+   1.5
+  ],
+  "per_seed": {
+   "0": {
+    "control": 66.6,
+    "arm": 67.0,
+    "diff": 0.4
+   },
+   "1": {
+    "control": 68.0,
+    "arm": 67.5,
+    "diff": -0.5
+   }
+  },
+  "complete": true,
+  "superior": false,
+  "non_inferior_margin": -2.0,
+  "non_inferior": true
+ },
+ "GS2": {
+  "claim": "GS2 guard - fixed (fresh sealed test)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": 1.1,
+  "ci95_points": [
+   -0.9,
+   3.1
+  ],
+  "passes": false,
+  "per_seed": {
+   "0": {
+    "control": 65.9,
+    "arm": 67.0,
+    "diff": 1.1
+   }
+  },
+  "complete": true
+ },
+ "GS1": {
+  "claim": "GS1 guard - n0 (fresh sealed test)",
+  "seeds": [
+   0,
+   1
+  ],
+  "n_episodes": 1000,
+  "bar_points": 3.0,
+  "mean_points": 8.1,
+  "ci95_points": [
+   6.22,
+   10.0
+  ],
+  "passes": true,
+  "per_seed": {
+   "0": {
+    "control": 59.15,
+    "arm": 67.0,
+    "diff": 7.85
+   },
+   "1": {
+    "control": 59.15,
+    "arm": 67.5,
+    "diff": 8.35
+   }
+  },
+  "complete": true
+ },
+ "noise_reference_halves": {
+  "a800": {
+   "diff": 0.4,
+   "ci95": [
+    -0.25,
+    1.1
+   ]
+  }
+ },
+ "runs": {
+  "a8_spatmain_fixed_s0": 65.9,
+  "a8_spatmain_fixed_s1": null,
+  "a8_spatmain_guard_s0": 67.0,
+  "a8_spatmain_guard_s1": 67.5,
+  "a8_spatmain_onebig_s0": 66.6,
+  "a8_spatmain_onebig_s1": 68.0
+ }
+}

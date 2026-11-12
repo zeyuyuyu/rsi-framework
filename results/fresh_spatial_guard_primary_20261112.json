@@ -1,0 +1,134 @@
+{
+ "block": "spatial_guard_pooled",
+ "reference": {
+  "yq": {
+   "evaluations": 4,
+   "success": 59.55
+  },
+  "a800": {
+   "evaluations": 4,
+   "success": 59.15
+  }
+ },
+ "GS3": {
+  "claim": "GS3 guard - onebig (fresh sealed test)",
+  "seeds": [
+   "Y1",
+   "Y2",
+   "Y3",
+   "A0",
+   "A1"
+  ],
+  "n_episodes": 1000,
+  "bar_points": 0.0,
+  "mean_points": 0.48,
+  "ci95_points": [
+   -0.44,
+   1.44
+  ],
+  "per_seed": {
+   "Y1": {
+    "control": 63.8,
+    "arm": 64.9,
+    "diff": 1.1
+   },
+   "Y2": {
+    "control": 63.7,
+    "arm": 65.4,
+    "diff": 1.7
+   },
+   "Y3": {
+    "control": 64.8,
+    "arm": 64.5,
+    "diff": -0.3
+   },
+   "A0": {
+    "control": 66.6,
+    "arm": 67.0,
+    "diff": 0.4
+   },
+   "A1": {
+    "control": 68.0,
+    "arm": 67.5,
+    "diff": -0.5
+   }
+  },
+  "complete": true,
+  "superior": false,
+  "non_inferior_margin": -2.0,
+  "non_inferior": true
+ },
+ "GS2": {
+  "claim": "GS2 guard - fixed (fresh sealed test)",
+  "seeds": [
+   "Y1",
+   "Y2",
+   "Y3",
+   "A0"
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": 0.35,
+  "ci95_points": [
+   -0.62,
+   1.32
+  ],
+  "passes": false,
+  "per_seed": {
+   "Y1": {
+    "control": 64.3,
+    "arm": 64.9,
+    "diff": 0.6
+   },
+   "Y2": {
+    "control": 65.0,
+    "arm": 65.4,
+    "diff": 0.4
+   },
+   "Y3": {
+    "control": 65.2,
+    "arm": 64.5,
+    "diff": -0.7
+   },
+   "A0": {
+    "control": 65.9,
+    "arm": 67.0,
+    "diff": 1.1
+   }
+  },
+  "complete": true
+ },
+ "noise_reference_halves": {
+  "yq": {
+   "diff": -0.4,
+   "ci95": [
+    -1.05,
+    0.25
+   ]
+  },
+  "a800": {
+   "diff": 0.4,
+   "ci95": [
+    -0.25,
+    1.1
+   ]
+  }
+ },
+ "runs": {
+  "a8_spatmain_fixed_s0": 65.9,
+  "a8_spatmain_fixed_s1": null,
+  "yq_ofts_fixed_s1": 64.3,
+  "yq_ofts_fixed_s2": 65.0,
+  "yq_ofts_fixed_s3": 65.2,
+  "a8_spatmain_guard_s0": 67.0,
+  "a8_spatmain_guard_s1": 67.5,
+  "yq_ofts_guard_s1": 64.9,
+  "yq_ofts_guard_s2": 65.4,
+  "yq_ofts_guard_s3": 64.5,
+  "a8_spatmain_onebig_s0": 66.6,
+  "a8_spatmain_onebig_s1": 68.0,
+  "yq_ofts_onebig_s1": 63.8,
+  "yq_ofts_onebig_s2": 63.7,
+  "yq_ofts_onebig_s3": 64.8
+ }
+}

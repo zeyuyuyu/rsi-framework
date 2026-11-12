@@ -137,6 +137,15 @@ Reading:
 - Both predictions missed on seeds 1-3: no seed fell under 30%, and N1 is under +25.
 - N2 (meta3) is part B. It waits for `yq_oftsb_meta3_s2/s3`.
 
+### 4.1j LIBERO-Spatial, guard-rail gate against one-shot RL (addendum 33 primary, read 2026-11-12): non-inferior, not superior
+
+Within-platform pairs Y1-3 + A0-1. Fresh scenes are primary. Full note: `docs/results/SPATIAL_GUARD_READ_20261112.md`.
+- **GS3** guard − one-shot RL: **+0.48 [−0.44, +1.44]** fresh, +0.21 [−0.95, +1.39] official. Non-inferior on both tests, not superior.
+- **GS2** guard − strict gate: +0.35, fails its +2 bar.
+- **GS1** guard − start: +5.38 fresh on Yangquan, passes.
+
+All predictions hit. The 25%-likely superiority did not happen.
+
 ### 4.1i LIBERO-Goal, 12 rounds with the guard-rail gate (addendum 32 Part A, read 2026-11-12)
 
 Fresh scenes are primary for this read. Full note: `docs/results/GOAL_GUARD12_READ_20261112.md`.
@@ -239,6 +248,7 @@ both platforms) did not degrade under the gate; no second scenario was registere
 ## 6. What the evidence supports, by strength
 
 * **Registered passes on unseen scenes:** LIBERO-Spatial loop − start +5.65, verifier +6.05, recursion +4.55 (fresh scenes); recursion on Spatial's official test +5.73; Goal 12-round recursion +7.30 (fresh) / +7.84 (official).
+* **Registered non-inferiority, Spatial guard-rail loop against one-shot RL:** +0.48 [−0.44, +1.44] fresh, +0.21 [−0.95, +1.39] official. A tie on the tuned recipe at equal training compute.
 * **Registered pass, Goal 12 rounds with the guard-rail gate:** loop − start +5.21 on fresh scenes (G1). Against plain RL it is −1.07 [−2.63, +0.53] on fresh scenes (tie) and +0.51 on the official test (non-inferior).
 * **Registered passes against plain training (Goal, same recipe):** gate only − plain training +13.60 (official) / +15.47 (fresh) at equal training compute; gate + meta +15.98 / +19.80. Plain training ends 15-16 points below its start. Spatial (addendum 31 part A): gate only − plain training +13.00 on the official test (passes), +8.37 on fresh scenes (under +10).
 * **Significant (CI excludes 0):** the gated loop does not degrade at six rounds with recursive practice (31/31 runs; the same recipe collapses to 5.5%
