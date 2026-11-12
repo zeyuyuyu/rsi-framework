@@ -1,0 +1,47 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "seed",
+    "id": "58f8f217054f933f",
+    "note": "",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 1e-05,
+        "operator": "bc",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "2e34f64db5584056d7c01685fd5e72f6a4bc4420cb350f5c6fb945d9535dbfae",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftsb_nogate_s3/ckpt-r06c0",
+    "parent_id": "8fe878be7628b6ce3244581a292e66f44c3275f41ad4b0e33f1f06aac0e5b1ee"
+  }
+}
