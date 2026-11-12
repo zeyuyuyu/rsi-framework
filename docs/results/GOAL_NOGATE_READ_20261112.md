@@ -38,7 +38,7 @@ Noise of the fresh reference (two halves of the initial-policy evaluations): −
 
 | written before launch | outcome |
 |---|---|
-| Plain training collapses on at least two of three seeds (final under 30%) | **Miss.** It degrades on every seed by 12-20 points, to 40-48%, but no seed falls under 30%. The earlier 5.5% was one always-accept curve at the gate over a longer horizon. |
+| Plain training collapses on at least two of three seeds (final under 30%) | **Miss.** It degrades on every seed by 12-20 points, to 40-48%, but no seed falls under 30%. The earlier 5.5% came from one always-accept run, `a8_oftg_curve_bc_s1`, on the A800 node and on its gate and audit sets. It fell to 5.5% in the same six rounds: round 6 gate 0.07, audit 0.04. On Yangquan's three seeds the same horizon ends at 40-48% on both tests. |
 | NG1 and NG2 above +25 | **Miss.** They come out +13.6 / +16.0 (official) and +15.5 / +19.8 (fresh). They clear the registered +10 bar but sit well under the predicted size. |
 
 ## Reading
