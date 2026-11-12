@@ -69,3 +69,5 @@ Yangquan now runs only four of our jobs, on six cards. Two changes follow.
   - `submit_rep_yq.sh` maps `yq_ofts_guard12_*` to v32 for replicates.
 - Readers `fresh_read.py spatial_guard12` and `spatial_guard12_read.py` were committed before any result. They were checked on a scratch root of already-read runs, where the values equal earlier reads.
 - `scripts/baidu/close_loop_yq.sh` takes over the Yangquan close-out when the conductor's loop ends (about 2026-11-14 09Z) and runs until 2026-11-15 13:00Z.
+- 22:51:14Z: `yq_ofts_guard12_s3` failed about 90 s after starting. Its entry script's curl download of the source tarball was reset by the peer (`OpenSSL SSL_read: Connection reset by peer`), before any training. It was resubmitted unchanged about 23:00Z.
+- 22:54Z: on the A800 node, `a8_spatmain_guard12_s0` resumed by hand on GPU 3 (the user cleared that card on 2026-11-12). The runner excludes GPU 3, so the launch copies the runner's own procedure: the plan with the assigned GPUs written to `queue/plans/`, `run_libero --resume` started in its own session, and a reservation entry for the card. The resume check compares the engine plan, not the GPU fields.
