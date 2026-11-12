@@ -64,9 +64,9 @@ arm & change in \cref{alg:loop} & isolates \\
 \texttt{fixed} & none (proposer off) & gated recursive loop \\
 \texttt{nonrec} & $\theta_{\text{gen}} = \theta_0$ & data recursion \\
 \texttt{shuffled} & labels permuted per scene & the verifier \\
-\texttt{onebig} & $R{=}1$, $3R$ inner steps & gate + rounds vs one-shot RL \\
-\texttt{full} & numeric proposer, $c{=}2$ & meta level (equal compute) \\
-\texttt{llm}$\ast$ & LLM proposer, $c{=}2$ & meta level (equal compute) \\
+\texttt{onebig} & $R{=}1$, $3R$ inner steps & one-shot RL baseline \\
+\texttt{full} & numeric proposer, $c{=}2$ & meta level \\
+\texttt{llm}$\ast$ & LLM proposer, $c{=}2$ & meta level \\
 \bottomrule
 \end{tabular}\\[2pt]
 {\footnotesize $\ast$ \texttt{llm}: knob space; \texttt{llm\_harness}: harness space; \texttt{llm\_harness\_cap}: harness space under the compute cap.}
