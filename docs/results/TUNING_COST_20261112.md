@@ -80,3 +80,11 @@ The A800 meta run `a8_oftgb_llm_harness_s0` has no fresh-scene evaluation, so th
 | meta level − hand-tuned gated loop | +1.57 [−0.03, +3.17] | +2.98 [+1.60, +4.40] |
 
 Seed 0 alone: +2.1 against RL, +7.2 against the tuned loop. The paper keeps citing the three-seed value, as this note said it would. The four-seed value agrees with it.
+
+## Spatial counterpart, fixed before its data exist (2026-11-12 ~23:15Z)
+
+The same descriptive comparison on LIBERO-Spatial is computed once, when `yq_oftsb_meta3_s2` and `yq_oftsb_meta3_s3` (addendum 29, still running) have their finals and fresh evaluations. It is reported whatever it shows, beside the Goal result.
+- **Pairs**: the meta level from the failing BC recipe (`yq_oftsb_meta3_s{1,2,3}`, and `a8_spatrep_meta3_s0` on the A800 node) against one-shot RL on the hand-tuned recipe (`yq_ofts_onebig_s{1,2,3}`, `a8_spatmain_onebig_s0`). Both tests, within platform, seeds 0-3 and seeds 1-3 both shown.
+- **Compute**: meta3 trains two candidates per round, like the Goal meta arm.
+- **Caveat known in advance**: meta3's frozen memory (addendum 29) holds records of 32 earlier runs, some of them on the hand-tuned GRPO recipe. So on Spatial "no pilot runs" does not mean "no access to earlier tuning", and the note will say so with the result.
+- **Not done**: nothing is computed from meta3 s1 or seed 0 alone before then.
