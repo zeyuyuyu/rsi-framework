@@ -137,6 +137,22 @@ Reading:
 - Both predictions missed on seeds 1-3: no seed fell under 30%, and N1 is under +25.
 - N2 (meta3) is part B. It waits for `yq_oftsb_meta3_s2/s3`.
 
+### 4.1g Counting the tuning (descriptive, 2026-11-12): from a failing recipe the meta level reaches RL on the hand-tuned recipe without its pilot sweep
+
+The meta level is started from the BC recipe that fails. It is compared with one-shot RL on the hand-tuned GRPO recipe (Goal, within platform). Full note: `docs/results/TUNING_COST_20261112.md`.
+- **Official test**, seeds 0-3: +0.05 [−1.62, +1.70].
+- **Fresh scenes**, seeds 1-3: **+2.20 [+0.47, +3.87]**.
+
+Compute:
+- The tuned recipe came from 21 pilot runs, ≥ 213 GPU-hours on record, about 13 one-shot RL runs.
+- The meta level used twice one run's training and no pilots.
+
+This is not a registered claim: it pairs evaluations already read under their own registrations. The edit space itself was designed by us.
+
+### 4.1h LIBERO-Goal main study on fresh scenes (addendum 30, read 2026-11-12)
+
+F1 loop − start +1.43 [−0.07, +2.94], F2 verifier +2.58 [+1.12, +4.05], F3 recursion +1.62 [+0.10, +3.10], F5 loop − one-shot RL −0.80 [−2.23, +0.60]. Read as descriptive against the Spatial bars, as registered: none reaches its bar. The verifier and recursion are positive with a CI above 0, and RL ties. Output: `results/fresh_goal_main_20261112.json`.
+
 ### 4.1d LIBERO-Object curve (addendum 13, read 2026-11-11): plain GRPO self-practice +26 points (one seed)
 
 `a8_ofto_curve_grpo_s0` (A800 node, always-accept GRPO, 6 rounds). On 400 sampled gate + audit placements, success rises from 55.8% to 82.0% (r05) and 81.8% (r06).
@@ -220,6 +236,7 @@ both platforms) did not degrade under the gate; no second scenario was registere
   code domain (+2.8, replicated on 7B); one VLA seed +3.3 [+0.1, +6.6]; train-on-test inflation +16.8.
 * **Significant but under its bar:** self-repair S1, llm_harness − fixed from a failing recipe, +2.65 [+0.73, +4.58] (bar +3).
 * **Directional (positive point estimate, CI includes 0, bar missed):** VLA loop +1.7, recursion +1.7, verifier +1.2; self-repair S2 (LLM − numeric search) +1.15.
+* **Descriptive, counting the tuning:** from a failing recipe the meta level reaches one-shot RL on the hand-tuned recipe (official +0.05, fresh +2.20 [+0.47, +3.87]) without its ≥ 213 GPU-hour pilot sweep.
 * **Null:** meta level on a working recipe (±1.2; v2 −0.3 / +0.3, mechanism in 4.2); loop vs one-shot RL (−0.6); self-repaired loop vs the hand-tuned loop (S3 +0.3).
 * **Pending:** the self-repair study on Spatial with meta level v3 (addendum 29, 15 runs). Every earlier registered read is done (2026-11-09).
 

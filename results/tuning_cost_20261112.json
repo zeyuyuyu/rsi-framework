@@ -1,0 +1,345 @@
+{
+ "note": "descriptive; new pairs of already-read evaluations; no bar",
+ "M_vs_RL_official": {
+  "claim": "meta level from the failing recipe - one-shot RL on the tuned recipe (official, seeds 0-3)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 0.05,
+  "ci95_points": [
+   -1.62,
+   1.7
+  ],
+  "per_seed": {
+   "0": {
+    "control": 62.67,
+    "arm": 60.87,
+    "diff": -1.8,
+    "ci95": [
+     -5.4,
+     1.73
+    ],
+    "mcnemar_p": 0.3099,
+    "arm_only": 43,
+    "control_only": 54
+   },
+   "1": {
+    "control": 58.8,
+    "arm": 60.13,
+    "diff": 1.33,
+    "ci95": [
+     -2.0,
+     4.8
+    ],
+    "mcnemar_p": 0.2723,
+    "arm_only": 47,
+    "control_only": 36
+   },
+   "2": {
+    "control": 59.0,
+    "arm": 61.27,
+    "diff": 2.27,
+    "ci95": [
+     -1.13,
+     5.67
+    ],
+    "mcnemar_p": 0.4018,
+    "arm_only": 50,
+    "control_only": 41
+   },
+   "3": {
+    "control": 59.53,
+    "arm": 57.93,
+    "diff": -1.6,
+    "ci95": [
+     -5.13,
+     1.87
+    ],
+    "mcnemar_p": 0.8408,
+    "arm_only": 48,
+    "control_only": 51
+   }
+  }
+ },
+ "M_vs_tuned_official": {
+  "claim": "meta level from the failing recipe - hand-tuned gated loop (official, seeds 0-3; S3)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 0.28,
+  "ci95_points": [
+   -1.43,
+   1.97
+  ],
+  "per_seed": {
+   "0": {
+    "control": 57.2,
+    "arm": 60.87,
+    "diff": 3.67,
+    "ci95": [
+     0.33,
+     7.0
+    ],
+    "mcnemar_p": 0.1374,
+    "arm_only": 52,
+    "control_only": 37
+   },
+   "1": {
+    "control": 59.8,
+    "arm": 60.13,
+    "diff": 0.33,
+    "ci95": [
+     -3.13,
+     3.8
+    ],
+    "mcnemar_p": 0.6785,
+    "arm_only": 49,
+    "control_only": 44
+   },
+   "2": {
+    "control": 59.87,
+    "arm": 61.27,
+    "diff": 1.4,
+    "ci95": [
+     -2.0,
+     4.8
+    ],
+    "mcnemar_p": 0.6879,
+    "arm_only": 52,
+    "control_only": 47
+   },
+   "3": {
+    "control": 62.2,
+    "arm": 57.93,
+    "diff": -4.27,
+    "ci95": [
+     -8.13,
+     -0.4
+    ],
+    "mcnemar_p": 0.1014,
+    "arm_only": 51,
+    "control_only": 70
+   }
+  }
+ },
+ "M_vs_RL_fresh": {
+  "claim": "meta level from the failing recipe - one-shot RL on the tuned recipe (fresh scenes, seeds 1-3)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 2.2,
+  "ci95_points": [
+   0.47,
+   3.87
+  ],
+  "passes": null,
+  "per_seed": {
+   "1": {
+    "control": 60.0,
+    "arm": 64.2,
+    "diff": 4.2
+   },
+   "2": {
+    "control": 62.2,
+    "arm": 64.5,
+    "diff": 2.3
+   },
+   "3": {
+    "control": 61.8,
+    "arm": 61.9,
+    "diff": 0.1
+   }
+  }
+ },
+ "M_vs_tuned_fresh": {
+  "claim": "meta level from the failing recipe - hand-tuned gated loop (fresh scenes, seeds 1-3)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 1.57,
+  "ci95_points": [
+   -0.03,
+   3.17
+  ],
+  "passes": null,
+  "per_seed": {
+   "1": {
+    "control": 62.6,
+    "arm": 64.2,
+    "diff": 1.6
+   },
+   "2": {
+    "control": 60.5,
+    "arm": 64.5,
+    "diff": 4.0
+   },
+   "3": {
+    "control": 62.8,
+    "arm": 61.9,
+    "diff": -0.9
+   }
+  }
+ },
+ "finals_official": {
+  "s0": {
+   "meta": 60.87,
+   "rl": 62.67,
+   "tuned_loop": 57.2
+  },
+  "s1": {
+   "meta": 60.13,
+   "rl": 58.8,
+   "tuned_loop": 59.8
+  },
+  "s2": {
+   "meta": 61.27,
+   "rl": 59.0,
+   "tuned_loop": 59.87
+  },
+  "s3": {
+   "meta": 57.93,
+   "rl": 59.53,
+   "tuned_loop": 62.2
+  }
+ },
+ "training_work_per_run": {
+  "one_shot_rl": "1 candidate x 18 inner steps",
+  "meta_level": "2 candidates x 6 rounds x 3 inner steps = 2x",
+  "gated_loop": "1 candidate x 6 rounds x 3 inner steps = 1x"
+ },
+ "pilots": {
+  "runs": 21,
+  "timed": 18,
+  "gpu_hours_on_record": 213.4,
+  "list": [
+   {
+    "run": "bj_oft3_pilot2_l10_lr1e4",
+    "hours": 4.1,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot2_l10_lr5e5",
+    "hours": 3.9,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot3_l10_s1000",
+    "hours": 3.3,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot3_l10_s400",
+    "hours": 2.5,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot5_curve",
+    "hours": 15.5,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot7_lr3e5",
+    "hours": 15.2,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot7_lr3e5_ep",
+    "hours": 15.1,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot_l10_bc",
+    "hours": 3.7,
+    "cards": 1
+   },
+   {
+    "run": "bj_oft3_pilot_l10_grpo",
+    "hours": 4.1,
+    "cards": 1
+   },
+   {
+    "run": "a8_oft3_pilot4_short_s1",
+    "hours": null,
+    "cards": 1
+   },
+   {
+    "run": "a8_oft3_pilot6_curve_matched_s1",
+    "hours": 24.1,
+    "cards": 1
+   },
+   {
+    "run": "a8_oft3_pilot6_curve_matched_s1.failed1",
+    "hours": null,
+    "cards": 1
+   },
+   {
+    "run": "a8_oft3_pilot7_lr3e5_ep_s1",
+    "hours": 22.5,
+    "cards": 1
+   },
+   {
+    "run": "a8_oft3_pilot7_lr3e5_s1",
+    "hours": 22.1,
+    "cards": 1
+   },
+   {
+    "run": "bj_oftg_curve_bc",
+    "hours": 11.5,
+    "cards": 1
+   },
+   {
+    "run": "bj_oftg_curve_grpo",
+    "hours": 11.7,
+    "cards": 1
+   },
+   {
+    "run": "bj_oftg_curve_grpo_s2",
+    "hours": 12.0,
+    "cards": 1
+   },
+   {
+    "run": "bj_oftg_curve_grpo_s3",
+    "hours": 11.8,
+    "cards": 1
+   },
+   {
+    "run": "a8_oftg_curve_bc_s1",
+    "hours": 15.5,
+    "cards": 1
+   },
+   {
+    "run": "a8_oftg_curve_bct_s1",
+    "hours": null,
+    "cards": 1
+   },
+   {
+    "run": "a8_oftg_curve_grpo_s1",
+    "hours": 14.8,
+    "cards": 1
+   }
+  ]
+ },
+ "one_shot_rl_hours_yangquan": [
+  15.7,
+  16.9,
+  16.9
+ ]
+}

@@ -77,6 +77,8 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-12): counting the tuning (descriptive).** The recipe that plain RL and the main loops use was chosen by 21 pilot runs (≥ 213 GPU-hours on record, about 13 one-shot RL runs). Started instead from a recipe that fails, the framework's meta level ends level with one-shot RL on the hand-tuned recipe on the official test (+0.05 [−1.6, +1.7]) and 2.2 points [+0.5, +3.9] ahead on unseen scenes. It uses twice one run's training and no pilots. Not a registered claim, and the edit space is ours. Note: `docs/results/TUNING_COST_20261112.md`.
+
 **New (2026-11-12): the same comparison on LIBERO-Spatial (addendum 31, part A).**
 - At equal training compute, the gate alone ends **+13.0 [+10.4, +15.6]** above plain training on the official test (registered bar +10 met). On the fresh scenes it is +8.4 [+6.7, +10.1], under the bar.
 - Plain training loses 15 points. On one seed (A800 node) it collapses to 1.2%.
