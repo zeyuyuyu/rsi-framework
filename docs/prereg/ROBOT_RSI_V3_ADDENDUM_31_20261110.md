@@ -61,3 +61,16 @@ reported alongside, each seed paired within its platform.
 * A800 node, queued at 19:26Z, not yet started: `a8_spatrep_nogate_s0` (order 88, one card, `src12`). It starts when a
   card frees. The Yangquan runs `yq_oftsb_nogate_s1-3` are submitted with the other long runs once tonight's
   evaluations are in the queue.
+
+## Amendment 2 (2026-11-12, before any N1, N2 or N3 test number has been read; commit time in git): the read in two parts
+
+The meta-level runs these claims are paired with are late.
+- `yq_oftsb_meta3_s2` started on 2026-11-12 around 06Z.
+- `yq_oftsb_meta3_s3` still waits for two free Yangquan cards at once. The 64-card queue has been full with other users' jobs.
+- Waiting for them would push N1 past the paper deadline. N1 is the equal-compute comparison and does not involve meta3.
+
+The single read is therefore split. Claims, bars, pairing and statistics are unchanged.
+- **Part A (N1, N3)**: read once, when `yq_oftsb_nogate_s1-3` and `yq_oftsb_fixed_s1-3` all have their three-evaluation finals and their fresh-scene evaluations. Both the official test and the fresh scenes are read.
+- **Part B (N2)**: read once, when `yq_oftsb_meta3_s1-3` have theirs. If they are not complete by 2026-11-15 12:00Z, N2 is reported as not read.
+- **Amendment 1's four-seed statistic**: reported alongside each part. Seed 0 is on the A800 node (`a8_spatrep_{nogate,fixed,meta3}_s0`, all complete), and every pair is formed within its platform. N1 and N2 stay registered on seeds 1-3.
+- **Readers**: `spatial_nogate_read.py --part A|B`. The change is committed before either part is read. At this commit the only output of the reader has been `--check`, which prints no test number.
