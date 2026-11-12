@@ -33,3 +33,12 @@ Reader: `fresh_read.py spatial_long12_a8` and `scripts/report/spatial_long12_a8_
 - fixed12 − onebig12: a tie to −3 (onebig12 led on Goal, −2.7).
 - guard12 − onebig12: between −2 and +1.
 - guard12 − start: +4 to +7 on fresh scenes.
+
+## Operational notes
+
+- 2026-11-12 19:22:47Z: both runs were queued after this addendum (f659907, 19:22:34Z). They launched at 19:23:18Z on GPUs 0 and 1.
+- 21:20:47Z: `a8_spatmain_guard12_s0` failed in round 1, at the training call of its third inner step: CUDA out of memory on GPU 0.
+  - Cause: an unrelated job from another project on the same node account started on GPU 0 about 40 minutes earlier and held 35 GB, later 74 GB. That job was not touched.
+  - No round of this run had completed, and no gate or test result exists.
+  - The run is requeued with `--resume` (queue order 118) and starts when a card frees, on the same plan and source.
+- The read deadline is unchanged (2026-11-15 12:00Z). If the run cannot complete by then, it is reported as not read.
