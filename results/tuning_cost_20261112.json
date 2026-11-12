@@ -300,8 +300,37 @@
  },
  "training_work_per_run": {
   "one_shot_rl": "1 candidate x 18 inner steps",
-  "meta_level": "2 candidates x 6 rounds x 3 inner steps = 2x",
+  "meta_level": "2 candidates x 6 rounds x 3 inner steps = 2x the step count (GPU-hours: see gpu_hours_measured)",
   "gated_loop": "1 candidate x 6 rounds x 3 inner steps = 1x"
+ },
+ "gpu_hours_measured": {
+  "meta_level": {
+   "s1": 61.6,
+   "s2": 85.3,
+   "s3": 51.6,
+   "s0": 77.2
+  },
+  "one_shot_rl": {
+   "s1": 15.7,
+   "s2": 16.9,
+   "s3": 16.8,
+   "s0": 14.3
+  },
+  "gated_loop_tuned": {
+   "s1": 16.6,
+   "s2": 16.8,
+   "s3": 17.8,
+   "s0": 18.2
+  },
+  "one_shot_rl_36_steps": {
+   "s1": 27.8,
+   "s2": 25.2,
+   "s3": 25.6
+  },
+  "meta_level_mean_yangquan": 66.2,
+  "one_shot_rl_mean_yangquan": 16.5,
+  "gated_loop_tuned_mean_yangquan": 17.1,
+  "one_shot_rl_36_steps_mean_yangquan": 26.2
  },
  "pilots": {
   "runs": 21,

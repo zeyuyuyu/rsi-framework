@@ -71,8 +71,24 @@ def main():
         d.pop("passes", None)
     res["finals_official"] = {f"s{s}": dict(meta=G.pct(meta[s]["bits"]), rl=G.pct(rl[s]["bits"]), tuned_loop=G.pct(tuned[s]["bits"]))
                               for s in (0, 1, 2, 3)}
-    res["training_work_per_run"] = dict(one_shot_rl="1 candidate x 18 inner steps", meta_level="2 candidates x 6 rounds x 3 inner steps = 2x",
+    res["training_work_per_run"] = dict(one_shot_rl="1 candidate x 18 inner steps",
+                                        meta_level="2 candidates x 6 rounds x 3 inner steps = 2x the step count (GPU-hours: see gpu_hours_measured)",
                                         gated_loop="1 candidate x 6 rounds x 3 inner steps = 1x")
+    # correction 2026-11-12 ~23:50Z: step counts are not cost. The meta level's edits raise scenes, samples and update
+    # steps per inner step, so its runs are measured here. report.json "seconds" accumulates over resumed sessions
+    # ("elapsed" is the last session only); every run below used one card.
+    def gpu_hours(d):
+        rep = Path(d) / "report.json"
+        return round(sum(json.load(open(rep))["seconds"].values()) / 3600, 1) if rep.exists() else None
+    a8 = lambda n: root / "a800" / "runs2" / n
+    res["gpu_hours_measured"] = dict(
+        meta_level={**{f"s{s}": gpu_hours(yq("yq_oftgb_llm_harness", s)) for s in (1, 2, 3)}, "s0": gpu_hours(a8("a8_oftgb_llm_harness_s0"))},
+        one_shot_rl={**{f"s{s}": gpu_hours(yq("yq_oftg_onebig", s)) for s in (1, 2, 3)}, "s0": gpu_hours(a8("a8_goalmain_onebig_s0"))},
+        gated_loop_tuned={**{f"s{s}": gpu_hours(yq("yq_oftg_fixed", s)) for s in (1, 2, 3)}, "s0": gpu_hours(a8("a8_goalmain_fixed_s0"))},
+        one_shot_rl_36_steps={f"s{s}": gpu_hours(yq("yq_oftg_onebig12", s)) for s in (1, 2, 3)})
+    for k, v in list(res["gpu_hours_measured"].items()):
+        yqv = [v[f"s{s}"] for s in (1, 2, 3) if v.get(f"s{s}") is not None]
+        res["gpu_hours_measured"][k + "_mean_yangquan"] = round(sum(yqv) / len(yqv), 1) if yqv else None
     pilots = []
     for pat in PILOTS:
         for d in sorted(glob.glob(str(root / pat))):
@@ -81,6 +97,8 @@ def main():
                 continue
             rep, plan = os.path.join(d, "report.json"), os.path.join(d, "plan.json")
             el = json.load(open(rep)).get("elapsed") if os.path.exists(rep) else None
+            if el is not None:      # resumed pilots: "elapsed" is the last session; "seconds" accumulates. Take the larger.
+                el = max(el, sum((json.load(open(rep)).get("seconds") or {}).values()))
             cards = len(json.load(open(plan)).get("vla", {}).get("rollout_gpus", [0]) or [0]) if os.path.exists(plan) else 1
             pilots.append(dict(run=name, hours=None if el is None else round(el / 3600, 1), cards=cards))
     timed = [p for p in pilots if p["hours"] is not None]

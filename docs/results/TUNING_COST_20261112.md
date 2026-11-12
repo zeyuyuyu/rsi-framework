@@ -49,15 +49,34 @@ The official S3 value recomputed here (+0.28) equals the registered self-repair 
 ## Compute
 
 - **One-shot RL**: one run, 1 candidate × 18 inner steps. It also needed the pilot sweep that chose its recipe.
-- **The meta level**: one run, 2 candidates × 6 rounds × 3 inner steps, which is twice one run's training. It adds LLM calls and no pilots.
+- **The meta level**: one run, 2 candidates × 6 rounds × 3 inner steps. That is twice one run's *step count*, but not twice its cost: see the correction below. It adds LLM calls and no pilots.
 
 ## Reading
 
 Counting the tuning:
 - Started from a recipe that fails, the meta level ends level with one-shot RL on the hand-tuned recipe on the official test (+0.05).
 - On unseen scenes it ends 2.2 points ahead.
-- It gets there with about 2 run-equivalents of training, against about 1 + 13 for the tuned RL result.
+- It gets there in 52-85 GPU-hours a run (mean 69), against about 230 for the tuned RL result (≥ 213 of pilots plus a 14-17 hour run). This line was corrected on 2026-11-12; it used to say "about 2 run-equivalents".
 - Plain RL on the failing recipe does not get there: plain training of it ends 15 points below its start (NG3).
+
+## Correction (2026-11-12 ~23:50Z): the meta level's cost is measured, and it is about four runs, not two
+
+The first version of this note, and the paper built on it, said the meta level used "twice one run's training". That counted update steps (2 candidates × 18 steps). It is not the cost: the language model's edits raise the scenes, samples and update steps per inner step (for example 64 → 128-200 scenes, 8 → 12-16 samples, 100 → 200-400 updates), so each step is dearer.
+
+Measured GPU-hours per run (`report.json` seconds summed over resumed sessions; one card each; `gpu_hours_measured` in the JSON):
+
+| run | seed 0 (A800) | seed 1 | seed 2 | seed 3 | Yangquan mean |
+|---|---|---|---|---|---|
+| meta level from the failing recipe | 77.2 | 61.6 | 85.3 | 51.6 | 66.2 |
+| one-shot RL, tuned recipe (18 steps) | 14.3 | 15.7 | 16.9 | 16.8 | 16.5 |
+| gated loop, tuned recipe | 18.2 | 16.6 | 16.8 | 17.8 | 17.1 |
+| one-shot RL, tuned recipe, 36 steps (addendum 32) | - | 27.8 | 25.2 | 25.6 | 26.2 |
+
+What follows:
+- The meta level costs about four one-shot RL runs, not two.
+- Counting the pilots, tuned RL costs about 230 GPU-hours (≥ 213 + 16.5). The meta level costs 52-85, about 30% of that. "A fraction of its compute" stands; "twice one run's training" does not.
+- **Not counting the pilots, the meta level is the less efficient of the two.** Tuned one-shot RL run for 36 steps costs 26 GPU-hours and ends at 66.3% on the fresh scenes (seeds 1-3, read under addendum 32). The meta level costs 66 and ends at 63.5% on the same seeds (the 18-step RL run: 61.3%; means of three seeds, not a paired read). The comparisons in this note are against the 18-step run, the one-shot baseline of the main studies.
+- No test statistic in this note changes; the reader's comparisons are identical before and after.
 
 ## Caveats
 

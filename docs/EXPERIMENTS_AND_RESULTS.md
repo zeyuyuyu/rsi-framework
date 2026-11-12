@@ -163,7 +163,7 @@ The meta level is started from the BC recipe that fails. It is compared with one
 
 Compute:
 - The tuned recipe came from 21 pilot runs, ≥ 213 GPU-hours on record, about 13 one-shot RL runs.
-- The meta level used twice one run's training and no pilots.
+- The meta level's runs took 52-85 GPU-hours each (mean 69 over four seeds; one RL run takes 14-17) and no pilots. Corrected 2026-11-12: this line used to say "twice one run's training", which counted update steps, not cost.
 
 This is not a registered claim: it pairs evaluations already read under their own registrations. The edit space itself was designed by us.
 

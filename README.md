@@ -89,7 +89,7 @@ It is not superior. Note: `docs/results/SPATIAL_GUARD_READ_20261112.md`.
 
 Note: `docs/results/GOAL_GUARD12_READ_20261112.md`.
 
-**New (2026-11-12): counting the tuning (descriptive).** The recipe that plain RL and the main loops use was chosen by 21 pilot runs (≥ 213 GPU-hours on record, about 13 one-shot RL runs). Started instead from a recipe that fails, the framework's meta level ends level with one-shot RL on the hand-tuned recipe on the official test (+0.05 [−1.6, +1.7]) and 2.2 points [+0.5, +3.9] ahead on unseen scenes. It uses twice one run's training and no pilots. Not a registered claim, and the edit space is ours. Note: `docs/results/TUNING_COST_20261112.md`.
+**New (2026-11-12): counting the tuning (descriptive).** The recipe that plain RL and the main loops use was chosen by 21 pilot runs (≥ 213 GPU-hours on record, about 13 one-shot RL runs). Started instead from a recipe that fails, the framework's meta level ends level with one-shot RL on the hand-tuned recipe on the official test (+0.05 [−1.6, +1.7]) and 2.2 points [+0.5, +3.9] ahead on unseen scenes. Its runs took 52–85 GPU-hours each (one RL run takes 14–17) and no pilots. (Corrected 2026-11-12: this line used to say "twice one run's training", which counted update steps, not cost; the meta level's edits make each step dearer.) Not a registered claim, and the edit space is ours. Note: `docs/results/TUNING_COST_20261112.md`.
 
 **New (2026-11-12): the same comparison on LIBERO-Spatial (addendum 31, part A).**
 - At equal training compute, the gate alone ends **+13.0 [+10.4, +15.6]** above plain training on the official test (registered bar +10 met). On the fresh scenes it is +8.4 [+6.7, +10.1], under the bar.
