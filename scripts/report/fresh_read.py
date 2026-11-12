@@ -14,7 +14,7 @@ Blocks and bars (addendum 30):
   long12          FL1 fixed12 - n0 >= +5 (CI > 0)   FL3 fixed12 - nonrec12 >= +2 (CI > 0)   fixed12 - onebig12 if run
 usage: python3 scripts/report/fresh_read.py <block> [results root] [--check] [--json out.json]
        block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate |
-              spatial_guard | spatial_guard_bj | spatial_guard_pooled | spatial_guard_repl_a8 | spatial_long12_a8
+              spatial_guard | spatial_guard_bj | spatial_guard_pooled | spatial_guard_repl_a8 | spatial_long12_a8 | spatial_guard12
 Beijing (platform B, addendum 33 amendment 1): runs results/baidu/bj_ofts_<arm>_s<seed>_fresh, reference
 bj_fresh_n0_<suite>_<k>; pairs are formed within a platform.
 --check prints which evaluations exist and no number."""
@@ -132,6 +132,11 @@ BLOCKS = {
                                  noninf={"GS3": -2.0},
                                  claims=[("GS3", "onebig", "guard", 0.0),
                                          ("GS2", "fixed", "guard", 2.0, ("Y1", "Y2", "Y3", "A0"))]),
+    # addendum 34 amendment 1 (block added before any of its runs existed): Spatial 12 rounds on Yangquan, seeds 1-3
+    "spatial_guard12": dict(suite="spatial", arms=("guard12", "fixed12", "onebig12"), seeds=(1, 2, 3),
+                            name=lambda arm, s: f"yq_ofts_{arm}_s{s}", noninf={"G3s": -2.0},
+                            claims=[("G1s", "n0", "guard12", 5.0), ("G2s", "fixed12", "guard12", 2.0),
+                                    ("G3s", "onebig12", "guard12", 0.0)]),
     # addendum 34 (block added before either of its runs existed): Spatial 12 rounds on the A800 node, seed 0, descriptive
     "spatial_long12_a8": dict(suite="spatial", arms=("fixed12", "nonrec12", "onebig12", "guard12"), seeds=(0,),
                               platforms=("a800",), plat=lambda s: "a800", name=lambda arm, s: f"a8_spatmain_{arm}_s{s}",

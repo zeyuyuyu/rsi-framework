@@ -63,3 +63,9 @@ Yangquan now runs only four of our jobs, on six cards. Two changes follow.
 - **When**: read once, when the nine Yangquan runs (fixed12, onebig12 and guard12 × 3 seeds) have finals and fresh-scene evaluations, if that is before 2026-11-15 12:00Z. Otherwise they are reported as not read.
 - **Predictions**: G1s +5 to +7; G2s 0 to +3; G3s between −2 and +1. These are the same ranges as on Goal.
 - **Readers**: committed before any result of these runs exists.
+- 2026-11-12 22:49:19-22:49:29Z: `yq_ofts_onebig12_s1-3` (v30) and `yq_ofts_guard12_s1-3` (v32) were submitted to Yangquan, after amendment 1 (856e5ab, 22:48:46Z).
+  - The guard12 plans are the fixed12 plans plus the three guard-rail fields, uploaded to BOS.
+  - The onebig12 plans were re-uploaded from the files `mkplans_vla.py yq_spatial_long12` wrote under addendum 30, because the uploader's key cannot read BOS back to verify them.
+  - `submit_rep_yq.sh` maps `yq_ofts_guard12_*` to v32 for replicates.
+- Readers `fresh_read.py spatial_guard12` and `spatial_guard12_read.py` were committed before any result. They were checked on a scratch root of already-read runs, where the values equal earlier reads.
+- `scripts/baidu/close_loop_yq.sh` takes over the Yangquan close-out when the conductor's loop ends (about 2026-11-14 09Z) and runs until 2026-11-15 13:00Z.
