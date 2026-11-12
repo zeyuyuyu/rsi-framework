@@ -14,7 +14,7 @@ Blocks and bars (addendum 30):
   long12          FL1 fixed12 - n0 >= +5 (CI > 0)   FL3 fixed12 - nonrec12 >= +2 (CI > 0)   fixed12 - onebig12 if run
 usage: python3 scripts/report/fresh_read.py <block> [results root] [--check] [--json out.json]
        block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate |
-              spatial_guard | spatial_guard_bj | spatial_guard_pooled
+              spatial_guard | spatial_guard_bj | spatial_guard_pooled | spatial_guard_repl_a8
 Beijing (platform B, addendum 33 amendment 1): runs results/baidu/bj_ofts_<arm>_s<seed>_fresh, reference
 bj_fresh_n0_<suite>_<k>; pairs are formed within a platform.
 --check prints which evaluations exist and no number."""
@@ -121,8 +121,13 @@ BLOCKS = {
                              plat=lambda s: "a800", name=lambda arm, s: f"a8_spatmain_{arm}_s{s}", noninf={"GS3": -2.0},
                              claims=[("GS3", "onebig", "guard", 0.0), ("GS2", "fixed", "guard", 2.0, (0,)),
                                      ("GS1", "n0", "guard", 3.0)]),
+    # amendment 4: the primary pools Y1-3 + A0 + A1 only; Beijing (spatial_guard_bj) and A2/A3 (spatial_guard_repl_a8)
+    # are replications, each read once on its own and never pooled into the primary
+    "spatial_guard_repl_a8": dict(suite="spatial", arms=("guard", "onebig"), seeds=("A2", "A3"), platforms=("a800",),
+                                  plat=lambda s: "a800", name=lambda arm, s: GUARD_RUN[s[0]].format(arm=arm, n=s[1:]),
+                                  noninf={"GS3": -2.0}, claims=[("GS3", "onebig", "guard", 0.0)]),
     "spatial_guard_pooled": dict(suite="spatial", arms=("guard", "onebig", "fixed"),
-                                 seeds=("Y1", "Y2", "Y3", "A0", "A1", "B1", "B2", "B3"), platforms=("yq", "a800", "bj"),
+                                 seeds=("Y1", "Y2", "Y3", "A0", "A1"), platforms=("yq", "a800"),
                                  plat=lambda s: PLAT_OF[s[0]], name=lambda arm, s: GUARD_RUN[s[0]].format(arm=arm, n=s[1:]),
                                  noninf={"GS3": -2.0},
                                  claims=[("GS3", "onebig", "guard", 0.0),

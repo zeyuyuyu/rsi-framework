@@ -14,7 +14,8 @@ Pairs (guard against plain RL "onebig"; against the strict gate "fixed" where th
   GS2  guard - fixed >= +2.0, CI > 0, on Y1-3 (+ A0)
   GS1  guard - reference per platform: R1 rule on Y and B (>= +5.0, CI > 0, >= 2 of 3 seeds > 0); on A the same
        difference, descriptive
-usage: python3 scripts/report/spatial_guard_read.py [results root] [--check] [--exclude A,B|A1] [--yq-primary] [--json out]
+usage: python3 scripts/report/spatial_guard_read.py [results root] [--check] [--exclude A1] [--yq-primary] [--replication A23|B] [--json out]
+Amendment 4: the default read is the primary (Y1-3 + A0 + A1, all required); --replication reads A2/A3 or Beijing.
 --check prints readiness and no test number."""
 import json
 import sys
@@ -30,7 +31,11 @@ SUB = {"Y": "baidu", "A": "a800/runs2", "B": "baidu"}
 NAMES = {"Y": dict(new="yq_ofts_guard", rl="yq_ofts_onebig", strict="yq_ofts_fixed"),
          "A": dict(new="a8_spatmain_guard", rl="a8_spatmain_onebig", strict="a8_spatmain_fixed"),
          "B": dict(new="bj_ofts_guard", rl="bj_ofts_onebig")}
-PAIRS = [("Y", 1), ("Y", 2), ("Y", 3), ("A", 0), ("A", 1), ("B", 1), ("B", 2), ("B", 3)]
+PAIRS = [("Y", 1), ("Y", 2), ("Y", 3), ("A", 0), ("A", 1), ("A", 2), ("A", 3), ("B", 1), ("B", 2), ("B", 3)]
+# amendment 4: the primary read pools Y1-3 + A0 + A1 and needs all five; A2/A3 and B1-3 are replications, each read
+# once on its own with --replication A23 | B, never pooled into the primary
+PRIMARY = [("Y", 1), ("Y", 2), ("Y", 3), ("A", 0), ("A", 1)]
+REPLICATION = {"A23": [("A", 2), ("A", 3)], "B": [("B", 1), ("B", 2), ("B", 3)]}
 STRICT = {("Y", 1), ("Y", 2), ("Y", 3), ("A", 0)}       # pairs that have a strict-gate arm
 
 
@@ -52,6 +57,11 @@ def main():
         i = args.index("--exclude"); excl = set(args[i + 1].split(",")); del args[i:i + 2]
     if "--yq-primary" in args:
         excl |= {"A", "B"}
+    repl = None
+    if "--replication" in args:
+        i = args.index("--replication"); repl = args[i + 1]; del args[i:i + 2]
+        if repl not in REPLICATION:
+            raise SystemExit("--replication A23 or B")
     check = "--check" in args
     args = [a for a in args if a not in ("--check", "--yq-primary")]
     root = args[0] if args else "results"
@@ -65,11 +75,13 @@ def main():
                 runs[(P, k, s)] = G.record(Path(root) / SUB[P] / f"{n}_s{s}")
             except SystemExit as e:   # not finished, or fewer than three final evaluations
                 missing[(P, k, s)] = str(e)
-    if any(P == "Y" for P, _, _ in missing) and not check:
-        raise SystemExit("Yangquan not complete:\n" + "\n".join(v for (P, _, _), v in missing.items() if P == "Y"))
+    group = REPLICATION[repl] if repl else [u for u in PRIMARY if u[0] not in excl and f"{u[0]}{u[1]}" not in excl]
+    need = [(P, k, s) for (P, k, s) in missing if (P, s) in group and k in ("new", "rl")]
+    if need and not check:
+        raise SystemExit("not complete:\n" + "\n".join(missing[m] for m in need))
     label = lambda P, s: f"{P}{s}"
     complete = {label(P, s): (P, "new", s) in runs and (P, "rl", s) in runs for P, s in PAIRS}
-    used = [(P, s) for P, s in PAIRS if complete[label(P, s)] and P not in excl and label(P, s) not in excl]
+    used = [u for u in group if complete[label(*u)]]
     digests = {r["digest"] for r in runs.values()} | {r["n0_digest"] for r in runs.values()}
     if len(digests) > 1:
         raise SystemExit(f"episode id lists differ across runs: {sorted(digests)}")
@@ -91,7 +103,8 @@ def main():
     pair = lambda P, s, ctrl: (label(P, s), runs[(P, ctrl, s)]["bits"], runs[(P, "new", s)]["bits"])
     res = {"mode": dict(mode="final", **{f"pooled_n0_{PLAT[P]}": dict(n=len(refs[P][1]), mean=G.pct(refs[P][0]))
                                          for P in PLAT if refs[P][1]}),
-           "pairs_pooled": [label(*u) for u in used], "excluded": sorted(excl), "complete": complete}
+           "read": repl and f"replication {repl}" or "primary", "pairs_pooled": [label(*u) for u in used],
+           "excluded": sorted(excl), "complete": {label(*u): complete[label(*u)] for u in group}}
     for P in PLAT:
         mine = [u for u in used if u[0] == P]
         if mine:
@@ -99,11 +112,11 @@ def main():
     res["GS3"] = gs3([pair(*u, "rl") for u in used],
                      f"GS3 guard - onebig (plain RL at equal compute), pairs {'+'.join(label(*u) for u in used)}; official test")
     strict = [u for u in used if u in STRICT and (u[0], "strict", u[1]) in runs]
-    res["GS2"] = G.paired([pair(*u, "strict") for u in strict], 2.0,
-                          f"GS2 guard - fixed (strict gate), pairs {'+'.join(label(*u) for u in strict)}; official test")
+    if strict:
+        res["GS2"] = G.paired([pair(*u, "strict") for u in strict], 2.0,
+                              f"GS2 guard - fixed (strict gate), pairs {'+'.join(label(*u) for u in strict)}; official test")
     for P in PLAT:
-        recs = {s: runs[(P, "new", s)] for p, s in PAIRS if p == P and (P, "new", s) in runs
-                and P not in excl and label(P, s) not in excl}
+        recs = {s: runs[(P, "new", s)] for p, s in used if p == P}   # only the pairs of this read
         if not recs:
             continue
         key = "GS1" if P == "Y" else f"GS1_{PLAT[P]}"
@@ -118,7 +131,7 @@ def main():
     res["runs"] = {r["run"]: dict(retained=r["retained"], gate=r["retained_gate"], test=G.pct(r["bits"]), n0=G.pct(r["n0_bits"]),
                                   rounds=r["rounds"], evals=r["n_evals"],
                                   accepted_rounds=sorted({rnd for rnd, _, _, acc in r["cands"] if acc}))
-                   for _, r in sorted(runs.items())}
+                   for (P, k, s), r in sorted(runs.items()) if (P, s) in used}   # nothing outside this read
     text = json.dumps(res, indent=1)
     print(text)
     if out:
