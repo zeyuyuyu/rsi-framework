@@ -77,6 +77,13 @@ Data paths are plan fields: `data.cruxeval`, `data.lcb`, `heldout.paths` (MBPP).
 
 ## Results so far (2026-11-08)
 
+**New (2026-11-12): the framework against plain training on LIBERO-Goal (addendum 32, 9 runs).**
+- Trained without the framework's gate, the same recipe ends 15.2 points below its start on the official test and 16.3 below on 1,000 unseen scenes. The recipe is iterated self-training on verified successes, run on three seeds.
+- At equal training compute, the gate alone ends **+13.6 [+10.5, +16.8]** (official) and **+15.5 [+13.2, +17.8]** (fresh) above plain training. With the meta level the gap is +16.0 / +19.8. All four pass the registered +10 bar.
+- The predicted collapse under 30% did not happen.
+
+Note: `docs/results/GOAL_NOGATE_READ_20261112.md`.
+
 **New (2026-11-11): LIBERO-Object curve read (addendum 13, one seed).** Plain GRPO self-practice lifts a LIBERO-Object policy from 55.8% to 82.0% on 400 sampled placements: D = **+26.1 points [+22.0, +30.5]**, with gate and audit halves alike. This is object-level evidence on a third suite, not an RSI claim; the official test stays sealed. Note: `docs/results/M1_OBJECT_20261111.md`.
 
 **New (2026-11-11): LIBERO-Spatial main study read (16 runs).** On 1,000 sealed unseen scenes the self-improvement loop lifts the policy by **+5.65 points [+4.28, +7.04]** over its start (every seed, registered bar met); with shuffled verifier labels it ends 6.05 lower and with practice from the frozen initial policy 4.55 lower (both pass their bars). Recursion also passes on the official test (+5.73 [+4.12, +7.38]); on the official fixed states the loop shows no gain over its start (−0.01). One round of plain RL at equal compute ties the loop on both tests. Note: `docs/results/SPATIAL_MAIN_READ_20261111.md`.

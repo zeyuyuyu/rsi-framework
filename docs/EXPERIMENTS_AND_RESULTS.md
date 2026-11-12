@@ -108,6 +108,20 @@ Reading: on unseen scenes the loop lifts a Spatial policy by 5.7 points on every
 ingredients are needed (shuffled labels: 6.1 lower; frozen-policy practice: 4.6 lower). Recursion passes on both tests
 already at six rounds. The official fixed states show no gain over the start; the two tests part only there.
 
+### 4.1e LIBERO-Goal, the framework against plain training (addendum 32 Part B, read 2026-11-12): both bars pass on both tests
+
+Same BC recipe (iterated rejection-sampling fine-tuning), Yangquan seeds 1-3. Full note: `docs/results/GOAL_NOGATE_READ_20261112.md`.
+
+| claim | official test | fresh scenes |
+|---|---|---|
+| NG1 gate only − plain training (equal training compute) | **+13.60 [+10.53, +16.76]**, passes (+10) | **+15.47 [+13.20, +17.77]**, passes |
+| NG2 gate + LLM meta − plain training (2× training compute) | **+15.98 [+13.02, +18.91]**, passes | **+19.80 [+17.50, +22.13]**, passes |
+| NG3 plain training − start | −15.15 [−18.84, −11.45] | −16.29 [−18.79, −13.70] |
+
+Reading:
+- Plain training of this recipe loses 12-20 points on every seed, while the gated loop holds its start.
+- Both predictions missed. No seed fell under 30%, and the gaps sit under the predicted +25.
+
 ### 4.1d LIBERO-Object curve (addendum 13, read 2026-11-11): plain GRPO self-practice +26 points (one seed)
 
 `a8_ofto_curve_grpo_s0` (A800 node, always-accept GRPO, 6 rounds). On 400 sampled gate + audit placements, success rises from 55.8% to 82.0% (r05) and 81.8% (r06).
@@ -185,6 +199,7 @@ both platforms) did not degrade under the gate; no second scenario was registere
 ## 6. What the evidence supports, by strength
 
 * **Registered passes on unseen scenes:** LIBERO-Spatial loop − start +5.65, verifier +6.05, recursion +4.55 (fresh scenes); recursion on Spatial's official test +5.73; Goal 12-round recursion +7.30 (fresh) / +7.84 (official).
+* **Registered passes against plain training (Goal, same recipe):** gate only − plain training +13.60 (official) / +15.47 (fresh) at equal training compute; gate + meta +15.98 / +19.80. Plain training ends 15-16 points below its start.
 * **Significant (CI excludes 0):** the gated loop does not degrade at six rounds with recursive practice (31/31 runs; the same recipe collapses to 5.5%
   without the gate); verified feedback improves code world models (+2.6 to +5.8); recursion helps at 8 rounds in the
   code domain (+2.8, replicated on 7B); one VLA seed +3.3 [+0.1, +6.6]; train-on-test inflation +16.8.
