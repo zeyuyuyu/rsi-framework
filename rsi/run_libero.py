@@ -38,6 +38,19 @@ def make_backend(vcfg):
     return BACKENDS[family](VLAConfig(**vcfg))
 
 
+def _eval_node(run, args):
+    """Node to score for --test-eval / --fresh-eval: the retained one of an ended run, or --node. A run that has not
+    ended is scored only with --interim and a node its accepted.jsonl lists."""
+    if (run / "report.json").exists():
+        return args.node or json.loads((run / "report.json").read_text())["retained"]
+    if not (args.interim and args.node):
+        raise SystemExit("run_has_not_ended")                    # report.json is written only when the run has ended
+    accepted = {json.loads(l)["node"] for l in (run / "accepted.jsonl").read_text().splitlines() if l.strip()}
+    if args.node != "n0" and args.node not in accepted:
+        raise SystemExit("interim_node_is_not_an_accepted_version")
+    return args.node
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--plan", required=True)
@@ -62,6 +75,9 @@ def main():
     # without its checkpoints (the archive keeps their paths), then the engine resumes it under the new plan
     # (Engine.run(resume=True, extend=True): only rounds, candidates, gate rule and proposer may differ).
     parser.add_argument("--extend-from", metavar="RUN_DIR")
+    # addendum 35: with --test-eval / --fresh-eval and --node, score an ACCEPTED node of a run that has not ended
+    # (a registered interim read); without it an evaluation needs the run's report.json
+    parser.add_argument("--interim", action="store_true")
     args = parser.parse_args()
     stop_workers_on_sigterm()
     plan = json.loads(Path(args.plan).read_text())
@@ -76,6 +92,8 @@ def main():
             if staging.exists():
                 shutil.rmtree(staging)
             shutil.copytree(source, staging, symlinks=True, ignore=shutil.ignore_patterns("ckpt-*", "resume-*"))
+            for ckpt in sorted(source.glob("ckpt-*")):           # not copied: linked, so --test-eval finds an old node
+                (staging / ckpt.name).symlink_to(ckpt.resolve(), target_is_directory=True)
             staging.rename(out)
         args.resume = True
     if args.resume and not (out / "plan.json").exists():
@@ -121,8 +139,7 @@ def main():
         return
     if args.test_eval:
         run = Path(args.test_eval)
-        report = json.loads((run / "report.json").read_text())   # written only when the run has ended
-        node = args.node or report["retained"]                   # --node: addendum 18 am. 1 (R5-ungated)
+        node = _eval_node(run, args)                             # --node: addendum 18 am. 1 (R5-ungated)
         version = initial if node == "n0" else \
             Version(**json.loads((run / f"ckpt-{node}" / "receipt.json").read_text())["version"])
         out.mkdir(parents=True)
@@ -142,8 +159,7 @@ def main():
             run, node, version = args.fresh_eval, "n0", initial
         else:
             run = Path(args.fresh_eval)
-            report = json.loads((run / "report.json").read_text())   # written only when the run has ended
-            node = args.node or report["retained"]
+            node = _eval_node(run, args)
             version = initial if node == "n0" else \
                 Version(**json.loads((run / f"ckpt-{node}" / "receipt.json").read_text())["version"])
         cases = domain.fresh_test(args.fresh_per_task)
