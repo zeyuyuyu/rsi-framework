@@ -94,7 +94,12 @@ Card-hours of the meta-level runs (requested cards × job time, summed over sess
 What follows:
 - The meta level costs 59-206 GPU-hours a run on Yangquan, mean 118: about seven one-shot RL runs, and about half of tuned RL's 230 with its pilots counted. On seed 2 the two costs are close (206 against 230).
 - "52-85 GPU-hours" and "about 30%" in the first correction, in the paper and in the README were too low. All are corrected.
-- Job time includes queue wait and set-up, so these card-hours are an upper bound for Yangquan; the first sessions' job time (51-55 h) is within two hours of their recorded phase seconds.
+- These card-hours are an upper bound: they count the two cards that sat idle while a three-card session trained on one, queue wait and set-up, and on seed 2 about 18 hours of a round that the job's wall-time limit cut and that was redone.
+- **GPU time actually used** is lower: 76 / 139 / 57 hours on seeds 1-3, mean 90, about 40% of tuned RL's 230.
+  - Single-card sessions are counted at their job time (51.2, 54.5, 51.3 h).
+  - The last three-card session of each run is the backend's own GPU-seconds (`backend-accounting.json`: 24.9, 60.1, 5.6 h).
+  - Seed 2's middle three-card session covered round 4: rollout and evaluation seconds × 3 plus training seconds × 1 = 23.9 h.
+- So the cost is between 40% (used) and about half (reserved) of tuned RL's. The paper says "about half", the conservative end; the pilots' 213 GPU-hours are also cards × run time.
 - No test statistic changes.
 
 ## Caveats
