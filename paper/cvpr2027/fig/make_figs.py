@@ -232,30 +232,38 @@ def fig_runs():
 
 # ---------------------------------------------------------------- 3. retained-gate trajectories on LIBERO-Goal (Y)
 def fig_gates():
-    arms = ["fixed", "full", "llm_harness", "nonrec", "shuffled"]
-    fig, axes = plt.subplots(1, 5, figsize=(7.0, 2.0), sharey=True, gridspec_kw={"wspace": 0.05})
-    for ax, arm in zip(axes, arms):
-        ygrid(ax)
-        col, rec = C[arm], []
-        for s in (1, 2, 3):
-            p = os.path.join(ROOT, f"results/baidu/yq_oftg_{arm}_s{s}/report.json")
-            if os.path.exists(p):
-                rec.append(chain(p))
-        if rec:
-            mean = [sum(y[k] for y, _ in rec) / len(rec) for k in range(7)]
-            ax.axhline(mean[0], **REF)
-            for y, acc in rec:
-                ax.plot(range(7), y, color=col, lw=0.8, alpha=0.7, zorder=2)
-                ax.plot(acc, [y[k] for k in acc], "o", color=col, ms=2.6, mec="white", mew=0.4, zorder=3)
-            ax.plot(range(7), mean, "-", color=col, lw=2.0, zorder=4)
-            ax.plot([6], mean[-1:], "o", color=col, ms=4.6, zorder=5, **RING)
-            ax.annotate(f"{mean[-1] - mean[0]:+.1f} pts".replace("-", "−"), (1, 1), xycoords="axes fraction",
-                        xytext=(0, 3), textcoords="offset points", ha="right", va="bottom", fontsize=7.5, fontweight="bold")
-        panel_title(ax, TITLE[arm], arm)
-        ax.set_xlabel("Round")
-        ax.set_xticks(range(7))
-        ax.set_ylim(56, 69); ax.set_yticks(range(56, 70, 4))
-    axes[0].set_ylabel("Gate success of the\nretained policy (%)")
+    """The loop and its two controls at the gate, on both suites (three seeds each on the cloud platform)."""
+    suites = [("LIBERO-Goal", "yq_oftg"), ("LIBERO-Spatial", "yq_ofts")]
+    arms = ["fixed", "nonrec", "shuffled"]
+    fig = plt.figure(figsize=(7.0, 2.15))
+    subfigs = fig.subfigures(1, 2, wspace=0.02)
+    for k, (sf, (suite, prefix)) in enumerate(zip(subfigs, suites)):
+        axes = sf.subplots(1, 3, sharey=True, gridspec_kw={"wspace": 0.05})
+        sf.suptitle(suite, fontsize=8, fontweight="bold", color=INK, x=0.5, ha="center")
+        for ax, arm in zip(axes, arms):
+            ygrid(ax)
+            col, rec = C[arm], []
+            for s in (1, 2, 3):
+                p = os.path.join(ROOT, f"results/baidu/{prefix}_{arm}_s{s}/report.json")
+                if os.path.exists(p):
+                    rec.append(chain(p))
+            if rec:
+                mean = [sum(y[r] for y, _ in rec) / len(rec) for r in range(7)]
+                ax.axhline(mean[0], **REF)
+                for y, acc in rec:
+                    ax.plot(range(7), y, color=col, lw=0.8, alpha=0.7, zorder=2)
+                    ax.plot(acc, [y[r] for r in acc], "o", color=col, ms=2.6, mec="white", mew=0.4, zorder=3)
+                ax.plot(range(7), mean, "-", color=col, lw=2.0, zorder=4)
+                ax.plot([6], mean[-1:], "o", color=col, ms=4.6, zorder=5, **RING)
+                ax.annotate(f"{mean[-1] - mean[0]:+.1f} pts".replace("-", "\u2212"), (1, 1), xycoords="axes fraction",
+                            xytext=(0, 3), textcoords="offset points", ha="right", va="bottom", fontsize=7.5,
+                            fontweight="bold")
+            panel_title(ax, TITLE[arm], arm)
+            ax.set_xlabel("Round")
+            ax.set_xticks(range(7))
+            ax.set_ylim(55, 69); ax.set_yticks(range(56, 70, 4))
+        if k == 0:
+            axes[0].set_ylabel("Gate success of the\nretained policy (%)")
     fig.legend(handles=[Line2D([], [], color=INK2, lw=0.8, marker="o", ms=2.6, mec="white", mew=0.4,
                                label="one seed (dot: a new version was accepted)"),
                         Line2D([], [], color=INK2, lw=2.0, label="mean of 3 seeds"),
