@@ -205,14 +205,14 @@ class Engine:
         return result
 
     # ------------------------------------------------------------------- run
-    def _restore(self, archive, versions):
+    def _restore(self, archive, versions, extend=False):
         """Continue a run stopped between or inside rounds (e.g. a job wall-time kill). Completed
         rounds (round-NN.json written) are kept; whatever an unfinished round left behind is moved
         to resume-NN/, and the loop state is rebuilt from the files. Two things cannot be replayed
         and are recorded in resume.json: the meta proposer's random stream is re-seeded from
         (seed, completed rounds), and training cases of a candidate that curated no items were
         never written, so they do not enter the duplicate filter."""
-        if (self.out / "report.json").exists():
+        if (self.out / "report.json").exists() and not extend:
             raise ValueError("run_already_complete")
         done = 0
         while (self.out / f"round-{done + 1:02d}.json").exists():
@@ -226,7 +226,7 @@ class Engine:
         for path in sorted(self.out.iterdir()):
             name = path.name
             m = re.match(r"(?:round-|ckpt-r)(\d{2})", name)
-            if (m and int(m.group(1)) > done) or name in ("failure.json", "retained.json") \
+            if (m and int(m.group(1)) > done) or name in ("failure.json", "retained.json", "report.json") \
                     or name.startswith("test-"):
                 path.rename(aside / name)
                 moved.append(name)
@@ -277,7 +277,28 @@ class Engine:
             s.write(json.dumps(record) + "\n")
         return root, parent, done
 
-    def run(self, resume=False):
+    # What an extension (addendum 35) may change in the stored plan: more rounds, how many candidates a round trains,
+    # the gate's acceptance rule, which accepted versions are tested, and the proposer. Everything else must match.
+    EXTENSION_CONFIG_KEYS = ("rounds", "candidates_per_round", "min_gate_gain", "gate_floor", "test_all_accepted")
+
+    def _check_extension(self, stored, new):
+        """Raise unless ``new`` is ``stored`` continued: the same run with more rounds (EXTENSION_CONFIG_KEYS and the
+        proposer may differ; the fresh gate sets of the stored rounds must be the same sets)."""
+        a, b = json.loads(json.dumps(stored)), json.loads(json.dumps(new))
+        if b["config"]["rounds"] <= a["config"]["rounds"]:
+            raise ValueError("extension_needs_more_rounds")
+        for plan in (a, b):
+            for key in self.EXTENSION_CONFIG_KEYS:
+                plan["config"].pop(key, None)
+            plan.pop("proposer", None)
+        fa, fb = a.pop("fresh_gate_ids", None), b.pop("fresh_gate_ids", None)
+        if (fa is None) != (fb is None) or (fa is not None and any(fb.get(r) != ids for r, ids in fa.items())):
+            raise ValueError("extension_plan_mismatch:fresh_gate_ids")
+        if a != b:
+            diff = sorted(k for k in set(a) | set(b) if a.get(k) != b.get(k))
+            raise ValueError(f"extension_plan_mismatch:{','.join(diff)}")
+
+    def run(self, resume=False, extend=False):
         cfg = self.config
         if not resume:
             self.out.mkdir(parents=True, exist_ok=False)
@@ -309,8 +330,23 @@ class Engine:
                     test_role="read once after the last round; never decides anything")
         if resume:
             stored = json.loads((self.out / "plan.json").read_text())
-            if stored != json.loads(json.dumps(plan, sort_keys=True, default=str)):
-                raise ValueError("resume_plan_mismatch")
+            current = json.loads(json.dumps(plan, sort_keys=True, default=str))
+            if stored != current:
+                if not extend:
+                    raise ValueError("resume_plan_mismatch")
+                self._check_extension(stored, current)
+                k = 1
+                while (self.out / f"plan-before-extension-{k}.json").exists():
+                    k += 1
+                (self.out / "plan.json").rename(self.out / f"plan-before-extension-{k}.json")
+                _write(self.out / "plan.json", plan)
+                with (self.out / "extension.jsonl").open("a") as s:
+                    s.write(json.dumps(dict(at=time.time(), from_rounds=stored["config"]["rounds"],
+                                            to_rounds=cfg.rounds, stored_plan=f"plan-before-extension-{k}.json",
+                                            changed={key: [stored["config"].get(key), current["config"].get(key)]
+                                                     for key in self.EXTENSION_CONFIG_KEYS
+                                                     if stored["config"].get(key) != current["config"].get(key)},
+                                            proposer=[stored.get("proposer"), current.get("proposer")])) + "\n")
         else:
             _write(self.out / "plan.json", plan)
         archive = Archive(self.out / "archive.jsonl")
@@ -318,7 +354,7 @@ class Engine:
         versions = {self.initial.id}
         try:
             if resume:
-                root, parent, done = self._restore(archive, versions)
+                root, parent, done = self._restore(archive, versions, extend=extend)
             else:
                 gate0, _ = self._score(self.initial, self.gate, "gate_eval")
                 audit0, _ = self._score(self.initial, self.audit, "audit_eval")

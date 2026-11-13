@@ -58,10 +58,26 @@ def main():
     parser.add_argument("--fresh-per-task", type=int, default=100)
     # continue an interrupted run in place (Engine.run(resume=True); the stored plan must match)
     parser.add_argument("--resume", action="store_true")
+    # addendum 35: continue a COMPLETE run for more rounds in a new run dir. --out is created as a copy of RUN_DIR
+    # without its checkpoints (the archive keeps their paths), then the engine resumes it under the new plan
+    # (Engine.run(resume=True, extend=True): only rounds, candidates, gate rule and proposer may differ).
+    parser.add_argument("--extend-from", metavar="RUN_DIR")
     args = parser.parse_args()
     stop_workers_on_sigterm()
     plan = json.loads(Path(args.plan).read_text())
     out = Path(args.out)
+    if args.extend_from:
+        source = Path(args.extend_from)
+        if not out.exists():
+            if not (source / "report.json").exists():
+                raise SystemExit("extend_source_is_not_a_complete_run")
+            import shutil
+            staging = out.with_name(out.name + ".copying")
+            if staging.exists():
+                shutil.rmtree(staging)
+            shutil.copytree(source, staging, symlinks=True, ignore=shutil.ignore_patterns("ckpt-*", "resume-*"))
+            staging.rename(out)
+        args.resume = True
     if args.resume and not (out / "plan.json").exists():
         raise SystemExit("resume_needs_an_existing_run")
     if out.exists() and not args.resume:
@@ -211,7 +227,7 @@ def main():
                     tests={"libero_official": (domain, test)}, out=out,
                     config=cfg, proposer=proposer,
                     fresh_gates=fresh)
-    report = engine.run(resume=args.resume)
+    report = engine.run(resume=args.resume, extend=bool(args.extend_from))
     (out / "backend-accounting.json").write_text(json.dumps(dict(
         gpu_seconds=backend.gpu_seconds, admissions=backend.admissions), indent=2, default=str))
     t = report.get("tests", {}).get("libero_official")   # absent when tests are sealed (pilots)

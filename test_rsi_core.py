@@ -338,6 +338,54 @@ class EngineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             e2.run(resume=True)
 
+    def test_extension_continues_a_complete_run_like_the_longer_run(self):
+        """Addendum 35: a complete 2-round run extended to 4 rounds ends where an uninterrupted 4-round run ends;
+        only rounds, candidates, the gate rule and the proposer may change, and the old plan is kept."""
+        def make(name, **cfg):
+            domain = ToyDomain()
+            return Engine(domain, ToyBackend(), Version("init", "/b"), domain.default_program(),
+                          gate=heldout("gate", 20), audit=heldout("audit", 20),
+                          tests={"t": (domain, heldout("test", 40))}, out=self.tmp / name,
+                          config=EngineConfig(**cfg), proposer=FixedProgram())
+
+        whole = make("whole4", rounds=4).run()
+        short_engine = make("short", rounds=2)
+        short = short_engine.run()
+        self.assertEqual(len(short["accepted_chain"]), 3)
+        with self.assertRaises(ValueError):                       # a complete run does not resume without extend
+            make("short", rounds=4).run(resume=True)
+        with self.assertRaises(ValueError):                       # nor extend to the same or fewer rounds
+            make("short", rounds=2, min_gate_gain=-0.05).run(resume=True, extend=True)
+        with self.assertRaises(ValueError):                       # nor change anything else (here the seed)
+            make("short", rounds=4, seed=1).run(resume=True, extend=True)
+        self.assertTrue((self.tmp / "short" / "report.json").exists())     # refused extensions left the run intact
+        extended_engine = make("short", rounds=4, min_gate_gain=-0.05, test_all_accepted=False)
+        extended_engine.backend.skill = short_engine.backend.skill         # the toy backend's weights live in memory
+        extended = extended_engine.run(resume=True, extend=True)
+        self.assertEqual(extended["retained"], whole["retained"])
+        # test_all_accepted=False reports (and tests) only the start and the retained version
+        self.assertEqual([(n["node"], n["gate"]) for n in extended["accepted_chain"]],
+                         [(n["node"], n["gate"]) for n in (whole["accepted_chain"][0], whole["accepted_chain"][-1])])
+        self.assertEqual(extended["tests"]["t"]["final"], whole["tests"]["t"]["final"])
+        self.assertEqual(extended["config"]["rounds"], 4)
+        out = self.tmp / "short"
+        self.assertEqual(json.loads((out / "plan-before-extension-1.json").read_text())["config"]["rounds"], 2)
+        self.assertEqual(json.loads((out / "plan.json").read_text())["config"]["rounds"], 4)
+        record = json.loads((out / "extension.jsonl").read_text())
+        self.assertEqual((record["from_rounds"], record["to_rounds"]), (2, 4))
+        self.assertEqual(record["changed"]["min_gate_gain"], [0.0, -0.05])
+        aside = sorted(p.name for p in (out / "resume-03").iterdir())
+        self.assertIn("report.json", aside)                       # the 2-round report is set aside, not lost
+        with open(out / "accepted.jsonl") as stream:
+            self.assertEqual([json.loads(l)["round"] for l in stream], [1, 2, 3, 4])
+        # an interrupted extension resumes like any run: the stored plan is now the extended one
+        (out / "report.json").unlink()
+        again_engine = make("short", rounds=4, min_gate_gain=-0.05, test_all_accepted=False)
+        again_engine.backend.skill = short_engine.backend.skill
+        again = again_engine.run(resume=True, extend=True)
+        self.assertEqual(again["retained"], whole["retained"])
+        self.assertFalse((out / "plan-before-extension-2.json").exists())
+
     def test_rejected_candidates_are_released_accepted_ones_kept(self):
         class Releasing(ToyBackend):
             def __init__(self):
