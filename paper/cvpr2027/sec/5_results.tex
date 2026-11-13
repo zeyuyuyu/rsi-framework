@@ -10,7 +10,7 @@
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{fig_selfrepair}
-  \caption{\textbf{Self-repair study, gate level.} Left: the starting BC recipe collapses when every version is accepted. Right (narrower scale): under the gate the same recipe stays at its starting level (\texttt{fixed}); both proposers find repairs; at the gate the LLM arm looks 4--8 points ahead, on the sealed test it is $+2.65$ (\cref{tab:selfrepair}).}
+  \caption{\textbf{Self-repair study, gate level.} The number in each panel is the mean change from round 0 to round 6. Left: the starting BC recipe collapses when every version is accepted. Right (narrower scale): under the gate the same recipe stays near its starting level (\texttt{fixed}); both proposers find repairs, and the LLM arm climbs most. Gate gains overstate test gains: on the sealed test the LLM arm is $+2.65$ above the gate alone (\cref{tab:selfrepair}).}
   \label{fig:selfrepair}
 \end{figure*}
 
@@ -36,17 +36,19 @@ We report what each level of the architecture contributes (\cref{fig:framework})
 \begin{table}[t]
   \centering
   \small
-  \caption{\textbf{Self-repair study}: gate / sealed-test final (\%, three evaluations) of each retained version, and what changed. S1 $=$ \texttt{llm\_harness} $-$ \texttt{fixed} $= +2.65$ $[+0.73, +4.58]$ (bar $+3$ missed); S2 $=$ \texttt{llm\_harness} $-$ \texttt{full} $= +1.15$ $[-0.63, +2.92]$; S3 $=$ \texttt{llm\_harness} $-$ hand-tuned GRPO loop $= +0.28$ $[-1.43, +1.97]$.}
+  \caption{\textbf{Self-repair study}: gate / sealed-test final (\%, three evaluations) of each retained version, and what changed (bold: best sealed-test final of the seed). S1 $=$ \texttt{llm\_harness} $-$ \texttt{fixed} $= +2.65$ $[+0.73, +4.58]$ (CI above zero, under its $+3$ bar); S2 $=$ \texttt{llm\_harness} $-$ \texttt{full} $= +1.15$ $[-0.63, +2.92]$; S3 $=$ \texttt{llm\_harness} $-$ hand-tuned GRPO loop $= +0.28$ $[-1.43, +1.97]$.}
   \label{tab:selfrepair}
   \resizebox{\linewidth}{!}{%
   \begin{tabular}{@{}llll@{}}
     \toprule
     seed & \texttt{fixed} (gate only) & \texttt{full} (numeric) & \texttt{llm\_harness} \\
     \midrule
-    1 (Y) & 60.0 / 56.1 & 62.5 / 56.7 & 65.5 / 60.1, GRPO in r1 \\
-    2 (Y) & start / 58.7, all refused & 65.0 / 59.9, GRPO & 68.5 / 61.3, GRPO in r1 \\
-    3 (Y) & 63.0 / 57.5 & 61.0 / 60.2, BC rollout-$T$ & 64.5 / 57.9, BC $T$ 1.6$\to$1.3 \\
-    0 (A) & 64.5 / 57.4 & 61.5 / 58.8 & 68.5 / 60.9, GRPO in r2 \\
+    1 (Y) & 60.0 / 56.1 & 62.5 / 56.7 & 65.5 / \textbf{60.1}, GRPO in r1 \\
+    2 (Y) & start / 58.7, all refused & 65.0 / 59.9, GRPO & 68.5 / \textbf{61.3}, GRPO in r1 \\
+    3 (Y) & 63.0 / 57.5 & 61.0 / \textbf{60.2}, BC rollout-$T$ & 64.5 / 57.9, BC $T$ 1.6$\to$1.3 \\
+    0 (A) & 64.5 / 57.4 & 61.5 / 58.8 & 68.5 / \textbf{60.9}, GRPO in r2 \\
+    \midrule
+    mean test & 57.4 & 58.9 & \textbf{60.1} \\
     \bottomrule
   \end{tabular}}
 \end{table}

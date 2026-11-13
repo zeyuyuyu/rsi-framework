@@ -284,7 +284,10 @@ def fig_selfrepair():
     ax.plot([c["round"] for c in ch], [c["audit"] * 100 for c in ch], "-o", color=MUTED, lw=1.1, ms=3.6, mfc="white",
             mec=INK2, mew=0.8, label="audit")
     ax.plot([c["round"] for c in ch], [c["gate"] * 100 for c in ch], "-o", color=INK, lw=1.8, ms=4, label="gate", **RING)
-    panel_title(ax, "No gate", "every version accepted")
+    panel_title(ax, "No gate", "always accept")
+    delta = lambda a, d: a.annotate(f"{d:+.1f} pts".replace("-", "\u2212"), (1, 1), xycoords="axes fraction", xytext=(0, 3),
+                                    textcoords="offset points", ha="right", va="bottom", fontsize=7.5, fontweight="bold")
+    delta(ax, (ch[-1]["gate"] - ch[0]["gate"]) * 100)            # gate success, round 0 to the last round
     ax.legend(loc="lower left", handlelength=1.6)
     ax.set_ylabel("Success on held-out\nplacements (%)")
     ax.set_ylim(0, 72); ax.set_yticks(range(0, 80, 20)); ax.set_xlabel("Round"); ax.set_xticks(range(7))
@@ -305,6 +308,7 @@ def fig_selfrepair():
             ax.plot(range(7), rec[-1], "-o", color=C[arm], lw=0.9, ms=3.2, mfc="white", mec=C[arm], mew=0.9, zorder=4)
         if rec:
             ax.axhline(sum(y[0] for y in rec) / len(rec), **REF)
+            delta(ax, sum(y[-1] - y[0] for y in rec) / len(rec))   # mean change of the retained policy over the seeds
         panel_title(ax, TITLE[arm] if arm != "fixed" else "Gated, same recipe", arm)
         ax.set_xlabel("Round"); ax.set_xticks(range(7))
         if i:
