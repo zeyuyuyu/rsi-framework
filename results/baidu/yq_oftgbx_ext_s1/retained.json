@@ -1,0 +1,47 @@
+{
+  "node": "r05c1",
+  "program": {
+    "author": "llm",
+    "id": "fbe95e79ddeb5c80",
+    "note": "{\"why\": \"Keep the working grpo setup but lower the sampling temperature slightly and use more scenes with a tighter mixed band to raise signal quality and reduce noisy advantages, while using a larger batch for lower gradient variance.\", \"diff\": {\"curation.band\": [0.1, 0.9], \"update.batch\": 128}}",
+    "params": {
+      "curation": {
+        "adv": "zscore",
+        "band": [
+          0.1,
+          0.9
+        ],
+        "budget": 600,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "progress",
+        "cases": 128,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 12,
+        "temperature": 1.2
+      },
+      "update": {
+        "batch": 128,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 5e-05,
+        "operator": "grpo",
+        "ratio": "matched",
+        "steps": 200
+      }
+    },
+    "parent_id": "f511810fce1b76bc"
+  },
+  "version": {
+    "id": "437e0e92eabe55af5ed92b67c70dd80ec175a525d63d83324d7a4ba28b026a24",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s1/ckpt-r05c1",
+    "parent_id": "567e31f8332e42c4394ccd1caa99f728d403779b52ba090681350a0a068a4d90"
+  }
+}
