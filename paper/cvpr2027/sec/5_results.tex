@@ -60,7 +60,7 @@ We report what each level of the architecture contributes (\cref{fig:framework})
 \subsection{Against plain RL, counting its tuning}
 \label{sec:rl}
 
-\textbf{Finding 6: counting the tuning, the loop reaches tuned RL at about half of its compute.} The RL recipe was chosen by 21 pilot runs ($\geq$213 GPU-hours), which a fair comparison charges to RL: with its own 14--17 hours, the tuned one-shot run (18 inner steps) costs about 230 GPU-hours. Started from the failing recipe instead, the meta level needs no pilots; its runs cost 59--206 GPU-hours (mean 118; they were resumed on three cards). It ends level with that RL run on the official test ($+0.05$ $[-1.6, +1.7]$) and $+2.2$ points $[+0.5, +3.9]$ ahead on the fresh scenes (descriptive: a new pairing of registered reads).
+\textbf{Finding 6: counting the tuning, the loop reaches tuned RL at about half of its compute.} The RL recipe was chosen by 21 pilot runs ($\geq$213 GPU-hours), which a fair comparison charges to RL: with its own 14--17 hours, the tuned one-shot run (18 training blocks) costs about 230 GPU-hours. Started from the failing recipe instead, the meta level needs no pilots; its runs cost 59--206 GPU-hours (mean 118; they were resumed on three cards). It ends level with that RL run on the official test ($+0.05$ $[-1.6, +1.7]$) and $+2.2$ points $[+0.5, +3.9]$ ahead on the fresh scenes (descriptive: a new pairing of registered reads).
 
 \subsection{How much of a published VLA-RL number is the test set?}
 \label{sec:rq4}

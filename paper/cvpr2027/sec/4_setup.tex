@@ -24,18 +24,41 @@
 \label{sec:setup}
 
 \subsection{Benchmarks, policies and starting points}
-\textbf{LIBERO / OpenVLA-OFT.} LIBERO-Goal~\cite{liu2023libero} has ten goal-conditioned tasks in one scene, LIBERO-Spatial ten pick-and-place tasks that differ in the spatial layout of the same objects, and LIBERO-10 ten long-horizon tasks. The policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), started from a supervised fine-tune on \emph{one} demonstration per task~\cite{li2025simplevlarl} so that there is room to improve (about 59\% on LIBERO-Goal, 60\% on LIBERO-Spatial, 19\% on LIBERO-10). Rollouts and GRPO/BC training use the SimpleVLA-RL stack with LoRA ($r{=}32$). The seed program---chosen from sealed pilots and frozen by amendment before any main run---is GRPO with learning rate $3\times10^{-5}$, matched-ratio log-probabilities, episode-balanced loss, 8 samples per scene at temperature 1.6, 64 scenes per inner step, 100 optimiser steps of batch 64; 6 rounds of 3 inner steps; fresh paired gates.
+\textbf{LIBERO / OpenVLA-OFT.} LIBERO-Goal~\cite{liu2023libero} has ten goal-conditioned tasks in one scene, LIBERO-Spatial ten pick-and-place tasks that differ in the spatial layout of the same objects, and LIBERO-10 ten long-horizon tasks. The policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), started from a supervised fine-tune on \emph{one} demonstration per task~\cite{li2025simplevlarl} so that there is room to improve (about 59\% on LIBERO-Goal, 60\% on LIBERO-Spatial, 19\% on LIBERO-10). The policy emits each chunk as 56 discrete action tokens (256 bins) in one parallel-decoding forward; rollouts sample them at temperature $T$ (greedy for gates and tests), and GRPO log-probabilities divide the same logits by $T$. Rollouts and GRPO/BC training use the SimpleVLA-RL stack with LoRA ($r{=}32$). The seed program---chosen from sealed pilots and frozen by amendment before any main run---is GRPO with learning rate $3\times10^{-5}$, matched-ratio log-probabilities, episode-balanced loss, 8 attempts per instance at temperature 1.6, 64 instances per block, 100 optimiser steps of batch 64; 6 rounds of 3 blocks; fresh paired gates.
 
-\subsection{Arms and baselines}
-The LIBERO-Goal main study runs the eight arms of \cref{sec:controls} with three seeds each (a fourth seed was added to the \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} arms by amendment before any of their runs ended), 31 runs in all, on two GPU platforms: a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. The stacks are not bit-identical, so every comparison is paired within a platform and the platforms serve as replicates. \texttt{onebig} is the plain-RL baseline: the whole six-round rollout and update budget in one round of 18 on-policy inner steps from the initial policy, with the same sampling and update code; it is read both through the gate and as its ungated single candidate.
+\subsection{Experimental design and controls}
+\label{sec:controls}
+\begin{table}[t]
+\centering\footnotesize
+\caption{\textbf{Controls.} Each arm changes one decision of \cref{alg:loop}; everything else is that of \texttt{fixed}.}
+\label{tab:controls}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+arm & change in \cref{alg:loop} & tests \\
+\midrule
+\texttt{fixed} & none (program adaptation off) & gated recursive loop \\
+\texttt{nonrec} & $\theta_{\text{gen}} = \theta_0$ & data recursion \\
+\texttt{shuffled} & labels permuted within instance & label--attempt pairing \\
+\texttt{nogate} & every candidate accepted & selection \\
+\texttt{onebig} & $R{=}1$, $3R$ blocks & one-shot RL baseline \\
+\texttt{full} & numeric proposer, $c{=}2$ & program adaptation \\
+\texttt{llm}$\ast$ & LLM proposer, $c{=}2$ & program adaptation \\
+\bottomrule
+\end{tabular}\\[2pt]
+{\footnotesize $\ast$ \texttt{llm}: knob space; \texttt{llm\_harness}: harness space; \texttt{llm\_harness\_cap}: harness space under the compute cap.}
+\end{table}
+\Cref{tab:controls} lists the arms. They vary the policy that generates experience (\texttt{nonrec}), the labels (\texttt{shuffled}, which keeps each instance's success count and breaks only which attempt succeeded), the selection rule (\texttt{nogate}), the round schedule (\texttt{onebig}) or the program proposer. \texttt{nonrec}, \texttt{shuffled}, \texttt{nogate} and \texttt{onebig} train the same number of blocks with the same rollout and optimiser budget as their gated loop. \texttt{onebig} is the plain-RL baseline: the whole six-round budget in one round of 18 on-policy blocks from the initial policy, with the same sampling and update code, so it also skips the intermediate gate evaluations. We report its version retained after the gate; its ungated candidate is a registered sensitivity check (they differ on one Goal seed, by 0.7 points on the official test). The program-adaptation arms train two candidates a round, twice the training of \texttt{fixed}; LLM calls are not counted in GPU time.
 
-A second study on LIBERO-Spatial, registered before any of its runs, repeats the four object-level arms (\texttt{fixed}, \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig}) with four seeds under the Goal bars (sixteen runs); a twelve-round extension on Goal (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}) and a self-repair study (\cref{sec:rq3}) complete the design.
+The LIBERO-Goal main study runs these eight arms with three seeds each (a fourth seed was added to the \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} arms by amendment before any of their runs ended), 31 runs in all, on two GPU platforms: a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. The stacks are not bit-identical, so every comparison is paired within a platform and the platforms serve as replicates.
 
-\subsection{Preregistered protocol}
+A second study on LIBERO-Spatial, registered before any of its runs, repeats the four arms that keep the seed program (\texttt{fixed}, \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig}) with four seeds under the Goal bars (sixteen runs); a twelve-round extension on Goal (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}) and a self-repair study (\cref{sec:rq3}) complete the design.
+
+\subsection{Evaluation protocol}
 \label{sec:protocol}
 We fixed the protocol before the runs and release the preregistration documents and every dated amendment with the code.
 
-\paragraph{Sealing.} The official LIBERO test states are never used for training, sampling, gating or program selection, and no test file is opened before a study's read-once. Only two sealed pilots per model were allowed before the seed program was frozen.
+\paragraph{Evaluation sets and sealing.} Each run draws its gate and audit sets from seeds that never overlap the official benchmark states. The audit (200 more episodes) is recorded for retained candidates but never decides anything; it exposes overfitting to the gate. The official test (50 initial states per task, 500 episodes) is never used for training, sampling, gating or program selection, and no test file is opened before a study's read-once, after every decision in every run of the study has been made. A second sealed test, registered before any of its evaluations, scores each retained policy on 1{,}000 freshly sampled configurations that no run trained, gated or audited on. Only two sealed pilots per model were allowed before the seed program was frozen.
 
 \paragraph{Finals and reference.} The \emph{same} initial policy scored between 57.2\% and 60.0\% in different runs, and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy, and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 on the cloud pool, 21 on the A800). A noise check (the same statistic between two halves of the initial-policy evaluations) accompanies every verdict.
 
