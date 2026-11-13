@@ -97,3 +97,10 @@ The win, if there is one, is of a particular kind and will be described as such:
 `fresh_read.py goal_ext` and `scripts/report/goal_ext_read.py` are committed before any evaluation of these runs exists.
 
 ## Operational notes
+
+- 2026-11-13 00:15:30Z: this addendum was committed and pushed (8286333; the header's "~00:40Z" was an estimate written before the commit).
+- 00:15:53Z: `rsi_src_v33.tgz` (sha256 `5980f6f51669127d…`) and the three plans were uploaded to BOS; the tarball was downloaded again and is byte-identical. The entry script link (`run_vla6.sh`) was re-signed and the script behind it is byte-identical to the repository's.
+- 00:16:29-00:16:33Z: the three runs were submitted: `yq_oftgbx_ext_s1` job-lgsmcu53ia9y (3 cards, `RUN_TIMEOUT_S` 180000), `yq_oftgbx_ext_s2` job-939pnipsdu7k (1 card, 115000), `yq_oftgbx_ext_s3` job-e6e209tyaqp1 (3 cards, 190800). Each has `ARGS=--extend-from /mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s<seed>`.
+- The readers `fresh_read.py goal_ext` / `goal_ext_interim` and `scripts/report/goal_ext_read.py` were committed after the submission and before any round of these runs had completed; `--check` shows the continued runs' evaluations as missing, and the earlier block `goal_guard12` still returns G3 = −1.07 [−2.63, +0.53].
+- If a run's interim and final versions are the same node, its `_fin_rep` and `_fin_fresh` result directories are copies of the `_i14` ones, and a line here says so.
+

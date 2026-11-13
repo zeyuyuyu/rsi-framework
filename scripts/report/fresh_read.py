@@ -13,7 +13,7 @@ Blocks and bars (addendum 30):
   spatial repair  FS1 meta3 - fixed(BC) >= +3 (CI > 0)   FS2 meta3 - full (CI)   meta3 - n0 and fixed(BC) - n0 (CI)
   long12          FL1 fixed12 - n0 >= +5 (CI > 0)   FL3 fixed12 - nonrec12 >= +2 (CI > 0)   fixed12 - onebig12 if run
 usage: python3 scripts/report/fresh_read.py <block> [results root] [--check] [--json out.json]
-       block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate |
+       block: spatial_main | goal_main | spatial_repair | spatial_long12 | goal_long12 | goal_guard12 | goal_nogate | goal_ext | goal_ext_interim |
               spatial_guard | spatial_guard_bj | spatial_guard_pooled | spatial_guard_repl_a8 | spatial_long12_a8 | spatial_guard12
 Beijing (platform B, addendum 33 amendment 1): runs results/baidu/bj_ofts_<arm>_s<seed>_fresh, reference
 bj_fresh_n0_<suite>_<k>; pairs are formed within a platform.
@@ -103,6 +103,20 @@ BLOCKS = {
                          name=lambda arm, s: f"yq_oftg_{arm}_s{s}",
                          claims=[("G1", "n0", "guard12", 5.0), ("G2", "fixed12", "guard12", 2.0),
                                  ("G3", "onebig12", "guard12", None)]),
+    # addendum 35 (blocks added before any evaluation of its runs existed; the blocks above are unchanged): the
+    # self-repaired loop continued under tuned RL's counted budget. "ext" is the continued run's retained version at
+    # the final read (<run>_fin_fresh) or at the interim read of 2026-11-14 10:00Z (<run>_i14_fresh); "round6" is the
+    # same run before the continuation. E1 is read for superiority (CI > 0) and non-inferiority (margin 2).
+    "goal_ext": dict(suite="goal", arms=("ext", "onebig12", "onebig", "round6"), seeds=(1, 2, 3), noninf={"E1": -2.0},
+                     name=lambda arm, s: {"ext": f"yq_oftgbx_ext_s{s}_fin",
+                                          "round6": f"yq_oftgb_llm_harness_s{s}"}.get(arm, f"yq_oftg_{arm}_s{s}"),
+                     claims=[("E1", "onebig12", "ext", 0.0), ("E2", "onebig", "ext", 3.0), ("E3", "round6", "ext", None)]),
+    "goal_ext_interim": dict(suite="goal", arms=("ext", "onebig12", "onebig", "round6"), seeds=(1, 2, 3),
+                             noninf={"E1": -2.0},
+                             name=lambda arm, s: {"ext": f"yq_oftgbx_ext_s{s}_i14",
+                                                  "round6": f"yq_oftgb_llm_harness_s{s}"}.get(arm, f"yq_oftg_{arm}_s{s}"),
+                             claims=[("E1", "onebig12", "ext", 0.0), ("E2", "onebig", "ext", 3.0),
+                                     ("E3", "round6", "ext", None)]),
     # addendum 33 (block added before any of its runs existed; the blocks above are unchanged)
     "spatial_guard": dict(suite="spatial", arms=("guard", "onebig", "fixed"), seeds=(1, 2, 3),
                           name=lambda arm, s: f"yq_ofts_{arm}_s{s}", noninf={"GS3": -2.0},
