@@ -56,14 +56,14 @@ The official S3 value recomputed here (+0.28) equals the registered self-repair 
 Counting the tuning:
 - Started from a recipe that fails, the meta level ends level with one-shot RL on the hand-tuned recipe on the official test (+0.05).
 - On unseen scenes it ends 2.2 points ahead.
-- It gets there in 52-85 GPU-hours a run (mean 69), against about 230 for the tuned RL result (≥ 213 of pilots plus a 14-17 hour run). This line was corrected on 2026-11-12; it used to say "about 2 run-equivalents".
+- It gets there in 59-206 GPU-hours a run (mean 118 on Yangquan), against about 230 for the tuned RL result (≥ 213 of pilots plus a 14-17 hour run). This line was corrected twice (see the two corrections below); it first said "about 2 run-equivalents", then "52-85".
 - Plain RL on the failing recipe does not get there: plain training of it ends 15 points below its start (NG3).
 
 ## Correction (2026-11-12 ~23:50Z): the meta level's cost is measured, and it is about four runs, not two
 
 The first version of this note, and the paper built on it, said the meta level used "twice one run's training". That counted update steps (2 candidates × 18 steps). It is not the cost: the language model's edits raise the scenes, samples and update steps per inner step (for example 64 → 128-200 scenes, 8 → 12-16 samples, 100 → 200-400 updates), so each step is dearer.
 
-Measured GPU-hours per run (`report.json` seconds summed over resumed sessions; one card each; `gpu_hours_measured` in the JSON):
+Wall-clock hours per run (`report.json` seconds summed over resumed sessions; `wall_clock_hours` in the JSON). This is GPU-hours only for runs that held one card; the meta-level row is not (second correction below):
 
 | run | seed 0 (A800) | seed 1 | seed 2 | seed 3 | Yangquan mean |
 |---|---|---|---|---|---|
@@ -74,9 +74,28 @@ Measured GPU-hours per run (`report.json` seconds summed over resumed sessions; 
 
 What follows:
 - The meta level costs about four one-shot RL runs, not two.
-- Counting the pilots, tuned RL costs about 230 GPU-hours (≥ 213 + 16.5). The meta level costs 52-85, about 30% of that. "A fraction of its compute" stands; "twice one run's training" does not.
-- **Not counting the pilots, the meta level is the less efficient of the two.** Tuned one-shot RL run for 36 steps costs 26 GPU-hours and ends at 66.3% on the fresh scenes (seeds 1-3, read under addendum 32). The meta level costs 66 and ends at 63.5% on the same seeds (the 18-step RL run: 61.3%; means of three seeds, not a paired read). The comparisons in this note are against the 18-step run, the one-shot baseline of the main studies.
+- Counting the pilots, tuned RL costs about 230 GPU-hours (≥ 213 + 16.5). The meta level costs 52-85, about 30% of that. **Superseded by the second correction below: 52-85 is wall-clock; the cost is 59-206 card-hours, about half.** "A fraction of its compute" stands; "twice one run's training" does not.
+- **Not counting the pilots, the meta level is the less efficient of the two.** Tuned one-shot RL run for 36 steps costs 26 GPU-hours and ends at 66.3% on the fresh scenes (seeds 1-3, read under addendum 32). The meta level costs 118 (card-hours, second correction) and ends at 63.5% on the same seeds (the 18-step RL run: 61.3%; means of three seeds, not a paired read). The comparisons in this note are against the 18-step run, the one-shot baseline of the main studies.
 - No test statistic in this note changes; the reader's comparisons are identical before and after.
+
+## Second correction (2026-11-13 ~00:30Z): the table above is wall-clock; the meta runs held three cards when resumed
+
+The "GPU-hours" of the first correction are `report.json` seconds, which are wall-clock. That equals GPU-hours for the one-shot RL, gated-loop and numeric-search runs, which held one card throughout. It does not for the meta-level runs: each was resumed on three cards (one session of seed 2 briefly on six), with rollouts on all of them.
+
+Card-hours of the meta-level runs (requested cards × job time, summed over sessions; `results/yq_selfrepair_job_sessions_20261113.json`, `meta_level_card_hours` in the JSON):
+
+| seed | sessions (cards × hours) | card-hours |
+|---|---|---|
+| 1 | 1 × 51.2, 3 × 0.6, 3 × 12.2 | 89.6 |
+| 2 | 1 × 54.5, 3 × 14.4, 6 × 0.4, 3 × 35.3 | 206.0 |
+| 3 | 1 × 51.3, 3 × 0.5, 3 × 2.0 | 58.8 |
+| 0 (A800) | rollouts on up to six cards; the backend's GPU-seconds of the last session alone are 103.6 h | ≥ 104 |
+
+What follows:
+- The meta level costs 59-206 GPU-hours a run on Yangquan, mean 118: about seven one-shot RL runs, and about half of tuned RL's 230 with its pilots counted. On seed 2 the two costs are close (206 against 230).
+- "52-85 GPU-hours" and "about 30%" in the first correction, in the paper and in the README were too low. All are corrected.
+- Job time includes queue wait and set-up, so these card-hours are an upper bound for Yangquan; the first sessions' job time (51-55 h) is within two hours of their recorded phase seconds.
+- No test statistic changes.
 
 ## Caveats
 

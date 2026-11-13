@@ -300,10 +300,10 @@
  },
  "training_work_per_run": {
   "one_shot_rl": "1 candidate x 18 inner steps",
-  "meta_level": "2 candidates x 6 rounds x 3 inner steps = 2x the step count (GPU-hours: see gpu_hours_measured)",
+  "meta_level": "2 candidates x 6 rounds x 3 inner steps = 2x the step count (cost: see meta_level_card_hours)",
   "gated_loop": "1 candidate x 6 rounds x 3 inner steps = 1x"
  },
- "gpu_hours_measured": {
+ "wall_clock_hours": {
   "meta_level": {
    "s1": 61.6,
    "s2": 85.3,
@@ -331,6 +331,16 @@
   "one_shot_rl_mean_yangquan": 16.5,
   "gated_loop_tuned_mean_yangquan": 17.1,
   "one_shot_rl_36_steps_mean_yangquan": 26.2
+ },
+ "meta_level_card_hours": {
+  "yangquan_cards_x_job_time": {
+   "s1": 89.6,
+   "s2": 206.0,
+   "s3": 58.8
+  },
+  "yangquan_mean": 118.1,
+  "a800_s0_gpu_seconds_last_session": 103.6,
+  "note": "Yangquan: requested cards x (job finished - created) summed over sessions; A800 seed 0: the backend's own GPU-seconds of its last session (rollouts on up to six cards), a lower bound for the run"
  },
  "pilots": {
   "runs": 21,

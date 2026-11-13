@@ -1,0 +1,104 @@
+{
+ "note": "AIHC job sessions (DescribeJob createdAt/finishedAt and requested cards) of the LIBERO-Goal self-repair meta runs on Yangquan; card-hours = cards x (finished - created), which includes queue wait and set-up",
+ "sessions": [
+  {
+   "run": "yq_oftgb_llm_harness_s1",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s1",
+   "job_id": "job-uqoggukbhzmr",
+   "cards": 1,
+   "created": "2026-11-04T16:18:13Z",
+   "finished": "2026-11-06T19:27:28Z",
+   "status": "ManualTermination"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s2",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s2",
+   "job_id": "job-ov65gen3qlvu",
+   "cards": 1,
+   "created": "2026-11-04T16:18:15Z",
+   "finished": "2026-11-06T22:48:23Z",
+   "status": "Failed"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s3",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s3",
+   "job_id": "job-ivcd0a5r1fzp",
+   "cards": 1,
+   "created": "2026-11-04T16:18:16Z",
+   "finished": "2026-11-06T19:35:17Z",
+   "status": "ManualTermination"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s1",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s1-resume11061927",
+   "job_id": "job-guln6ybdm2yp",
+   "cards": 3,
+   "created": "2026-11-06T19:27:33Z",
+   "finished": "2026-11-06T20:04:33Z",
+   "status": "ManualTermination"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s3",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s3-resume11061935",
+   "job_id": "job-dfz5alow1xaf",
+   "cards": 3,
+   "created": "2026-11-06T19:35:22Z",
+   "finished": "2026-11-06T20:03:05Z",
+   "status": "Failed"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s3",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s3-resume11062003",
+   "job_id": "job-mfioj5dty4c6",
+   "cards": 3,
+   "created": "2026-11-06T20:03:36Z",
+   "finished": "2026-11-06T20:04:53Z",
+   "status": "ManualTermination"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s1",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s1-resume11062008",
+   "job_id": "job-ws2moqr8twkc",
+   "cards": 3,
+   "created": "2026-11-06T20:08:24Z",
+   "finished": "2026-11-07T08:20:27Z",
+   "status": "Succeeded"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s3",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s3-resume11062008",
+   "job_id": "job-fatymmgiuz4d",
+   "cards": 3,
+   "created": "2026-11-06T20:08:26Z",
+   "finished": "2026-11-06T22:08:49Z",
+   "status": "Succeeded"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s2",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s2-resume11062251",
+   "job_id": "job-v3p6ngvem924",
+   "cards": 3,
+   "created": "2026-11-06T22:51:08Z",
+   "finished": "2026-11-07T13:16:57Z",
+   "status": "ManualTermination"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s2",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s2-resume11071316",
+   "job_id": "job-2nwy6hjds1wj",
+   "cards": 6,
+   "created": "2026-11-07T13:17:01Z",
+   "finished": "2026-11-07T13:39:26Z",
+   "status": "ManualTermination"
+  },
+  {
+   "run": "yq_oftgb_llm_harness_s2",
+   "job": "zw-rsi-yq-oftgb-llm-harness-s2-resume11071339",
+   "job_id": "job-y5zz0zgbmago",
+   "cards": 3,
+   "created": "2026-11-07T13:39:48Z",
+   "finished": "2026-11-09T00:59:34Z",
+   "status": "Succeeded"
+  }
+ ]
+}

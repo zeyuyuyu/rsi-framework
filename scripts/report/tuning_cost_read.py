@@ -72,11 +72,13 @@ def main():
     res["finals_official"] = {f"s{s}": dict(meta=G.pct(meta[s]["bits"]), rl=G.pct(rl[s]["bits"]), tuned_loop=G.pct(tuned[s]["bits"]))
                               for s in (0, 1, 2, 3)}
     res["training_work_per_run"] = dict(one_shot_rl="1 candidate x 18 inner steps",
-                                        meta_level="2 candidates x 6 rounds x 3 inner steps = 2x the step count (GPU-hours: see gpu_hours_measured)",
+                                        meta_level="2 candidates x 6 rounds x 3 inner steps = 2x the step count (cost: see meta_level_card_hours)",
                                         gated_loop="1 candidate x 6 rounds x 3 inner steps = 1x")
     # correction 2026-11-12 ~23:50Z: step counts are not cost. The meta level's edits raise scenes, samples and update
     # steps per inner step, so its runs are measured here. report.json "seconds" accumulates over resumed sessions
-    # ("elapsed" is the last session only); every run below used one card.
+    # ("elapsed" is the last session only). It is WALL-CLOCK: the one-shot RL, gated-loop and numeric-search runs
+    # held one card throughout, but the meta-level runs were resumed on three cards (second correction, 2026-11-13
+    # ~00:30Z), so their cost is card_hours_held below, not this number.
     def gpu_hours(d):
         rep = Path(d) / "report.json"
         return round(sum(json.load(open(rep))["seconds"].values()) / 3600, 1) if rep.exists() else None
@@ -86,9 +88,25 @@ def main():
         one_shot_rl={**{f"s{s}": gpu_hours(yq("yq_oftg_onebig", s)) for s in (1, 2, 3)}, "s0": gpu_hours(a8("a8_goalmain_onebig_s0"))},
         gated_loop_tuned={**{f"s{s}": gpu_hours(yq("yq_oftg_fixed", s)) for s in (1, 2, 3)}, "s0": gpu_hours(a8("a8_goalmain_fixed_s0"))},
         one_shot_rl_36_steps={f"s{s}": gpu_hours(yq("yq_oftg_onebig12", s)) for s in (1, 2, 3)})
-    for k, v in list(res["gpu_hours_measured"].items()):
+    res["wall_clock_hours"] = res.pop("gpu_hours_measured")
+    sess_file = root / "yq_selfrepair_job_sessions_20261113.json"
+    if sess_file.exists():
+        import datetime
+        ts = lambda t: datetime.datetime.strptime(t, "%Y-%m-%dT%H:%M:%SZ")
+        held = {}
+        for j in json.load(open(sess_file))["sessions"]:
+            hours = (ts(j["finished"]) - ts(j["created"])).total_seconds() / 3600
+            held[j["run"][-2:]] = held.get(j["run"][-2:], 0.0) + j["cards"] * hours
+        acct = json.load(open(a8("a8_oftgb_llm_harness_s0") / "backend-accounting.json"))["gpu_seconds"]
+        res["meta_level_card_hours"] = dict(
+            yangquan_cards_x_job_time={k: round(v, 1) for k, v in sorted(held.items())},
+            yangquan_mean=round(sum(held.values()) / len(held), 1),
+            a800_s0_gpu_seconds_last_session=round(sum(acct.values()) / 3600, 1),
+            note="Yangquan: requested cards x (job finished - created) summed over sessions; A800 seed 0: the backend's "
+                 "own GPU-seconds of its last session (rollouts on up to six cards), a lower bound for the run")
+    for k, v in list(res["wall_clock_hours"].items()):
         yqv = [v[f"s{s}"] for s in (1, 2, 3) if v.get(f"s{s}") is not None]
-        res["gpu_hours_measured"][k + "_mean_yangquan"] = round(sum(yqv) / len(yqv), 1) if yqv else None
+        res["wall_clock_hours"][k + "_mean_yangquan"] = round(sum(yqv) / len(yqv), 1) if yqv else None
     pilots = []
     for pat in PILOTS:
         for d in sorted(glob.glob(str(root / pat))):
