@@ -1,0 +1,99 @@
+# Prereg v3, addendum 35: the self-repaired loop continued under tuned RL's total budget, against tuned RL's best run
+
+Committed 2026-11-13 (~00:40Z; commit time in git) before any run named here exists.
+
+## Why
+
+The paper compares the framework with RL only with RL's tuning counted (author's decision, 2026-11-12): the tuned recipe cost 21 pilot runs, at least 213.4 GPU-hours, and a comparison that leaves them out charges RL nothing for them.
+
+What that comparison shows so far (`docs/results/TUNING_COST_20261112.md`, descriptive):
+- Started from the failing BC recipe, the LLM meta level (`yq_oftgb_llm_harness_s{1,2,3}`, six rounds) ends level with tuned one-shot RL of 18 steps on the official test and +2.2 [+0.5, +3.9] ahead on the fresh scenes, at about half of RL's counted cost.
+- Tuned RL run for 36 steps (`yq_oftg_onebig12_s{1,2,3}`, counted cost about 239 GPU-hours) ends higher than the self-repaired loop: 66.3% against 63.5% on the fresh scenes.
+
+The self-repaired loop stopped at six rounds with half of RL's counted budget unspent. This addendum lets it go on until that budget is spent and asks whether it then ends above tuned RL's best run.
+
+## What is already known (disclosed)
+
+Every comparison arm has been read. Fresh-scene finals, seeds 1-3:
+
+| arm | seed 1 | seed 2 | seed 3 | mean |
+|---|---|---|---|---|
+| self-repaired loop at round 6 (`yq_oftgb_llm_harness`) | 64.2 | 64.5 | 61.9 | 63.5 |
+| tuned one-shot RL, 18 steps (`yq_oftg_onebig`) | 60.0 | 62.2 | 61.8 | 61.3 |
+| tuned one-shot RL, 36 steps (`yq_oftg_onebig12`) | 66.8 | 65.5 | 66.6 | 66.3 |
+| tuned loop, guard-rail gate, 12 rounds (`yq_oftg_guard12`) | 66.9 | 64.9 | 63.9 | 65.2 |
+
+Also known, and the reason for this design:
+- At equal training compute the loop and RL tie in every registered read. Success follows the number of training steps: the gate success of the 12-round tuned loops rises about 0.6 points a round and is still rising at round 12. No run of ours goes beyond 36 steps.
+- So the new runs are expected to gain from training longer, and E2 below is expected to pass. The open questions are whether the gain continues past 36 steps and whether it is enough to pass tuned RL's 36-step run within RL's counted budget.
+
+## Budget
+
+Costs are reserved card-hours: requested cards × job time (created to finished), summed over a run's jobs. Evaluation-only jobs are left out on both sides.
+
+| seed | tuned RL, 36 steps: pilots + run | self-repaired loop so far | left for the continuation |
+|---|---|---|---|
+| 1 | 213.4 + 28.1 = 241.5 | 89.6 | 151.9 |
+| 2 | 213.4 + 25.4 = 238.8 | 206.0 | 32.8 |
+| 3 | 213.4 + 25.8 = 239.2 | 58.8 | 180.4 |
+
+(`results/yq_selfrepair_job_sessions_20261113.json`; the RL runs held one card.)
+
+## Runs
+
+`yq_oftgbx_ext_s{1,2,3}`: each continues `yq_oftgb_llm_harness_s<seed>` from the end of its round 6 (`run_libero --extend-from`, source `rsi_src_v33` = `rsi/` at commit 63608cd, tarball sha256 `5980f6f51669127d…`).
+
+- **What continues**: the run's retained version and its retained program (the recipe its own meta level repaired), its archive, its duplicate filter and its seed. Practice and gate placements of rounds 7 and later are the ones a longer run draws; none was used before.
+- **What changes**: one candidate a round instead of two, so the meta level is never called again and the repaired recipe stays fixed; the guard-rail gate of addendum 32 (`min_gate_gain -0.05`, `gate_floor 0.05`); `test_all_accepted false`.
+- **Cards and stop**: a run stops at its planned last round, or when its job reaches the time below, whichever is first. The times keep each run inside the budget above.
+
+| run | cards | planned last round | job time limit | reserved card-hours at the limit |
+|---|---|---|---|---|
+| `yq_oftgbx_ext_s1` | 3 | 22 | 50.0 h | 150 |
+| `yq_oftgbx_ext_s2` | 1 | 9 | 31.9 h | 32 |
+| `yq_oftgbx_ext_s3` | 3 | 24 | 53.0 h (the job limit; before the cut-off) | 159 |
+
+- A run cut by its time limit is read at the version it retained after its last completed round.
+- A job that fails for an infrastructure reason is resubmitted with `RESUME_RUN`; its card-hours count.
+- Cut-off: 2026-11-15 10:00Z. Anything still running then is stopped and read as above.
+
+## Evaluations
+
+For each run and each read, two jobs score the retained version: `--test-eval <run> --node <node> --replicates 3` (official test, three evaluations) and `--fresh-eval <run> --node <node>` (1,000 sealed fresh scenes), with `--interim` when the run has not ended.
+
+- **Interim read**: the version each run retains after its last round completed by 2026-11-14 10:00Z. Run names `<run>_i14_rep`, `<run>_i14_fresh`.
+- **Final read**: the version each run retains when it stops. Run names `<run>_fin_rep`, `<run>_fin_fresh`. If a run's interim and final versions are the same node, its interim evaluations are reused.
+
+Each read happens once, when its six evaluations exist. A read whose evaluations do not all exist by 2026-11-15 14:00Z is reported as not read.
+
+## Claims
+
+Fresh scenes are primary; the official test is reported beside them. Seeds 1-3, paired within Yangquan, seed-averaged per-episode paired bootstrap (10,000 draws). The final read is primary; the interim read is reported as interim.
+
+| claim | comparison | reading |
+|---|---|---|
+| E1 | continued loop − tuned one-shot RL, 36 steps | "beats" if the CI is above 0; non-inferior if its lower bound is above −2 |
+| E2 | continued loop − tuned one-shot RL, 18 steps | bar ≥ +3, CI above 0 |
+| E3 | continued loop − the same runs at round 6 | CI reported: what continuing added |
+| cost | each run's reserved card-hours (round-6 cost + continuation jobs) against its seed's counted RL cost | reported per seed; E1 is "within RL's budget" only for seeds at or under it |
+
+What each E1 outcome will be said to mean:
+- CI above 0, all seeds within budget: counting its tuning, the loop ends above tuned RL's best run at no more total compute.
+- Non-inferior: the loop matches tuned RL's best run, at the measured fraction of its counted cost.
+- Lower bound at or under −2: tuned RL's 36-step run stays ahead, and the paper says so.
+
+The win, if there is one, is of a particular kind and will be described as such: the loop spends on training what RL spent on pilots, so it trains for more steps within the same total. At equal training steps the two tie (addenda 18, 28, 30, 32, 33).
+
+## Predictions
+
+- Final E1, fresh scenes: +1 to +6, most likely about +3; CI above 0 with probability about 0.7. Official: −1 to +3.
+- Interim E1, fresh scenes: −1 to +4; CI above 0 with probability about 0.45.
+- E2 final, fresh: +5 to +10. E3 final, fresh: +3 to +8.
+- Seed 2 gains least (three more rounds); seed 3 (a repaired BC recipe) gains less a round than seed 1.
+- Chance that a run needs a resubmission because the extension path is new on the real backend: about 0.3.
+
+## Readers
+
+`fresh_read.py goal_ext` and `scripts/report/goal_ext_read.py` are committed before any evaluation of these runs exists.
+
+## Operational notes
