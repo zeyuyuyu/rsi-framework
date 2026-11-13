@@ -135,8 +135,10 @@ class Engine:
                 raise ValueError("gate_split_required")
         self.fresh_gates = {r: list(cs) for r, cs in fresh_gates.items()} if fresh_gates else None
         if config.inner_steps > 1 and not ((config.rounds <= 9 and config.inner_steps <= 99) or
-                                           (config.rounds <= 12 and config.inner_steps <= 16 and 0 <= config.seed <= 3)):
-            raise ValueError("inner_steps_need_rounds<=9_and_steps<=99_or_rounds<=12_steps<=16_seed<=3")  # inner_seed's range
+                                           (config.rounds <= 12 and config.inner_steps <= 16 and 0 <= config.seed <= 3) or
+                                           # addendum 35: rounds 13-24 have inner-seed values for steps 1-6
+                                           (config.rounds <= 24 and config.inner_steps <= 7 and 0 <= config.seed <= 3)):
+            raise ValueError("inner_steps_need_rounds<=9_and_steps<=99_or_rounds<=12_steps<=16_or_rounds<=24_steps<=7_seed<=3")  # inner_seed's range
         self.domain, self.backend, self.initial = domain, backend, initial
         self.seed_program = Program.make(domain.validate_program(seed_program))
         self.gate, self.audit, self.tests = list(gate), list(audit), dict(tests)

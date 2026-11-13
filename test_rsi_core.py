@@ -1123,6 +1123,23 @@ class ProgramTests(unittest.TestCase):
         for bad in ((1, 25, 1), (4, 10, 1), (4, 13, 1), (1, 10, 16), (1, 13, 7), (1, 10, 0 - 1)):
             with self.assertRaises(ValueError):
                 inner_seed(*bad)
+        # the engine's own range check follows inner_seed (the first addendum-35 launch failed on the old <=12 limit)
+        tmp = Path(tempfile.mkdtemp())
+
+        def build(name, **cfg):
+            toy = ToyDomain()
+            return Engine(toy, ToyBackend(), Version("init", "/b"), toy.default_program(), gate=heldout("gate", 20),
+                          audit=heldout("audit", 20), tests={"t": (toy, heldout("test", 40))}, out=tmp / name,
+                          config=EngineConfig(**cfg), proposer=FixedProgram())
+
+        for ok in (dict(rounds=24, inner_steps=3, seed=3), dict(rounds=24, inner_steps=7, seed=0), dict(rounds=12, inner_steps=16)):
+            build(f"range-ok-{ok['rounds']}-{ok['inner_steps']}", **ok)
+            for r in range(1, ok["rounds"] + 1):
+                for it in range(ok["inner_steps"]):
+                    inner_seed(ok.get("seed", 0), r, it)                           # every seed the run will ask for exists
+        for bad in (dict(rounds=25, inner_steps=3), dict(rounds=24, inner_steps=8), dict(rounds=13, inner_steps=3, seed=4)):
+            with self.assertRaises(ValueError):
+                build("range-bad", **bad)
         # rounds 13-24 (addendum 35): new values only, distinct from every earlier one, placements in range, and the
         # practice placements of two (round, step) pairs never overlap
         placements = {}
