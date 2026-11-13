@@ -87,6 +87,10 @@ def inner_seed(run_seed: int, round_index: int, step: int) -> int:
         return run_seed * 1000 + 100 * round_index + step
     if 0 <= run_seed <= 3 and 10 <= round_index <= 12 and 0 < step < 16:
         return INNER_SEED_EXT_BASE + 48 * run_seed + 16 * (round_index - 10) + step
+    # Rounds 13-24 (addendum 35, extended runs), steps 1-6: the values run_seed * 1000 + 25..96, which nothing else
+    # uses (step-0 seeds of rounds <= 24 end at +24; the <= 9-round values start at +101; rounds 10-12 sit above 4000).
+    if 0 <= run_seed <= 3 and 13 <= round_index <= 24 and 0 < step <= 6:
+        return run_seed * 1000 + 25 + 6 * (round_index - 13) + (step - 1)
     raise ValueError(f"inner_seed_out_of_range:seed={run_seed},round={round_index},step={step}")
 
 

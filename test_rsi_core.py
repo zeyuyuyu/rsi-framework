@@ -1120,9 +1120,30 @@ class ProgramTests(unittest.TestCase):
         self.assertEqual(inner_seed(3, 12, 15), 4191)                            # top of the block
         with self.assertRaises(ValueError):
             d.propose(None, None, prog, 1, 1001 * 100 + 1)                       # the old seed-1 value
-        for bad in ((1, 13, 1), (4, 10, 1), (1, 10, 16), (1, 10, 0 - 1)):
+        for bad in ((1, 25, 1), (4, 10, 1), (4, 13, 1), (1, 10, 16), (1, 13, 7), (1, 10, 0 - 1)):
             with self.assertRaises(ValueError):
                 inner_seed(*bad)
+        # rounds 13-24 (addendum 35): new values only, distinct from every earlier one, placements in range, and the
+        # practice placements of two (round, step) pairs never overlap
+        placements = {}
+        for run_seed in range(4):
+            for r in range(1, 25):
+                for it in range(3):
+                    s = inner_seed(run_seed, r, it)
+                    if r >= 13:
+                        self.assertNotIn(s, seen)
+                        seen[s] = (run_seed, r, it)
+                        if it:
+                            self.assertTrue(run_seed * 1000 + 25 <= s <= run_seed * 1000 + 96)
+                    for case in d.propose(None, None, prog, r, s):
+                        seed = case.inputs["init"]["seed"]
+                        self.assertLess(seed, 2 ** 32)
+                        self.assertNotIn(seed, placements)
+                        placements[seed] = (run_seed, r, it)
+        gates = {c.inputs["init"]["seed"] for cases in d.fresh_gates(24, 20).values() for c in cases}
+        self.assertEqual(len(gates), 24 * 10 * 20)
+        self.assertFalse(gates & set(placements))                                # gate sets of rounds 1-24 stay unseen
+        self.assertFalse({c.inputs["init"]["seed"] for c in d.fresh_test(100)} & (gates | set(placements)))
 
     def test_libero_fresh_gate_seeds_are_disjoint_and_in_range(self):
         from rsi.core.engine import inner_seed
