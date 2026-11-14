@@ -1,0 +1,193 @@
+{
+ "mode": {
+  "read": "interim",
+  "nodes": {
+   "1": "r09c0",
+   "2": "r08c0",
+   "3": "r07c0"
+  }
+ },
+ "E1": {
+  "claim": "E1 continued loop - tuned one-shot RL, 36 steps (official test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": -0.98,
+  "ci95_points": [
+   -3.02,
+   1.07
+  ],
+  "per_seed": {
+   "1": {
+    "control": 58.6,
+    "arm": 61.93,
+    "diff": 3.33,
+    "ci95": [
+     0.07,
+     6.6
+    ],
+    "mcnemar_p": 0.053,
+    "arm_only": 53,
+    "control_only": 34
+   },
+   "2": {
+    "control": 60.87,
+    "arm": 62.47,
+    "diff": 1.6,
+    "ci95": [
+     -1.8,
+     4.93
+    ],
+    "mcnemar_p": 0.3481,
+    "arm_only": 51,
+    "control_only": 41
+   },
+   "3": {
+    "control": 63.27,
+    "arm": 55.4,
+    "diff": -7.87,
+    "ci95": [
+     -11.67,
+     -4.07
+    ],
+    "mcnemar_p": 0.0002,
+    "arm_only": 41,
+    "control_only": 83
+   }
+  },
+  "superior": false,
+  "non_inferior_margin": -2.0,
+  "non_inferior": false
+ },
+ "E2": {
+  "claim": "E2 continued loop - tuned one-shot RL, 18 steps (official test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 0.82,
+  "ci95_points": [
+   -1.29,
+   2.93
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 58.8,
+    "arm": 61.93,
+    "diff": 3.13,
+    "ci95": [
+     -0.47,
+     6.6
+    ],
+    "mcnemar_p": 0.0662,
+    "arm_only": 52,
+    "control_only": 34
+   },
+   "2": {
+    "control": 59.0,
+    "arm": 62.47,
+    "diff": 3.47,
+    "ci95": [
+     0.13,
+     6.87
+    ],
+    "mcnemar_p": 0.047,
+    "arm_only": 56,
+    "control_only": 36
+   },
+   "3": {
+    "control": 59.53,
+    "arm": 55.4,
+    "diff": -4.13,
+    "ci95": [
+     -8.0,
+     -0.33
+    ],
+    "mcnemar_p": 0.0709,
+    "arm_only": 51,
+    "control_only": 72
+   }
+  }
+ },
+ "E3": {
+  "claim": "E3 continued loop - the same run at round 6 (official test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 0.16,
+  "ci95_points": [
+   -1.78,
+   2.13
+  ],
+  "per_seed": {
+   "1": {
+    "control": 60.13,
+    "arm": 61.93,
+    "diff": 1.8,
+    "ci95": [
+     -1.4,
+     4.93
+    ],
+    "mcnemar_p": 0.4944,
+    "arm_only": 42,
+    "control_only": 35
+   },
+   "2": {
+    "control": 61.27,
+    "arm": 62.47,
+    "diff": 1.2,
+    "ci95": [
+     -2.0,
+     4.4
+    ],
+    "mcnemar_p": 0.2664,
+    "arm_only": 46,
+    "control_only": 35
+   },
+   "3": {
+    "control": 57.93,
+    "arm": 55.4,
+    "diff": -2.53,
+    "ci95": [
+     -6.07,
+     1.0
+    ],
+    "mcnemar_p": 0.1078,
+    "arm_only": 47,
+    "control_only": 65
+   }
+  }
+ },
+ "finals": {
+  "1": {
+   "ext": 61.93,
+   "onebig12": 58.6,
+   "onebig": 58.8,
+   "round6": 60.13
+  },
+  "2": {
+   "ext": 62.47,
+   "onebig12": 60.87,
+   "onebig": 59.0,
+   "round6": 61.27
+  },
+  "3": {
+   "ext": 55.4,
+   "onebig12": 63.27,
+   "onebig": 59.53,
+   "round6": 57.93
+  }
+ }
+}

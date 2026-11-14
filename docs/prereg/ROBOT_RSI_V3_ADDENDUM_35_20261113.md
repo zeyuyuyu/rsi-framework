@@ -121,3 +121,7 @@ The win, if there is one, is of a particular kind and will be described as such:
   - seed 2 (`yq_oftgbx_ext_s2`, job-939pnipsdu7k, stopped at its time limit 08:18Z): `r08c0` (round 9 not complete).
   - seed 3 (`yq_oftgbx_ext_s3`, job-jr8hv88w0cl4): `r07c0` (round 8 refused, round 9 not complete).
   - Submitted next, one card each, source `rsi_src_v34` (signed URL valid to 11-20, checked by a range request), checkpoint `Haozhan72/Openvla-oft-SFT-libero-goal-traj1`: `<run>_i14_rep` = `--test-eval <run dir> --node <node> --replicates 3 --interim`, `<run>_i14_fresh` = `--fresh-eval <run dir> --node <node> --interim`; seed 1's run names are `yq_oftgbx_ext_s1_i14_*` with run dir `yq_oftgbx_ext_s1b`.
+- 2026-11-14 11:3xZ, interim read (reported as interim; the final read is primary). All six evaluations succeeded (job ids in `scripts/baidu/jobs_yq.tsv`); outputs `results/fresh_goal_ext_interim_20261114.json`, `results/goal_ext_read_interim_20261114.txt`.
+  - Fresh scenes: E1 (ext − RL 36 blocks) −2.37 [−4.00, −0.73], per seed +1.2, +1.2, −9.5; E2 (ext − RL 18 blocks) +2.60 [+0.83, +4.40] (bar +3 not met); E3 (ext − round 6) +0.40 [−1.27, +2.03].
+  - Official test: E1 −0.98 [−3.02, +1.07] (+3.33, +1.60, −7.87); E2 +0.82 [−1.29, +2.93]; E3 +0.16 [−1.78, +2.13].
+  - Seed 3's interim version `r07c0` scores 57.1 on the fresh scenes against 61.9 for its round-6 version: under the guard-rail gate the BC chain accepted a version that is worse on both tests.
