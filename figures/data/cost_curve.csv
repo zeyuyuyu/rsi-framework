@@ -1,0 +1,60 @@
+series,seed,x_gpu_hours,success_pct,version
+RSI self-repairing loop,0,0.0,59.92,n0
+RSI self-repairing loop,0,9.8,60.0,r01c1
+RSI self-repairing loop,0,27.1,60.9,r02c1
+RSI self-repairing loop,0,43.2,63.4,r03c1
+RSI self-repairing loop,0,58.8,62.9,r04c0
+RSI self-repairing loop,0,77.4,64.3,r05c1
+RSI self-repairing loop,0,103.6,67.0,r06c0
+RSI self-repairing loop,1,0.0,60.02,n0
+RSI self-repairing loop,1,9.3,59.9,r01c1
+RSI self-repairing loop,1,23.5,59.0,r02c1
+RSI self-repairing loop,1,43.8,60.5,r03c0
+RSI self-repairing loop,1,58.1,62.8,r04c0
+RSI self-repairing loop,1,74.3,64.2,r05c1
+RSI self-repairing loop,1,89.6,64.2,r05c1
+RSI self-repairing loop,2,0.0,60.02,n0
+RSI self-repairing loop,2,19.7,59.8,r01c1
+RSI self-repairing loop,2,48.1,61.9,r02c1
+RSI self-repairing loop,2,88.5,64.0,r03c1
+RSI self-repairing loop,2,123.4,63.8,r04c1
+RSI self-repairing loop,2,160.1,64.9,r05c0
+RSI self-repairing loop,2,206.0,64.5,r06c0
+RSI self-repairing loop,3,0.0,60.02,n0
+RSI self-repairing loop,3,7.8,59.3,r01c0
+RSI self-repairing loop,3,14.3,59.3,r01c0
+RSI self-repairing loop,3,20.0,59.3,r03c0
+RSI self-repairing loop,3,28.7,62.2,r04c1
+RSI self-repairing loop,3,40.4,62.3,r05c0
+RSI self-repairing loop,3,58.8,61.9,r06c1
+"tuned RL, 18 blocks",0,213.4,59.92,n0
+"tuned RL, 18 blocks",0,218.2,60.9,r01c0-i5
+"tuned RL, 18 blocks",0,222.9,63.3,r01c0-i11
+"tuned RL, 18 blocks",0,227.7,64.9,retained
+"tuned RL, 18 blocks",1,213.4,60.02,n0
+"tuned RL, 18 blocks",1,229.1,62.0,r01c0 (ungated)
+"tuned RL, 18 blocks",2,213.4,60.02,n0
+"tuned RL, 18 blocks",2,230.3,62.2,retained
+"tuned RL, 18 blocks",3,213.4,60.02,n0
+"tuned RL, 18 blocks",3,230.2,61.8,retained
+"tuned RL, 36 blocks",1,213.4,60.02,n0
+"tuned RL, 36 blocks",1,218.0,60.5,r01c0-i5
+"tuned RL, 36 blocks",1,222.7,60.4,r01c0-i11
+"tuned RL, 36 blocks",1,227.3,61.8,r01c0-i17
+"tuned RL, 36 blocks",1,231.9,63.4,r01c0-i23
+"tuned RL, 36 blocks",1,236.6,64.2,r01c0-i29
+"tuned RL, 36 blocks",1,241.2,66.8,retained
+"tuned RL, 36 blocks",2,213.4,60.02,n0
+"tuned RL, 36 blocks",2,217.6,61.1,r01c0-i5
+"tuned RL, 36 blocks",2,221.8,62.7,r01c0-i11
+"tuned RL, 36 blocks",2,226.0,64.3,r01c0-i17
+"tuned RL, 36 blocks",2,230.2,64.1,r01c0-i23
+"tuned RL, 36 blocks",2,234.4,65.8,r01c0-i29
+"tuned RL, 36 blocks",2,238.6,65.5,retained
+"tuned RL, 36 blocks",3,213.4,60.02,n0
+"tuned RL, 36 blocks",3,217.7,60.8,r01c0-i5
+"tuned RL, 36 blocks",3,221.9,62.1,r01c0-i11
+"tuned RL, 36 blocks",3,226.2,61.8,r01c0-i17
+"tuned RL, 36 blocks",3,230.5,62.0,r01c0-i23
+"tuned RL, 36 blocks",3,234.7,65.0,r01c0-i29
+"tuned RL, 36 blocks",3,239.0,66.6,retained

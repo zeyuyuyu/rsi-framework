@@ -118,3 +118,11 @@ cost += [["RSI self-repair, LIBERO-Goal (A800, lower bound)", "s0", tc["meta_lev
 cost += [["RSI meta level, LIBERO-Spatial (wall-clock, two cards)", s, h, "x2 cards"] for s, h in ts["wall_clock_hours"]["meta_level"].items()]
 cost += [["one-shot RL, LIBERO-Spatial (own training)", s, h, "one card"] for s, h in ts["wall_clock_hours"]["one_shot_rl"].items()]
 write("finding6_costs_gpu_hours.csv", ["item", "seed", "gpu_hours", "note"], cost)
+
+# Finding 6 cost curve (addendum 36): one fresh evaluation per point, cost with RL's 213.4 pilot GPU-hours counted
+cc = R("cost_curve_read_20261114.json")
+if os.path.exists(cc):
+    part = json.load(open(cc))["partA"]
+    names = {"loop": "RSI self-repairing loop", "rl36": "tuned RL, 36 blocks", "rl18": "tuned RL, 18 blocks"}
+    rows = [[names[k.rsplit("_s", 1)[0]], k.rsplit("_s", 1)[1], x, y, v] for k, pts in sorted(part.items()) for x, y, v in pts]
+    write("cost_curve.csv", ["series", "seed", "x_gpu_hours", "success_pct", "version"], rows)
