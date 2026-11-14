@@ -1,0 +1,261 @@
+{
+ "mode": {
+  "mode": "final",
+  "part": "B",
+  "pooled_n0_yq": {
+   "n": 24,
+   "mean": 60.31
+  },
+  "pooled_n0_a800": {
+   "n": 15,
+   "mean": 59.32
+  }
+ },
+ "N2": {
+  "claim": "N2 gate + meta level v3 - plain training (official test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 10.0,
+  "mean_points": 11.49,
+  "ci95_points": [
+   9.11,
+   13.93
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 44.2,
+    "arm": 61.4,
+    "diff": 17.2,
+    "ci95": [
+     13.27,
+     21.2
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 108,
+    "control_only": 22
+   },
+   "2": {
+    "control": 45.93,
+    "arm": 54.2,
+    "diff": 8.27,
+    "ci95": [
+     4.8,
+     11.8
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 71,
+    "control_only": 27
+   },
+   "3": {
+    "control": 45.6,
+    "arm": 54.6,
+    "diff": 9.0,
+    "ci95": [
+     5.53,
+     12.53
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 70,
+    "control_only": 28
+   }
+  }
+ },
+ "N2_4seed": {
+  "claim": "N2 gate + meta level v3 - plain training, seeds 0-3 within platform (official test; alongside, amendment 1)",
+  "seeds": [
+   "A0",
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 500,
+  "bar_points": 10.0,
+  "mean_points": 23.77,
+  "ci95_points": [
+   21.4,
+   26.17
+  ],
+  "passes": true,
+  "per_seed": {
+   "A0": {
+    "control": 1.2,
+    "arm": 61.8,
+    "diff": 60.6,
+    "ci95": [
+     56.27,
+     64.73
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 308,
+    "control_only": 2
+   },
+   "1": {
+    "control": 44.2,
+    "arm": 61.4,
+    "diff": 17.2,
+    "ci95": [
+     13.27,
+     21.2
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 108,
+    "control_only": 22
+   },
+   "2": {
+    "control": 45.93,
+    "arm": 54.2,
+    "diff": 8.27,
+    "ci95": [
+     4.8,
+     11.8
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 71,
+    "control_only": 27
+   },
+   "3": {
+    "control": 45.6,
+    "arm": 54.6,
+    "diff": 9.0,
+    "ci95": [
+     5.53,
+     12.53
+    ],
+    "mcnemar_p": 0.0,
+    "arm_only": 70,
+    "control_only": 28
+   }
+  }
+ },
+ "N2_fresh": {
+  "claim": "N2 gate + meta level v3 - plain training (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 10.0,
+  "mean_points": 11.6,
+  "ci95_points": [
+   9.93,
+   13.33
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 50.9,
+    "arm": 66.9,
+    "diff": 16.0
+   },
+   "2": {
+    "control": 53.2,
+    "arm": 63.7,
+    "diff": 10.5
+   },
+   "3": {
+    "control": 53.1,
+    "arm": 61.4,
+    "diff": 8.3
+   }
+  }
+ },
+ "N2_fresh_4seed": {
+  "claim": "N2 gate + meta level v3 - plain training, seeds 0-3 within platform (fresh sealed test; alongside)",
+  "seeds": [
+   "A0",
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 10.0,
+  "mean_points": 25.5,
+  "ci95_points": [
+   23.93,
+   27.1
+  ],
+  "passes": true,
+  "per_seed": {
+   "A0": {
+    "control": 1.8,
+    "arm": 69.0,
+    "diff": 67.2
+   },
+   "1": {
+    "control": 50.9,
+    "arm": 66.9,
+    "diff": 16.0
+   },
+   "2": {
+    "control": 53.2,
+    "arm": 63.7,
+    "diff": 10.5
+   },
+   "3": {
+    "control": 53.1,
+    "arm": 61.4,
+    "diff": 8.3
+   }
+  }
+ },
+ "runs": {
+  "meta3_s1": {
+   "retained": "r06c1",
+   "gate": 0.695,
+   "test": 61.4,
+   "n0": 59.2,
+   "evals": 3
+  },
+  "meta3_s2": {
+   "retained": "r05c1",
+   "gate": 0.68,
+   "test": 54.2,
+   "n0": 59.2,
+   "evals": 3
+  },
+  "meta3_s3": {
+   "retained": "r06c0",
+   "gate": 0.66,
+   "test": 54.6,
+   "n0": 58.4,
+   "evals": 3
+  },
+  "nogate_s1": {
+   "retained": "r06c0",
+   "gate": 0.49,
+   "test": 44.2,
+   "n0": 59.2,
+   "evals": 3
+  },
+  "nogate_s2": {
+   "retained": "r06c0",
+   "gate": 0.49,
+   "test": 45.93,
+   "n0": 59.4,
+   "evals": 3
+  },
+  "nogate_s3": {
+   "retained": "r06c0",
+   "gate": 0.495,
+   "test": 45.6,
+   "n0": 59.4,
+   "evals": 3
+  },
+  "meta3_s0 (A800)": {
+   "retained": "r06c0",
+   "test": 61.8,
+   "evals": 3
+  },
+  "nogate_s0 (A800)": {
+   "retained": "r06c0",
+   "test": 1.2,
+   "evals": 3
+  }
+ }
+}
