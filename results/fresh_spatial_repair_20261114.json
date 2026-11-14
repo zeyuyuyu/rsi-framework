@@ -1,0 +1,185 @@
+{
+ "block": "spatial_repair",
+ "reference": {
+  "yq": {
+   "evaluations": 4,
+   "success": 59.55
+  },
+  "a800": {
+   "evaluations": 4,
+   "success": 59.15
+  }
+ },
+ "FS1": {
+  "claim": "FS1 meta3 - fixed (fresh sealed test)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 3.0,
+  "mean_points": 3.6,
+  "ci95_points": [
+   2.5,
+   4.72
+  ],
+  "passes": true,
+  "per_seed": {
+   "0": {
+    "control": 64.3,
+    "arm": 69.0,
+    "diff": 4.7
+   },
+   "1": {
+    "control": 58.9,
+    "arm": 66.9,
+    "diff": 8.0
+   },
+   "2": {
+    "control": 63.9,
+    "arm": 63.7,
+    "diff": -0.2
+   },
+   "3": {
+    "control": 59.5,
+    "arm": 61.4,
+    "diff": 1.9
+   }
+  },
+  "complete": true
+ },
+ "FS2": {
+  "claim": "FS2 meta3 - full (fresh sealed test)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": -2.0,
+  "ci95_points": [
+   -4.5,
+   0.6
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 71.0,
+    "arm": 69.0,
+    "diff": -2.0
+   }
+  },
+  "complete": false
+ },
+ "meta3_vs_n0": {
+  "claim": "meta3_vs_n0 meta3 - n0 (fresh sealed test)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 5.8,
+  "ci95_points": [
+   4.34,
+   7.31
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 59.15,
+    "arm": 69.0,
+    "diff": 9.85
+   },
+   "1": {
+    "control": 59.55,
+    "arm": 66.9,
+    "diff": 7.35
+   },
+   "2": {
+    "control": 59.55,
+    "arm": 63.7,
+    "diff": 4.15
+   },
+   "3": {
+    "control": 59.55,
+    "arm": 61.4,
+    "diff": 1.85
+   }
+  },
+  "complete": true
+ },
+ "fixedBC_vs_n0": {
+  "claim": "fixedBC_vs_n0 fixed - n0 (fresh sealed test)",
+  "seeds": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 2.2,
+  "ci95_points": [
+   0.87,
+   3.56
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 59.15,
+    "arm": 64.3,
+    "diff": 5.15
+   },
+   "1": {
+    "control": 59.55,
+    "arm": 58.9,
+    "diff": -0.65
+   },
+   "2": {
+    "control": 59.55,
+    "arm": 63.9,
+    "diff": 4.35
+   },
+   "3": {
+    "control": 59.55,
+    "arm": 59.5,
+    "diff": -0.05
+   }
+  },
+  "complete": true
+ },
+ "noise_reference_halves": {
+  "yq": {
+   "diff": -0.4,
+   "ci95": [
+    -1.05,
+    0.25
+   ]
+  },
+  "a800": {
+   "diff": 0.4,
+   "ci95": [
+    -0.25,
+    1.1
+   ]
+  }
+ },
+ "runs": {
+  "a8_spatrep_fixed_s0": 64.3,
+  "yq_oftsb_fixed_s1": 58.9,
+  "yq_oftsb_fixed_s2": 63.9,
+  "yq_oftsb_fixed_s3": 59.5,
+  "a8_spatrep_full_s0": 71.0,
+  "yq_oftsb_full_s1": null,
+  "yq_oftsb_full_s2": null,
+  "yq_oftsb_full_s3": null,
+  "a8_spatrep_meta3_s0": 69.0,
+  "yq_oftsb_meta3_s1": 66.9,
+  "yq_oftsb_meta3_s2": 63.7,
+  "yq_oftsb_meta3_s3": 61.4
+ }
+}
