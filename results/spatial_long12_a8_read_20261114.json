@@ -1,0 +1,177 @@
+{
+ "note": "addendum 34, descriptive, one seed (A800 node); official test",
+ "pooled_n0_a800": {
+  "n": 16,
+  "mean": 59.34
+ },
+ "FL5_A0": {
+  "claim": "FL5_A0 fixed12 - onebig12 (official test, seed 0)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 0.13,
+  "ci95_points": [
+   -2.53,
+   2.87
+  ],
+  "per_seed": {
+   "0": {
+    "control": 62.87,
+    "arm": 63.0,
+    "diff": 0.13,
+    "ci95": [
+     -2.53,
+     2.87
+    ],
+    "mcnemar_p": 0.8974,
+    "arm_only": 29,
+    "control_only": 31
+   }
+  }
+ },
+ "G3s": {
+  "claim": "G3s guard12 - onebig12 (official test, seed 0)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": -0.6,
+  "ci95_points": [
+   -3.4,
+   2.2
+  ],
+  "per_seed": {
+   "0": {
+    "control": 62.87,
+    "arm": 62.27,
+    "diff": -0.6,
+    "ci95": [
+     -3.4,
+     2.2
+    ],
+    "mcnemar_p": 0.5258,
+    "arm_only": 28,
+    "control_only": 34
+   }
+  }
+ },
+ "G2s": {
+  "claim": "G2s guard12 - fixed12 (official test, seed 0)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": -0.73,
+  "ci95_points": [
+   -3.33,
+   1.8
+  ],
+  "per_seed": {
+   "0": {
+    "control": 63.0,
+    "arm": 62.27,
+    "diff": -0.73,
+    "ci95": [
+     -3.33,
+     1.8
+    ],
+    "mcnemar_p": 0.6889,
+    "arm_only": 26,
+    "control_only": 30
+   }
+  }
+ },
+ "G1s": {
+  "claim": "G1s guard12 - pooled initial reference (official test, seed 0)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 2.93,
+  "ci95_points": [
+   0.17,
+   5.76
+  ],
+  "per_seed": {
+   "0": {
+    "control": 59.34,
+    "arm": 62.27,
+    "diff": 2.93,
+    "ci95": [
+     0.17,
+     5.76
+    ],
+    "mcnemar_p": 0.1686,
+    "arm_only": 38,
+    "control_only": 26
+   }
+  }
+ },
+ "runs": {
+  "a8_spatmain_fixed12_s0": {
+   "retained": "r12c0",
+   "test": 63.0,
+   "rounds": 12,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    3,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "a8_spatmain_nonrec12_s0": {
+   "retained": "r06c0",
+   "test": 57.27,
+   "rounds": 12,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    3,
+    4,
+    6
+   ]
+  },
+  "a8_spatmain_onebig12_s0": {
+   "retained": "r01c0",
+   "test": 62.87,
+   "rounds": 1,
+   "evals": 3,
+   "accepted_rounds": [
+    1
+   ]
+  },
+  "a8_spatmain_guard12_s0": {
+   "retained": "r12c0",
+   "test": 62.27,
+   "rounds": 12,
+   "evals": 3,
+   "accepted_rounds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ]
+  }
+ }
+}

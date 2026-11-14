@@ -1,0 +1,144 @@
+{
+ "block": "spatial_guard12",
+ "reference": {
+  "yq": {
+   "evaluations": 4,
+   "success": 59.55
+  },
+  "a800": {
+   "evaluations": 4,
+   "success": 59.15
+  }
+ },
+ "G1s": {
+  "claim": "G1s guard12 - n0 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 5.0,
+  "mean_points": 8.55,
+  "ci95_points": [
+   6.87,
+   10.23
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 59.55,
+    "arm": 69.9,
+    "diff": 10.35
+   },
+   "2": {
+    "control": 59.55,
+    "arm": 68.7,
+    "diff": 9.15
+   },
+   "3": {
+    "control": 59.55,
+    "arm": 65.7,
+    "diff": 6.15
+   }
+  },
+  "complete": true
+ },
+ "G2s": {
+  "claim": "G2s guard12 - fixed12 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": 1.17,
+  "ci95_points": [
+   -0.07,
+   2.4
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 66.5,
+    "arm": 69.9,
+    "diff": 3.4
+   },
+   "2": {
+    "control": 69.1,
+    "arm": 68.7,
+    "diff": -0.4
+   },
+   "3": {
+    "control": 65.2,
+    "arm": 65.7,
+    "diff": 0.5
+   }
+  },
+  "complete": true
+ },
+ "G3s": {
+  "claim": "G3s guard12 - onebig12 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 0.0,
+  "mean_points": -2.33,
+  "ci95_points": [
+   -3.7,
+   -0.97
+  ],
+  "per_seed": {
+   "1": {
+    "control": 69.4,
+    "arm": 69.9,
+    "diff": 0.5
+   },
+   "2": {
+    "control": 70.7,
+    "arm": 68.7,
+    "diff": -2.0
+   },
+   "3": {
+    "control": 71.2,
+    "arm": 65.7,
+    "diff": -5.5
+   }
+  },
+  "complete": true,
+  "superior": false,
+  "non_inferior_margin": -2.0,
+  "non_inferior": false
+ },
+ "noise_reference_halves": {
+  "yq": {
+   "diff": -0.4,
+   "ci95": [
+    -1.05,
+    0.25
+   ]
+  },
+  "a800": {
+   "diff": 0.4,
+   "ci95": [
+    -0.25,
+    1.1
+   ]
+  }
+ },
+ "runs": {
+  "yq_ofts_fixed12_s1": 66.5,
+  "yq_ofts_fixed12_s2": 69.1,
+  "yq_ofts_fixed12_s3": 65.2,
+  "yq_ofts_guard12_s1": 69.9,
+  "yq_ofts_guard12_s2": 68.7,
+  "yq_ofts_guard12_s3": 65.7,
+  "yq_ofts_onebig12_s1": 69.4,
+  "yq_ofts_onebig12_s2": 70.7,
+  "yq_ofts_onebig12_s3": 71.2
+ }
+}

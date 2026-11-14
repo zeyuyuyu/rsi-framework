@@ -1,0 +1,112 @@
+{
+ "block": "spatial_long12_a8",
+ "reference": {
+  "a800": {
+   "evaluations": 4,
+   "success": 59.15
+  }
+ },
+ "FL5_A0": {
+  "claim": "FL5_A0 fixed12 - onebig12 (fresh sealed test)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 0.3,
+  "ci95_points": [
+   -1.9,
+   2.5
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 71.4,
+    "arm": 71.7,
+    "diff": 0.3
+   }
+  },
+  "complete": true
+ },
+ "G3s": {
+  "claim": "G3s guard12 - onebig12 (fresh sealed test)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": -0.6,
+  "ci95_points": [
+   -2.9,
+   1.6
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 71.4,
+    "arm": 70.8,
+    "diff": -0.6
+   }
+  },
+  "complete": true
+ },
+ "G2s": {
+  "claim": "G2s guard12 - fixed12 (fresh sealed test)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": -0.9,
+  "ci95_points": [
+   -3.0,
+   1.2
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 71.7,
+    "arm": 70.8,
+    "diff": -0.9
+   }
+  },
+  "complete": true
+ },
+ "G1s": {
+  "claim": "G1s guard12 - n0 (fresh sealed test)",
+  "seeds": [
+   0
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 11.65,
+  "ci95_points": [
+   9.3,
+   13.95
+  ],
+  "passes": null,
+  "per_seed": {
+   "0": {
+    "control": 59.15,
+    "arm": 70.8,
+    "diff": 11.65
+   }
+  },
+  "complete": true
+ },
+ "noise_reference_halves": {
+  "a800": {
+   "diff": 0.4,
+   "ci95": [
+    -0.25,
+    1.1
+   ]
+  }
+ },
+ "runs": {
+  "a8_spatmain_fixed12_s0": 71.7,
+  "a8_spatmain_guard12_s0": 70.8,
+  "a8_spatmain_nonrec12_s0": 60.6,
+  "a8_spatmain_onebig12_s0": 71.4
+ }
+}
