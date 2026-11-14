@@ -463,7 +463,46 @@ def fig_framework():
     save(fig, "fig_framework.pdf")
 
 
-FIGS = [fig_teaser, fig_claims, fig_runs, fig_gates, fig_selfrepair, fig_code, fig_inflation, fig_framework]
+
+# ---------------------------------------------------------------- cost curve (Finding 6, addendum 36)
+def fig_cost():
+    """Success on 1,000 unseen LIBERO-Goal scenes against cumulative GPU-hours with RL's recipe pilots counted
+    (Yangquan seeds 1-3; one fresh evaluation per point; results/cost_curve_read_20261114.json, addendum 36)."""
+    d = json.load(open(os.path.join(ROOT, "results/cost_curve_read_20261114.json")))["partA"]
+    seeds = (1, 2, 3)
+    fig, ax = plt.subplots(figsize=(3.3, 1.95))
+    ygrid(ax)
+    pilots = 213.4
+    ax.axvspan(0, pilots, ymin=0, ymax=0.06, color=GRID, lw=0)
+    ax.text(pilots / 2, 58.35, "RL recipe pilots: 213 GPU-hours", ha="center", va="bottom", fontsize=6, color=INK2)
+    start = sum(d[f"loop_s{s}"][0][1] for s in seeds) / 3
+    ax.axhline(start, **REF)
+    ax.text(160, start - 0.2, "start", ha="center", va="top", fontsize=6, color=MUTED)
+    loop_c, rl_c = C["llm_harness"], C["onebig"]
+    for key, col, mk in (("loop", loop_c, "o"), ("rl36", rl_c, "s")):
+        curves = [d[f"{key}_s{s}"] for s in seeds]
+        for c in curves:
+            ax.plot([p_[0] for p_ in c], [p_[1] for p_ in c], "-", color=col, lw=0.7, alpha=0.45, zorder=2)
+        n = min(len(c) for c in curves)
+        mx = [sum(c[i][0] for c in curves) / 3 for i in range(n)]
+        my = [sum(c[i][1] for c in curves) / 3 for i in range(n)]
+        ax.plot(mx, my, "-" + mk, color=col, lw=1.8, ms=3.4, zorder=4, **RING)
+        if key == "loop":
+            ax.text(mx[-1] + 4, my[-1], "RSI, self-repairing loop", ha="left", va="center", fontsize=6.3, color=INK, fontweight="bold")
+        else:
+            ax.text(mx[-1] - 2, my[-1] + 0.35, "tuned RL", ha="right", va="bottom", fontsize=6.3, color=INK, fontweight="bold")
+    rl18 = [d[f"rl18_s{s}"][-1] for s in seeds]
+    reg = [d["rl18_s1"][0][1]] + [d[f"rl18_s{s}"][-1][1] for s in (2, 3)]   # registered: seed 1's gate kept the start
+    x18 = sum(p_[0] for p_ in rl18) / 3
+    ax.plot([x18], [sum(reg) / 3], "s", ms=4.2, mfc="white", mec=rl_c, mew=1.1, zorder=5)
+    ax.annotate("18 blocks", (x18, sum(reg) / 3), xytext=(-5, -1), textcoords="offset points", ha="right", va="top",
+                fontsize=5.8, color=INK2)
+    ax.set_xlim(-4, 262); ax.set_ylim(58.2, 67.6); ax.set_yticks(range(58, 68, 2))
+    ax.set_xlabel("GPU-hours, RL's tuning counted", labelpad=1)
+    ax.set_ylabel("Unseen-scene success (%)", labelpad=2)
+    save(fig, "fig_cost.pdf")
+
+FIGS = [fig_teaser, fig_claims, fig_runs, fig_gates, fig_selfrepair, fig_code, fig_inflation, fig_framework, fig_cost]
 
 if __name__ == "__main__":
     if "--check" in sys.argv:
