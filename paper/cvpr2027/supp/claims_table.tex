@@ -1,0 +1,18 @@
+\paragraph{Registered claims and bars.}
+\begin{center}\footnotesize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}llr@{}}
+\toprule
+claim & comparison & bar (points) \\
+\midrule
+R1 improvement & \texttt{fixed}, \texttt{full} $-$ reference & $\ge +5$, CI $>0$, 2/3 seeds $>0$ \\
+R2 verifier & \texttt{fixed} $-$ \texttt{shuffled} & $\ge +3$, CI $>0$ \\
+R3 recursion & \texttt{fixed} $-$ \texttt{nonrec} & $\ge +2$, CI $>0$ \\
+NG1, N1 gate & \texttt{fixed} $-$ \texttt{nogate} (self-training recipe) & $\ge +10$, CI $>0$ \\
+R4 meta level & each meta arm $-$ \texttt{fixed} & $\ge +2$, CI $>0$ \\
+M2-A meta v2 & \texttt{llm} $-$ identical-recipe replica & $\ge +3$, CI $>0$ \\
+S1 self-repair & \texttt{llm\_harness} $-$ \texttt{fixed} (failing start) & $\ge +3$, CI $>0$ \\
+\bottomrule
+\end{tabular}}
+\end{center}

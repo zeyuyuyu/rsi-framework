@@ -2,6 +2,4 @@
 \label{sec:discussion}
 \paragraph{What the evidence does not support.} The improvement over the start clears its bar only on Spatial's unseen scenes, not on the official test of either suite nor on Goal's unseen scenes, and the self-repair margin misses its bar ($+2.7$ against $+3$). The comparison with tuned RL is descriptive, against RL's 18-step run and with its pilots counted. We do not claim that the language model's diagnosis, rather than the knob space it edits, carries the repair (its margin over blind search is $+1.2$ $[-0.6, +2.9]$).
 
-\paragraph{For practitioners.} A fresh paired gate makes an unsafe recipe safe for one evaluation per candidate if its strictness matches its noise.
-
 \paragraph{Limitations.} One simulated benchmark family, one 7B policy and a few-demonstration start; other policies and real robots are untested. Preregistration constrains the analysis, not the design: a different recipe space might leave more for a meta level to find, and ``without tuning'' means without pilot runs, not without our choice of that space.
