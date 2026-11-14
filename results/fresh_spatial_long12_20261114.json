@@ -1,0 +1,142 @@
+{
+ "block": "spatial_long12",
+ "reference": {
+  "yq": {
+   "evaluations": 4,
+   "success": 59.55
+  },
+  "a800": {
+   "evaluations": 4,
+   "success": 59.15
+  }
+ },
+ "FL1": {
+  "claim": "FL1 fixed12 - n0 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 5.0,
+  "mean_points": 7.38,
+  "ci95_points": [
+   5.75,
+   9.06
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 59.55,
+    "arm": 66.5,
+    "diff": 6.95
+   },
+   "2": {
+    "control": 59.55,
+    "arm": 69.1,
+    "diff": 9.55
+   },
+   "3": {
+    "control": 59.55,
+    "arm": 65.2,
+    "diff": 5.65
+   }
+  },
+  "complete": true
+ },
+ "FL3": {
+  "claim": "FL3 fixed12 - nonrec12 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": 8.63,
+  "ci95_points": [
+   7.17,
+   10.1
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 57.8,
+    "arm": 66.5,
+    "diff": 8.7
+   },
+   "2": {
+    "control": 59.0,
+    "arm": 69.1,
+    "diff": 10.1
+   },
+   "3": {
+    "control": 58.1,
+    "arm": 65.2,
+    "diff": 7.1
+   }
+  },
+  "complete": true
+ },
+ "FL5": {
+  "claim": "FL5 fixed12 - onebig12 (fresh sealed test)",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": 2.0,
+  "mean_points": -3.5,
+  "ci95_points": [
+   -4.9,
+   -2.17
+  ],
+  "passes": false,
+  "per_seed": {
+   "1": {
+    "control": 69.4,
+    "arm": 66.5,
+    "diff": -2.9
+   },
+   "2": {
+    "control": 70.7,
+    "arm": 69.1,
+    "diff": -1.6
+   },
+   "3": {
+    "control": 71.2,
+    "arm": 65.2,
+    "diff": -6.0
+   }
+  },
+  "complete": true
+ },
+ "noise_reference_halves": {
+  "yq": {
+   "diff": -0.4,
+   "ci95": [
+    -1.05,
+    0.25
+   ]
+  },
+  "a800": {
+   "diff": 0.4,
+   "ci95": [
+    -0.25,
+    1.1
+   ]
+  }
+ },
+ "runs": {
+  "yq_ofts_fixed12_s1": 66.5,
+  "yq_ofts_fixed12_s2": 69.1,
+  "yq_ofts_fixed12_s3": 65.2,
+  "yq_ofts_nonrec12_s1": 57.8,
+  "yq_ofts_nonrec12_s2": 59.0,
+  "yq_ofts_nonrec12_s3": 58.1,
+  "yq_ofts_onebig12_s1": 69.4,
+  "yq_ofts_onebig12_s2": 70.7,
+  "yq_ofts_onebig12_s3": 71.2
+ }
+}
