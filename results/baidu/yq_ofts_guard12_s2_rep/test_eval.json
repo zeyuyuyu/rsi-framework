@@ -1,0 +1,13 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_guard12_s2",
+  "node": "r12c0",
+  "version": {
+    "id": "9b4fd7f2651f74af3a5f7a15775dfa4ec2b705769d966aca447a2e92316d496e",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_guard12_s2/ckpt-r12c0",
+    "parent_id": "1c1ce952ecf9f8b8b545336005bd1e1a35846b60a9c208a692a79dfae1cf24e7"
+  },
+  "test_success": [
+    0.626,
+    0.602
+  ]
+}
