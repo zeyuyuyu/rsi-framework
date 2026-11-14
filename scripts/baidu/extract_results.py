@@ -51,8 +51,11 @@ def main(logs, out):
         for begin in (i for i, ln in enumerate(lines) if "RSI_RESULT_BEGIN" in ln):
             end = next((i for i in range(begin, len(lines)) if "RSI_RESULT_END" in lines[i]), len(lines))
             complete = any(ln.startswith("----- FILE report.json") for ln in lines[begin:end])
-            blocks.append((complete, log, lines[begin:]))
-    for complete, log, block in sorted(blocks, key=lambda b: b[0]):
+            # an evaluation job carries no report.json; a failed attempt and its successful resubmission then tie
+            # on `complete`, so a block that exited 0 is also written after one that did not
+            ok = re.search(r"\brc=0\b", lines[begin]) is not None
+            blocks.append(((complete, ok), log, lines[begin:]))
+    for _, log, block in sorted(blocks, key=lambda b: b[0]):
         extract(log, block, out)
 
 
