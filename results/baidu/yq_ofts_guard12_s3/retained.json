@@ -1,0 +1,43 @@
+{
+  "node": "r12c0",
+  "program": {
+    "author": "seed",
+    "id": "2a8413c825eed0ba",
+    "note": "",
+    "params": {
+      "curation": {
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "mixed_groups"
+      },
+      "curriculum": {
+        "allocation": "uniform",
+        "cases": 64,
+        "floor": 0.05
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "lr": 3e-05,
+        "operator": "grpo",
+        "steps": 100
+      }
+    },
+    "parent_id": null
+  },
+  "version": {
+    "id": "77f957d638aafb181f230bab40488b905705d23d1e829b5b582a808365135eaa",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_ofts_guard12_s3/ckpt-r12c0",
+    "parent_id": "8a03511882db47bae3a8fa50587247e011a5c64d92f907722b011a5f34a8a5ab"
+  }
+}
