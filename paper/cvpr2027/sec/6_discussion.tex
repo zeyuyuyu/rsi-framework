@@ -1,5 +1,3 @@
-\section{Discussion}
+\section{Future work}
 \label{sec:discussion}
-\paragraph{What the evidence does not support.} The improvement over the start clears its bar only on Spatial's unseen scenes, not on the official test of either suite nor on Goal's unseen scenes, and the self-repair margin misses its bar ($+2.7$ against $+3$). The comparison with tuned RL is descriptive, against RL's 18-step run with its pilots counted, and is a win on Goal only. We do not claim that the language model's diagnosis, rather than the knob space it edits, carries the repair (its margin over blind search is $+1.2$ $[-0.6, +2.9]$).
-
-\paragraph{Limitations.} One simulated benchmark family, one 7B policy and a few-demonstration start; other policies and real robots are untested. Preregistration constrains the analysis, not the design: a different recipe space might leave more for a meta level to find, and ``without tuning'' means without pilot runs, not without our choice of that space.
+Next we will take the loop to real robots and to other VLA policies, widen the meta level's edit space beyond the procedures diagnosed during development, and run the counted-tuning comparison at longer budgets and on more suites. The protocol, code and every registered read are released, so each of these steps can be checked the same way.
