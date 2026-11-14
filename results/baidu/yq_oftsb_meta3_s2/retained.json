@@ -1,0 +1,59 @@
+{
+  "node": "r05c1",
+  "program": {
+    "author": "llm",
+    "id": "4efacdf5cf33df10",
+    "note": "{\"why\": \"A single change: raise the BC lr from 1e-5 to 3e-5. All lower-lr edits were indistinguishable from noise, and the gate-based keep rule protects against a collapse.\", \"diff\": {\"update.lr\": 3e-05}}",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 2,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "allocation": "weights",
+        "cases": 64,
+        "floor": 0.05,
+        "task_weights": [
+          2,
+          0,
+          0,
+          0,
+          2,
+          2,
+          0,
+          2,
+          2,
+          2
+        ]
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 3e-05,
+        "operator": "bc",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "12199fc61034767d"
+  },
+  "version": {
+    "id": "73ce7b61cfc107d89e1f8c45685e0e6e021f894b9d3c0c092e9ecef7880feca6",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftsb_meta3_s2/ckpt-r05c1",
+    "parent_id": "9b2740594489e537f316824f0912302067056a247103626eae7576e474544f33"
+  }
+}

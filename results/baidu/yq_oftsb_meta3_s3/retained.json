@@ -1,0 +1,59 @@
+{
+  "node": "r06c0",
+  "program": {
+    "author": "llm",
+    "id": "8ba98e5e70740230",
+    "note": "{\"why\": \"Raise per_case from 2 to 4 so BC sees about twice as many distinct successful tries per step, especially on the hard scenes of tasks 0 and 7, while changing only one field.\", \"diff\": {\"curation.per_case\": 4}}",
+    "params": {
+      "curation": {
+        "adv": "center",
+        "band": [
+          0.0,
+          1.0
+        ],
+        "budget": 400,
+        "per_case": 4,
+        "rule": "verified"
+      },
+      "curriculum": {
+        "allocation": "weights",
+        "cases": 64,
+        "floor": 0.05,
+        "task_weights": [
+          3.0,
+          1.5,
+          0.3,
+          0.3,
+          1.0,
+          1.5,
+          0.2,
+          3.0,
+          1.5,
+          0.5
+        ]
+      },
+      "solver": {
+        "greedy": 0,
+        "samples": 8,
+        "temperature": 1.6
+      },
+      "update": {
+        "batch": 64,
+        "bc_temp": "unit",
+        "clip_high": 0.28,
+        "clip_low": 0.2,
+        "loss_agg": "episode",
+        "lr": 1e-05,
+        "operator": "bc",
+        "ratio": "matched",
+        "steps": 100
+      }
+    },
+    "parent_id": "9ee5e4cf4ad4a3be"
+  },
+  "version": {
+    "id": "338abc831ef39a4902410c36840ca07c828e6658b0dd3c3f498c3e86bb8151fe",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftsb_meta3_s3/ckpt-r06c0",
+    "parent_id": "1b6b80389f216b8d94129965e337477de3439d02072d4ce8fe9519899cfc1d30"
+  }
+}
