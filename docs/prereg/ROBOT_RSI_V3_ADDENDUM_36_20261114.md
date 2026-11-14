@@ -46,5 +46,6 @@ The versions of the registered comparison: the loop's round-6 version (s0 r06c0,
 
 ## Operational notes
 
-- 2026-11-14 05:5xZ: the 35 Yangquan jobs were submitted (one card each, `rsi_src_v30`); job ids are in `scripts/baidu/jobs_yq.tsv`. The nine A800 evaluations were queued as entries 129-137 on `src13`.
+- 2026-11-14 05:5xZ: the 35 Yangquan jobs were submitted (one card each, `rsi_src_v30`); job ids are in `scripts/baidu/jobs_yq.tsv`.
+- Correction to "Code" above, before any result: the registered A800 Goal fresh evaluations (`a8_oftgb_llm_harness_s0_fresh`, `a8_goalmain_onebig_s0_fresh`, queue entries 115 and 97) ran on `src12`, not `src13`. The nine A800 evaluations therefore run on `src12` as well (entries 129-137, queued 05:38Z; 129-133 launched 05:39Z on GPUs 2, 4-7). Entries 134-137 were first written with the runs' training sources (`src5` for the RL run, which has no fresh evaluation), then set to `src12` while still pending; nothing ran on another source.
 - The reader `scripts/report/cost_curve_read.py` was committed after the submissions and before any of their results was fetched; `--check` lists the missing evaluations and prints no success number.
