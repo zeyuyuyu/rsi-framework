@@ -43,3 +43,8 @@ The versions of the registered comparison: the loop's round-6 version (s0 r06c0,
 
 - Part A: the loop's fresh success climbs from 60 to 61-64 over rounds 1-5. RL-36 is near 61 at block 18 and reaches the loop's round-6 level (63.5) between blocks 24 and 30, that is at about 225-235 GPU-hours with the tuning counted.
 - Part B: the three-evaluation estimate of loop − RL (18 blocks) on fresh scenes is +1 to +3, CI above zero with probability about 0.6.
+
+## Operational notes
+
+- 2026-11-14 05:5xZ: the 35 Yangquan jobs were submitted (one card each, `rsi_src_v30`); job ids are in `scripts/baidu/jobs_yq.tsv`. The nine A800 evaluations were queued as entries 129-137 on `src13`.
+- The reader `scripts/report/cost_curve_read.py` was committed after the submissions and before any of their results was fetched; `--check` lists the missing evaluations and prints no success number.
