@@ -25,6 +25,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import goal_read as G   # noqa: E402
 
 ARMS = ("fixed", "full", "meta3")
+# addendum 29 amendment (2026-11-14): stopped while queued on 11-10 and never resubmitted
+NEVER_RUN = {("full", 1), ("full", 2), ("full", 3)}
+TUNED_META3_NEVER_RUN = True
 
 
 def run_dir(root, arm, seed):
@@ -52,9 +55,9 @@ def main():
     G.MODE = "final"
     yq = tuple(s for s in seeds if s > 0)
 
-    runs = {(arm, s): G.record(run_dir(root, arm, s)) for arm in ARMS for s in seeds}
+    runs = {(arm, s): G.record(run_dir(root, arm, s)) for arm in ARMS for s in seeds if (arm, s) not in NEVER_RUN}
     tuned = {s: G.record(tuned_dir(root, s)) for s in sorted(set(seeds) | {1, 2, 3})}
-    tuned_meta = {s: G.record(Path(root) / "baidu" / f"yq_ofts_meta3_s{s}") for s in (1, 2, 3)}
+    tuned_meta = {} if TUNED_META3_NEVER_RUN else {s: G.record(Path(root) / "baidu" / f"yq_ofts_meta3_s{s}") for s in (1, 2, 3)}
     everything = list(runs.values()) + list(tuned.values()) + list(tuned_meta.values())
     digests = {r["digest"] for r in everything} | {r["n0_digest"] for r in everything}
     if len(digests) != 1:
@@ -74,15 +77,17 @@ def main():
     res = {"mode": dict(mode="final", pairing="within platform: seed 0 A800, seeds 1-3 Yangquan", seeds=list(seeds))}
     res["S1_all_seeds"] = G.paired(pairs("fixed", "meta3", seeds), 3.0, f"S1-spatial meta3 - fixed (seeds {seeds})")
     res["S1_yangquan"] = G.paired(pairs("fixed", "meta3", yq), 3.0, f"S1-spatial meta3 - fixed (Yangquan seeds {yq})")
-    res["S2_all_seeds"] = G.paired(pairs("full", "meta3", seeds), 0.0, f"S2-spatial meta3 - full (seeds {seeds}, no bar)")
-    res["S2_yangquan"] = G.paired(pairs("full", "meta3", yq), 0.0, f"S2-spatial meta3 - full (Yangquan seeds {yq}, no bar)")
-    res["full_minus_fixed"] = G.paired(pairs("fixed", "full", seeds), 0.0, f"secondary: full - fixed (seeds {seeds}, no bar)")
+    full_seeds = tuple(s for s in seeds if ("full", s) not in NEVER_RUN)
+    res["S2_available_seeds"] = G.paired(pairs("full", "meta3", full_seeds), 0.0,
+                                         f"S2-spatial meta3 - full (seeds {full_seeds}; Yangquan full runs never made, amendment 2026-11-14; no bar)")
+    res["full_minus_fixed"] = G.paired(pairs("fixed", "full", full_seeds), 0.0, f"secondary: full - fixed (seeds {full_seeds}, no bar)")
     res["S3_meta3_vs_tuned"] = G.paired([(s, tuned[s]["bits"], runs[("meta3", s)]["bits"]) for s in seeds], 0.0,
                                         "S3-spatial descriptive: meta3 (BC start) - hand-tuned GRPO fixed (no bar)")
     res["S3_fixed_vs_tuned"] = G.paired([(s, tuned[s]["bits"], runs[("fixed", s)]["bits"]) for s in seeds], 0.0,
                                         "S3-spatial descriptive: gate-only fixed (BC start) - hand-tuned GRPO fixed (no bar)")
-    res["R4_spatial"] = G.paired([(s, tuned[s]["bits"], tuned_meta[s]["bits"]) for s in (1, 2, 3)], 2.0,
-                                 "R4-spatial meta3 (tuned start) - fixed (tuned), Yangquan seeds 1-3")
+    res["R4_spatial"] = "not read: yq_ofts_meta3_s1-3 were never made (amendment 2026-11-14)" if TUNED_META3_NEVER_RUN else \
+        G.paired([(s, tuned[s]["bits"], tuned_meta[s]["bits"]) for s in (1, 2, 3)], 2.0,
+                 "R4-spatial meta3 (tuned start) - fixed (tuned), Yangquan seeds 1-3")
     res["noise_check_n0_halves"] = dict(
         yq=G.noise_check(dict({f"{a}_s{s}": r for (a, s), r in runs.items() if s > 0},
                               **{f"tuned_meta3_s{s}": r for s, r in tuned_meta.items()})),

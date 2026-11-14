@@ -195,3 +195,13 @@ No registered read, bar or run changes. Addendum 28's sixteen runs are read on t
 - 2026-11-11 05:52Z: since about 04:43Z a process from another project under the same account (`nsr/run_gen.sh 5,6`, a Qwen3-32B generation job) holds about 42-44 GB on A800 GPUs 5 and 6. `a8_spatrep_full_s0` (GPU 5) has been waiting in GPU admission since its round-4 rollout call (04:45Z). It resumes by itself when GPU 5 frees, and nothing has been killed. `a8_spatmain_fixed12_s0` (GPUs 0 and 6, addendum 30) falls back to GPU 0 alone after its 600 s admission wait, which changes only its speed. No design change.
 - 2026-11-11 ~07:45Z: the other project's job left GPUs 5-6. `a8_spatrep_full_s0` left GPU admission by itself and continued its round-4 rollout. It waited about 3 h; nothing was restarted.
 - Correction to the two notes above (2026-11-11 10:2xZ): the call that waited in admission (00010) belonged to round 1 of `a8_spatrep_full_s0`, not round 4. Round 1 finished at about 10:20Z (seed candidate kept, gate 0.60 against a re-scored parent of 0.595).
+
+## Amendment (2026-11-14 ~06:00Z, before the read): two run sets were never made
+
+- `yq_oftsb_full_s1-3` (job-2ip8kewtmsqc, job-mt68wtwe23ag, job-gr8sajq84v2y) and `yq_ofts_meta3_s1-3` were stopped while still queued on 2026-11-10 at 17:07Z, under addendum 30's queue order, to be "resubmitted later under the same names". They never were; the ledger has no later submission. Found today while checking readiness. They cannot finish before the paper deadline, so they are not submitted now.
+- The read is therefore made now, on what exists. Every run it uses ended before this amendment and none of their test numbers has been opened:
+  - **S1-spatial** (primary, `meta3 − fixed` ≥ +3.0, CI > 0): seeds 0-3 as registered, with the Yangquan three-seed statistic beside it. Unaffected.
+  - **S3-spatial** (descriptive): seeds 0-3 as registered. Unaffected.
+  - **S2-spatial** (`meta3 − full`, no bar): seed 0 only (`a8_spatrep_full_s0`); the Yangquan statistic is not computed.
+  - **R4-spatial**: not read; its runs do not exist.
+- The reader takes these exclusions from the constant `NEVER_RUN`, committed with this amendment.
