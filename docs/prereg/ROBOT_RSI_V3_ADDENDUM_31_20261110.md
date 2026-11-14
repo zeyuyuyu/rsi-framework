@@ -74,3 +74,8 @@ The single read is therefore split. Claims, bars, pairing and statistics are unc
 - **Part B (N2)**: read once, when `yq_oftsb_meta3_s1-3` have theirs. If they are not complete by 2026-11-15 12:00Z, N2 is reported as not read.
 - **Amendment 1's four-seed statistic**: reported alongside each part. Seed 0 is on the A800 node (`a8_spatrep_{nogate,fixed,meta3}_s0`, all complete), and every pair is formed within its platform. N1 and N2 stay registered on seeds 1-3.
 - **Readers**: `spatial_nogate_read.py --part A|B`. The change is committed before either part is read. At this commit the only output of the reader has been `--check`, which prints no test number.
+
+## Operational note (2026-11-14)
+
+- `yq_ofts_fixed12_s2` finished on its fourth submission (job-tvlypjmv56ku), which wrote to the run directory `yq_ofts_fixed12_s2-20261111T232447Z` because the plain name already existed. The conductor submitted its `_rep` and `_fresh` against the plain name on 11-13 15:36Z; both failed in under six minutes reading a `report.json` that is not there (job-rmpuwh4lnr4p, job-1gqg5wmyeipn). Nothing was evaluated.
+- 2026-11-14 05:25Z: both resubmitted by hand against the real directory, same source (v30) and checkpoint: `yq_ofts_fixed12_s2_fresh` job-orzet31zji4n and `yq_ofts_fixed12_s2_rep` job-20z213xryeb5 (the first `_rep` request timed out client-side; the job list showed no job had been created, so it was sent once more).
