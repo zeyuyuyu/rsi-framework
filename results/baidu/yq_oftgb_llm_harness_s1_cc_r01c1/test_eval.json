@@ -1,0 +1,14 @@
+{
+  "run": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s1",
+  "node": "r01c1",
+  "version": {
+    "id": "5681cbc9185880774d33ba45894c530447ae98f0289dd9f0b6b637753cfbc61e",
+    "location": "/mnt/pfs/shitianyu-rsi/runs/yq_oftgb_llm_harness_s1/ckpt-r01c1",
+    "parent_id": "1a6d2792fc67c44e7d263cfa6f4980be1a68c91cbad9b25cca3ba7542eb6eb9f"
+  },
+  "set": "libero_fresh_sealed",
+  "per_task": 100,
+  "fresh_success": [
+    0.599
+  ]
+}
