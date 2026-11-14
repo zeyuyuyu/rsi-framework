@@ -1,0 +1,21 @@
+item,seed,gpu_hours,note
+"RL recipe pilots (21 runs, LIBERO-Goal)",,213.4,charged to RL on both suites
+"one-shot RL, 18 blocks (own training)",s1,15.7,one card
+"one-shot RL, 18 blocks (own training)",s2,16.9,one card
+"one-shot RL, 18 blocks (own training)",s3,16.8,one card
+"one-shot RL, 18 blocks (own training)",s0,14.3,one card
+"one-shot RL, 36 blocks (own training)",s1,27.8,one card
+"one-shot RL, 36 blocks (own training)",s2,25.2,one card
+"one-shot RL, 36 blocks (own training)",s3,25.6,one card
+"RSI self-repair, LIBERO-Goal (reserved card-hours)",s1,89.6,"Yangquan, resumed on 3 cards"
+"RSI self-repair, LIBERO-Goal (reserved card-hours)",s2,206.0,"Yangquan, resumed on 3 cards"
+"RSI self-repair, LIBERO-Goal (reserved card-hours)",s3,58.8,"Yangquan, resumed on 3 cards"
+"RSI self-repair, LIBERO-Goal (A800, lower bound)",s0,103.6,backend GPU-hours
+"RSI meta level, LIBERO-Spatial (wall-clock, two cards)",s0,27.9,x2 cards
+"RSI meta level, LIBERO-Spatial (wall-clock, two cards)",s1,22.4,x2 cards
+"RSI meta level, LIBERO-Spatial (wall-clock, two cards)",s2,25.0,x2 cards
+"RSI meta level, LIBERO-Spatial (wall-clock, two cards)",s3,21.0,x2 cards
+"one-shot RL, LIBERO-Spatial (own training)",s0,15.2,one card
+"one-shot RL, LIBERO-Spatial (own training)",s1,14.7,one card
+"one-shot RL, LIBERO-Spatial (own training)",s2,14.8,one card
+"one-shot RL, LIBERO-Spatial (own training)",s3,14.8,one card

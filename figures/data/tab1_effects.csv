@@ -1,0 +1,6 @@
+comparison,bar,goal_official_mean,goal_official_ci_low,goal_official_ci_high,goal_fresh_mean,goal_fresh_ci_low,goal_fresh_ci_high,spatial_official_mean,spatial_official_ci_low,spatial_official_ci_high,spatial_fresh_mean,spatial_fresh_ci_low,spatial_fresh_ci_high,goal_official_bar_met,goal_fresh_bar_met,spatial_official_bar_met,spatial_fresh_bar_met
+loop - start,+5 / +3,+1.60,-0.88,+4.13,+3.54,+1.72,+5.42,-0.01,-2.15,+2.13,+5.65,+4.28,+7.04,False,False,False,True
+recursion: loop - nonrec,+2,+7.84,+5.22,+10.49,+7.30,+5.47,+9.20,+5.73,+4.12,+7.38,+4.55,+3.38,+5.73,True,True,True,True
+verifier: loop - shuffled,+3,,,,,,,+1.67,+0.18,+3.13,+6.05,+4.80,+7.32,False,False,False,True
+gate: loop - plain self-training-,+10,+13.60,+10.53,+16.76,+15.47,+13.20,+17.77,+13.00,+10.44,+15.60,+8.37,+6.67,+10.07,True,True,True,False
+gate - meta level - plain self-training-,+10,+15.98,+13.02,+18.91,+19.80,+17.50,+22.13,+11.49,+9.11,+13.93,+11.60,+9.93,+13.33,True,True,True,True

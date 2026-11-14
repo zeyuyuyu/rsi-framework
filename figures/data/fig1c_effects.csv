@@ -1,0 +1,5 @@
+effect,comparison,mean_points,ci_low,ci_high,source
+RSI loop,"vs its start (LIBERO-Spatial, 1,000 unseen scenes)",5.65,4.28,7.04,fresh_spatial_main_20261111.json F1
+verifier,"real vs shuffled labels (Spatial, unseen scenes)",6.05,4.8,7.32,fresh_spatial_main_20261111.json F2
+recursion,"vs practice from the frozen initial policy (Spatial, unseen scenes)",4.55,3.38,5.73,fresh_spatial_main_20261111.json F3
+meta level,"vs gate alone, failing recipe (LIBERO-Goal, official test)",2.65,0.73,4.58,selfrepair_read_20261109.json S1

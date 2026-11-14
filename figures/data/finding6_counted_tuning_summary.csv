@@ -1,0 +1,6 @@
+suite,test,rsi_minus_tuned_rl_points,ci_low,ci_high,source_key
+LIBERO-Goal,official (seeds 0-3),0.05,-1.62,1.7,M_vs_RL_official
+LIBERO-Goal,fresh (seeds 1-3),2.2,0.47,3.87,M_vs_RL_fresh
+LIBERO-Goal,fresh (seeds 0-3),2.17,0.75,3.6,M_vs_RL_fresh_4seed
+LIBERO-Spatial,official (seeds 0-3),-2.83,-4.53,-1.17,official_s0123
+LIBERO-Spatial,fresh (seeds 0-3),0.53,-0.68,1.75,fresh_s0123

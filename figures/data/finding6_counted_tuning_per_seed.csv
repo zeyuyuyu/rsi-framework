@@ -1,0 +1,17 @@
+suite,test,seed,rsi_loop_pct,tuned_rl_pct,difference_points
+LIBERO-Goal,official,0,60.87,62.67,-1.8
+LIBERO-Goal,official,1,60.13,58.8,1.33
+LIBERO-Goal,official,2,61.27,59.0,2.27
+LIBERO-Goal,official,3,57.93,59.53,-1.6
+LIBERO-Goal,fresh,0,67.0,64.9,2.1
+LIBERO-Goal,fresh,1,64.2,60.0,4.2
+LIBERO-Goal,fresh,2,64.5,62.2,2.3
+LIBERO-Goal,fresh,3,61.9,61.8,0.1
+LIBERO-Spatial,official,0,61.8,60.2,1.6
+LIBERO-Spatial,official,1,61.4,61.27,0.13
+LIBERO-Spatial,official,2,54.2,61.4,-7.2
+LIBERO-Spatial,official,3,54.6,60.47,-5.87
+LIBERO-Spatial,fresh,0,69.0,66.6,2.4
+LIBERO-Spatial,fresh,1,66.9,63.8,3.1
+LIBERO-Spatial,fresh,2,63.7,63.7,0.0
+LIBERO-Spatial,fresh,3,61.4,64.8,-3.4

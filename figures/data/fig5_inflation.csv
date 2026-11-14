@@ -1,0 +1,25 @@
+kind,policy_or_task,placement_set,success_pct
+cell,sft,official,14.6
+cell,sft,fresh,20.0
+cell,rl,official,87.4
+cell,rl,fresh,76.0
+rl_per_task,task 0,official,78
+rl_per_task,task 1,official,84
+rl_per_task,task 2,official,98
+rl_per_task,task 3,official,88
+rl_per_task,task 4,official,80
+rl_per_task,task 5,official,96
+rl_per_task,task 6,official,90
+rl_per_task,task 7,official,86
+rl_per_task,task 8,official,82
+rl_per_task,task 9,official,92
+rl_per_task,task 0,fresh,62
+rl_per_task,task 1,fresh,68
+rl_per_task,task 2,fresh,92
+rl_per_task,task 3,fresh,92
+rl_per_task,task 4,fresh,52
+rl_per_task,task 5,fresh,90
+rl_per_task,task 6,fresh,50
+rl_per_task,task 7,fresh,84
+rl_per_task,task 8,fresh,84
+rl_per_task,task 9,fresh,86
