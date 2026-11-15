@@ -7,7 +7,8 @@ cd "$(dirname "$0")/../.."
 L=/home/zeyu/rsi/yq_logs
 seed=$1; cards=$2; sfx=${3:-}
 case $seed in 1) run=yq_oftgbx_ext_s1b; left=98.9;; 3) run=yq_oftgbx_ext_s3; left=127.4;; *) echo "seed 1 or 3"; exit 1;; esac
-cut=$(date -u -d "2026-11-15 20:30" +%s); now=$(date -u +%s)
+left=${LEFT:-$left}   # amendment 1: card-hours still left for this seed when resubmitting
+cut=$(date -u -d "${CUT:-2026-11-15 20:30}" +%s); now=$(date -u +%s)   # amendment 1: seed 3 CUT="2026-11-16 18:00"
 t=$(python3 -c "print(int(min($left / $cards * 3600, $cut - $now) - 900))")
 [ "$t" -gt 1800 ] || { echo "too little time left: $t s"; exit 1; }
 export AIHC_HOST=aihc.yq.baidubce.com AIHC_POOL=aihc-serverless AIHC_QUEUE=aihcq-4yv1euenciip

@@ -37,6 +37,16 @@ Seed 2 is already at RL's budget; its read stays `r08c0`. This addendum spends t
 
 Every outcome is reported, including an M1 below zero.
 
+## Amendment 1 (registered 2026-11-15 09:05Z, before any evaluation of this addendum and before the 20:30Z cut-off)
+
+The official paper deadline is 2026-11-16 23:59 AoE (2026-11-17 11:59Z), later than the date the cut-off above was set for. At the PI's request, seed 3 now runs to its full budget, as early as possible:
+
+- **Seed 3 stop**: when its reserved card-hours reach its counted RL budget, 239.2 GPU-hours (36 blocks), not at 20:30Z. Hard cut-off 2026-11-16 18:00Z.
+- **Seed 3 cards**: cost is reserved card-hours, so more cards spend the budget sooner. The 4-card job (job-1lvwkiee0ivw) is stopped by its job id and the run resumed in place on 8 cards (`RUN_TIMEOUT_S` = card-hours left / 8, minus setup); the card rule above applies (15 minutes queued, then half). The 4-card job's time counts.
+- **Seed 1**: unchanged. It stops at its time limit near 20:20Z at about 237 of 241.5 GPU-hours (98%); the remaining few card-hours cannot complete a round (about 3 h on 8 cards).
+- **Interim read (descriptive)**: once seed 1's final evaluations are in, M1/M2 with seed 3's version retained at that time (its `_cc_` evaluation, one fresh evaluation), labelled interim. The **final read** is taken when seed 3 stops; the paper reports the final read.
+- Everything else as above.
+
 ## Ops notes
 
 - 08:31:35Z: `yq_oftgbx_mb_s1` submitted on 8 cards (job-uartqxlotifa, `RUN_TIMEOUT_S` 42205); Running within two minutes.
