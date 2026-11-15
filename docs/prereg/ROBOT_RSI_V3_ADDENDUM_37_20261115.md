@@ -35,3 +35,8 @@ Reader `scripts/report/addendum37_read.py`, committed before any of these result
 - Part A: three-evaluation E1 stays negative while seed 3 keeps `r07c0` (about −2, CI below 0); three-evaluation E2 stays positive (+2 to +3, CI above 0).
 - Part B: seed 1's kept versions after round 9 score 67-70 on fresh scenes.
 - Part C: one to three more rounds by the stop; seed 0's fresh score moves by −1 to +2 from 67.0.
+
+## Operational notes
+
+- 2026-11-15 ~04:50Z: part A and B jobs submitted on Yangquan (ids in `scripts/baidu/jobs_yq.tsv`).
+- Part C, before launch: when the four cards were checked, GPUs 2, 4 and 5 had been taken again by another project's jobs. Part C therefore runs on two cards, GPU 1 and GPU 3 (GPU 3 shared with an unrelated 4.5 GB process, as on 11-12); rollouts on both, training on GPU 1. Everything else as above; fewer rounds are expected by the stop.
