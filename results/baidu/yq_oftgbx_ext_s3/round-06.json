@@ -1,0 +1,3 @@
+{"round": 6, "parent": "r06c1", "accepted": true, "seconds": {"attempt": 128021, "audit_eval": 3346, "gate_eval": 10588, "meta": 102, "propose": 0, "train": 36725}}
+{"node": "r06c0", "gate": 0.59, "audit": null, "author": "llm", "program": "5e4f3c0c6de47130", "verified_rate": 0.584375, "mixed_fraction": 0.72}
+{"node": "r06c1", "gate": 0.645, "audit": null, "author": "llm", "program": "3ee74602db30b7e4", "verified_rate": 0.5834375, "mixed_fraction": 0.8}
