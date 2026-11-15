@@ -495,19 +495,29 @@ def fig_cost():
     ly = [mean([c[i][1] for c in loop]) for i in range(len(loop[0]))]
     fx = mean([ext["totals"][f"s{s}"] for s in seeds])
     fy = mean([ext[f"s{s}"][-1]["success_pct"] for s in seeds])
+    # seeds 1 and 2 individually (thin); the third seed's curve is in the supplementary table
+    for s, dy in (("1", 0.0), ("2", 0.0)):
+        pts = [(q[0], q[1]) for q in d[f"loop_s{s}"]] + [(q["x_gpu_hours"], q["success_pct"]) for q in ext[f"s{s}"]]
+        pts.append((ext["totals"][f"s{s}"], ext[f"s{s}"][-1]["success_pct"]))
+        ax.plot([q[0] for q in pts], [q[1] for q in pts], "-", color=rsi_c, lw=0.8, alpha=0.45, zorder=3)
+        ax.plot([pts[-1][0]], [pts[-1][1]], "o", color=rsi_c, ms=3, alpha=0.8, zorder=5, **RING)
+        if s == "1":
+            ax.text(pts[-1][0] + 4, pts[-1][1], f"seed 1: {pts[-1][1]:.1f}%", ha="left", va="center", fontsize=5.8, color=INK2)
+        else:
+            ax.text(pts[-1][0] - 3, pts[-1][1] + 0.55, f"seed 2: {pts[-1][1]:.1f}%", ha="right", va="bottom", fontsize=5.8, color=INK2)
     ax.plot(lx, ly, "-", color=rsi_c, lw=1.8, zorder=4)
     ax.plot([lx[-1], fx], [ly[-1], fy], "--", color=rsi_c, lw=1.4, zorder=4)
     ax.plot([fx], [fy], "o", color=rsi_c, ms=5, zorder=6, **RING)
-    ax.text(fx, fy + 0.45, f"RSI: {fy:.1f}%, {fx:.0f} GPU-h", ha="center", va="bottom", fontsize=6, color=INK,
+    ax.text(fx, fy + 0.45, f"RSI, mean: {fy:.1f}%, {fx:.0f} GPU-h", ha="center", va="bottom", fontsize=6, color=INK,
             fontweight="bold")
     # the comparison itself: RSI's level carried to RL's cost, and the gap there
     ax.plot([fx, x18 + 7], [fy, fy], color=rsi_c, lw=0.7, ls=(0, (1, 1.5)), zorder=2)
     ax.annotate("", xy=(x18 + 7, fy), xytext=(x18 + 7, y18), arrowprops=dict(arrowstyle="<->", color=INK2, lw=0.8,
                 shrinkA=0, shrinkB=0))
     ax.text(x18 + 9, (fy + y18) / 2, f"+{fy - y18:.1f}", ha="left", va="center", fontsize=6.3, color=INK, fontweight="bold")
-    ax.text((fx + x18) / 2 + 3, fy - 0.2, f"{(1 - fx / x18) * 100:.0f}% fewer GPU-h", ha="center", va="top", fontsize=6,
+    ax.text((fx + x18) / 2 - 8, fy - 0.6, f"{(1 - fx / x18) * 100:.0f}% fewer GPU-h", ha="center", va="top", fontsize=6,
             color=INK2)
-    ax.set_xlim(-4, 252); ax.set_ylim(58.6, 66.4); ax.set_yticks(range(60, 67, 2))
+    ax.set_xlim(-4, 252); ax.set_ylim(58.6, 71.6); ax.set_yticks(range(60, 72, 2))
     ax.set_xlabel("Total GPU-hours (RL's recipe tuning included)", labelpad=1)
     ax.set_ylabel("Unseen-scene success (%)", labelpad=2)
     save(fig, "fig_cost.pdf")
