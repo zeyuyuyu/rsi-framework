@@ -1,0 +1,100 @@
+{
+ "note": "addendum 37; descriptive",
+ "A_evaluations": {
+  "s1": {
+   "ext": 3,
+   "rl36": 3,
+   "rl18": 3
+  },
+  "s2": {
+   "ext": 3,
+   "rl36": 3,
+   "rl18": 3
+  },
+  "s3": {
+   "ext": 3,
+   "rl36": 3,
+   "rl18": 3
+  }
+ },
+ "B_points": {
+  "yq_oftgbx_ext_s1_cc_r11c0": 69.8,
+  "yq_oftgbx_ext_s1_cc_r12c0": 69.8,
+  "yq_oftgbx_ext_s2_cc_r07c0": 65.4
+ },
+ "C_evaluations": {
+  "ext_official": 0,
+  "ext_fresh": 0,
+  "rl18_fresh": 3
+ },
+ "missing": [
+  "C ext official: 0/3",
+  "C ext fresh: 0/3"
+ ],
+ "A_E1_three_evaluations": {
+  "claim": "E1 ext - RL 36 blocks, fresh scenes, three evaluations each, seeds 1-3",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": -1.99,
+  "ci95_points": [
+   -3.31,
+   -0.66
+  ],
+  "passes": null,
+  "per_seed": {
+   "1": {
+    "control": 66.77,
+    "arm": 70.2,
+    "diff": 3.43
+   },
+   "2": {
+    "control": 66.43,
+    "arm": 66.73,
+    "diff": 0.3
+   },
+   "3": {
+    "control": 65.87,
+    "arm": 56.17,
+    "diff": -9.7
+   }
+  }
+ },
+ "A_E2_three_evaluations": {
+  "claim": "E2 ext - RL 18 blocks, fresh scenes, three evaluations each, seeds 1-3",
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "n_episodes": 1000,
+  "bar_points": null,
+  "mean_points": 2.99,
+  "ci95_points": [
+   1.5,
+   4.5
+  ],
+  "passes": null,
+  "per_seed": {
+   "1": {
+    "control": 59.8,
+    "arm": 70.2,
+    "diff": 10.4
+   },
+   "2": {
+    "control": 62.67,
+    "arm": 66.73,
+    "diff": 4.06
+   },
+   "3": {
+    "control": 61.67,
+    "arm": 56.17,
+    "diff": -5.5
+   }
+  }
+ }
+}
