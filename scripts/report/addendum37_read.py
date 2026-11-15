@@ -20,6 +20,8 @@ import cost_curve_read as C      # noqa: E402
 
 
 def official(d):
+    """Official-test evaluations in d: TESTBITS lines of tests.txt (Yangquan extract), else the A800 per-episode
+    files test-libero_official-<node>-rep<k>.jsonl (episode order as written; digest as rsi.audit.compare_arms)."""
     out = []
     t = d / "tests.txt"
     if t.exists():
@@ -27,6 +29,11 @@ def official(d):
             p = line.split()
             if len(p) == 5 and p[0] == "TESTBITS" and p[1].startswith("test-libero_official-"):
                 out.append((p[3], [int(c) for c in p[4]]))
+    if not out and d.exists():
+        from rsi.audit.compare_arms import _digest
+        for f in sorted(d.glob("test-libero_official-*-rep*.jsonl")):
+            recs = [json.loads(l) for l in open(f) if l.strip()]
+            out.append((_digest([r["id"] for r in recs]), [1 if r["score"] >= 0.5 else 0 for r in recs]))
     return out
 
 
@@ -58,7 +65,8 @@ def main():
     res["A_evaluations"] = {f"s{s}": {k: len(v) for k, v in d.items()} for s, d in sets.items()}
     cc = sorted(Y.glob("yq_oftgbx_ext_s*_cc_*"))
     res["B_points"] = {d.name: (None if check or not C.evals(d) else F.pct(C.evals(d)[0][1])) for d in cc}
-    e0r, e0f = official(A / "a8_oftgbx_ext_s0_fin_rep"), C.evals(A / "a8_oftgbx_ext_s0_fin_fresh")
+    rep0 = A / "a8_oftgbx_ext_s0_fin_rep_b"   # requeued under _b after the first launch landed on another session's GPU (ops note)
+    e0r, e0f = official(rep0 if rep0.exists() else A / "a8_oftgbx_ext_s0_fin_rep"), C.evals(A / "a8_oftgbx_ext_s0_fin_fresh")
     r0f = three(A / "a8_goalmain_onebig_s0_fresh", A / "a8_goalmain_onebig_s0_fresh23")
     res["C_evaluations"] = dict(ext_official=len(e0r), ext_fresh=len(e0f), rl18_fresh=len(r0f))
     for k, n, need in (("C ext official", len(e0r), 3), ("C ext fresh", len(e0f), 3), ("C rl18 fresh", len(r0f), 3)):
@@ -80,6 +88,8 @@ def main():
         import goal_read as G
         G.MODE = "final"
         rl0 = G.record(A / "a8_goalmain_onebig_s0")
+        if {dg for dg, _ in e0r} != {rl0["digest"]}:
+            raise SystemExit(f"seed 0 official episode lists differ: {sorted({dg for dg, _ in e0r})} vs {rl0['digest']}")
         res["C_official"] = G.paired([(0, rl0["bits"], C.mean_bits(e0r))], 0.0, "seed 0 ext - RL 18 blocks, official, three evaluations")
         res["C_official"].pop("passes", None)
     print(json.dumps(res, indent=1))
