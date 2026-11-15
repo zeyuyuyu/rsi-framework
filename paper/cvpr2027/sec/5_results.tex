@@ -62,7 +62,7 @@ Every number below comes from a preregistered read of a sealed test unless it is
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_cost}
-  \caption{\textbf{RSI ends above tuned RL with fewer GPU-hours} (LIBERO-Goal, 1{,}000 unseen scenes; mean of seeds 1--3). RL first spends 213 GPU-hours choosing its recipe, with the policy unchanged (dotted), then trains 18 blocks (the registered tuned run; trained twice as long, 66.3\% at 240 GPU-hours). Green: the loop, rounds 0--6 (solid), then continued with its program fixed (dashed) to its final version; thin: seeds 1 and 2 (all seeds in the supplementary material).}
+  \caption{\textbf{RSI ends above tuned RL, counting RL's tuning} (LIBERO-Goal, 1{,}000 unseen scenes; seeds 1 and 2). RL first spends 213 GPU-hours choosing its recipe, with the policy unchanged (dotted), then trains 18 blocks (the registered tuned run). Green: the loop, rounds 0--6, then continued with its program fixed. Over all three registered seeds the loop ends $+3.5$ $[+1.7, +5.3]$ points above tuned RL at 29\% fewer GPU-hours (\cref{sec:rl}; every seed in the supplementary material).}
   \label{fig:cost}
 \end{figure}
 
