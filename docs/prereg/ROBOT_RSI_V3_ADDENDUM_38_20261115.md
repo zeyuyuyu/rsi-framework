@@ -69,3 +69,4 @@ Both 8-card jobs failed within ten minutes for an infrastructure reason (below).
 - 14:45Z: seed 3 `r11c0` trained; `yq_oftgbx_mb_s3_cc_r11c0` submitted (one fresh evaluation; read only if the gate kept it).
 - 15:24Z: `yq_oftgbx_mb_s3_cc_r11c0` (submitted while round 11's gate was still running) and its retry `_b` after round 12 had started both stopped with `interim_node_is_not_an_accepted_version`: seed 3's round-11 candidate was refused by the gate; seed 3 still retains `r07c0`. Seed 1's `r14c0` evaluation ran, so round 14 was kept.
 - 16:22Z: seed 1 `r15c0` trained; `yq_oftgbx_mb_s1_cc_r15c0` submitted after round 15's gate finished (it runs only if the gate kept r15c0).
+- 16:44Z: `yq_oftgbx_mb_s1_cc_r15c0` passed the accepted-version check and is evaluating: seed 1 kept round 15 (r14c0, r15c0 kept so far under this addendum).
