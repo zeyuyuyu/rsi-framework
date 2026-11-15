@@ -34,6 +34,13 @@ lines += [r"\midrule", f"mean & {fmt(mean)} \\\\", r"\bottomrule", r"\end{tabula
           "Success in \\%; GPU-hours include RL's 213 pilot hours. The loop's version is the one each run retained when it stopped "
           "(addendum 35). Seed 3's gate refused its candidates in rounds 8--10, so it kept its round-7 version; on one card it "
           "had spent 112 of its 239 GPU-hours when its time limit stopped it. Addendum 38 continues seeds 1 and 3 up to RL's budget."]
+a37 = J("addendum37_read_20261116.json")   # seed 0 on the second platform (A800), addendum 37 part C
+if "C_fresh" in a37 and "C_official" in a37:
+    cf, co = a37["C_fresh"]["per_seed"]["0"], a37["C_official"]["per_seed"]["0"]
+    lines.append(f" Seed 0 on the second platform (A800), continued the same way: against its tuned RL run (18 blocks), "
+                 f"{cf['arm']:.1f} vs {cf['control']:.1f} on the fresh scenes (${a37['C_fresh']['mean_points']:+.1f}$ "
+                 f"$[{a37['C_fresh']['ci95_points'][0]:+.1f}, {a37['C_fresh']['ci95_points'][1]:+.1f}]$) and "
+                 f"{co['arm']:.1f} vs {co['control']:.1f} on the official test, three evaluations per version.")
 out = R / "paper/cvpr2027/supp/tab_cost_per_seed.tex"
 out.write_text("\n".join(lines) + "\n")
 print(out.read_text())

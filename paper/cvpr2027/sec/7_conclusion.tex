@@ -1,6 +1,6 @@
 \section{Conclusion}
 \label{sec:conclusion}
-Each level of recursive self-improvement does a distinct job for a robot policy: recursion makes it better on unseen scenes of two suites, the gate keeps self-training from degrading, and the meta level repairs a failing training procedure; counting RL's tuning, it beats tuned RL on Goal with fewer GPU-hours.
+Each level of RSI does a distinct job for a robot policy: recursion makes it better on unseen scenes of two suites, the gate keeps self-training from degrading, and the meta level repairs a failing training procedure; counting RL's tuning, it beats tuned RL on Goal with fewer GPU-hours.
 
 \section*{LLM Usage Statement}
 Large language models are part of the method studied here: the \texttt{llm} meta level (\cref{sec:meta}) calls Claude Sonnet 5.5 to propose edits to the training program; its inputs and outputs are logged and released with the run records. In the research and the writing we used Claude Code, an AI coding assistant (Claude Opus 5.5 and Claude Fable 5.1/5.2), to write and debug the experiment and analysis code, launch and monitor runs, compute the registered reads, generate the figures from the run records, and draft and edit text in all sections. The authors designed the study, fixed each registered claim and its analysis in a preregistration before its data existed, reviewed the code, numbers and text, and take full responsibility for the paper.

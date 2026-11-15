@@ -28,4 +28,7 @@ for n in 0_abstract 1_intro 2_related 3_method 4_setup 5_results 6_discussion 7_
 ok=1; for n in fig_framework.pdf fig_framework_old.pdf fig_framework_old2.pdf main.bib rebuttal.tex README.md; do cmp -s "$W/pre/$n" "$W/post/$n" || { echo "COLLEAGUE FILE CHANGED: $n"; ok=0; }; done
 diff -rq "$W/pre/sec" "$W/post/sec" > /dev/null || { echo "COLLEAGUE sec/ CHANGED"; ok=0; }; [ $ok = 1 ] && echo colleague-ok
 for p in 8 9; do echo "overleaf page $p: $(pdftotext -f $p -l $p "$W/after.pdf" - 2>/dev/null | grep -n -m3 -E '^([0-9]\. (Future work|Conclusion)|References)' | tr '\n' ' ')"; done
+first9=$(pdftotext -f 9 -l 9 "$W/after.pdf" - 2>/dev/null | grep -v -E '^[0-9]+$|^$|CVPR' | head -1)
+echo "overleaf page 9 starts: $first9"
+echo "$first9" | grep -qE '^(LLM Usage Statement|References)' || { echo "MAIN TEXT SPILLS ONTO PAGE 9"; exit 4; }
 [ $bad = 0 ] && [ $ok = 1 ] || { echo "PUSH NOT VERIFIED"; exit 3; }
