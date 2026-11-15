@@ -1,0 +1,50 @@
+{
+ "s1": [
+  {
+   "node": "r09c0",
+   "x_gpu_hours": 110.2,
+   "success_pct": 68.0,
+   "source": "yq_oftgbx_ext_s1_i14_fresh"
+  },
+  {
+   "node": "r11c0",
+   "x_gpu_hours": 123.8,
+   "success_pct": 69.8,
+   "source": "yq_oftgbx_ext_s1_cc_r11c0"
+  },
+  {
+   "node": "r12c0",
+   "x_gpu_hours": 130.4,
+   "success_pct": 69.8,
+   "source": "yq_oftgbx_ext_s1_cc_r12c0"
+  },
+  {
+   "node": "r13c0",
+   "x_gpu_hours": 137.1,
+   "success_pct": 70.6,
+   "source": "yq_oftgbx_ext_s1_fin_fresh"
+  }
+ ],
+ "s2": [
+  {
+   "node": "r07c0",
+   "x_gpu_hours": 217.3,
+   "success_pct": 65.4,
+   "source": "yq_oftgbx_ext_s2_cc_r07c0"
+  },
+  {
+   "node": "r08c0",
+   "x_gpu_hours": 228.5,
+   "success_pct": 66.7,
+   "source": "yq_oftgbx_ext_s2_fin_fresh"
+  }
+ ],
+ "s3": [
+  {
+   "node": "r07c0",
+   "x_gpu_hours": 70.9,
+   "success_pct": 57.1,
+   "source": "yq_oftgbx_ext_s3_fin_fresh"
+  }
+ ]
+}

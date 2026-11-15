@@ -365,7 +365,7 @@ def fig_code():
 def fig_inflation():
     d = json.load(open(os.path.join(ROOT, "results/train_on_test_inflation_20261030.json")))
     sets = [("official", "official test states", C["fixed"]), ("fresh", "fresh placements", C["full"])]
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(3.4, 1.9), sharey=True, gridspec_kw={"width_ratios": [1.25, 2.0], "wspace": 0.04})
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(3.4, 1.6), sharey=True, gridspec_kw={"width_ratios": [1.25, 2.0], "wspace": 0.04})
     ygrid(a1); ygrid(a2)
     for j, (key, label, col) in enumerate(sets):
         for i, ck in enumerate(["sft", "rl"]):
@@ -470,11 +470,11 @@ def fig_cost():
     (Yangquan seeds 1-3; one fresh evaluation per point; results/cost_curve_read_20261114.json, addendum 36)."""
     d = json.load(open(os.path.join(ROOT, "results/cost_curve_read_20261114.json")))["partA"]
     seeds = (1, 2, 3)
-    fig, ax = plt.subplots(figsize=(3.3, 1.95))
+    fig, ax = plt.subplots(figsize=(3.3, 1.7))
     ygrid(ax)
     pilots = 213.4
     ax.axvspan(0, pilots, ymin=0, ymax=0.06, color=GRID, lw=0)
-    ax.text(pilots / 2, 58.35, "RL recipe pilots: 213 GPU-hours", ha="center", va="bottom", fontsize=6, color=INK2)
+    ax.text(pilots / 2, 55.95, "RL recipe pilots: 213 GPU-hours", ha="center", va="bottom", fontsize=6, color=INK2)
     start = sum(d[f"loop_s{s}"][0][1] for s in seeds) / 3
     ax.axhline(start, **REF)
     ax.text(160, start - 0.2, "start", ha="center", va="top", fontsize=6, color=MUTED)
@@ -488,16 +488,25 @@ def fig_cost():
         my = [sum(c[i][1] for c in curves) / 3 for i in range(n)]
         ax.plot(mx, my, "-" + mk, color=col, lw=1.8, ms=3.4, zorder=4, **RING)
         if key == "loop":
-            ax.text(mx[-1] + 4, my[-1], "RSI, self-repairing loop", ha="left", va="center", fontsize=6.3, color=INK, fontweight="bold")
+            ax.text(mx[-1] - 6, my[-1] + 1.6, "RSI, self-repairing loop", ha="center", va="bottom", fontsize=6.3, color=INK, fontweight="bold")
         else:
-            ax.text(mx[-1] - 2, my[-1] + 0.35, "tuned RL", ha="right", va="bottom", fontsize=6.3, color=INK, fontweight="bold")
+            ax.text(209, 62.9, "tuned RL, 36 blocks", ha="right", va="center", fontsize=6.3, color=INK, fontweight="bold")
+    # the loop continued within RL's counted budget (addendum 35; ext_cost_points_20261115.json): one dashed line per
+    # seed from its round-6 version through the versions it kept; the filled dot is the seed's final version
+    ext = json.load(open(os.path.join(ROOT, "results/ext_cost_points_20261115.json")))
+    for s in seeds:
+        start6 = d[f"loop_s{s}"][-1]
+        pts = [(start6[0], start6[1])] + [(p_["x_gpu_hours"], p_["success_pct"]) for p_ in ext[f"s{s}"]]
+        ax.plot([q[0] for q in pts], [q[1] for q in pts], "--", color=loop_c, lw=0.9, alpha=0.8, zorder=3)
+        ax.plot([pts[-1][0]], [pts[-1][1]], "o", color=loop_c, ms=3.6, zorder=5, **RING)
+    s1end = ext["s1"][-1]
+    ax.text(s1end["x_gpu_hours"] + 4, s1end["success_pct"] + 0.1, "continued", ha="left", va="center", fontsize=5.8, color=INK2)
     rl18 = [d[f"rl18_s{s}"][-1] for s in seeds]
     reg = [d["rl18_s1"][0][1]] + [d[f"rl18_s{s}"][-1][1] for s in (2, 3)]   # registered: seed 1's gate kept the start
     x18 = sum(p_[0] for p_ in rl18) / 3
     ax.plot([x18], [sum(reg) / 3], "s", ms=4.2, mfc="white", mec=rl_c, mew=1.1, zorder=5)
-    ax.annotate("18 blocks", (x18, sum(reg) / 3), xytext=(-5, -1), textcoords="offset points", ha="right", va="top",
-                fontsize=5.8, color=INK2)
-    ax.set_xlim(-4, 262); ax.set_ylim(58.2, 67.6); ax.set_yticks(range(58, 68, 2))
+    ax.text(209, 61.5, "hollow square: 18 blocks", ha="right", va="center", fontsize=5.8, color=INK2)
+    ax.set_xlim(-4, 262); ax.set_ylim(55.8, 71.6); ax.set_yticks(range(56, 72, 4))
     ax.set_xlabel("GPU-hours, RL's tuning counted", labelpad=1)
     ax.set_ylabel("Unseen-scene success (%)", labelpad=2)
     save(fig, "fig_cost.pdf")
