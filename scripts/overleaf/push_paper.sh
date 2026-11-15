@@ -23,8 +23,9 @@ for f in "$@"; do
 done
 timeout 600 node "$H/ol_push.js" $PRA "$W/after.pdf" "$W"/stage/* 2>&1 | grep -E "overwrites|in tree|compile|saved|ERR|pdf" | cut -c1-160
 timeout 150 node "$H/ol_zip.js" $PRA "$W/post.zip" > /dev/null 2>&1 && (cd "$W/post" && unzip -o -q ../post.zip) || { echo "post download failed"; exit 1; }
-for n in $(ls "$W/stage"); do cmp -s "$W/stage/$n" "$W/post/$n" && echo "$n pushed == repo" || echo "$n MISMATCH"; done
+bad=0; for n in $(ls "$W/stage"); do cmp -s "$W/stage/$n" "$W/post/$n" && echo "$n pushed == repo" || { echo "$n MISMATCH"; bad=1; }; done
 for n in 0_abstract 1_intro 2_related 3_method 4_setup 5_results 6_discussion 7_conclusion; do cmp -s "$R/sec/$n.tex" "$W/post/sec_$n.tex" || echo "sec_$n differs from repo"; done
 ok=1; for n in fig_framework.pdf fig_framework_old.pdf fig_framework_old2.pdf main.bib rebuttal.tex README.md; do cmp -s "$W/pre/$n" "$W/post/$n" || { echo "COLLEAGUE FILE CHANGED: $n"; ok=0; }; done
 diff -rq "$W/pre/sec" "$W/post/sec" > /dev/null || { echo "COLLEAGUE sec/ CHANGED"; ok=0; }; [ $ok = 1 ] && echo colleague-ok
 for p in 8 9; do echo "overleaf page $p: $(pdftotext -f $p -l $p "$W/after.pdf" - 2>/dev/null | grep -n -m3 -E '^([0-9]\. (Future work|Conclusion)|References)' | tr '\n' ' ')"; done
+[ $bad = 0 ] && [ $ok = 1 ] || { echo "PUSH NOT VERIFIED"; exit 3; }

@@ -13,6 +13,9 @@ const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
   const batches = [files.filter(f => !f.endsWith('.pdf')), files.filter(f => f.endsWith('.pdf'))].filter(b => b.length);
   for (const batch of batches) {
     log('batch', batch.map(f => path.basename(f)).join(' '));
+    // a narrow window or an earlier close can fold the file tree; unfold it so Upload is clickable
+    const unfold = page.getByRole('button', { name: 'Click to show the panel' });
+    for (let i = 0; i < await unfold.count(); i++) { if (await unfold.nth(i).isVisible()) { const bb = await unfold.nth(i).boundingBox(); if (bb && bb.x < 200) { await unfold.nth(i).click(); await page.waitForTimeout(1200); break; } } }
     await page.getByRole('button', { name: /Upload/ }).first().click();
     const input = page.locator('input[type=file]').first();
     await input.waitFor({ state: 'attached', timeout: 15000 });
@@ -29,7 +32,7 @@ const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
     }
     log('overwrites', ow);
     // close the upload modal if still open
-    const close = page.getByRole('button', { name: /^Close$/ });
+    const close = page.locator('[role=dialog], .modal').getByRole('button', { name: /^Close$/ });  // modal only, never the file-tree close
     for (let i = 0; i < 3 && await close.count(); i++) { try { await close.first().click({ timeout: 3000 }); } catch (e) {} await page.waitForTimeout(600); }
     await page.waitForTimeout(1500);
   }
