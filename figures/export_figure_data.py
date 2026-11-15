@@ -125,4 +125,8 @@ if os.path.exists(cc):
     part = json.load(open(cc))["partA"]
     names = {"loop": "RSI self-repairing loop", "rl36": "tuned RL, 36 blocks", "rl18": "tuned RL, 18 blocks"}
     rows = [[names[k.rsplit("_s", 1)[0]], k.rsplit("_s", 1)[1], x, y, v] for k, pts in sorted(part.items()) for x, y, v in pts]
+    ext = R("ext_cost_points_20261115.json")  # continued loop within RL's budget (addendum 35/37), same x convention
+    if os.path.exists(ext):
+        rows += [["RSI loop, continued within RL budget", s[1:], q["x_gpu_hours"], q["success_pct"], q["node"]]
+                 for s, pts in sorted(json.load(open(ext)).items()) for q in pts]
     write("cost_curve.csv", ["series", "seed", "x_gpu_hours", "success_pct", "version"], rows)
