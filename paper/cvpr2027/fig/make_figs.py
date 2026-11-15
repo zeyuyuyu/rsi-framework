@@ -467,7 +467,8 @@ def fig_framework():
 # ---------------------------------------------------------------- cost curve (Finding 6, addendum 36)
 def fig_cost():
     """Success on 1,000 unseen LIBERO-Goal scenes against total GPU-hours, RL's recipe pilots counted (means of
-    Yangquan seeds 1-3; one fresh evaluation per point). Loop rounds 0-6 and RL: results/cost_curve_read_20261114.json
+    Yangquan seeds 1-3; one fresh evaluation per point). RL = the registered tuned RL run (18 blocks); the 36-block run
+    is reported in the caption and Finding 6. Loop rounds 0-6 and RL: results/cost_curve_read_20261114.json
     (addendum 36); the loop's final version at its run's total cost: results/ext_cost_points_20261115.json (addendum 35)."""
     d = json.load(open(os.path.join(ROOT, "results/cost_curve_read_20261114.json")))["partA"]
     ext = json.load(open(os.path.join(ROOT, "results/ext_cost_points_20261115.json")))
@@ -482,18 +483,11 @@ def fig_cost():
     ax.plot([0, pilots], [start, start], color=rl_c, lw=1.4, ls=(0, (1, 1.6)), zorder=2)
     ax.text(pilots / 2, start - 0.45, f"RL recipe tuning: {pilots:.0f} GPU-h, policy unchanged", ha="center", va="top",
             fontsize=6, color=INK2)
-    rl36 = [d[f"rl36_s{s}"] for s in seeds]
-    rx = [mean([c[i][0] for c in rl36]) for i in range(len(rl36[0]))]
-    ry = [mean([c[i][1] for c in rl36]) for i in range(len(rl36[0]))]
-    ax.plot(rx, ry, "-", color=rl_c, lw=1.4, zorder=3)
-    ax.plot([rx[-1]], [ry[-1]], "s", color=rl_c, ms=4, zorder=5, **RING)
-    ax.text(rx[-1] + 2, ry[-1] + 0.75, f"RL, 36 blocks: {ry[-1]:.1f}%, {rx[-1]:.0f} GPU-h", ha="right", va="bottom",
-            fontsize=6, color=INK)
     reg = [d["rl18_s1"][0][1]] + [d[f"rl18_s{s}"][-1][1] for s in (2, 3)]   # registered: seed 1's gate kept the start
     x18, y18 = mean([d[f"rl18_s{s}"][-1][0] for s in seeds]), mean(reg)
-    ax.plot([pilots, x18], [start, y18], "-", color=rl_c, lw=1.4, zorder=3)
-    ax.plot([x18], [y18], "s", ms=4.4, mfc="white", mec=rl_c, mew=1.2, zorder=6)
-    ax.text(pilots - 5, y18 + 0.05, f"tuned RL (18 blocks): {y18:.1f}%, {x18:.0f} GPU-h", ha="right", va="center",
+    ax.plot([pilots, x18], [start, y18], "-", color=rl_c, lw=1.6, zorder=3)
+    ax.plot([x18], [y18], "s", color=rl_c, ms=4.4, zorder=6, **RING)
+    ax.text(pilots - 5, y18, f"tuned RL: {y18:.1f}%, {x18:.0f} GPU-h", ha="right", va="center",
             fontsize=6, color=INK, fontweight="bold")
     # RSI: rounds 0-6, then continued with its program fixed; final point = each seed's final version at its run's total cost
     loop = [d[f"loop_s{s}"] for s in seeds]
@@ -504,9 +498,16 @@ def fig_cost():
     ax.plot(lx, ly, "-", color=rsi_c, lw=1.8, zorder=4)
     ax.plot([lx[-1], fx], [ly[-1], fy], "--", color=rsi_c, lw=1.4, zorder=4)
     ax.plot([fx], [fy], "o", color=rsi_c, ms=5, zorder=6, **RING)
-    ax.text(fx, fy + 0.7, f"RSI: {fy:.1f}%, {fx:.0f} GPU-h", ha="center", va="bottom", fontsize=6, color=INK,
+    ax.text(fx, fy + 0.45, f"RSI: {fy:.1f}%, {fx:.0f} GPU-h", ha="center", va="bottom", fontsize=6, color=INK,
             fontweight="bold")
-    ax.set_xlim(-4, 252); ax.set_ylim(58.6, 68.6); ax.set_yticks(range(60, 69, 2))
+    # the comparison itself: RSI's level carried to RL's cost, and the gap there
+    ax.plot([fx, x18 + 7], [fy, fy], color=rsi_c, lw=0.7, ls=(0, (1, 1.5)), zorder=2)
+    ax.annotate("", xy=(x18 + 7, fy), xytext=(x18 + 7, y18), arrowprops=dict(arrowstyle="<->", color=INK2, lw=0.8,
+                shrinkA=0, shrinkB=0))
+    ax.text(x18 + 9, (fy + y18) / 2, f"+{fy - y18:.1f}", ha="left", va="center", fontsize=6.3, color=INK, fontweight="bold")
+    ax.text((fx + x18) / 2 + 3, fy - 0.2, f"{(1 - fx / x18) * 100:.0f}% fewer GPU-h", ha="center", va="top", fontsize=6,
+            color=INK2)
+    ax.set_xlim(-4, 252); ax.set_ylim(58.6, 66.4); ax.set_yticks(range(60, 67, 2))
     ax.set_xlabel("Total GPU-hours (RL's recipe tuning included)", labelpad=1)
     ax.set_ylabel("Unseen-scene success (%)", labelpad=2)
     save(fig, "fig_cost.pdf")
