@@ -1,0 +1,37 @@
+{
+ "note": "addendum 38: total reserved GPU-hours (RL pilots counted on the RL side); failed and manually stopped jobs count; jobs stopped while queued do not",
+ "rl36_budget": {
+  "s1": 241.5,
+  "s2": 238.8,
+  "s3": 239.2
+ },
+ "rl18_cost": {
+  "s1": 229.1,
+  "s2": 230.3,
+  "s3": 230.2
+ },
+ "s1": {
+  "total": 240.8,
+  "final_node": "r16c0",
+  "status": "stopped at budget (rc 124) 2026-11-15T21:21:34Z",
+  "jobs": {
+   "job-uartqxlotifa": "8 cards, failed, 1.70",
+   "job-lni873lelr1q": "8 cards, 09:19:30Z-21:21:34Z, 96.27"
+  }
+ },
+ "s2": {
+  "total": 238.1,
+  "final_node": "r08c0",
+  "status": "at budget before this addendum"
+ },
+ "s3": {
+  "total_so_far": 163.6,
+  "final_node": null,
+  "status": "running on 8 cards (job-tqf4ti2mpfus) to its budget",
+  "jobs": {
+   "job-1lvwkiee0ivw": "4 cards, stopped, 1.78",
+   "job-hcfqtbwpm2qw": "8 cards, failed, 1.20",
+   "job-eg59nsypucaz": "4 cards, 09:34:55Z-21:47:32Z, stopped to move to 8 cards, 48.84"
+  }
+ }
+}
