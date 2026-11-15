@@ -38,3 +38,8 @@ Seed 2 is already at RL's budget; its read stays `r08c0`. This addendum spends t
 Every outcome is reported, including an M1 below zero.
 
 ## Ops notes
+
+- 08:31:35Z: `yq_oftgbx_mb_s1` submitted on 8 cards (job-uartqxlotifa, `RUN_TIMEOUT_S` 42205); Running within two minutes.
+- 08:31:39Z: `yq_oftgbx_mb_s3` submitted on 8 cards (job-0lqny67zmwq5, `RUN_TIMEOUT_S` 42201).
+- 08:34:21Z, deviation: job-0lqny67zmwq5 was stopped while still queued after about 3 minutes, not the 15 the card rule above sets (the operator misread the clock). It never left the queue and is not counted. `yq_oftgbx_mb_s3b` was submitted on 4 cards (job-1lvwkiee0ivw, `RUN_TIMEOUT_S` 42036) and was Running at 08:34:42Z, so it was kept rather than returned to the 8-card queue. Training uses one card either way; with 4 cards seed 3 reaches about 160 of its 239.2 GPU-hours by the cut-off (about 207 with 8), so for seed 3 the read is "within RL's budget", not "at" it. Reported as such.
+- Seed totals before this addendum, now from `scripts/report/ext_cost_points.py` (job created/finished from DescribeJob): 142.8, 238.1, 111.8 GPU-hours (seed 1 includes its failed 3-card, 3-minute first job).

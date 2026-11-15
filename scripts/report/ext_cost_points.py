@@ -28,5 +28,10 @@ for s, r in RUNS.items():
         if node not in ends or not ev: continue
         pts.append(dict(node=node, x_gpu_hours=round(r["c6"] + (ends[node] - ts(r["created"])) / 3600, 1), success_pct=F.pct(ev[0][1]), source=d))
     out[f"s{s}"] = sorted(pts, key=lambda p: p["x_gpu_hours"])
+# each run's total reserved card-hours when it stopped: round-6 cost + one card x continuation job time (created to
+# finished, from DescribeJob) + seed 1's failed first job (3 cards x 3 min, counted per addendum 35)
+FINISHED = {1: "2026-11-15T05:55:53Z", 2: "2026-11-14T08:20:13Z", 3: "2026-11-15T06:38:03Z"}
+EXTRA = {1: 3 * 3 / 60, 2: 0.0, 3: 0.0}
+out["totals"] = {f"s{s}": round(r["c6"] + (ts(FINISHED[s]) - ts(r["created"])) / 3600 + EXTRA[s], 1) for s, r in RUNS.items()}
 (root / "ext_cost_points_20261115.json").write_text(json.dumps(out, indent=1))
 print(json.dumps(out, indent=1))
