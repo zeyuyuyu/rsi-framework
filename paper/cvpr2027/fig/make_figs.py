@@ -466,48 +466,48 @@ def fig_framework():
 
 # ---------------------------------------------------------------- cost curve (Finding 6, addendum 36)
 def fig_cost():
-    """Success on 1,000 unseen LIBERO-Goal scenes against cumulative GPU-hours with RL's recipe pilots counted
-    (Yangquan seeds 1-3; one fresh evaluation per point; results/cost_curve_read_20261114.json, addendum 36)."""
+    """Success on 1,000 unseen LIBERO-Goal scenes against total GPU-hours, RL's recipe pilots counted (means of
+    Yangquan seeds 1-3; one fresh evaluation per point). Loop rounds 0-6 and RL: results/cost_curve_read_20261114.json
+    (addendum 36); the loop's final version at its run's total cost: results/ext_cost_points_20261115.json (addendum 35)."""
     d = json.load(open(os.path.join(ROOT, "results/cost_curve_read_20261114.json")))["partA"]
-    seeds = (1, 2, 3)
-    fig, ax = plt.subplots(figsize=(3.3, 1.7))
-    ygrid(ax)
-    pilots = 213.4
-    ax.axvspan(0, pilots, ymin=0, ymax=0.06, color=GRID, lw=0)
-    ax.text(pilots / 2, 55.95, "RL recipe pilots: 213 GPU-hours", ha="center", va="bottom", fontsize=6, color=INK2)
-    start = sum(d[f"loop_s{s}"][0][1] for s in seeds) / 3
-    ax.axhline(start, **REF)
-    ax.text(160, start - 0.2, "start", ha="center", va="top", fontsize=6, color=MUTED)
-    loop_c, rl_c = C["llm_harness"], C["onebig"]
-    for key, col, mk in (("loop", loop_c, "o"), ("rl36", rl_c, "s")):
-        curves = [d[f"{key}_s{s}"] for s in seeds]
-        for c in curves:
-            ax.plot([p_[0] for p_ in c], [p_[1] for p_ in c], "-", color=col, lw=0.7, alpha=0.45, zorder=2)
-        n = min(len(c) for c in curves)
-        mx = [sum(c[i][0] for c in curves) / 3 for i in range(n)]
-        my = [sum(c[i][1] for c in curves) / 3 for i in range(n)]
-        ax.plot(mx, my, "-" + mk, color=col, lw=1.8, ms=3.4, zorder=4, **RING)
-        if key == "loop":
-            ax.text(mx[-1] - 6, my[-1] + 1.6, "RSI, self-repairing loop", ha="center", va="bottom", fontsize=6.3, color=INK, fontweight="bold")
-        else:
-            ax.text(209, 62.9, "tuned RL, 36 blocks", ha="right", va="center", fontsize=6.3, color=INK, fontweight="bold")
-    # the loop continued within RL's counted budget (addendum 35; ext_cost_points_20261115.json): one dashed line per
-    # seed from its round-6 version through the versions it kept; the filled dot is the seed's final version
     ext = json.load(open(os.path.join(ROOT, "results/ext_cost_points_20261115.json")))
-    for s in seeds:
-        start6 = d[f"loop_s{s}"][-1]
-        pts = [(start6[0], start6[1])] + [(p_["x_gpu_hours"], p_["success_pct"]) for p_ in ext[f"s{s}"]]
-        ax.plot([q[0] for q in pts], [q[1] for q in pts], "--", color=loop_c, lw=0.9, alpha=0.8, zorder=3)
-        ax.plot([pts[-1][0]], [pts[-1][1]], "o", color=loop_c, ms=3.6, zorder=5, **RING)
-    s1end = ext["s1"][-1]
-    ax.text(s1end["x_gpu_hours"] + 4, s1end["success_pct"] + 0.1, "continued", ha="left", va="center", fontsize=5.8, color=INK2)
-    rl18 = [d[f"rl18_s{s}"][-1] for s in seeds]
+    seeds = (1, 2, 3)
+    mean = lambda v: sum(v) / len(v)
+    fig, ax = plt.subplots(figsize=(3.3, 1.75))
+    ygrid(ax)
+    rsi_c, rl_c = C["llm_harness"], INK2
+    pilots = d["rl36_s1"][0][0]
+    start = mean([d[f"loop_s{s}"][0][1] for s in seeds])
+    # RL: the policy does not change while its recipe is tuned, then one training run
+    ax.plot([0, pilots], [start, start], color=rl_c, lw=1.4, ls=(0, (1, 1.6)), zorder=2)
+    ax.text(pilots / 2, start - 0.45, f"RL recipe tuning: {pilots:.0f} GPU-h, policy unchanged", ha="center", va="top",
+            fontsize=6, color=INK2)
+    rl36 = [d[f"rl36_s{s}"] for s in seeds]
+    rx = [mean([c[i][0] for c in rl36]) for i in range(len(rl36[0]))]
+    ry = [mean([c[i][1] for c in rl36]) for i in range(len(rl36[0]))]
+    ax.plot(rx, ry, "-", color=rl_c, lw=1.4, zorder=3)
+    ax.plot([rx[-1]], [ry[-1]], "s", color=rl_c, ms=4, zorder=5, **RING)
+    ax.text(rx[-1] + 2, ry[-1] + 0.75, f"RL, 36 blocks: {ry[-1]:.1f}%, {rx[-1]:.0f} GPU-h", ha="right", va="bottom",
+            fontsize=6, color=INK)
     reg = [d["rl18_s1"][0][1]] + [d[f"rl18_s{s}"][-1][1] for s in (2, 3)]   # registered: seed 1's gate kept the start
-    x18 = sum(p_[0] for p_ in rl18) / 3
-    ax.plot([x18], [sum(reg) / 3], "s", ms=4.2, mfc="white", mec=rl_c, mew=1.1, zorder=5)
-    ax.text(209, 61.5, "hollow square: 18 blocks", ha="right", va="center", fontsize=5.8, color=INK2)
-    ax.set_xlim(-4, 262); ax.set_ylim(55.8, 71.6); ax.set_yticks(range(56, 72, 4))
-    ax.set_xlabel("GPU-hours, RL's tuning counted", labelpad=1)
+    x18, y18 = mean([d[f"rl18_s{s}"][-1][0] for s in seeds]), mean(reg)
+    ax.plot([pilots, x18], [start, y18], "-", color=rl_c, lw=1.4, zorder=3)
+    ax.plot([x18], [y18], "s", ms=4.4, mfc="white", mec=rl_c, mew=1.2, zorder=6)
+    ax.text(pilots - 5, y18 + 0.05, f"tuned RL (18 blocks): {y18:.1f}%, {x18:.0f} GPU-h", ha="right", va="center",
+            fontsize=6, color=INK, fontweight="bold")
+    # RSI: rounds 0-6, then continued with its program fixed; final point = each seed's final version at its run's total cost
+    loop = [d[f"loop_s{s}"] for s in seeds]
+    lx = [mean([c[i][0] for c in loop]) for i in range(len(loop[0]))]
+    ly = [mean([c[i][1] for c in loop]) for i in range(len(loop[0]))]
+    fx = mean([ext["totals"][f"s{s}"] for s in seeds])
+    fy = mean([ext[f"s{s}"][-1]["success_pct"] for s in seeds])
+    ax.plot(lx, ly, "-", color=rsi_c, lw=1.8, zorder=4)
+    ax.plot([lx[-1], fx], [ly[-1], fy], "--", color=rsi_c, lw=1.4, zorder=4)
+    ax.plot([fx], [fy], "o", color=rsi_c, ms=5, zorder=6, **RING)
+    ax.text(fx, fy + 0.7, f"RSI: {fy:.1f}%, {fx:.0f} GPU-h", ha="center", va="bottom", fontsize=6, color=INK,
+            fontweight="bold")
+    ax.set_xlim(-4, 252); ax.set_ylim(58.6, 68.6); ax.set_yticks(range(60, 69, 2))
+    ax.set_xlabel("Total GPU-hours (RL's recipe tuning included)", labelpad=1)
     ax.set_ylabel("Unseen-scene success (%)", labelpad=2)
     save(fig, "fig_cost.pdf")
 
