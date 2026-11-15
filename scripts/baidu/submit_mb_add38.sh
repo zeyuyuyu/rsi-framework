@@ -12,7 +12,7 @@ cut=$(date -u -d "${CUT:-2026-11-15 20:30}" +%s); now=$(date -u +%s)   # amendme
 t=$(python3 -c "print(int(min($left / $cards * 3600, $cut - $now) - 900))")
 [ "$t" -gt 1800 ] || { echo "too little time left: $t s"; exit 1; }
 export AIHC_HOST=aihc.yq.baidubce.com AIHC_POOL=aihc-serverless AIHC_QUEUE=aihcq-4yv1euenciip
-export JOB_GPU=$cards JOB_CPU=$(( cards >= 8 ? 24 : (cards >= 4 ? 18 : 12) )) JOB_MEM=$(( cards >= 4 ? 200 : 120 ))
+export JOB_GPU=$cards JOB_CPU=$(( 12 * cards )) JOB_MEM=$(( cards > 1 ? 100 * cards : 120 ))   # amendment 2: 12 CPUs, 100 GiB per card
 export RSI_SRC_URL="$(cat $L/src_v34.url)" RESUME_RUN=$run RUN_TIMEOUT_S=$t RUN_NAME=yq_oftgbx_mb_s${seed}${sfx}
 [ "$cards" -le 1 ] || export JOB_ENTRY_URL="$(cat $L/run_vla6.sh.url)"
 echo "$(date -u +%FT%TZ) submit $RUN_NAME resume=$run cards=$cards timeout=$t"

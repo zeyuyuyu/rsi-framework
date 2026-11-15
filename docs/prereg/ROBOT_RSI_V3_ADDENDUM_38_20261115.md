@@ -47,6 +47,14 @@ The official paper deadline is 2026-11-16 23:59 AoE (2026-11-17 11:59Z), later t
 - **Interim read (descriptive)**: once seed 1's final evaluations are in, M1/M2 with seed 3's version retained at that time (its `_cc_` evaluation, one fresh evaluation), labelled interim. The **final read** is taken when seed 3 stops; the paper reports the final read.
 - Everything else as above.
 
+## Amendment 2 (registered 2026-11-15 09:35Z, before any evaluation of this addendum)
+
+Both 8-card jobs failed within ten minutes for an infrastructure reason (below). To keep one rule for both seeds:
+
+- **Seed 1 stop**: also at its counted RL budget (241.5 GPU-hours), not at 20:30Z; hard cut-off 2026-11-16 18:00Z, as for seed 3.
+- **Job resources**: CPU and memory now scale with the cards, 12 CPUs and 100 GiB per card (96 CPUs and 800 GiB on 8 cards), as the one-card jobs had (12 CPUs, 120 GiB).
+- Everything else as above and in amendment 1.
+
 ## Ops notes
 
 - 08:31:35Z: `yq_oftgbx_mb_s1` submitted on 8 cards (job-uartqxlotifa, `RUN_TIMEOUT_S` 42205); Running within two minutes.
@@ -55,3 +63,4 @@ The official paper deadline is 2026-11-16 23:59 AoE (2026-11-17 11:59Z), later t
 - Seed totals before this addendum, now from `scripts/report/ext_cost_points.py` (job created/finished from DescribeJob): 142.8, 238.1, 111.8 GPU-hours (seed 1 includes its failed 3-card, 3-minute first job).
 - 09:01:09Z, amendment 1: job-1lvwkiee0ivw (seed 3, 4 cards, created 08:34:24Z) stopped by its job id (ManualTermination); its 0.45 h × 4 cards count. Seed 3 then stood at 111.8 + 1.78 = 113.6 GPU-hours, 125.6 left. 09:01:13Z: `yq_oftgbx_mb_s3c` submitted on 8 cards (job-hcfqtbwpm2qw, `RUN_TIMEOUT_S` 55629 = 125.6 card-hours / 8 minus setup; hard cut-off 2026-11-16 18:00Z). A watcher applies the 15-minute card rule.
 - 09:01:33Z: job-hcfqtbwpm2qw Running on 8 cards (not queued). Seed 3 reaches its budget near 2026-11-16 00:45Z.
+- 09:20Z: both 8-card jobs had failed (infrastructure, not the loop): job-uartqxlotifa (seed 1, created 08:31:39Z, finished 08:44:22Z) and job-hcfqtbwpm2qw (seed 3, 09:01:15Z to 09:10:16Z), each with `RuntimeError: parallel_worker_failed` in the parent's gate evaluation of its first resumed round: 40 greedy rollout processes (5 per card) ran with 24 CPUs and 200 GiB (load 50), and two of them died. Their card-hours count: seed 1 at 142.8 + 1.70 = 144.5 GPU-hours (97.0 left), seed 3 at 113.6 + 1.20 = 114.8 (124.4 left). Resubmitted with `RESUME_RUN` under amendment 2.
