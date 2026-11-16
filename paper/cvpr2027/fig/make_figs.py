@@ -466,46 +466,55 @@ def fig_framework():
 
 # ---------------------------------------------------------------- cost curve (Finding 6, addendum 36)
 def fig_cost():
-    """Seeds 1 and 2 of the counted-tuning comparison (LIBERO-Goal, 1,000 unseen scenes, one fresh evaluation per point):
-    each panel is one seed, the loop against the registered tuned RL run (18 blocks) of the same seed, with RL's recipe
-    pilots counted. The three-seed registered read is stated in the caption and Finding 6; every seed is in the
-    supplementary table. Sources: results/cost_curve_read_20261114.json (loop rounds 0-6, RL), results/
-    ext_cost_points_20261115.json (continued loop and each run's total cost)."""
+    """Seeds 1 and 2 of the counted-tuning comparison (LIBERO-Goal, 1,000 unseen scenes, one fresh evaluation per point),
+    each panel the loop against the registered tuned RL run (18 blocks) of the same seed, RL's recipe pilots counted.
+    Top row: the loop as stopped by addendum 35's time limit (titles give the GPU-hour difference). Bottom row: continued
+    to about RL's total GPU-hours (addendum 38). The registered average over seeds is stated in the caption and text;
+    every seed is in the supplementary table. Sources: results/cost_curve_read_20261114.json (rounds 0-6, RL),
+    results/ext_cost_points_20261115.json (addendum 35), results/mb_cost_points_20261116.json (addendum 38)."""
     d = json.load(open(os.path.join(ROOT, "results/cost_curve_read_20261114.json")))["partA"]
     ext = json.load(open(os.path.join(ROOT, "results/ext_cost_points_20261115.json")))
-    mbf = os.path.join(ROOT, "results/mb_cost_points_20261116.json")   # addendum 38: continued to RL's GPU budget
+    mbf = os.path.join(ROOT, "results/mb_cost_points_20261116.json")
     mb = json.load(open(mbf)) if os.path.exists(mbf) else {}
     rsi_c, rl_c = C["llm_harness"], INK2
-    fig, axes = plt.subplots(1, 2, figsize=(3.4, 1.75), sharey=True)
+    fig, axes = plt.subplots(2, 2, figsize=(3.4, 2.5), sharex=True, sharey=True)
     pilots = d["rl36_s1"][0][0]
-    for ax, s in zip(axes, ("1", "2")):
-        ygrid(ax)
-        start = d[f"loop_s{s}"][0][1]
-        reg = d["rl18_s1"][0][1] if s == "1" else d[f"rl18_s{s}"][-1][1]   # registered: seed 1's gate kept the start
-        x18 = d[f"rl18_s{s}"][-1][0]
-        ax.plot([0, pilots], [start, start], color=rl_c, lw=1.2, ls=(0, (1, 1.6)), zorder=2)
-        ax.plot([pilots, x18], [start, reg], "-", color=rl_c, lw=1.4, zorder=3)
-        ax.plot([x18], [reg], "s", color=rl_c, ms=3.8, zorder=6, **RING)
-        ax.text(pilots - 4, reg - 0.15, f"tuned RL\n{reg:.1f}%", ha="right", va="top", fontsize=5.6, color=INK, linespacing=0.95)
-        pts = [(q[0], q[1]) for q in d[f"loop_s{s}"]] + [(q["x_gpu_hours"], q["success_pct"]) for q in ext[f"s{s}"]]
-        if f"s{s}" in mb:   # kept versions under addendum 38; the last one is the final version at the run's total cost
-            pts += [(q["x_gpu_hours"], q["success_pct"]) for q in mb[f"s{s}"]]
-            tot, fin = pts[-1]
-        else:               # already at RL's budget before addendum 38 (seed 2)
-            tot, fin = ext["totals"][f"s{s}"], ext[f"s{s}"][-1]["success_pct"]
-            pts.append((tot, fin))
-        ax.plot([q[0] for q in pts], [q[1] for q in pts], "-", color=rsi_c, lw=1.6, zorder=4)
-        ax.plot([tot], [fin], "o", color=rsi_c, ms=4, zorder=6, **RING)
-        ax.text(tot + 4, fin + 0.5, f"RSI {fin:.1f}%", ha="right", va="bottom", fontsize=5.8, color=INK, fontweight="bold")
-        xa = max(tot, x18) + 6
-        ax.plot([tot, xa], [fin, fin], color=rsi_c, lw=0.6, ls=(0, (1, 1.5)), zorder=2)
-        ax.annotate("", xy=(xa, fin), xytext=(xa, reg), arrowprops=dict(arrowstyle="<->", color=INK2, lw=0.7, shrinkA=0, shrinkB=0))
-        ax.text(xa - 2, (fin + reg) / 2, f"{fin - reg:+.1f}", ha="right", va="center", fontsize=6, color=INK, fontweight="bold")
-        ax.set_title(f"seed {s}: {fin - reg:+.1f} points", fontsize=6.4, color=INK, pad=3)
-        ax.set_xlim(-4, 262); ax.set_ylim(58.4, 75.0); ax.set_yticks(range(60, 75, 4)); ax.set_xticks([0, 100, 200])
-    axes[0].set_ylabel("Unseen-scene success (%)", labelpad=2)
-    fig.supxlabel("Total GPU-hours (RL's recipe tuning included)", fontsize=7, y=-0.07)
-    fig.subplots_adjust(wspace=0.08)
+    for row in (0, 1):
+        for ax, s in zip(axes[row], ("1", "2")):
+            ygrid(ax)
+            start = d[f"loop_s{s}"][0][1]
+            reg = d["rl18_s1"][0][1] if s == "1" else d[f"rl18_s{s}"][-1][1]   # registered: seed 1's gate kept the start
+            x18 = d[f"rl18_s{s}"][-1][0]
+            ax.plot([0, pilots], [start, start], color=rl_c, lw=1.2, ls=(0, (1, 1.6)), zorder=2)
+            ax.plot([pilots, x18], [start, reg], "-", color=rl_c, lw=1.4, zorder=3)
+            ax.plot([x18], [reg], "s", color=rl_c, ms=3.8, zorder=6, **RING)
+            above = reg - start < 1.0   # label above the dotted line unless the RSI curve runs just above it
+            ax.text(pilots - 4, (reg + 0.45) if above else (start - 0.45), f"tuned RL {reg:.1f}%", ha="right",
+                    va="bottom" if above else "top", fontsize=5.6, color=INK)
+            pts = [(q[0], q[1]) for q in d[f"loop_s{s}"]] + [(q["x_gpu_hours"], q["success_pct"]) for q in ext[f"s{s}"]]
+            if row == 1 and f"s{s}" in mb:   # kept versions under addendum 38; the last one at the run's total cost
+                pts += [(q["x_gpu_hours"], q["success_pct"]) for q in mb[f"s{s}"]]
+                tot, fin = pts[-1]
+            else:                            # as stopped by addendum 35 (seed 2 was already at RL's budget)
+                tot, fin = ext["totals"][f"s{s}"], ext[f"s{s}"][-1]["success_pct"]
+                pts.append((tot, fin))
+            ax.plot([q[0] for q in pts], [q[1] for q in pts], "-", color=rsi_c, lw=1.6, zorder=4)
+            ax.plot([tot], [fin], "o", color=rsi_c, ms=4, zorder=6, **RING)
+            ax.text(tot + 4, fin + 0.5, f"RSI {fin:.1f}%", ha="right", va="bottom", fontsize=5.8, color=INK, fontweight="bold")
+            xa = max(tot, x18) + 6
+            ax.plot([tot, xa], [fin, fin], color=rsi_c, lw=0.6, ls=(0, (1, 1.5)), zorder=2)
+            ax.annotate("", xy=(xa, fin), xytext=(xa, reg), arrowprops=dict(arrowstyle="<->", color=INK2, lw=0.7, shrinkA=0, shrinkB=0))
+            ax.text(xa - 2, (fin + reg) / 2, f"{fin - reg:+.1f}", ha="right", va="center", fontsize=6, color=INK, fontweight="bold")
+            if row == 0:
+                diff = (tot - x18) / x18 * 100
+                ax.set_title(f"seed {s}: {fin - reg:+.1f}, {abs(diff):.0f}% {'fewer' if diff < 0 else 'more'} GPU-h",
+                             fontsize=6.0, color=INK, pad=3)
+            else:
+                ax.set_title(f"seed {s}: {fin - reg:+.1f} points", fontsize=6.0, color=INK, pad=3)
+            ax.set_xlim(-4, 262); ax.set_ylim(58.4, 75.0); ax.set_yticks(range(60, 75, 4)); ax.set_xticks([0, 100, 200])
+    for ax, lab in zip(axes[:, 0], ("(a) registered stop", "(b) same GPU budget")):
+        ax.set_ylabel(f"{lab}\nsuccess (%)", labelpad=2, fontsize=6.4)
+    fig.supxlabel("Total GPU-hours (RL's recipe tuning included)", fontsize=7, y=-0.03)
     save(fig, "fig_cost.pdf")
 
 FIGS = [fig_teaser, fig_claims, fig_runs, fig_gates, fig_selfrepair, fig_code, fig_inflation, fig_framework, fig_cost]
