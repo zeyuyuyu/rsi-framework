@@ -1,14 +1,31 @@
-\section{Problem formulation}
+% \section{Problem formulation}
+% \label{sec:problem}
+% We consider robot policy improvement as a sequence of training attempts informed by interaction outcomes. Starting from a demonstration-trained policy and an initial training program, each attempt collects experience, produces a candidate policy, and evaluates its task performance. The resulting evidence informs which policy to continue from and how to train it next. We allow both the policy and the training program to change, while keeping the task-success criterion fixed. The objective is improved performance on held-out task instances, without additional demonstrations.
+
+% \paragraph{Robot policy improvement.} A task instance, or \emph{scene}, $c=(\ell, x_0)$ consists of a language instruction $\ell$ and initial object placements $x_0$. The policy $\pi_\theta$ maps the instruction, camera images and proprioceptive observations to action chunks. Executing it in environment $E$ produces a trajectory $\tau$, labelled by a fixed external success rule $v(c, \tau) \in \{0, 1\}$. For a task distribution $\mu$, performance is the expected success under a fixed evaluation protocol:
+% \begin{equation}
+% J(\theta) = \mathbb{E}_{c \sim \mu}\, \mathbb{E}_{\tau \sim p_E(\cdot \mid c, \theta)}\, v(c, \tau),
+% \end{equation}
+% where $p_E$ includes the environment's transitions and observations and the policy's sampling. Starting from a demonstration-trained policy $\theta_0$, the objective is to increase $J$ using new interactions and their success labels, without additional demonstrations. We measure this improvement on instances excluded from training and policy selection.
+
+% \paragraph{Policies and training programs.} A \emph{training program} $P$ specifies which instances to collect, the number of attempts $K$ and sampling temperature $T$, the rule for selecting training data, and the policy update. Programs are stored as JSON configurations in a declared space $\mathcal{P}$. A \emph{version} is a pair $(\theta, P)$. After each round $r$, the loop retains a version $(\theta^\star, P^\star)$ from which learning continues. The success rule and selection rule remain fixed throughout this process.
+
+\section{Problem Formulation}
 \label{sec:problem}
-Given a robot policy initialized from demonstrations and an initial training program, we seek to improve expected success on a target task distribution through further interaction, without additional demonstrations. A fixed external verifier provides binary task-success feedback. The policy also generates experience for subsequent updates, so changing the policy can change the data available for further learning. We allow the training program governing experience collection and policy updates to be revised using records of earlier rounds, and examine how this evolving process affects the resulting policy.
 
-\paragraph{Robot policy improvement.} A task instance, or \emph{scene}, $c=(\ell, x_0)$ consists of a language instruction $\ell$ and initial object placements $x_0$. The policy $\pi_\theta$ maps the instruction, camera images and proprioceptive observations to action chunks. Executing it in environment $E$ produces a trajectory $\tau$, labelled by a fixed external success rule $v(c, \tau) \in \{0, 1\}$. For a task distribution $\mu$, performance is the expected success under a fixed evaluation protocol:
+We study robot policy improvement from a demonstration-trained policy $\theta_0$ and an initial training program $P_0$, without additional demonstrations. As the policy learns, its behavior changes the experience available for subsequent updates; records of completed training attempts can inform changes to the training program.
+
+\paragraph{Task performance.}
+A task instance $c=(\ell,x_0)$ comprises a language instruction $\ell$ and an initial environment configuration $x_0$. In our VLA instantiation, $\pi_\theta$ maps the instruction, camera images and proprioceptive observations to action chunks. Interaction with environment $E$ produces a trajectory $\tau$, labelled by a fixed external success rule $v(c,\tau)\in\{0,1\}$. For a fixed target distribution $\mu$, performance is
 \begin{equation}
-J(\theta) = \mathbb{E}_{c \sim \mu}\, \mathbb{E}_{\tau \sim p_E(\cdot \mid c, \theta)}\, v(c, \tau),
+J(\theta)=\mathbb{E}_{c\sim\mu}\,
+\mathbb{E}_{\tau\sim p_E^{\mathrm{eval}}(\cdot\mid c,\theta)}
+[v(c,\tau)],
 \end{equation}
-where $p_E$ includes the environment's transitions and observations and the policy's sampling. Starting from a demonstration-trained policy $\theta_0$, the objective is to increase $J$ using new interactions and their success labels, without additional demonstrations. We measure this improvement on instances excluded from training and policy selection.
+where $p_E^{\mathrm{eval}}$ includes policy execution and environment dynamics under a fixed evaluation protocol. Our goal is to improve $J$ relative to $\theta_0$, measured on instances excluded from training and policy selection.
 
-\paragraph{Policies and training programs.} A \emph{training program} $P$ specifies which instances to collect, the number of attempts $K$ and sampling temperature $T$, the rule for selecting training data, and the policy update. Programs are stored as JSON configurations in a declared space $\mathcal{P}$. A \emph{version} is a pair $(\theta, P)$. After each round $r$, the loop retains a version $(\theta^\star, P^\star)$ from which learning continues. The success rule and selection rule remain fixed throughout this process.
+\paragraph{Improvement process.}
+A program $P\in\mathcal{P}$ specifies instance sampling, rollout collection, training-data selection and policy updates, with $\mathcal{P}$ the declared space of admissible programs. The pair $(\theta,P)$ defines a version from which learning continues. Completed training and validation records support decisions about which version to retain and whether to revise its program. Records from rejected candidates remain available for subsequent program proposals. These decisions rely on finite observations of performance. Program changes may alter practice-instance sampling, while the target distribution $\mu$ and success rule $v$ remain fixed.
 
 \section{Framework}
 \label{sec:method}

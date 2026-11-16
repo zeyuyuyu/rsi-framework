@@ -1,58 +1,136 @@
 \section{Experimental setup}
 \label{sec:setup}
-\begin{table*}[t]
-  \centering
-  \small
-  \caption{\textbf{Effects of the loop and its components on two suites and two sealed tests.} Values are percentage-point differences with 95\% CIs from a seed-averaged paired bootstrap; bold indicates that the registered threshold is met. Official: the benchmark's 500 fixed states, three-evaluation finals against the pooled initial reference. Fresh: 1{,}000 sealed sampled placements (\cref{sec:protocol}). Goal: twelve rounds, seeds 1--3; Spatial: six rounds, seeds 0--3 (start vs.\ official reference: seeds 1--3).}
-  \label{tab:long}
-  \resizebox{\textwidth}{!}{%
-  \begin{tabular}{@{}lcccccc@{}}
-    \toprule
-    & & \multicolumn{2}{c}{LIBERO-Goal, 12 rounds} & & \multicolumn{2}{c}{LIBERO-Spatial, 6 rounds} \\
-    \cmidrule{3-4}\cmidrule{6-7}
-    comparison & bar & official & fresh scenes & & official & fresh scenes \\
-    \midrule
-    loop $-$ start & $+5$ / $+3$$^\dagger$ & $+1.60$ {\scriptsize $[-0.88, +4.13]$} & $+3.54$ {\scriptsize $[+1.72, +5.42]$} & & $-0.01$ {\scriptsize $[-2.15, +2.13]$} & {\boldmath$+5.65$ {\scriptsize $[+4.28, +7.04]$}} \\
-    recursion: loop $-$ \texttt{nonrec} & $+2$ & {\boldmath$+7.84$ {\scriptsize $[+5.22, +10.49]$}} & {\boldmath$+7.30$ {\scriptsize $[+5.47, +9.20]$}} & & {\boldmath$+5.73$ {\scriptsize $[+4.12, +7.38]$}} & {\boldmath$+4.55$ {\scriptsize $[+3.38, +5.73]$}} \\
-    verifier: loop $-$ \texttt{shuffled} & $+3$ & -- & -- & & $+1.67$ {\scriptsize $[+0.18, +3.13]$} & {\boldmath$+6.05$ {\scriptsize $[+4.80, +7.32]$}} \\
-    gate: loop $-$ plain self-training$^\ddagger$ & $+10$ & {\boldmath$+13.60$ {\scriptsize $[+10.53, +16.76]$}} & {\boldmath$+15.47$ {\scriptsize $[+13.20, +17.77]$}} & & {\boldmath$+13.00$ {\scriptsize $[+10.44, +15.60]$}} & $+8.37$ {\scriptsize $[+6.67, +10.07]$} \\
-    gate $+$ meta level $-$ plain self-training$^\ddagger$ & $+10$ & {\boldmath$+15.98$ {\scriptsize $[+13.02, +18.91]$}} & {\boldmath$+19.80$ {\scriptsize $[+17.50, +22.13]$}} & & {\boldmath$+11.49$ {\scriptsize $[+9.11, +13.93]$}} & {\boldmath$+11.60$ {\scriptsize $[+9.93, +13.33]$}} \\
-    \bottomrule
-  \end{tabular}}\\[2pt]
-  {\footnotesize $^\dagger$ $+5$ on the official test and on Goal's fresh scenes; $+3$ on Spatial's fresh scenes (registered before any Spatial run ended), where $+5.65$ also clears $+5$. $^\ddagger$ The self-training recipe of \cref{sec:starting}, six rounds, seeds 1--3: with and without the gate at equal compute, and with the gate and the LLM meta level (two candidates a round).}
-\end{table*}
+% \begin{table*}[t]
+%   \centering
+%   \small
+%   \caption{\textbf{Effects of the loop and its components on two suites and two sealed tests.} Values are percentage-point differences with 95\% CIs from a seed-averaged paired bootstrap; bold indicates that the registered threshold is met. Official: the benchmark's 500 fixed states, three-evaluation finals against the pooled initial reference. Fresh: 1{,}000 sealed sampled placements (\cref{sec:protocol}). Goal: twelve rounds, seeds 1--3; Spatial: six rounds, seeds 0--3 (start vs.\ official reference: seeds 1--3).}
+%   \label{tab:long}
+%   \resizebox{\textwidth}{!}{%
+%   \begin{tabular}{@{}lcccccc@{}}
+%     \toprule
+%     & & \multicolumn{2}{c}{LIBERO-Goal, 12 rounds} & & \multicolumn{2}{c}{LIBERO-Spatial, 6 rounds} \\
+%     \cmidrule{3-4}\cmidrule{6-7}
+%     comparison & bar & official & fresh scenes & & official & fresh scenes \\
+%     \midrule
+%     loop $-$ start & $+5$ / $+3$$^\dagger$ & $+1.60$ {\scriptsize $[-0.88, +4.13]$} & $+3.54$ {\scriptsize $[+1.72, +5.42]$} & & $-0.01$ {\scriptsize $[-2.15, +2.13]$} & {\boldmath$+5.65$ {\scriptsize $[+4.28, +7.04]$}} \\
+%     recursion: loop $-$ \texttt{nonrec} & $+2$ & {\boldmath$+7.84$ {\scriptsize $[+5.22, +10.49]$}} & {\boldmath$+7.30$ {\scriptsize $[+5.47, +9.20]$}} & & {\boldmath$+5.73$ {\scriptsize $[+4.12, +7.38]$}} & {\boldmath$+4.55$ {\scriptsize $[+3.38, +5.73]$}} \\
+%     verifier: loop $-$ \texttt{shuffled} & $+3$ & -- & -- & & $+1.67$ {\scriptsize $[+0.18, +3.13]$} & {\boldmath$+6.05$ {\scriptsize $[+4.80, +7.32]$}} \\
+%     gate: loop $-$ plain self-training$^\ddagger$ & $+10$ & {\boldmath$+13.60$ {\scriptsize $[+10.53, +16.76]$}} & {\boldmath$+15.47$ {\scriptsize $[+13.20, +17.77]$}} & & {\boldmath$+13.00$ {\scriptsize $[+10.44, +15.60]$}} & $+8.37$ {\scriptsize $[+6.67, +10.07]$} \\
+%     gate $+$ meta level $-$ plain self-training$^\ddagger$ & $+10$ & {\boldmath$+15.98$ {\scriptsize $[+13.02, +18.91]$}} & {\boldmath$+19.80$ {\scriptsize $[+17.50, +22.13]$}} & & {\boldmath$+11.49$ {\scriptsize $[+9.11, +13.93]$}} & {\boldmath$+11.60$ {\scriptsize $[+9.93, +13.33]$}} \\
+%     \bottomrule
+%   \end{tabular}}\\[2pt]
+%   {\footnotesize $^\dagger$ $+5$ on the official test and on Goal's fresh scenes; $+3$ on Spatial's fresh scenes (registered before any Spatial run ended), where $+5.65$ also clears $+5$. $^\ddagger$ The self-training recipe of \cref{sec:starting}, six rounds, seeds 1--3: with and without the gate at equal compute, and with the gate and the LLM meta level (two candidates a round).}
+% \end{table*}
+
+
+
+\begin{table}[t]
+\centering
+\caption{\textbf{Component ablation results.}
+Success-rate differences (pp) with 95\% CIs.}
+\label{tab:components}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Comparison (setup)}
+& \textbf{Official}
+& \textbf{Fresh} \\
+\midrule
+
+\multicolumn{3}{@{}l}{\textbf{LIBERO-Goal}} \\
+\addlinespace[2pt]
+
+Recursion (GRPO/12)
+& \shortstack{$+7.84$ \\ {\tiny $[5.22,10.49]$}}
+& \shortstack{$+7.30$ \\ {\tiny $[5.47,9.20]$}} \\
+
+Gate strictness (GRPO/12)
+& \shortstack{$+0.89$ \\ {\tiny $[-1.11,2.89]$}}
+& \shortstack{$+1.67$ \\ {\tiny $[0.00,3.30]$}} \\
+
+Gate (BC/6)
+& \shortstack{$+13.60$ \\ {\tiny $[10.53,16.76]$}}
+& \shortstack{$+15.47$ \\ {\tiny $[13.20,17.77]$}} \\
+
+LLM meta-level (BC/6)
+& \shortstack{$+2.38$ \\ {\tiny $[0.29,4.47]$}}
+& \shortstack{$+4.33$ \\ {\tiny [TBD]}} \\
+
+\midrule
+\multicolumn{3}{@{}l}{\textbf{LIBERO-Spatial}} \\
+\addlinespace[2pt]
+
+Recursion (GRPO/12)
+& \shortstack{$+8.67$ \\ {\tiny $[6.76,10.69]$}}
+& \shortstack{$+8.63$ \\ {\tiny $[7.17,10.10]$}} \\
+
+Gate strictness (GRPO/12)
+& \shortstack{$+0.29$ \\ {\tiny $[-1.51,2.13]$}}
+& \shortstack{$+1.17$ \\ {\tiny $[-0.07,2.40]$}} \\
+
+Gate strictness (GRPO/6)
+& \shortstack{$+1.62$ \\ {\tiny [TBD]}}
+& \shortstack{$+0.10$ \\ {\tiny $[-0.97,1.17]$}} \\
+
+Gate (BC/6)
+& \shortstack{$+13.00$ \\ {\tiny $[10.44,15.60]$}}
+& \shortstack{$+8.37$ \\ {\tiny $[6.67,10.07]$}} \\
+
+LLM meta-level (BC/6)
+& \shortstack{$-1.51$ \\ {\tiny $[-3.24,0.24]$}}
+& \shortstack{$+3.23$ \\ {\tiny [TBD]}} \\
+
+\bottomrule
+\end{tabular}
+
+\vspace{3pt}
+\parbox{\columnwidth}{\footnotesize
+Comparisons: Recursion = fixed $-$ nonrec;
+Gate strictness = guard $-$ fixed;
+Gate = fixed $-$ nogate;
+LLM meta-level = full RSI $-$ fixed.
+Setup indicates the initial recipe and number of rounds.
+}
+\end{table}
+
+
 
 \subsection{Benchmarks, policies and starting points}
 \label{sec:starting}
-We evaluate on LIBERO-Goal and LIBERO-Spatial~\cite{liu2023libero}. Goal contains ten goal-conditioned tasks in one scene; Spatial contains ten pick-and-place tasks with different layouts of the same objects. The separate checkpoint analysis uses LIBERO-10's ten long-horizon tasks. Our policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), initialised from supervised fine-tuning on one demonstration per task~\cite{li2025simplevlarl}. Initial success is about 59\% on Goal, 60\% on Spatial and 19\% on LIBERO-10.
+We evaluate our proposed RSI framework on LIBERO-Goal and LIBERO-Spatial~\cite{liu2023libero}. Goal contains ten goal-conditioned tasks in one scene; Spatial contains ten pick-and-place tasks with different layouts of the same objects. The separate checkpoint analysis uses LIBERO-10's ten long-horizon tasks. Our policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), initialised from supervised fine-tuning on one demonstration per task~\cite{li2025simplevlarl}. Initial success is about 59\% on LIBERO-Goal and 60\% on LIBERO-Spatial.
 
-Each action chunk contains 56 discrete tokens (256 bins), produced in one parallel-decoding forward pass. Rollouts sample at temperature $T$, also used for GRPO log-probabilities; gates and tests use greedy decoding. Rollouts and GRPO/BC updates use the SimpleVLA-RL stack with LoRA rank $r{=}32$.
+Each action chunk contains 56 discrete tokens (256 bins), produced in one parallel-decoding forward pass. Rollouts sample at temperature $T$, also used for GRPO log-probabilities; gates and tests use greedy decoding. Our implementation uses the OpenVLA-OFT model code from SimpleVLA-RL\cite{li2025simplevlarl}, with custom rollout and GRPO/BC update workers and LoRA rank $r{=}32$.
 
-The main component study starts with a working GRPO program. It was chosen through sealed pilots and frozen by amendment before the main runs; only two sealed pilots per model were allowed. The program uses learning rate $3\times10^{-5}$, matched-ratio log-probabilities and episode-balanced loss. Each block collects 8 attempts on each of 64 instances at temperature 1.6, then performs 100 optimiser steps with batch size 64. The main schedule comprises 6 rounds of 3 blocks, with fresh paired gates.
+The main component study uses a fixed GRPO training recipe informed by pilot experiments and chosen before the main runs. The recipe uses a learning rate of $3\times10^{-5}$, temperature-matched policy ratios, and episode-balanced loss. Each block collects eight attempts on each of 64 instances at temperature 1.6, then performs 100 optimiser steps with batch size 64. Each round comprises three blocks, with fresh paired gate evaluations determining whether to accept the updated policy.
 
-A separate self-repair study starts with a BC configuration identified as failing before any meta-level run. It trains on the policy's own temperature-1.6 samples with a unit-temperature likelihood. Accepting every update degrades performance. This setting lets us distinguish preserving an existing policy through selection from restoring learning by changing the program.
+All comparisons below use seeds 1--3 on both LIBERO-Goal and LIBERO-Spatial. The recursion and gate-strictness experiments start from the same fixed GRPO recipe and run for twelve rounds, with program adaptation disabled. They compare recursive against non-recursive data generation, and strict gating against a relaxed guard-rail gate, respectively.
+
+The gate-removal and self-repair experiments start from the same failing BC recipe and run for six rounds. The gate-removal comparison keeps recursion enabled and the training recipe fixed, changing only whether updates can be rejected by the gate. The self-repair comparison keeps recursion and strict gating enabled and compares the fixed BC recipe against full RSI with LLM-based program adaptation. The LLM can modify training parameters and switch the update algorithm, including from BC to GRPO. The fixed-recipe arms train one candidate per round, while the LLM arm trains two. \Cref{tab:components} reports the component ablation results on LIBERO-Goal and LIBERO-Spatial under both official and fresh evaluation protocols.
 
 \subsection{Experimental design and controls}
 \label{sec:controls}
 \begin{table}[t]
-\centering\footnotesize
-\caption{\textbf{Experimental controls.} Each arm changes the indicated decision in \cref{alg:loop}, using \texttt{fixed} as the reference configuration.}
+\centering
+\footnotesize
+\caption{\textbf{Experimental controls.}
+Fixed is the baseline within each starting recipe.}
 \label{tab:controls}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lll@{}}
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
-arm & change in \cref{alg:loop} & tests \\
+Arm & Recursion & Gate & Meta & Candidates \\
 \midrule
-\texttt{fixed} & none (program adaptation off) & gated recursive loop \\
-\texttt{nonrec} & $\theta_{\text{gen}} = \theta_0$ & data recursion \\
-\texttt{shuffled} & labels permuted within instance & label--attempt pairing \\
-\texttt{nogate} & every candidate accepted & selection \\
-\texttt{onebig} & $R{=}1$, $3R$ blocks & one-shot RL baseline \\
-\texttt{full} & numeric proposer, $c{=}2$ & program adaptation \\
-\texttt{llm}$\ast$ & LLM proposer, $c{=}2$ & program adaptation \\
+\texttt{fixed}  & On  & Strict  & Off & 1 \\
+\texttt{nonrec} & Off & Strict  & Off & 1 \\
+\texttt{nogate} & On  & None    & Off & 1 \\
+\texttt{guard}  & On  & Relaxed & Off & 1 \\
+\texttt{llm}    & On  & Strict  & LLM & 2 \\
 \bottomrule
-\end{tabular}\\[2pt]
-{\footnotesize $\ast$ \texttt{llm}: knob space; \texttt{llm\_harness}: harness space; \texttt{llm\_harness\_cap}: harness space under the compute cap.}
+\end{tabular}
 \end{table}
 
 \Cref{tab:controls} defines the controls. In \texttt{fixed}, the training program stays fixed while the policy learns. In \texttt{nonrec}, the initial policy generates all data while the learner continues to update. Shuffling labels preserves each instance's success count but breaks the association between attempts and outcomes. The controls use the gated loop's number of training blocks, rollout budget and optimiser budget.
