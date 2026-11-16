@@ -11,6 +11,7 @@ arms' finals are their registered three-evaluation finals, read earlier:
 usage: python3 scripts/report/goal_ext_read.py <final|interim> [results root] [--check] [--json out.json]
 --check prints readiness and no test number."""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -18,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import goal_read as G                                  # noqa: E402
 
-SEEDS = (1, 2, 3)
+SEEDS = tuple(int(x) for x in os.environ.get("READ_SEEDS", "1,2,3").split(","))   # READ_SEEDS=1,2: addendum 39
 TAG = {"final": "fin", "interim": "i14"}
 
 

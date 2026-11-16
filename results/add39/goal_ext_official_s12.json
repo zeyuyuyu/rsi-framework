@@ -1,0 +1,147 @@
+{
+ "mode": {
+  "read": "final",
+  "nodes": {
+   "1": "r13c0",
+   "2": "r08c0"
+  }
+ },
+ "E1": {
+  "claim": "E1 continued loop - tuned one-shot RL, 36 steps (official test)",
+  "seeds": [
+   1,
+   2
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 3.2,
+  "ci95_points": [
+   0.63,
+   5.73
+  ],
+  "per_seed": {
+   "1": {
+    "control": 58.6,
+    "arm": 63.4,
+    "diff": 4.8,
+    "ci95": [
+     1.27,
+     8.4
+    ],
+    "mcnemar_p": 0.0352,
+    "arm_only": 61,
+    "control_only": 39
+   },
+   "2": {
+    "control": 60.87,
+    "arm": 62.47,
+    "diff": 1.6,
+    "ci95": [
+     -1.8,
+     4.93
+    ],
+    "mcnemar_p": 0.3481,
+    "arm_only": 51,
+    "control_only": 41
+   }
+  },
+  "superior": true,
+  "non_inferior_margin": -2.0,
+  "non_inferior": true
+ },
+ "E2": {
+  "claim": "E2 continued loop - tuned one-shot RL, 18 steps (official test)",
+  "seeds": [
+   1,
+   2
+  ],
+  "n_episodes": 500,
+  "bar_points": 3.0,
+  "mean_points": 4.03,
+  "ci95_points": [
+   1.4,
+   6.57
+  ],
+  "passes": true,
+  "per_seed": {
+   "1": {
+    "control": 58.8,
+    "arm": 63.4,
+    "diff": 4.6,
+    "ci95": [
+     0.87,
+     8.27
+    ],
+    "mcnemar_p": 0.046,
+    "arm_only": 61,
+    "control_only": 40
+   },
+   "2": {
+    "control": 59.0,
+    "arm": 62.47,
+    "diff": 3.47,
+    "ci95": [
+     0.13,
+     6.87
+    ],
+    "mcnemar_p": 0.047,
+    "arm_only": 56,
+    "control_only": 36
+   }
+  }
+ },
+ "E3": {
+  "claim": "E3 continued loop - the same run at round 6 (official test)",
+  "seeds": [
+   1,
+   2
+  ],
+  "n_episodes": 500,
+  "bar_points": 0.0,
+  "mean_points": 2.23,
+  "ci95_points": [
+   -0.23,
+   4.73
+  ],
+  "per_seed": {
+   "1": {
+    "control": 60.13,
+    "arm": 63.4,
+    "diff": 3.27,
+    "ci95": [
+     -0.2,
+     6.73
+    ],
+    "mcnemar_p": 0.3729,
+    "arm_only": 56,
+    "control_only": 46
+   },
+   "2": {
+    "control": 61.27,
+    "arm": 62.47,
+    "diff": 1.2,
+    "ci95": [
+     -2.0,
+     4.4
+    ],
+    "mcnemar_p": 0.2664,
+    "arm_only": 46,
+    "control_only": 35
+   }
+  }
+ },
+ "finals": {
+  "1": {
+   "ext": 63.4,
+   "onebig12": 58.6,
+   "onebig": 58.8,
+   "round6": 60.13
+  },
+  "2": {
+   "ext": 62.47,
+   "onebig12": 60.87,
+   "onebig": 59.0,
+   "round6": 61.27
+  }
+ }
+}

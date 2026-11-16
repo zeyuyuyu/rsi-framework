@@ -19,6 +19,7 @@ Beijing (platform B, addendum 33 amendment 1): runs results/baidu/bj_ofts_<arm>_
 bj_fresh_n0_<suite>_<k>; pairs are formed within a platform.
 --check prints which evaluations exist and no number."""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -176,6 +177,8 @@ def main():
     block, root = dict(BLOCKS[args[0]]), (args[1] if len(args) > 1 else "results")
     keep = lambda seeds: tuple(s for s in seeds if not (isinstance(s, str) and (s[0] in excl or s in excl)))
     block["seeds"] = keep(block["seeds"])
+    if os.environ.get("READ_SEEDS"):   # seeds 1 and 2 only: seed 3's continuation excluded (addendum 39)
+        block["seeds"] = tuple(int(x) for x in os.environ["READ_SEEDS"].split(","))
     runs = {(arm, s): run_fresh(root, block["name"](arm, s)) for arm in block["arms"] for s in block["seeds"]}
     refs = {p: reference(root, p, block["suite"]) for p in block.get("platforms", ("yq", "a800"))}
     if check:

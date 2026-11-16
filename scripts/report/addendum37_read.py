@@ -10,6 +10,7 @@ loop, and seed 0 continued on the A800 node.
 usage: python3 scripts/report/addendum37_read.py [results root] [--check] [--json out.json]
 --check lists what exists and prints no success number."""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -17,6 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fresh_read as F           # noqa: E402
 import cost_curve_read as C      # noqa: E402
+
+SEEDS = tuple(int(x) for x in os.environ.get("READ_SEEDS", "1,2,3").split(","))   # READ_SEEDS=1,2: addendum 39
 
 
 def official(d):
@@ -54,7 +57,7 @@ def main():
             ev += got if d.name.endswith("fresh23") else got[:1]
         return ev
     sets = {}
-    for s in (1, 2, 3):
+    for s in SEEDS:
         ext = three(Y / f"yq_oftgbx_ext_s{s}_fin_fresh", Y / f"yq_oftgbx_ext_s{s}_fresh23")
         r36 = three(Y / f"yq_oftg_onebig12_s{s}_fresh", Y / f"yq_oftg_onebig12_s{s}_fresh23")
         r18 = three(Y / f"yq_oftg_onebig_s{s}_fresh", Y / f"yq_oftg_onebig_s{s}_fresh23")
@@ -76,12 +79,12 @@ def main():
         print(json.dumps(res, indent=1)); return
     if len(digests) > 1:
         raise SystemExit(f"fresh episode lists differ: {sorted(digests)}")
-    ok = [s for s in (1, 2, 3) if all(len(v) == 3 for v in sets[s].values())]
-    if len(ok) == 3:
+    ok = [s for s in SEEDS if all(len(v) == 3 for v in sets[s].values())]
+    if len(ok) == len(SEEDS):
         res["A_E1_three_evaluations"] = F.paired([(s, C.mean_bits(sets[s]["rl36"]), C.mean_bits(sets[s]["ext"])) for s in ok], None,
-                                                 "E1 ext - RL 36 blocks, fresh scenes, three evaluations each, seeds 1-3")
+                                                 "E1 ext - RL 36 blocks, fresh scenes, three evaluations each, seeds " + ",".join(map(str, ok)))
         res["A_E2_three_evaluations"] = F.paired([(s, C.mean_bits(sets[s]["rl18"]), C.mean_bits(sets[s]["ext"])) for s in ok], None,
-                                                 "E2 ext - RL 18 blocks, fresh scenes, three evaluations each, seeds 1-3")
+                                                 "E2 ext - RL 18 blocks, fresh scenes, three evaluations each, seeds " + ",".join(map(str, ok)))
     if len(e0f) == 3 and len(r0f) == 3:
         res["C_fresh"] = F.paired([(0, C.mean_bits(r0f), C.mean_bits(e0f))], None, "seed 0 ext - RL 18 blocks, fresh, three evaluations")
     if len(e0r) == 3:
