@@ -9,17 +9,18 @@ H=$(dirname "$(realpath "$0")"); REPO=$(realpath "$H/../.."); R=$REPO/paper/cvpr
 W=${OL_WORK:-/tmp/claude-1000/ol_push}/$label; mkdir -p "$W/pre" "$W/post" "$W/stage"
 ol_name() { case $1 in sec/*) echo "sec_$(basename "$1")";; *) basename "$1";; esac; }
 timeout 150 node "$H/ol_zip.js" $PRA "$W/pre.zip" > /dev/null 2>&1 && (cd "$W/pre" && unzip -o -q ../pre.zip) || { echo "pre download failed"; exit 1; }
+# main.tex on Overleaf inputs sec_N.tex (flat), the repo's inputs sec/N.tex: compare and stage it in Overleaf form
+to_ol() { if [ "$1" = main.tex ]; then sed 's#\\input{sec/#\\input{sec_#g'; else cat; fi; }
 for f in "$@"; do
   n=$(ol_name "$f")
   case $n in fig_framework*|main.bib|rebuttal.tex|README.md) echo "REFUSED colleague file $n"; exit 1;; esac
-  if [ -e "$W/pre/$n" ] && ! (cd "$REPO" && git show "HEAD~0:paper/cvpr2027/$f" > /dev/null 2>&1); then :; fi
   # the Overleaf copy must equal what git had before this change (i.e. nobody edited it there)
-  if [ -e "$W/pre/$n" ] && ! cmp -s "$W/pre/$n" <(cd "$REPO" && git show "$(git log -n1 --format=%H -- paper/cvpr2027/$f)~1:paper/cvpr2027/$f" 2>/dev/null) \
-       && ! cmp -s "$W/pre/$n" "$R/$f"; then
-    prev_ok=0; for c in $(cd "$REPO" && git log -n5 --format=%H -- "paper/cvpr2027/$f"); do cmp -s "$W/pre/$n" <(cd "$REPO" && git show "$c:paper/cvpr2027/$f") && prev_ok=1; done
+  if [ -e "$W/pre/$n" ] && ! cmp -s "$W/pre/$n" <(cd "$REPO" && git show "$(git log -n1 --format=%H -- paper/cvpr2027/$f)~1:paper/cvpr2027/$f" 2>/dev/null | to_ol "$f") \
+       && ! cmp -s "$W/pre/$n" <(to_ol "$f" < "$R/$f"); then
+    prev_ok=0; for c in $(cd "$REPO" && git log -n5 --format=%H -- "paper/cvpr2027/$f"); do cmp -s "$W/pre/$n" <(cd "$REPO" && git show "$c:paper/cvpr2027/$f" | to_ol "$f") && prev_ok=1; done
     [ $prev_ok = 1 ] || { echo "STOP: $n on Overleaf matches none of the last 5 git versions (edited there?)"; exit 2; }
   fi
-  cp "$R/$f" "$W/stage/$n"
+  to_ol "$f" < "$R/$f" > "$W/stage/$n"
 done
 timeout 600 node "$H/ol_push.js" $PRA "$W/after.pdf" "$W"/stage/* 2>&1 | grep -E "overwrites|in tree|compile|saved|ERR|pdf" | cut -c1-160
 timeout 150 node "$H/ol_zip.js" $PRA "$W/post.zip" > /dev/null 2>&1 && (cd "$W/post" && unzip -o -q ../post.zip) || { echo "post download failed"; exit 1; }

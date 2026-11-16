@@ -508,17 +508,17 @@ def fig_cost():
         # first version (after the start) above tuned RL's success: same rule on both seeds
         cx, cy = next((x, y) for x, y in pts[1:] if y >= reg)
         ax.plot([cx], [cy], "o", ms=6, mfc="none", mec=INK, mew=0.8, zorder=7)
-        lab = f"beats RL at {cx:.0f} GPU-h ({(1 - cx / x18) * 100:.0f}% fewer)"
+        lab = f"beats RL at {cx:.0f} GPU-h\n({(1 - cx / x18) * 100:.0f}% fewer GPU-h than RL)"
         if cy - start < 1.0:
-            ax.text(cx + 3, cy - 0.75, lab, ha="left", va="top", fontsize=5.0, color=INK2)
+            ax.text(cx + 3, cy - 0.7, lab, ha="left", va="top", fontsize=5.0, color=INK2, linespacing=0.95)
         else:
-            ax.text(cx - 6, cy + 0.9, lab.replace(" (", "\n("), ha="center", va="bottom", fontsize=5.0, color=INK2, linespacing=0.95)
+            ax.text(cx - 6, cy + 1.3, lab, ha="center", va="bottom", fontsize=5.0, color=INK2, linespacing=0.95)
         if abs(stop[0] - tot) > 1:   # the registered stop, where the run went on afterwards
             ax.plot([stop[0]], [stop[1]], "o", ms=3.2, mfc="white", mec=rsi_c, mew=1.0, zorder=7)
-            ax.text(stop[0] - 5, stop[1] + 0.55, f"{stop[1] - reg:+.1f} at {stop[0]:.0f} GPU-h\n({(1 - stop[0] / x18) * 100:.0f}% fewer)",
-                    ha="right", va="bottom", fontsize=5.0, color=INK2, linespacing=0.95)
+            ax.text(stop[0] - 62, stop[1] + 1.0, f"{stop[1] - reg:+.1f} at {stop[0]:.0f} GPU-h\n({(1 - stop[0] / x18) * 100:.0f}% fewer GPU-h than RL)",
+                    ha="center", va="bottom", fontsize=5.0, color=INK2, linespacing=0.95)
         ax.set_title(f"seed {s}: {fin - reg:+.1f} points at {tot:.0f} GPU-h", fontsize=6.2, color=INK, pad=3)
-        ax.set_xlim(-4, 262); ax.set_ylim(58.4, 75.0); ax.set_yticks(range(60, 75, 4)); ax.set_xticks([0, 100, 200])
+        ax.set_xlim(-4, 262); ax.set_ylim(57.3, 75.0); ax.set_yticks(range(60, 75, 4)); ax.set_xticks([0, 100, 200])
     axes[0].set_ylabel("Unseen-scene success (%)", labelpad=2)
     fig.supxlabel("Total GPU-hours (RL's recipe tuning included)", fontsize=7, y=-0.06)
     save(fig, "fig_cost.pdf")
