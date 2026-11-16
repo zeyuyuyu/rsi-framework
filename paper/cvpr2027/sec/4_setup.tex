@@ -1,8 +1,9 @@
 \section{Experimental setup}
+\label{sec:setup}
 \begin{table*}[t]
   \centering
   \small
-  \caption{\textbf{What the loop and its ingredients add, on two suites and two sealed tests} (points, 95\% CI, seed-averaged paired bootstrap; bold: registered bar met). Official: the benchmark's 500 fixed states, three-evaluation finals against the pooled initial reference. Fresh: 1{,}000 sealed sampled placements (\cref{sec:protocol}). Goal: twelve rounds, seeds 1--3; Spatial: six rounds, seeds 0--3 (start vs.\ official reference: seeds 1--3).}
+  \caption{\textbf{Effects of the loop and its components on two suites and two sealed tests.} Values are percentage-point differences with 95\% CIs from a seed-averaged paired bootstrap; bold indicates that the registered threshold is met. Official: the benchmark's 500 fixed states, three-evaluation finals against the pooled initial reference. Fresh: 1{,}000 sealed sampled placements (\cref{sec:protocol}). Goal: twelve rounds, seeds 1--3; Spatial: six rounds, seeds 0--3 (start vs.\ official reference: seeds 1--3).}
   \label{tab:long}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{@{}lcccccc@{}}
@@ -18,19 +19,24 @@
     gate $+$ meta level $-$ plain self-training$^\ddagger$ & $+10$ & {\boldmath$+15.98$ {\scriptsize $[+13.02, +18.91]$}} & {\boldmath$+19.80$ {\scriptsize $[+17.50, +22.13]$}} & & {\boldmath$+11.49$ {\scriptsize $[+9.11, +13.93]$}} & {\boldmath$+11.60$ {\scriptsize $[+9.93, +13.33]$}} \\
     \bottomrule
   \end{tabular}}\\[2pt]
-  {\footnotesize $^\dagger$ $+5$ on the official test and on Goal's fresh scenes; $+3$ on Spatial's fresh scenes (registered before any Spatial run ended), where $+5.65$ also clears $+5$. $^\ddagger$ The self-training recipe of \cref{sec:rq3}, six rounds, seeds 1--3: with and without the gate at equal compute, and with the gate and the LLM meta level (two candidates a round).}
+  {\footnotesize $^\dagger$ $+5$ on the official test and on Goal's fresh scenes; $+3$ on Spatial's fresh scenes (registered before any Spatial run ended), where $+5.65$ also clears $+5$. $^\ddagger$ The self-training recipe of \cref{sec:starting}, six rounds, seeds 1--3: with and without the gate at equal compute, and with the gate and the LLM meta level (two candidates a round).}
 \end{table*}
 
-\label{sec:setup}
-
 \subsection{Benchmarks, policies and starting points}
-\textbf{LIBERO / OpenVLA-OFT.} LIBERO-Goal~\cite{liu2023libero} has ten goal-conditioned tasks in one scene, LIBERO-Spatial ten pick-and-place tasks that differ in the spatial layout of the same objects, and LIBERO-10 ten long-horizon tasks. The policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), started from a supervised fine-tune on \emph{one} demonstration per task~\cite{li2025simplevlarl} so that there is room to improve (about 59\% on LIBERO-Goal, 60\% on LIBERO-Spatial, 19\% on LIBERO-10). The policy emits each chunk as 56 discrete action tokens (256 bins) in one parallel-decoding forward; rollouts sample them at temperature $T$ (greedy for gates and tests), and GRPO log-probabilities divide the same logits by $T$. Rollouts and GRPO/BC training use the SimpleVLA-RL stack with LoRA ($r{=}32$). The seed program---chosen from sealed pilots and frozen by amendment before any main run---is GRPO with learning rate $3\times10^{-5}$, matched-ratio log-probabilities, episode-balanced loss, 8 attempts per instance at temperature 1.6, 64 instances per block, 100 optimiser steps of batch 64; 6 rounds of 3 blocks; fresh paired gates.
+\label{sec:starting}
+We evaluate on LIBERO-Goal and LIBERO-Spatial~\cite{liu2023libero}. Goal contains ten goal-conditioned tasks in one scene; Spatial contains ten pick-and-place tasks with different layouts of the same objects. The separate checkpoint analysis uses LIBERO-10's ten long-horizon tasks. Our policy is OpenVLA-OFT~\cite{kim2025oft} (7B, action chunks of 8), initialised from supervised fine-tuning on one demonstration per task~\cite{li2025simplevlarl}. Initial success is about 59\% on Goal, 60\% on Spatial and 19\% on LIBERO-10.
+
+Each action chunk contains 56 discrete tokens (256 bins), produced in one parallel-decoding forward pass. Rollouts sample at temperature $T$, also used for GRPO log-probabilities; gates and tests use greedy decoding. Rollouts and GRPO/BC updates use the SimpleVLA-RL stack with LoRA rank $r{=}32$.
+
+The main component study starts with a working GRPO program. It was chosen through sealed pilots and frozen by amendment before the main runs; only two sealed pilots per model were allowed. The program uses learning rate $3\times10^{-5}$, matched-ratio log-probabilities and episode-balanced loss. Each block collects 8 attempts on each of 64 instances at temperature 1.6, then performs 100 optimiser steps with batch size 64. The main schedule comprises 6 rounds of 3 blocks, with fresh paired gates.
+
+A separate self-repair study starts with a BC configuration identified as failing before any meta-level run. It trains on the policy's own temperature-1.6 samples with a unit-temperature likelihood. Accepting every update degrades performance. This setting lets us distinguish preserving an existing policy through selection from restoring learning by changing the program.
 
 \subsection{Experimental design and controls}
 \label{sec:controls}
 \begin{table}[t]
 \centering\footnotesize
-\caption{\textbf{Controls.} Each arm changes one decision of \cref{alg:loop}; everything else is that of \texttt{fixed}.}
+\caption{\textbf{Experimental controls.} Each arm changes the indicated decision in \cref{alg:loop}, using \texttt{fixed} as the reference configuration.}
 \label{tab:controls}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lll@{}}
@@ -48,20 +54,21 @@ arm & change in \cref{alg:loop} & tests \\
 \end{tabular}\\[2pt]
 {\footnotesize $\ast$ \texttt{llm}: knob space; \texttt{llm\_harness}: harness space; \texttt{llm\_harness\_cap}: harness space under the compute cap.}
 \end{table}
-\Cref{tab:controls} lists the arms. They vary the policy that generates experience (\texttt{nonrec}), the labels (\texttt{shuffled}, which keeps each instance's success count and breaks only which attempt succeeded), the selection rule (\texttt{nogate}), the round schedule (\texttt{onebig}) or the program proposer. \texttt{nonrec}, \texttt{shuffled}, \texttt{nogate} and \texttt{onebig} train the same number of blocks with the same rollout and optimiser budget as their gated loop. \texttt{onebig} is the plain-RL baseline: the whole six-round budget in one round of 18 on-policy blocks from the initial policy, with the same sampling and update code, so it also skips the intermediate gate evaluations. We report its version retained after the gate; its ungated candidate is a registered sensitivity check (they differ on one Goal seed, by 0.7 points on the official test). The program-adaptation arms train two candidates a round, twice the training of \texttt{fixed}; LLM calls are not counted in GPU time.
 
-The LIBERO-Goal main study runs these eight arms with three seeds each (a fourth seed was added to the \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} arms by amendment before any of their runs ended), 31 runs in all, on two GPU platforms: a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. The stacks are not bit-identical, so every comparison is paired within a platform and the platforms serve as replicates.
+\Cref{tab:controls} defines the controls. In \texttt{fixed}, the training program stays fixed while the policy learns. In \texttt{nonrec}, the initial policy generates all data while the learner continues to update. Shuffling labels preserves each instance's success count but breaks the association between attempts and outcomes. The controls use the gated loop's number of training blocks, rollout budget and optimiser budget.
 
-A second study on LIBERO-Spatial, registered before any of its runs, repeats the four arms that keep the seed program (\texttt{fixed}, \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig}) with four seeds under the Goal bars (sixteen runs); a twelve-round extension on Goal (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}) and a self-repair study (\cref{sec:rq3}) complete the design.
+The one-shot RL baseline, \texttt{onebig}, uses the six-round budget in one round of 18 on-policy blocks from the initial policy, with unchanged sampling and updates. It has no intermediate gates. We report the policy retained by its final gate; the ungated candidate is a registered sensitivity check, differing on one Goal seed by 0.7 points on the official test. Program-adaptation arms train two candidates per round, doubling the training of \texttt{fixed}. LLM calls are excluded from GPU time.
+
+The Goal main study includes eight arms with three seeds each. An amendment added a fourth seed to \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} before any of those runs ended. The 31 runs span a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. Each platform provides a separate replication, with paired comparisons made within its evaluation stack.
+
+The Spatial study repeats \texttt{fixed}, \texttt{nonrec}, \texttt{shuffled} and \texttt{onebig} with four seeds: sixteen runs under the Goal thresholds, registered before they began. Longer training is examined through a twelve-round Goal extension (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}). The self-repair study compares selection and program adaptation from the failing BC configuration (\cref{sec:rq2,sec:rq3}).
 
 \subsection{Evaluation protocol}
 \label{sec:protocol}
-We fixed the protocol before the runs and release the preregistration documents and every dated amendment with the code.
+The preregistrations and dated amendments are released with the code.
 
-\paragraph{Evaluation sets and sealing.} Each run draws its gate and audit sets from seeds that never overlap the official benchmark states. The audit (200 more episodes) is recorded for retained candidates but never decides anything; it exposes overfitting to the gate. The official test (50 initial states per task, 500 episodes) is never used for training, sampling, gating or program selection, and no test file is opened before a study's read-once, after every decision in every run of the study has been made. A second sealed test, registered before any of its evaluations, scores each retained policy on 1{,}000 freshly sampled configurations that no run trained, gated or audited on. Only two sealed pilots per model were allowed before the seed program was frozen.
+\paragraph{Evaluation sets.} Gate and audit instances use seeds that do not overlap the official benchmark states. An audit of 200 additional episodes measures gate overfitting without influencing decisions. The official test contains 50 initial states per task, for 500 episodes. These states are excluded from training, sampling and selection; test results are accessed once after all study decisions are complete. A second test uses 1{,}000 fresh configurations excluded from training, gating and auditing. It was registered before evaluation and measures performance beyond the benchmark's fixed placements.
 
-\paragraph{Finals and reference.} The \emph{same} initial policy scored between 57.2\% and 60.0\% in different runs, and about 40\% of episodes flip between nearby policies. Each run's final is therefore the per-episode mean of three evaluations of its retained policy, and the initial reference is the per-episode mean of every in-run evaluation of the initial policy on that platform (36 on the cloud pool, 21 on the A800). A noise check (the same statistic between two halves of the initial-policy evaluations) accompanies every verdict.
+\paragraph{Final policies and reference.} Evaluations of the same initial policy range from 57.2\% to 60.0\% across runs, and about 40\% of episode outcomes change between nearby policies. We evaluate each retained policy three times and average the outcomes for each episode. The initial reference averages all in-run evaluations of the initial policy on the same platform: 36 on the cloud pool and 21 on the A800. A noise check applies the same statistic to two halves of these initial-policy evaluations.
 
-\paragraph{Claims and bars.} Seed-averaged per-episode paired bootstrap (10{,}000 draws), 95\% CI. ``CI $>0$'' means the interval excludes zero.
-The registered claims, comparisons and bars are listed in the supplementary material; \cref{tab:long} gives the bar of each comparison it reports.
-The reading scripts were committed before each read, and the outputs of every registered read, including those not discussed in this paper, are released.
+\paragraph{Statistical analysis.} We use a seed-averaged, per-episode paired bootstrap with 10{,}000 draws and report 95\% confidence intervals (CIs). ``CI $>0$'' denotes an interval above zero. The supplementary material lists registered claims, comparisons and effect thresholds; \cref{tab:long} gives the thresholds for the reported comparisons. The analysis scripts were fixed before the corresponding results were accessed. The released records contain all registered outputs.

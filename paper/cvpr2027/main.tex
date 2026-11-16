@@ -1,7 +1,6 @@
-% CVPR 2027 submission draft -- gated recursive self-improvement for VLA policies (preregistered study)
 \documentclass[10pt,twocolumn,letterpaper]{article}
 
-\usepackage[review]{cvpr}      % REVIEW version (line numbers, anonymous). Final: \usepackage{cvpr}
+\usepackage[review]{cvpr}
 \input{preamble}
 \usepackage{booktabs}
 \usepackage{enumitem}
@@ -17,20 +16,20 @@
 \def\confName{CVPR}
 \def\confYear{2027}
 
-\title{Recursive Self-Improvement for Robot Policies:\\Recursion Improves, the Gate Protects, the Meta Level Repairs}
+\title{Recursive Self-Improvement for Robot Policies:\\Data Recursion, Policy Selection and Program Adaptation}
 
 \author{Anonymous CVPR submission\\
 Paper ID \cvprPaperID}
 
 \begin{document}
 \maketitle
+\input{sec/0_abstract}
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_teaser}
-  \caption{\textbf{Recursive self-improvement for a robot policy.} (a) One practice placement of a LIBERO-Spatial task and two attempts by the initial OpenVLA-OFT policy, as its camera saw them; the simulator's success check labels each attempt, and the loop trains on such labelled attempts. (b) LIBERO-Goal, behaviour cloning on the policy's own samples: when every new version is accepted, success on the round's 200 held-out placements falls from 58.5\% to 7\% within six rounds; under the gate the same recipe stays at its starting level. (c) On sealed tests: on 1{,}000 unseen LIBERO-Spatial scenes, the loop against its start, against the same loop with shuffled verifier labels, and against practice from the frozen initial policy; and the language-model meta level against the gate alone on the failing recipe of (b) (LIBERO-Goal, official test).}
+  \caption{\textbf{Recursive self-improvement for a robot policy.} (a) Two attempts by the initial OpenVLA-OFT policy on one LIBERO-Spatial placement, shown from the policy's camera. The simulator labels each attempt for subsequent training. (b) Behaviour cloning on the policy's own samples in LIBERO-Goal. Accepting every update reduces success from 58.5\% to 7\% over six rounds, measured on 200 held-out placements per round; applying the gate maintains the initial performance. (c) Sealed-test comparisons: the loop versus its initial policy, shuffled verifier labels, and data from the frozen initial policy on 1{,}000 unseen LIBERO-Spatial scenes; and the language-model meta level versus the gate alone for the failing configuration in (b), evaluated on the official LIBERO-Goal test.}
   \label{fig:teaser}
 \end{figure}
-\input{sec/0_abstract}
 \input{sec/1_intro}
 \input{sec/2_related}
 \input{sec/3_method}
