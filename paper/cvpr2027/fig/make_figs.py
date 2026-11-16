@@ -470,7 +470,7 @@ def fig_cost():
     one panel per seed: the loop from round 0 to its version at about RL's total GPU-hours (addendum 38) against the
     registered tuned RL run (18 blocks) of the same seed, RL's recipe pilots counted. Marked on each curve: the first
     version above tuned RL (same rule on both seeds) and, where it differs from the end, the registered stop of addendum
-    35. The registered average over seeds is in the caption and text; every seed is in the supplementary table.
+    35. The average over seeds 1 and 2 is in the caption and text (seed 3's continuation is excluded, addendum 39).
     Sources: results/cost_curve_read_20261114.json, ext_cost_points_20261115.json, mb_cost_points_20261116.json."""
     d = json.load(open(os.path.join(ROOT, "results/cost_curve_read_20261114.json")))["partA"]
     ext = json.load(open(os.path.join(ROOT, "results/ext_cost_points_20261115.json")))

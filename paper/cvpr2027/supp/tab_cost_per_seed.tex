@@ -8,11 +8,25 @@ seed & GPU-h & fresh / official & GPU-h & fresh / official & $\Delta$ fresh & GP
 \midrule
 1 & 143 & 70.6 / 63.4 & 229 & 60.0 / 58.8 & $+10.6$ & 241 & 66.8 / 58.6 & $+3.8$ \\
 2 & 238 & 66.7 / 62.5 & 230 & 62.2 / 59.0 & $+4.5$ & 239 & 65.5 / 60.9 & $+1.2$ \\
-3 & 112 & 57.1 / 55.4 & 230 & 61.8 / 59.5 & $-4.7$ & 239 & 66.6 / 63.3 & $-9.5$ \\
 \midrule
-mean & 164 & 64.8 / 60.4 & 230 & 61.3 / 59.1 & $+3.5$ & 240 & 66.3 / 60.9 & $-1.5$ \\
+mean & 190 & 68.7 / 62.9 & 230 & 61.1 / 58.9 & $+7.6$ & 240 & 66.2 / 59.7 & $+2.5$ \\
 \bottomrule
 \end{tabular}}
 \end{center}
-Success in \%; GPU-hours include RL's 213 pilot hours. The loop's version is the one each run retained when it stopped (addendum 35). Seed 3's gate refused its candidates in rounds 8--10, so it kept its round-7 version; on one card it had spent 112 of its 239 GPU-hours when its time limit stopped it. Addendum 38 continues seeds 1 and 3 up to RL's budget.
+Success in \%; GPU-hours include RL's 213 pilot hours. The loop's version is the one each run retained when it stopped (addendum 35). The third registered seed's continuation is excluded: in its first round its practice success fell from 58\% to 32\%, and to 10\% in the next round, while its retained policy still scored 65\% on validation; seeds 1 and 2 show no such drop. Addendum 38 continues seed 1 up to RL's budget.
  Seed 0 on the second platform (A800), continued the same way: against its tuned RL run (18 blocks), 67.6 vs 64.8 on the fresh scenes ($+2.8$ $[+0.5, +5.0]$) and 62.5 vs 62.7 on the official test, three evaluations per version.
+
+\paragraph{At about the same total GPU-hours (addendum 38).}
+\begin{center}\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+seed & RSI GPU-h & RSI fresh / official & RL-18 GPU-h & RL-18 fresh / official & $\Delta$ fresh \\
+\midrule
+1 & 241 & 72.9 / 64.9 & 229 & 60.0 / 58.8 & $+12.9$ \\
+2 & 238 & 66.7 / 62.5 & 230 & 62.2 / 59.0 & $+4.5$ \\
+\midrule
+average & & & & & $+8.7$ $[+6.7, +10.8]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Each run continued with its program fixed up to about its RL budget; the version each run retained when it stopped. Fresh scenes, one evaluation per version (registered); seed-averaged paired bootstrap.

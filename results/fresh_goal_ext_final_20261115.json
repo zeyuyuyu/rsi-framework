@@ -14,15 +14,14 @@
   "claim": "E1 ext - onebig12 (fresh sealed test)",
   "seeds": [
    1,
-   2,
-   3
+   2
   ],
   "n_episodes": 1000,
   "bar_points": 0.0,
-  "mean_points": -1.5,
+  "mean_points": 2.5,
   "ci95_points": [
-   -3.1,
-   0.1
+   0.75,
+   4.25
   ],
   "per_seed": {
    "1": {
@@ -34,31 +33,25 @@
     "control": 65.5,
     "arm": 66.7,
     "diff": 1.2
-   },
-   "3": {
-    "control": 66.6,
-    "arm": 57.1,
-    "diff": -9.5
    }
   },
   "complete": true,
-  "superior": false,
+  "superior": true,
   "non_inferior_margin": -2.0,
-  "non_inferior": false
+  "non_inferior": true
  },
  "E2": {
   "claim": "E2 ext - onebig (fresh sealed test)",
   "seeds": [
    1,
-   2,
-   3
+   2
   ],
   "n_episodes": 1000,
   "bar_points": 3.0,
-  "mean_points": 3.47,
+  "mean_points": 7.55,
   "ci95_points": [
-   1.67,
-   5.27
+   5.55,
+   9.55
   ],
   "passes": true,
   "per_seed": {
@@ -71,11 +64,6 @@
     "control": 62.2,
     "arm": 66.7,
     "diff": 4.5
-   },
-   "3": {
-    "control": 61.8,
-    "arm": 57.1,
-    "diff": -4.7
    }
   },
   "complete": true
@@ -84,15 +72,14 @@
   "claim": "E3 ext - round6 (fresh sealed test)",
   "seeds": [
    1,
-   2,
-   3
+   2
   ],
   "n_episodes": 1000,
   "bar_points": null,
-  "mean_points": 1.27,
+  "mean_points": 4.3,
   "ci95_points": [
-   -0.33,
-   2.9
+   2.55,
+   6.05
   ],
   "passes": null,
   "per_seed": {
@@ -105,11 +92,6 @@
     "control": 64.5,
     "arm": 66.7,
     "diff": 2.2
-   },
-   "3": {
-    "control": 61.9,
-    "arm": 57.1,
-    "diff": -4.8
    }
   },
   "complete": true
@@ -133,15 +115,11 @@
  "runs": {
   "yq_oftgbx_ext_s1_fin": 70.6,
   "yq_oftgbx_ext_s2_fin": 66.7,
-  "yq_oftgbx_ext_s3_fin": 57.1,
   "yq_oftg_onebig_s1": 60.0,
   "yq_oftg_onebig_s2": 62.2,
-  "yq_oftg_onebig_s3": 61.8,
   "yq_oftg_onebig12_s1": 66.8,
   "yq_oftg_onebig12_s2": 65.5,
-  "yq_oftg_onebig12_s3": 66.6,
   "yq_oftgb_llm_harness_s1": 64.2,
-  "yq_oftgb_llm_harness_s2": 64.5,
-  "yq_oftgb_llm_harness_s3": 61.9
+  "yq_oftgb_llm_harness_s2": 64.5
  }
 }

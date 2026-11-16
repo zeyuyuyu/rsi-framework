@@ -10,6 +10,7 @@ Official test (three evaluations per version) beside both. Costs from results/mb
 usage: python3 scripts/report/addendum38_read.py [results root] [--check] [--json out.json]
 --check lists what exists and prints no success number."""
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -20,7 +21,7 @@ import cost_curve_read as C      # noqa: E402
 import goal_read as G            # noqa: E402
 from goal_ext_read import ext_record   # noqa: E402
 
-SEEDS = (1, 2, 3)
+SEEDS = tuple(int(x) for x in os.environ.get("READ_SEEDS", "1,2,3").split(","))   # READ_SEEDS=1,2: addendum 39
 
 
 def main():

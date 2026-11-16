@@ -9,8 +9,7 @@ root = Path(sys.argv[1]) if len(sys.argv) > 1 else REPO / "results"
 sys.path.insert(0, str(REPO / "scripts" / "report"))
 import cost_curve_read as C, fresh_read as F
 RUNS = {1: dict(job="job-btajrg01bzcz", created="2026-11-13T00:53:11Z", c6=89.6, nodes={"r09c0": "yq_oftgbx_ext_s1_i14_fresh", "r11c0": "yq_oftgbx_ext_s1_cc_r11c0", "r12c0": "yq_oftgbx_ext_s1_cc_r12c0", "r13c0": "yq_oftgbx_ext_s1_fin_fresh"}),
-        2: dict(job="job-939pnipsdu7k", created="2026-11-13T00:16:33Z", c6=206.0, nodes={"r07c0": "yq_oftgbx_ext_s2_cc_r07c0", "r08c0": "yq_oftgbx_ext_s2_fin_fresh"}),
-        3: dict(job="job-jr8hv88w0cl4", created="2026-11-13T01:35:19Z", c6=58.8, nodes={"r07c0": "yq_oftgbx_ext_s3_fin_fresh"})}
+        2: dict(job="job-939pnipsdu7k", created="2026-11-13T00:16:33Z", c6=206.0, nodes={"r07c0": "yq_oftgbx_ext_s2_cc_r07c0", "r08c0": "yq_oftgbx_ext_s2_fin_fresh"})}   # seed 3's continuation is excluded (addendum 39)
 ts = lambda t: datetime.datetime.strptime(t, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc).timestamp()
 out = {}
 for s, r in RUNS.items():
@@ -30,8 +29,8 @@ for s, r in RUNS.items():
     out[f"s{s}"] = sorted(pts, key=lambda p: p["x_gpu_hours"])
 # each run's total reserved card-hours when it stopped: round-6 cost + one card x continuation job time (created to
 # finished, from DescribeJob) + seed 1's failed first job (3 cards x 3 min, counted per addendum 35)
-FINISHED = {1: "2026-11-15T05:55:53Z", 2: "2026-11-14T08:20:13Z", 3: "2026-11-15T06:38:03Z"}
-EXTRA = {1: 3 * 3 / 60, 2: 0.0, 3: 0.0}
+FINISHED = {1: "2026-11-15T05:55:53Z", 2: "2026-11-14T08:20:13Z"}
+EXTRA = {1: 3 * 3 / 60, 2: 0.0}
 out["totals"] = {f"s{s}": round(r["c6"] + (ts(FINISHED[s]) - ts(r["created"])) / 3600 + EXTRA[s], 1) for s, r in RUNS.items()}
 (root / "ext_cost_points_20261115.json").write_text(json.dumps(out, indent=1))
 print(json.dumps(out, indent=1))

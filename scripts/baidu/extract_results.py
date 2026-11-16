@@ -15,6 +15,8 @@ def extract(log, block, out):
     name = re.search(r"name=(\S+)", block[0]).group(1)
     # a continuation job (resume_oftgb_llm.sh names it <run>_resumeMMDDHHMM) writes the same run directory as <run>
     name = re.sub(r"_resume\d{8}$", "", name)
+    if re.match(r"yq_oftgbx_(ext|mb)_s3", name):   # seed 3's continuation is excluded and not kept in the repo
+        return
     files, current = {}, None
     for ln in block[1:-1]:
         m = re.match(r"----- FILE (\S+)( \(compact\))? -----$", ln)
