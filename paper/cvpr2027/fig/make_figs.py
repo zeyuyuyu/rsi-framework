@@ -490,11 +490,6 @@ def fig_cost():
         above = reg - start < 1.0
         ax.text(pilots - 4, (reg + 0.45) if above else (start - 0.45), f"tuned RL {reg:.1f}%", ha="right",
                 va="bottom" if above else "top", fontsize=5.4, color=INK)
-        xr, yr, tag = d[f"rl18_s{s}"][-1]
-        if "ungated" in tag:   # RL's trained update that the gate did not keep (the registered result is the start)
-            ax.plot([xr], [yr], "s", ms=3.8, mfc="white", mec=rl_c, mew=1.0, zorder=6)
-            ax.text(xr - 5, yr + 0.35, f"RL update {yr:.1f}%\n(not kept by gate)", ha="right", va="bottom",
-                    fontsize=5.0, color=INK2, linespacing=0.95)
         pts = [(q[0], q[1]) for q in d[f"loop_s{s}"]] + [(q["x_gpu_hours"], q["success_pct"]) for q in ext[f"s{s}"]]
         stop = (ext["totals"][f"s{s}"], ext[f"s{s}"][-1]["success_pct"])          # registered stop (addendum 35)
         if f"s{s}" in mb:
@@ -513,7 +508,7 @@ def fig_cost():
         # first version (after the start) above tuned RL's success: same rule on both seeds
         cx, cy = next((x, y) for x, y in pts[1:] if y >= reg)
         ax.plot([cx], [cy], "o", ms=6, mfc="none", mec=INK, mew=0.8, zorder=7)
-        lab = f"passes RL at {cx:.0f} GPU-h ({(1 - cx / x18) * 100:.0f}% fewer)"
+        lab = f"beats RL at {cx:.0f} GPU-h ({(1 - cx / x18) * 100:.0f}% fewer)"
         if cy - start < 1.0:
             ax.text(cx + 3, cy - 0.75, lab, ha="left", va="top", fontsize=5.0, color=INK2)
         else:
