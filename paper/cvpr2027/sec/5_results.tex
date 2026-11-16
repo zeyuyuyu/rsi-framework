@@ -81,7 +81,7 @@ With per-task gate rates available, the proposer performs similarly to a \emph{r
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_cost}
-  \caption{\textbf{Performance and compute cost, including RL tuning} (LIBERO-Goal, 1{,}000 unseen scenes; seeds 1 and 2). RL first spends 213 GPU-hours selecting its configuration with the policy unchanged (dotted), then trains 18 blocks. Green: the loop (rounds 0--6, then a fixed program) up to about the same total GPU-hours as tuned RL; rings mark where it first passes tuned RL, the small dot its registered stop. At the registered stop and averaged over the registered seeds, the loop ends $+3.5$ $[+1.7, +5.3]$ points above tuned RL at 29\% fewer GPU-hours (\cref{sec:rl}; per-seed results in the supplementary material).}
+  \caption{\textbf{Performance and compute cost, including RL tuning} (LIBERO-Goal, 1{,}000 unseen scenes; seeds 1 and 2). RL first spends 213 GPU-hours selecting its configuration with the policy unchanged (dotted), then trains 18 blocks. Green: the loop (rounds 0--6, then a fixed program) up to about the same total GPU-hours as tuned RL; rings mark where it first passes tuned RL, the small dot its registered stop. For seed 1 the gate did not keep RL's trained update (hollow square), so RL's registered result is its start. At the registered stop and averaged over the registered seeds, the loop ends $+3.5$ $[+1.7, +5.3]$ points above tuned RL at 29\% fewer GPU-hours (\cref{sec:rl}; per-seed results in the supplementary material).}
   \label{fig:cost}
 \end{figure}
 
