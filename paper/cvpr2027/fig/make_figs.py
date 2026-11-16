@@ -515,7 +515,7 @@ def fig_cost():
             ax.text(cx - 6, cy + 1.3, lab, ha="center", va="bottom", fontsize=5.0, color=INK2, linespacing=0.95)
         if abs(stop[0] - tot) > 1:   # the registered stop, where the run went on afterwards
             ax.plot([stop[0]], [stop[1]], "o", ms=3.2, mfc="white", mec=rsi_c, mew=1.0, zorder=7)
-            ax.text(stop[0] - 62, stop[1] + 1.0, f"{stop[1] - reg:+.1f} at {stop[0]:.0f} GPU-h\n({(1 - stop[0] / x18) * 100:.0f}% fewer GPU-h than RL)",
+            ax.text(stop[0] - 62, stop[1] + 1.0, f"beats RL by {stop[1] - reg:.1f} at {stop[0]:.0f} GPU-h\n({(1 - stop[0] / x18) * 100:.0f}% fewer GPU-h than RL)",
                     ha="center", va="bottom", fontsize=5.0, color=INK2, linespacing=0.95)
         ax.set_title(f"seed {s}: {fin - reg:+.1f} points at {tot:.0f} GPU-h", fontsize=6.2, color=INK, pad=3)
         ax.set_xlim(-4, 262); ax.set_ylim(57.3, 75.0); ax.set_yticks(range(60, 75, 4)); ax.set_xticks([0, 100, 200])
