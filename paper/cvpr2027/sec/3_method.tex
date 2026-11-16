@@ -1,6 +1,6 @@
 \section{Problem formulation}
 \label{sec:problem}
-We describe self-training through a policy and the program used to collect experience and update it.
+Given a robot policy initialized from demonstrations and an initial training program, we seek to improve expected success on a target task distribution through further interaction, without additional demonstrations. A fixed external verifier provides binary task-success feedback. The policy also generates experience for subsequent updates, so changing the policy can change the data available for further learning. We allow the training program governing experience collection and policy updates to be revised using records of earlier rounds, and examine how this evolving process affects the resulting policy.
 
 \paragraph{Robot policy improvement.} A task instance, or \emph{scene}, $c=(\ell, x_0)$ consists of a language instruction $\ell$ and initial object placements $x_0$. The policy $\pi_\theta$ maps the instruction, camera images and proprioceptive observations to action chunks. Executing it in environment $E$ produces a trajectory $\tau$, labelled by a fixed external success rule $v(c, \tau) \in \{0, 1\}$. For a task distribution $\mu$, performance is the expected success under a fixed evaluation protocol:
 \begin{equation}
