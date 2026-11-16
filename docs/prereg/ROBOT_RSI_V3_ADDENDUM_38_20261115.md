@@ -84,3 +84,16 @@ Both 8-card jobs failed within ten minutes for an infrastructure reason (below).
 - 06:14Z: seed 3 `r15c0` trained; `yq_oftgbx_mb_s3_cc_r15c0` submitted after round 15's gate (it runs only if the gate kept r15c0).
 - 06:49Z: `yq_oftgbx_mb_s3_cc_r15c0` stopped with `interim_node_is_not_an_accepted_version`: round 15 refused; seed 3 retains `r13c0`. Its job stops near 07:04Z (`RUN_TIMEOUT_S`) inside round 16, which began about 06:15Z and needs over two hours on 8 cards, so `r13c0` will be the final version; its remaining final evaluations (`yq_oftgbx_mb_s3_fresh23`, `yq_oftgbx_mb_s3_fin_rep`) are submitted now to save time, and `yq_oftgbx_mb_s3_cc_r13c0` (same command as `fin_fresh`) serves as the registered one-evaluation read. If round 16 were kept after all, its version would be evaluated instead.
 - 07:06:18Z: seed 3 (job-tqf4ti2mpfus) reached its budget (`RUN_TIMEOUT_S`, rc 124) inside round 16; its last accepted round is 13, so its final version is **`r13c0`** (rounds 13 kept; 11, 12, 14, 15 refused under this addendum). Total: 163.6 + 8 × 9.31 h = **238.1 of 239.2 GPU-hours** (99.5%). Final evaluations: `yq_oftgbx_mb_s3_cc_r13c0` serves as `fin_fresh` (same command), `yq_oftgbx_mb_s3_fresh23` (job-9yqrdgjhek71) and `yq_oftgbx_mb_s3_fin_rep` (job-7t151l027bui) running since 06:50Z.
+
+## Final read (2026-11-16 ~08:45Z, `scripts/report/addendum38_read.py`, `results/addendum38_read_20261116.json`)
+
+Versions read: seed 1 `r16c0` (240.8 of 241.5 GPU-hours), seed 2 `r08c0` (238.1 of 238.8), seed 3 `r13c0` (238.1 of 239.2). Seed 3's registered one-evaluation fresh read is its `cc_r13c0` evaluation (same command as `fin_fresh`; copied, see ops notes).
+
+| comparison | fresh, one evaluation (registered) | fresh, three evaluations | official, three evaluations |
+|---|---|---|---|
+| M1 loop at RL's budget − RL 36 blocks | **−3.17 [−4.87, −1.47]** | −3.19 [−4.54, −1.84] | −2.82 [−5.07, −0.62] |
+| M2 loop at RL's budget − RL 18 blocks (bar +3) | **+1.80 [+0.03, +3.60]**, bar not met | +1.79 [+0.31, +3.27] | −1.02 [−3.31, +1.24] |
+
+Per seed, fresh, one evaluation (loop vs RL 36 / RL 18): seed 1 72.9 vs 66.8 / 60.0; seed 2 66.7 vs 65.5 / 62.2; seed 3 49.8 vs 66.6 / 61.8.
+
+Seed 3's version kept in round 13 (`r13c0`) scores 49.8 on the fresh scenes (three evaluations 50.2, official 46.9), below its round-7 version `r07c0` (57.1). Its gate accepted it on 200 fresh validation episodes; on the sealed tests it is worse. The expectation registered above (M1 −1.5 to +0.5; M2 +3 to +4.5) is not met: M1 is negative with the interval below zero, M2 is positive with the interval just above zero and below the +3 bar. The interim read of 2026-11-15 23:45Z (seed 3 still at `r07c0`) had M2 +4.23; it is superseded by this final read.
