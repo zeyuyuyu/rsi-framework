@@ -505,7 +505,14 @@ def fig_cost():
             ax.plot([tot, xa], [fin, fin], color=rsi_c, lw=0.6, ls=(0, (1, 1.5)), zorder=2)
             ax.annotate("", xy=(xa, fin), xytext=(xa, reg), arrowprops=dict(arrowstyle="<->", color=INK2, lw=0.7, shrinkA=0, shrinkB=0))
             ax.text(xa - 2, (fin + reg) / 2, f"{fin - reg:+.1f}", ha="right", va="center", fontsize=6, color=INK, fontweight="bold")
-            if row == 0:
+            if row == 0:   # same rule on both seeds: the first version (after the start) at or above tuned RL's success
+                cx, cy = next((x, y) for x, y in pts[1:] if y >= reg)
+                ax.plot([cx], [cy], "o", ms=6, mfc="none", mec=INK, mew=0.8, zorder=7)
+                lab = f"passes tuned RL,\n{(1 - cx / x18) * 100:.0f}% fewer GPU-h"
+                if cy - start < 1.0:   # crossing right at the start level: one line under the dotted RL line
+                    ax.text(cx + 3, cy - 0.75, f"passes RL at {(1 - cx / x18) * 100:.0f}% fewer GPU-h", ha="left", va="top", fontsize=5.0, color=INK2)
+                else:
+                    ax.text(cx - 4, cy + 0.9, lab, ha="center", va="bottom", fontsize=5.2, color=INK2, linespacing=0.95)
                 diff = (tot - x18) / x18 * 100
                 ax.set_title(f"seed {s}: {fin - reg:+.1f}, {abs(diff):.0f}% {'fewer' if diff < 0 else 'more'} GPU-h",
                              fontsize=6.0, color=INK, pad=3)
