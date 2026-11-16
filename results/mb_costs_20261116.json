@@ -25,13 +25,14 @@
   "status": "at budget before this addendum"
  },
  "s3": {
-  "total_so_far": 163.6,
-  "final_node": null,
-  "status": "running on 8 cards (job-tqf4ti2mpfus) to its budget",
+  "total": 238.1,
+  "final_node": "r13c0",
+  "status": "stopped at budget (rc 124) 2026-11-16T07:06:18Z",
   "jobs": {
    "job-1lvwkiee0ivw": "4 cards, stopped, 1.78",
    "job-hcfqtbwpm2qw": "8 cards, failed, 1.20",
-   "job-eg59nsypucaz": "4 cards, 09:34:55Z-21:47:32Z, stopped to move to 8 cards, 48.84"
+   "job-eg59nsypucaz": "4 cards, 09:34:55Z-21:47:32Z, stopped to move to 8 cards, 48.84",
+   "job-tqf4ti2mpfus": "8 cards, 21:47:55Z-07:06:18Z, 74.45"
   }
  }
 }
