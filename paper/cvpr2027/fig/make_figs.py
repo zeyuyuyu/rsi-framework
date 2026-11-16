@@ -477,7 +477,7 @@ def fig_cost():
     mbf = os.path.join(ROOT, "results/mb_cost_points_20261116.json")
     mb = json.load(open(mbf)) if os.path.exists(mbf) else {}
     rsi_c, rl_c = C["llm_harness"], INK2
-    fig, axes = plt.subplots(1, 2, figsize=(3.4, 1.95), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(3.4, 1.7), sharey=True)
     pilots = d["rl36_s1"][0][0]
     for ax, s in zip(axes, ("1", "2")):
         ygrid(ax)

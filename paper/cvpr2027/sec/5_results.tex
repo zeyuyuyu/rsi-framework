@@ -81,19 +81,15 @@ With per-task gate rates available, the proposer performs similarly to a \emph{r
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_cost}
-  \caption{\textbf{Performance and compute cost, including RL tuning} (LIBERO-Goal, 1{,}000 unseen scenes; seeds 1 and 2). RL first spends 213 GPU-hours selecting its configuration with the policy unchanged (dotted), then trains 18 blocks. Green: the loop (rounds 0--6, then a fixed program) up to about the same total GPU-hours as tuned RL; rings mark where it first beats tuned RL, the small dot its registered stop. For seed 1 the gate did not keep RL's trained update, so RL's registered result is its start. At the registered stop and averaged over the registered seeds, the loop ends $+3.5$ $[+1.7, +5.3]$ points above tuned RL at 29\% fewer GPU-hours (\cref{sec:rl}; per-seed results in the supplementary material).}
+  \caption{\textbf{Performance and compute cost, including RL tuning} (LIBERO-Goal, 1{,}000 unseen scenes). RL spends 213 GPU-hours choosing its configuration (dotted), then trains 18 blocks; for seed 1 the gate did not keep its update. Green: the loop up to about RL's total GPU-hours; rings: first version above RL; small dot: registered stop. Averaged over the registered seeds, at the registered stop the loop ends $+3.5$ $[+1.7, +5.3]$ points above tuned RL at 29\% fewer GPU-hours (\cref{sec:rl}; per-seed results in the supplementary material).}
   \label{fig:cost}
 \end{figure}
 
-To assess the cost of these gains, we compare total GPU-hours, including RL's tuning. Selecting RL's configuration required 21 pilot runs costing $\geq$213 GPU-hours. With 18 training blocks, the one-shot RL baseline uses about 230 GPU-hours in total.
+We compare total GPU-hours, including RL's tuning: selecting RL's configuration took 21 pilot runs ($\geq$213 GPU-hours), so the one-shot RL baseline (18 training blocks) costs about 230 GPU-hours. Starting from the failing configuration without pilots, the adapted loop uses 118 GPU-hours over six rounds, about half, and exceeds RL by $+2.2$ $[+0.9, +3.5]$ on fresh scenes (official test $+0.05$ $[-1.6, +1.7]$; descriptive pairings of registered results).
 
-Starting from the failing configuration without pilot tuning, the adapted loop uses 118 GPU-hours over six rounds, about half the baseline's cost. It exceeds RL by $+2.2$ $[+0.9, +3.5]$ on fresh scenes; the official-test difference is $+0.05$ $[-1.6, +1.7]$. These descriptive comparisons pair existing registered results.
+A preregistered continuation keeps the adapted program fixed. Using 164 GPU-hours on average against RL's 230 (29\% fewer), the loop finishes $+3.5$ points $[+1.7, +5.3]$ above tuned RL on fresh scenes, passing the registered $+3$ threshold ($+3.0$ $[+1.5, +4.5]$ with three evaluations per version; official test $+1.3$ $[-0.9, +3.5]$). Against RL trained twice as long (36 blocks, 240 GPU-hours) the difference is $-1.5$ $[-3.1, +0.1]$. \Cref{fig:cost} shows the trajectories; the supplementary material reports each seed.
 
-A preregistered continuation keeps the adapted program fixed. The loop finishes $+3.5$ points $[+1.7, +5.3]$ above tuned RL on fresh scenes, passing the registered $+3$ threshold. With three evaluations per version, the estimate is $+3.0$ $[+1.5, +4.5]$; the official-test difference is $+1.3$ $[-0.9, +3.5]$.
-
-The loop uses 164 GPU-hours in total on average, compared with RL's 230, a reduction of 29\%. Against RL trained for twice as long (36 blocks, 240 GPU-hours), its performance difference is $-1.5$ $[-3.1, +0.1]$. \Cref{fig:cost} shows the trajectories; the supplementary material reports each seed.
-
-On Spatial, the registered comparison gives similar fresh-scene performance at about a fifth of RL's counted GPU cost: $+0.5$ $[-0.7, +1.8]$. The official-test difference is $-2.8$ $[-4.5, -1.2]$. Here, the meta level's memory includes earlier tuned runs.
+On Spatial, at about a fifth of RL's counted cost, fresh-scene performance is similar ($+0.5$ $[-0.7, +1.8]$; official test $-2.8$ $[-4.5, -1.2]$); here the meta level's memory includes earlier tuned runs.
 
 \subsection{Evaluation on official and fresh initial states}
 \label{sec:rq4}
