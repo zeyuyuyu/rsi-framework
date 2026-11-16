@@ -1,0 +1,23 @@
+{
+ "s1": [
+  {
+   "node": "r14c0",
+   "x_gpu_hours": 172.3,
+   "success_pct": 71.7,
+   "source": "yq_oftgbx_mb_s1_cc_r14c0"
+  },
+  {
+   "node": "r15c0",
+   "x_gpu_hours": 199.1,
+   "success_pct": 72.3,
+   "source": "yq_oftgbx_mb_s1_cc_r15c0"
+  },
+  {
+   "node": "r16c0",
+   "x_gpu_hours": 240.8,
+   "success_pct": 72.9,
+   "source": "yq_oftgbx_mb_s1_fin_fresh",
+   "final": true
+  }
+ ]
+}
