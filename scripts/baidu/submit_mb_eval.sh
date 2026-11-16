@@ -1,6 +1,6 @@
 #!/bin/bash
 # Addendum 38 evaluations, one card each, source v34, on the resumed run dirs.
-# usage: submit_mb_eval.sh <seed 1|3> <node e.g. r15c0> <kind: cc|fin_fresh|fresh23|fin_rep> [name suffix for a retry]
+# usage: submit_mb_eval.sh <seed 1> <node e.g. r15c0> <kind: cc|fin_fresh|fresh23|fin_rep> [name suffix for a retry]
 #   cc        one fresh evaluation of a version kept during the night   -> yq_oftgbx_mb_s<n>_cc_<node>
 #   fin_fresh one fresh evaluation of the final version (registered)    -> yq_oftgbx_mb_s<n>_fin_fresh
 #   fresh23   two more fresh evaluations of the final version           -> yq_oftgbx_mb_s<n>_fresh23
@@ -9,7 +9,7 @@ set -eu
 cd "$(dirname "$0")/../.."
 L=/home/zeyu/rsi/yq_logs
 seed=$1; node=$2; kind=$3; sfx=${4:-}
-case $seed in 1) run=yq_oftgbx_ext_s1b;; 3) run=yq_oftgbx_ext_s3;; *) echo "seed 1 or 3"; exit 1;; esac
+case $seed in 1) run=yq_oftgbx_ext_s1b;; *) echo "seed 1 only (seed 3's continuation is excluded, addendum 39)"; exit 1;; esac
 R=/mnt/pfs/shitianyu-rsi/runs/$run
 case $kind in
   cc)        name=yq_oftgbx_mb_s${seed}_cc_${node}; args="--fresh-eval $R --node $node --interim";;

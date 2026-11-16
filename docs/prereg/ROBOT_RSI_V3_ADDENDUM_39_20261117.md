@@ -17,4 +17,4 @@ Decision of the PI, recorded 2026-11-17 before the paper deadline. Post hoc; dis
 
 The loop used 190 GPU-hours on average against RL's 230. The registered bars were set for seeds 1–3, so these numbers are reported without a pass/fail verdict against them.
 
-**Repository.** The excluded records are removed from the current tree. Git history is unchanged. `scripts/baidu/extract_results.py` skips these run names.
+**Repository.** The excluded records are removed from the current tree. Git history is unchanged. `scripts/baidu/extract_results.py` skips these run names. The launch plan `scripts/baidu/plans/yq_oftgbx_ext_s3.json` is removed, and the addendum-38 submit scripts accept seed 1 only.
