@@ -489,7 +489,7 @@ def fig_cost():
         ax.plot([x18], [reg], "s", color=rl_c, ms=3.8, zorder=6, **RING)
         above = reg - start < 1.0
         ax.text(pilots - 4, (reg + 0.45) if above else (start - 0.45), f"tuned RL {reg:.1f}%", ha="right",
-                va="bottom" if above else "top", fontsize=5.4, color=INK)
+                va="bottom" if above else "top", fontsize=5.6, color=INK, fontweight="bold")
         pts = [(q[0], q[1]) for q in d[f"loop_s{s}"]] + [(q["x_gpu_hours"], q["success_pct"]) for q in ext[f"s{s}"]]
         stop = (ext["totals"][f"s{s}"], ext[f"s{s}"][-1]["success_pct"])          # registered stop (addendum 35)
         if f"s{s}" in mb:
