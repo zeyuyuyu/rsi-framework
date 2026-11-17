@@ -137,7 +137,7 @@ Arm & Recursion & Gate & Meta & Candidates \\
 The strict gate requires the candidate to match or exceed its parent's success rate on paired gate evaluations. The \texttt{guard} arm permits a decrease of at most 5 percentage points relative to the parent, while also
 requiring the candidate to remain no more than 5 points below the initial policy. The \texttt{nogate} arm removes rejection based on performance degradation.
 
-\Cref{tab:controls} summarises the component controls; their starting recipes and training schedules are described in \cref{sec:starting}.
+Starting recipes and training schedules are described in \cref{sec:starting}.
 
 For the system-level comparison on LIBERO-Goal, we compare full LLM RSI with two tuned GRPO baselines, RL-18 and RL-36. Starting from the same initial policy, these baselines perform 18 or 36 sequential on-policy training blocks
 without intermediate gates. We report the policy retained by a final gate. Unlike RSI, which starts from the failing BC recipe, both baselines use a tuned GRPO recipe. We report execution GPU-hours separately from total costs
