@@ -5,7 +5,7 @@
 \begin{figure*}[t]
   \centering
   \includegraphics[width=\textwidth]{fig_selfrepair}
-  \caption{\textbf{Program adaptation and data recursion.} (a) Meta level minus \texttt{fixed} on the final tests. (b, c) Official success by round on Spatial, seeds 1 and 2, against \texttt{fixed} (\cref{tab:selfrepair}). (d) \texttt{fixed} minus \texttt{nonrec} after twelve rounds. (e) Spatial, GRPO: recursive versus non-recursive data generation.}
+  \caption{\textbf{Program adaptation and data recursion.} (a) Meta level minus \texttt{fixed} on the final tests, seeds 1--3. (b, c) Official success by round on Spatial, seeds 1 and 2, against \texttt{fixed} (\cref{tab:selfrepair}). (d) \texttt{fixed} minus \texttt{nonrec} after twelve rounds. (e) Spatial, GRPO: recursive versus non-recursive data generation.}
   \label{fig:selfrepair}
 \end{figure*}
 
@@ -31,16 +31,12 @@ All runs use data recursion and a fresh paired gate over six rounds,
 starting from a BC recipe with a sampling temperature of 1.6
 and unit-temperature likelihoods.
 We compare a fixed program (one candidate per round) with
-meta-level adaptation (two candidates per round) across three
-paired seeds. Both suites use LLM-based adaptation, with an additional
+meta-level adaptation (two candidates per round) on the four
+registered seeds (0--3). Both suites use LLM-based adaptation, with an additional
 numeric-search fallback for Spatial.
 
 \indent\textbf{Finding 1: Meta-level repair raises Fresh success on both suites.}
-As shown in \cref{fig:selfrepair}(a),
-adaptation improves Goal success by $+2.38$ pp (Official)
-and $+4.33$ pp (Fresh).
-On Spatial, Fresh improves by $+3.23$ pp, while Official
-decreases by $1.51$ pp.
+Adaptation improves Goal Official by $+2.65$ pp $[+0.73, +4.58]$ and Spatial Fresh by $+3.60$ $[+2.50, +4.72]$, above the registered $+3$ threshold; Spatial Official changes by $+0.53$ $[-1.05, +2.13]$ (Goal Fresh: \cref{tab:components}).
 These effects include additional candidate search,
 as adaptation evaluates twice as many candidates per round.
 
@@ -216,11 +212,11 @@ A preregistered continuation keeps the adapted program fixed. We report it for s
 \begin{figure}[t]
   \centering
   \includegraphics[width=\linewidth]{fig_inflation}
-  \caption{\textbf{Official versus Fresh evaluation.} Component effects (pp) on the official test states (open circles) and on 1{,}000 fresh placements (diamonds), averaged over three paired seeds (\cref{tab:components}).}
+  \caption{\textbf{Official versus Fresh evaluation.} Component effects (pp) on the official test states (open circles) and on 1{,}000 fresh placements (diamonds), seeds 1--3 (\cref{tab:components}).}
   \label{fig:inflation}
 \end{figure}
 
 We examine how evaluation protocols affect measured improvements on LIBERO-Goal and LIBERO-Spatial, comparing Official test states with independently sampled Fresh placements.
 
-\indent\textbf{Finding 5: Measured improvements depend on the evaluation protocol.} As shown in \cref{fig:inflation}, Program Adaptation on Spatial changes from $-1.51$ pp on Official to $+3.23$ pp on Fresh. Data Recursion shows similar gains across both evaluations, while Policy Selection varies in magnitude. These results suggest that improvements measured on Official states
+\indent\textbf{Finding 5: Measured improvements depend on the evaluation protocol.} As shown in \cref{fig:inflation}, Program Adaptation on Spatial changes from $-1.51$ pp on Official to $+3.23$ pp on Fresh (seeds 1--3). Data Recursion shows similar gains across both evaluations, while Policy Selection varies in magnitude. These results suggest that improvements measured on Official states
 do not always generalize to Fresh placements.

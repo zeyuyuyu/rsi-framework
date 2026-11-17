@@ -56,8 +56,8 @@ Gate (BC/6)
 & \shortstack{$+15.47$ \\ {\tiny $[13.20,17.77]$}} \\
 
 LLM meta-level (BC/6)
-& \shortstack{$+2.38$ \\ {\tiny $[0.29,4.47]$}}
-& \shortstack{$+4.33$ \\ {\tiny [TBD]}} \\
+& \shortstack{$+2.65\smash{^\dagger}$ \\ {\tiny $[0.73,4.58]$}}
+& \shortstack{$+4.33$ \\ {\tiny $[2.57,6.10]$}} \\
 
 \midrule
 \multicolumn{3}{@{}l}{\textbf{LIBERO-Spatial}} \\
@@ -72,16 +72,16 @@ Gate strictness (GRPO/12)
 & \shortstack{$+1.17$ \\ {\tiny $[-0.07,2.40]$}} \\
 
 Gate strictness (GRPO/6)
-& \shortstack{$+1.62$ \\ {\tiny [TBD]}}
-& \shortstack{$+0.10$ \\ {\tiny $[-0.97,1.17]$}} \\
+& \shortstack{$+0.73\smash{^\dagger}$ \\ {\tiny $[-0.77,2.25]$}}
+& \shortstack{$+0.35\smash{^\dagger}$ \\ {\tiny $[-0.62,1.32]$}} \\
 
 Gate (BC/6)
 & \shortstack{$+13.00$ \\ {\tiny $[10.44,15.60]$}}
 & \shortstack{$+8.37$ \\ {\tiny $[6.67,10.07]$}} \\
 
 LLM meta-level (BC/6)
-& \shortstack{$-1.51$ \\ {\tiny $[-3.24,0.24]$}}
-& \shortstack{$+3.23$ \\ {\tiny [TBD]}} \\
+& \shortstack{$+0.53\smash{^\dagger}$ \\ {\tiny $[-1.05,2.13]$}}
+& \shortstack{$+3.60\smash{^\dagger}$ \\ {\tiny $[2.50,4.72]$}} \\
 
 \bottomrule
 \end{tabular}
@@ -92,7 +92,8 @@ Comparisons: Recursion = fixed $-$ nonrec;
 Gate strictness = guard $-$ fixed;
 Gate = fixed $-$ nogate;
 LLM meta-level = full RSI $-$ fixed.
-Setup indicates the initial recipe and number of rounds.
+Setup: initial recipe/rounds.
+$^\dagger$ Seeds 0--3 as registered; other entries seeds 1--3.
 }
 \end{table}
 
@@ -106,7 +107,7 @@ Each action chunk contains 56 discrete tokens (256 bins), produced in one parall
 
 The main component study uses a fixed GRPO training recipe informed by pilot experiments and chosen before the main runs. The recipe uses a learning rate of $3\times10^{-5}$, temperature-matched policy ratios, and episode-balanced loss. Each block collects eight attempts on each of 64 instances at temperature 1.6, then performs 100 optimiser steps with batch size 64. Each round comprises three blocks, with fresh paired gate evaluations determining whether to accept the updated policy.
 
-All comparisons below use seeds 1--3 on both LIBERO-Goal and LIBERO-Spatial. The recursion and gate-strictness experiments start from the same fixed GRPO recipe and run for twelve rounds, with program adaptation disabled. They compare recursive against non-recursive data generation, and strict gating against a relaxed guard-rail gate, respectively.
+Comparisons use seeds 1--3 on both suites, except entries marked $^\dagger$ in \cref{tab:components}. The recursion and gate-strictness experiments start from the same fixed GRPO recipe and run for twelve rounds, with program adaptation disabled. They compare recursive against non-recursive data generation, and strict gating against a relaxed guard-rail gate, respectively.
 
 The gate-removal and self-repair experiments start from the same failing BC recipe and run for six rounds. The gate-removal comparison keeps recursion enabled and the training recipe fixed, changing only whether updates can be rejected by the gate. The self-repair comparison keeps recursion and strict gating enabled and compares the fixed BC recipe against full RSI with LLM-based program adaptation. The LLM can modify training parameters and switch the update algorithm, including from BC to GRPO. The fixed-recipe arms train one candidate per round, while the LLM arm trains two. \Cref{tab:components} reports the component ablation results on LIBERO-Goal and LIBERO-Spatial under both official and fresh evaluation protocols.
 
