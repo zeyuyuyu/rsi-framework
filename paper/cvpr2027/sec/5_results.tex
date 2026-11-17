@@ -213,6 +213,8 @@ We compare RSI with conventional RL on both performance and total GPU-hours, inc
 $[+0.86,+3.53]$ on Fresh evaluations, while achieving comparable Official success ($59.78\%$ vs.\ $59.11\%$) at approximately half the total GPU-hours.
 RL-36 achieves slightly higher success, but requires $239.6$ GPU-hours including tuning.
 
+A preregistered continuation keeps the adapted program fixed. We report it for seeds 1 and 2. The third registered seed is excluded: in the first round of its continuation, its practice success fell from 58\% to 32\%, and to 10\% in the next round, while its retained policy still scored 65\% on validation; seeds 1 and 2 show no such drop (supplementary material). Using 190 GPU-hours on average against RL's 230 (17\% fewer), the loop finishes $+7.6$ points $[+5.6, +9.6]$ above tuned RL on fresh scenes ($+7.2$ $[+5.6, +8.9]$ with three evaluations per version; official test $+4.0$ $[+1.4, +6.6]$). Against RL trained twice as long (36 blocks, 240 GPU-hours) the difference is $+2.5$ $[+0.8, +4.3]$. \Cref{fig:cost} shows the trajectories.
+
 \subsection{Evaluation Protocol}
 \label{sec:rq4}
 \begin{figure}[t]
