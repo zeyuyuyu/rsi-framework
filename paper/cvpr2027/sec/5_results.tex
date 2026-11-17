@@ -1,11 +1,6 @@
 \section{Results}
 \label{sec:results}
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\columnwidth]{fig_gates}
-  \caption{\textbf{Gate success across rounds} for the retained policies of the gated loop and its two controls. Thin lines show seeds 1--3; thick lines show their mean. Dots mark acceptance of a new version. Each round uses 200 new placements. Panel annotations give the change in the mean from round 0 to 6.}
-  \label{fig:gates}
-\end{figure}
+
 
 \begin{figure*}[t]
   \centering
@@ -14,69 +9,196 @@
   \label{fig:selfrepair}
 \end{figure*}
 
-We first examine how data recursion supports learning with a fixed GRPO program, then study how selection and adaptation restore learning from the BC starting point. We report sealed-test results from the registered analyses and identify gate-level measurements separately. The final comparisons address compute cost and the role of evaluation states.
 
-\subsection{Data recursion and verifier feedback}
+
+We evaluate recursive self-improvement on LIBERO-Spatial
+and LIBERO-Goal through three controlled component studies: \textbf{Program Adaptation}, \textbf{Data Recursion}, and \textbf{Policy Selection}.
+
+Beyond these components, we address two broader research questions:
+\begin{itemize}
+    \item \textbf{Compute Efficiency:}
+    How does RSI compare with conventional RL in terms
+    of performance and computational cost?
+    \item \textbf{Evaluation Protocol}
+    How sensitive are measured improvements to the evaluation protocol?
+\end{itemize}
+
+\subsection{Program Adaptation}
 \label{sec:rq1}
-We hold the training program fixed to examine the effect of updating the policy that generates experience. In the sixteen-run LIBERO-Spatial study, the loop improves success on 1{,}000 fresh scenes by $+5.65$ points $[+4.28, +7.04]$ after six rounds (\cref{tab:long}). Gains range from $+4.8$ to $+6.8$ across seeds and exceed the registered threshold. The loop exceeds the shuffled-label control by $6.05$ points and the frozen-generator control by $4.55$ points. The shuffled-label control remains at its initial level. Both informative success labels and an updated data generator contribute to the observed improvement.
+We examine whether meta-level program adaptation can repair an ineffective
+BC training program on LIBERO-Goal and LIBERO-Spatial.
+All runs use data recursion and a fresh paired gate over six rounds,
+starting from a BC recipe with a sampling temperature of 1.6
+and unit-temperature likelihoods.
+We compare a fixed program (one candidate per round) with
+meta-level adaptation (two candidates per round) across three
+paired seeds. Both suites use LLM-based adaptation, with an additional
+numeric-search fallback for Spatial.
 
-The official test shows the same direction for these component effects. On Spatial's 500 official states, the recursion and verifier differences are $+5.73$ $[+4.12, +7.38]$ and $+1.67$ $[+0.18, +3.13]$, respectively; recursion meets its registered criterion. Relative to the initial policy on this test, the six-round loop is level with its reference on Spatial ($-0.01$) and $+1.71$ $[-0.76, +4.23]$ above it on Goal. \Cref{fig:gates} shows the gate trajectories separating within six rounds on both suites.
+\indent\textbf{Finding 1: Meta-level repair can improve
+performance, but gains are not consistent across evaluations.}
+As shown in \cref{fig:selfrepair}(a),
+adaptation improves Goal success by $+2.38$ pp (Official)
+and $+4.33$ pp (Fresh).
+On Spatial, Fresh improves by $+3.23$ pp, while Official
+decreases by $1.51$ pp.
+These effects include additional candidate search,
+as adaptation evaluates twice as many candidates per round.
 
-We next examine whether gains continue with longer training. At twelve rounds, Spatial's fresh-scene gain reaches $+7.38$ $[+5.75, +9.06]$. The loop exceeds the non-recursive control by $+8.63$ $[+7.17, +10.10]$ on fresh scenes and $+8.67$ $[+6.76, +10.69]$ on the official test.
+To understand the variation on Spatial, we examine two contrasting
+cases in \cref{fig:selfrepair}(b--c) and \cref{tab:selfrepair}.
+In Seed 1, the meta-level switches from BC to GRPO in Round 1,
+improving final Official success by $+2.6$ pp over fixed.
+In Seed 2, the meta-level retains BC and modifies task sampling
+and learning rate. Despite a higher gate score for the Round 5
+candidate (68.0\% vs.\ 62.5\%), final Official success falls
+$4.8$ pp below fixed.
 
-On Goal, the twelve-round loop improves over its start by $+3.5$ points $[+1.7, +5.4]$ on fresh scenes. Its advantage over the non-recursive control is $+7.3$ on fresh scenes and $+7.8$ on the official test, positive on every seed.
+These cases highlight a limitation of meta-level repair:
+program changes selected by the gate do not necessarily
+improve performance on independent evaluations.
+\begin{table}[t]
+    \centering
+    \small
+    \caption{\textbf{Spatial program repair cases.}
+    Selected accepted program changes across two seeds.
+    Final Official differences average three evaluations
+    per retained policy.}
+    \label{tab:selfrepair}
+    \begin{tabular}{@{}p{0.19\linewidth}p{0.50\linewidth}p{0.18\linewidth}@{}}
+        \hline
+        Case & Key accepted changes & Official $\Delta$ \\
+        \hline
+        Seed 1
+        (Recovery)
+        & R1: BC $\to$ GRPO;
+        mixed-group curation;
+        token-level loss
+        & $+2.6$ pp \\
 
-A guard-rail gate rejects drops greater than 5 points. With this gate, the twelve-round gain is $+8.55$ $[+6.87, +10.23]$ on Spatial's fresh scenes, with improvement on every seed, and $+5.2$ $[+3.4, +7.1]$ on Goal. All reported twelve-round Spatial comparisons meet their registered thresholds. Complete registered results appear in the supplementary material.
-
-The paired gate is shared by both configurations; with the generator frozen, the Goal loop ends $-3.8$ points below its start on fresh scenes. This contrast is consistent with a benefit from keeping data generation close to the learner as it changes. To examine the gate itself, we next keep data recursion in place and compare policies trained with and without update selection.
-
-\subsection{Policy selection during self-training}
-\label{sec:rq2}
-We now use the failing BC configuration introduced in \cref{sec:starting}. Comparing gated and ungated training at equal compute isolates the effect of selecting updates while leaving the training program unchanged.
-
-On Goal, the gated loop preserves initial performance. It exceeds ungated training by $+13.6$ $[+10.5, +16.8]$ on the official test and $+15.5$ $[+13.2, +17.8]$ on fresh scenes, passing both registered $+10$ thresholds. The ungated reference ends $15.2$ points $[11.5, 18.8]$ below its start on the official test and $16.3$ points below on fresh scenes, with declines on all three seeds.
-
-On Spatial, the corresponding differences are $+13.0$ $[+10.4, +15.6]$ on the official test and $+8.4$ $[+6.7, +10.1]$ on fresh scenes. The official-test gain meets the registered threshold. Ungated training loses 15.0 and 7.2 points on these tests, respectively, reaching 1.2\% on one A800 seed.
-
-The gate adds one evaluation per candidate, with a standard deviation of about 3.4 points over 200 episodes. In this BC setting, selection preserves a capable policy from which learning can continue. Program adaptation addresses the next question: how to turn further experience into an improvement over that retained policy.
-
-\subsection{Adaptation of the training program}
-\label{sec:rq3}
-The adaptation study allows changes to the BC likelihood temperature, sampling temperature and update operator. The proposer chooses among these edits using descriptions of their operation and records from completed rounds. The study compares the gate alone (\texttt{fixed}), numeric search (\texttt{full}) and the workspace-based language model (\texttt{llm\_harness}) across four seeds. Both adaptation arms train two candidates per round. The registered repair criterion requires \texttt{llm\_harness} $-$ \texttt{fixed} $\ge +3$, with a CI above 0.
-
-\begin{table}[hb]
-  \centering
-  \small
-  \caption{\textbf{Self-repair study.} Gate / sealed-test success (\%, three evaluations) of each retained version and its program changes. Bold marks the best sealed-test result for each seed. S1 $=$ \texttt{llm\_harness} $-$ \texttt{fixed} $= +2.65$ $[+0.73, +4.58]$ (CI above zero; threshold $+3$).}
-  \label{tab:selfrepair}
-  \resizebox{\linewidth}{!}{%
-  \begin{tabular}{@{}llll@{}}
-    \toprule
-    seed & \texttt{fixed} (gate only) & \texttt{full} (numeric) & \texttt{llm\_harness} \\
-    \midrule
-    1 (Y) & 60.0 / 56.1 & 62.5 / 56.7 & 65.5 / \textbf{60.1}, GRPO in r1 \\
-    2 (Y) & start / 58.7, all refused & 65.0 / 59.9, GRPO & 68.5 / \textbf{61.3}, GRPO in r1 \\
-    3 (Y) & 63.0 / 57.5 & 61.0 / \textbf{60.2}, BC rollout-$T$ & 64.5 / 57.9, BC $T$ 1.6$\to$1.3 \\
-    0 (A) & 64.5 / 57.4 & 61.5 / 58.8 & 68.5 / \textbf{60.9}, GRPO in r2 \\
-    \midrule
-    mean test & 57.4 & 58.9 & \textbf{60.1} \\
-    \bottomrule
-  \end{tabular}}
+        Seed 2
+        (No recovery)
+        & R3: task reweighting;
+        R5: LR $10^{-5} \to 3\times10^{-5}$
+        & $-4.8$ pp \\
+        \hline
+    \end{tabular}
 \end{table}
 
-On all four seeds, the language model's first-round diagnosis identifies the temperature mismatch and missing failure signal. Its first proposal is to switch to GRPO on mixed-outcome scenes at a lower temperature. The gate accepts this change in rounds 1--2 on three seeds. On the fourth, it rejects the change twice, after which the model repairs BC instead (\cref{tab:selfrepair}).
+% \begin{table}[hb]
+%   \centering
+%   \small
+%   \caption{\textbf{Self-repair study.} Gate / sealed-test success (\%, three evaluations) of each retained version and its program changes. Bold marks the best sealed-test result for each seed. S1 $=$ \texttt{llm\_harness} $-$ \texttt{fixed} $= +2.65$ $[+0.73, +4.58]$ (CI above zero; threshold $+3$).}
+%   \label{tab:selfrepair}
+%   \resizebox{\linewidth}{!}{%
+%   \begin{tabular}{@{}llll@{}}
+%     \toprule
+%     seed & \texttt{fixed} (gate only) & \texttt{full} (numeric) & \texttt{llm\_harness} \\
+%     \midrule
+%     1 (Y) & 60.0 / 56.1 & 62.5 / 56.7 & 65.5 / \textbf{60.1}, GRPO in r1 \\
+%     2 (Y) & start / 58.7, all refused & 65.0 / 59.9, GRPO & 68.5 / \textbf{61.3}, GRPO in r1 \\
+%     3 (Y) & 63.0 / 57.5 & 61.0 / \textbf{60.2}, BC rollout-$T$ & 64.5 / 57.9, BC $T$ 1.6$\to$1.3 \\
+%     0 (A) & 64.5 / 57.4 & 61.5 / 58.8 & 68.5 / \textbf{60.9}, GRPO in r2 \\
+%     \midrule
+%     mean test & 57.4 & 58.9 & \textbf{60.1} \\
+%     \bottomrule
+%   \end{tabular}}
+% \end{table}
+\subsection{Data Recursion}
+\label{sec:rq2}
+We examine whether data recursion improves self-training on LIBERO-Goal and LIBERO-Spatial. All runs use a fixed GRPO training program and a fresh paired gate over twelve rounds. We compare recursive data generation using the latest policy with non-recursive generation using a frozen initial policy across three paired seeds. Both configurations update the learner, differing only in the policy used to generate training experience.
 
-On the sealed Goal test, the gain over the gate alone is $+2.65$ points $[+0.73, +4.58]$ (registered threshold $+3$), positive on three seeds with the pooled interval above zero. Relative to the hand-tuned GRPO loop, the difference is $+0.28$ $[-1.43, +1.97]$, indicating similar performance.
+\indent\textbf{Finding 2: Data recursion consistently
+outperforms frozen data generation, with gains that
+depend on the evaluation distribution.}
+As shown in \cref{fig:selfrepair}(d) and
+\cref{tab:recursion}, recursion outperforms the
+non-recursive control by $+7.30$--$+8.67$ pp across
+both suites and evaluations, with all paired 95\% CIs
+above zero. Relative to R0, recursion largely preserves
+Official performance ($+0.40$--$+0.93$ pp), while
+improving Fresh success by $+3.54$ pp on Goal and
+$+7.38$ pp on Spatial. In contrast, the non-recursive
+control degrades across all four settings
+(\cref{tab:recursion}).
 
-On Spatial's fresh scenes, the gain over the gate alone is $+3.60$ $[+2.50, +4.72]$ across four seeds, passing the registered $+3$ threshold. The official-test difference is $+0.53$ $[-1.05, +2.13]$.
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{\textbf{Data recursion over 12 rounds.}
+Changes relative to R0 and final paired advantages
+(pp; 95\% CI). R0 changes use single Official
+evaluations or the shared Fresh reference;
+final Official advantages use three evaluations
+per seed.}
+\label{tab:recursion}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Suite / Eval. &
+Rec. $-$ R0 &
+Non-rec. $-$ R0 &
+Rec. $-$ Non-rec. \\
+\midrule
+Goal / Official & +0.93 & -5.80 &
+\shortstack{$\mathbf{+7.84}$\\
+{\scriptsize $[5.22,10.49]$}} \\
+Goal / Fresh & +3.54 & -3.76 &
+\shortstack{$\mathbf{+7.30}$\\
+{\scriptsize $[5.47,9.20]$}} \\
+Spatial / Official & +0.40 & -7.93 &
+\shortstack{$\mathbf{+8.67}$\\
+{\scriptsize $[6.76,10.69]$}} \\
+Spatial / Fresh & +7.38 & -1.25 &
+\shortstack{$\mathbf{+8.63}$\\
+{\scriptsize $[7.17,10.10]$}} \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
-Numeric search also repairs the Goal configuration, on two seeds in round 6. Its final performance is $1.15$ points behind the language model $[-0.63, +2.92]$. The language model repairs in round one, at a higher per-step budget.
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{fig_gates}
+  \caption{\textbf{Gate success across rounds} for the retained policies of the gated loop and its two controls. Thin lines show seeds 1--3; thick lines show their mean. Dots mark acceptance of a new version. Each round uses 200 new placements. Panel annotations give the change in the mean from round 0 to 6.}
+  \label{fig:gates}
+\end{figure}
+\subsection{Policy Selection}
+\label{sec:rq3}
+We examine whether an acceptance gate prevents harmful policy updates during self-training. Starting from an ineffective BC training program,
+we compare a strict fresh paired gate with always accepting updates over six rounds on LIBERO-Goal and LIBERO-Spatial, using three paired seeds and equal training compute.
 
-To relate these repair results to the starting program, we also evaluate adaptation from the working GRPO configuration. All four meta-level arms finish within $\pm 1.2$ points of \texttt{fixed} (supplementary material).
+\indent\textbf{Finding 3: The acceptance gate prevents
+performance collapse by rejecting harmful updates.} \cref{fig:gates}(a,b) illustrates this effect on Spatial (Seed 2). At R3 and R4, the gated
+loop encounters candidates with gate-check scores similar to those in ungated training, but rejects both updates and retains the previous policy. By R6, the gated policy maintains $59.0\%$ Official success, while ungated training drops to $45.4\%$.
 
-With per-task gate rates available, the proposer performs similarly to a \emph{replica} arm that trains the identical program: the differences are $-0.27$ $[-2.53, +2.00]$ and $+0.30$ $[-1.60, +2.15]$ on the two platforms. Proposed programs score $-1.2$ points relative to the incumbent at the gate ($n{=}30$), compared with $+0.6$ for replicas (standard deviation 3.4, $n{=}36$). Together, the two starting conditions locate the observed benefit of program adaptation in repairing the training procedure.
+As shown in \cref{tab:gate}, strict gating limits the mean Official decline on Spatial to $2.20$ pp, compared with $13.80$ pp without the gate. This suggests that the gate primarily protects existing performance rather than repairing an ineffective training program.
 
-\subsection{Performance and compute cost relative to RL}
+More severe failures occur in additional ungated BC runs. On Goal, one run drops to $5.5\%$ mean Gate/Audit success, while a Spatial run reaches only $1.2\%$ Official success after six rounds. In the matched Spatial run, strict gating retains $55.13\%$ Official success, illustrating its protective role.
+
+We also examine gate strictness over 12 rounds of GRPO training
+(\cref{fig:gates}(c)). A relaxed guard allowing drops of up to 5 pp produces similar gate-check trends to strict selection, with only small differences in final Official performance.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Effect of gate selection.}
+Mean Official success across three seeds on
+LIBERO-Spatial (BC, six rounds).
+Changes are in percentage points.}
+\label{tab:gate}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Selection & R0 (\%) & R6 (\%) & $\Delta$ (pp) \\
+\midrule
+Strict Gate & 60.20 & 58.00 & -2.20 \\
+No Gate     & 59.33 & 45.53 & -13.80 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\subsection{Compute Efficiency}
 \label{sec:rl}
 \begin{figure}[t]
   \centering
@@ -85,13 +207,13 @@ With per-task gate rates available, the proposer performs similarly to a \emph{r
   \label{fig:cost}
 \end{figure}
 
-We compare total GPU-hours, including RL's tuning: selecting RL's configuration took 21 pilot runs ($\geq$213 GPU-hours), so the one-shot RL baseline (18 training blocks) costs about 230 GPU-hours. Starting from the failing configuration without pilots, the adapted loop uses 118 GPU-hours over six rounds, about half, and exceeds RL by $+2.2$ $[+0.9, +3.5]$ on fresh scenes (official test $+0.05$ $[-1.6, +1.7]$; descriptive pairings of registered results).
+We compare RSI with conventional RL on both performance and total GPU-hours, including the cost of selecting RL's training configuration. On LIBERO-Goal, RL tuning requires 21 pilot runs ($213.4$ GPU-hours), bringing the total cost of RL-18 to $229.9$ GPU-hours. In contrast, RSI starts from an ineffective BC program and uses $118.1$ GPU-hours over six rounds.
 
-A preregistered continuation keeps the adapted program fixed. We report it for seeds 1 and 2. The third registered seed is excluded: in the first round of its continuation, its practice success fell from 58\% to 32\%, and to 10\% in the next round, while its retained policy still scored 65\% on validation; seeds 1 and 2 show no such drop (supplementary material). Using 190 GPU-hours on average against RL's 230 (17\% fewer), the loop finishes $+7.6$ points $[+5.6, +9.6]$ above tuned RL on fresh scenes ($+7.2$ $[+5.6, +8.9]$ with three evaluations per version; official test $+4.0$ $[+1.4, +6.6]$). Against RL trained twice as long (36 blocks, 240 GPU-hours) the difference is $+2.5$ $[+0.8, +4.3]$. \Cref{fig:cost} shows the trajectories.
+\indent\textbf{Finding 4: RSI achieves a favorable performance--compute trade-off when RL tuning cost is included.} On Goal, RSI exceeds RL-18 by $+2.20$ pp
+$[+0.86,+3.53]$ on Fresh evaluations, while achieving comparable Official success ($59.78\%$ vs.\ $59.11\%$) at approximately half the total GPU-hours.
+RL-36 achieves slightly higher success, but requires $239.6$ GPU-hours including tuning.
 
-On Spatial, at about a fifth of RL's counted cost, fresh-scene performance is similar ($+0.5$ $[-0.7, +1.8]$; official test $-2.8$ $[-4.5, -1.2]$); here the meta level's memory includes earlier tuned runs.
-
-\subsection{Evaluation on official and fresh initial states}
+\subsection{Evaluation Protocol}
 \label{sec:rq4}
 \begin{figure}[t]
   \centering
@@ -100,6 +222,7 @@ On Spatial, at about a fifth of RL's counted cost, fresh-scene performance is si
   \label{fig:inflation}
 \end{figure}
 
-The component studies exclude test states from training. To examine the measurement problem when these states are reused, we separately evaluate a released SimpleVLA-RL LIBERO-10 checkpoint trained on the 50 fixed test states per task. We compare official states with fresh placements from LIBERO's sampler, using the SFT starting checkpoint to account for differences between the sets.
+We examine how evaluation protocols affect measured improvements on LIBERO-Goal and LIBERO-Spatial, comparing Official test states with independently sampled Fresh placements.
 
-On the 500 official episodes and 500 fresh placements, the SFT checkpoint scores 14.6\% and 20.0\%, respectively; the RL checkpoint scores 87.4\% and 76.0\%. Subtracting the SFT gap from the RL gap gives $+16.8$ points $[+9.8, +23.4]$, approximately a fifth of the reported RL score. An additional 500 previously unseen placements give $+16.0$ $[+9.2, +22.4]$ (\cref{fig:inflation}). RL improves over SFT by $+56$ points on fresh scenes.
+\indent\textbf{Finding 5: Measured improvements depend on the evaluation protocol.} As shown in \cref{fig:inflation}, Program Adaptation on Spatial changes from $-1.51$ pp on Official to $+3.23$ pp on Fresh. Data Recursion shows similar gains across both evaluations, while Policy Selection varies in magnitude. These results suggest that improvements measured on Official states
+do not always generalize to Fresh placements.

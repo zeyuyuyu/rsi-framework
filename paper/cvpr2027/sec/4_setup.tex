@@ -106,7 +106,7 @@ Each action chunk contains 56 discrete tokens (256 bins), produced in one parall
 
 The main component study uses a fixed GRPO training recipe informed by pilot experiments and chosen before the main runs. The recipe uses a learning rate of $3\times10^{-5}$, temperature-matched policy ratios, and episode-balanced loss. Each block collects eight attempts on each of 64 instances at temperature 1.6, then performs 100 optimiser steps with batch size 64. Each round comprises three blocks, with fresh paired gate evaluations determining whether to accept the updated policy.
 
-All comparisons below use seeds 1--3 on both LIBERO-Goal and LIBERO-Spatial, except the continuation in \cref{sec:rl} (seeds 1 and 2). The recursion and gate-strictness experiments start from the same fixed GRPO recipe and run for twelve rounds, with program adaptation disabled. They compare recursive against non-recursive data generation, and strict gating against a relaxed guard-rail gate, respectively.
+All comparisons below use seeds 1--3 on both LIBERO-Goal and LIBERO-Spatial. The recursion and gate-strictness experiments start from the same fixed GRPO recipe and run for twelve rounds, with program adaptation disabled. They compare recursive against non-recursive data generation, and strict gating against a relaxed guard-rail gate, respectively.
 
 The gate-removal and self-repair experiments start from the same failing BC recipe and run for six rounds. The gate-removal comparison keeps recursion enabled and the training recipe fixed, changing only whether updates can be rejected by the gate. The self-repair comparison keeps recursion and strict gating enabled and compares the fixed BC recipe against full RSI with LLM-based program adaptation. The LLM can modify training parameters and switch the update algorithm, including from BC to GRPO. The fixed-recipe arms train one candidate per round, while the LLM arm trains two. \Cref{tab:components} reports the component ablation results on LIBERO-Goal and LIBERO-Spatial under both official and fresh evaluation protocols.
 
@@ -133,20 +133,31 @@ Arm & Recursion & Gate & Meta & Candidates \\
 \end{tabular}
 \end{table}
 
-\Cref{tab:controls} defines the controls. In \texttt{fixed}, the training program stays fixed while the policy learns. In \texttt{nonrec}, the initial policy generates all data while the learner continues to update. Shuffling labels preserves each instance's success count but breaks the association between attempts and outcomes. The controls use the gated loop's number of training blocks, rollout budget and optimiser budget.
+\Cref{tab:controls} summarises the component controls. In \texttt{fixed}, the training recipe stays fixed while the policy learns. In \texttt{nonrec}, the initial policy generates training data while the learner continues to update.
+The strict gate requires the candidate to match or exceed its parent's success rate on paired gate evaluations. The \texttt{guard} arm permits a decrease of at most 5 percentage points relative to the parent, while also
+requiring the candidate to remain no more than 5 points below the initial policy. The \texttt{nogate} arm removes rejection based on performance degradation.
 
-The one-shot RL baseline, \texttt{onebig}, uses the six-round budget in one round of 18 on-policy blocks from the initial policy, with unchanged sampling and updates. It has no intermediate gates. We report the policy retained by its final gate; the ungated candidate is a registered sensitivity check, differing on one Goal seed by 0.7 points on the official test. Program-adaptation arms train two candidates per round, doubling the training of \texttt{fixed}. LLM calls are excluded from GPU time.
+\Cref{tab:controls} summarises the component controls; their starting recipes and training schedules are described in \cref{sec:starting}.
 
-The Goal main study includes eight arms with three seeds each. An amendment added a fourth seed to \texttt{nonrec}, \texttt{shuffled}, \texttt{onebig} and \texttt{fixed} before any of those runs ended. The 31 runs span a shared 8$\times$A800 node and a 16-GPU cloud pool with its own evaluation stack. Each platform provides a separate replication, with paired comparisons made within its evaluation stack.
+For the system-level comparison on LIBERO-Goal, we compare full LLM RSI with two tuned GRPO baselines, RL-18 and RL-36. Starting from the same initial policy, these baselines perform 18 or 36 sequential on-policy training blocks
+without intermediate gates. We report the policy retained by a final gate. Unlike RSI, which starts from the failing BC recipe, both baselines use a tuned GRPO recipe. We report execution GPU-hours separately from total costs
+including the one-time RL recipe-search cost of 213.4 GPU-hours. LLM inference costs are excluded from the reported GPU-hours.
 
-The Spatial study repeats \texttt{fixed}, \texttt{nonrec}, \texttt{shuffled} and \texttt{onebig} with four seeds: sixteen runs under the Goal thresholds, registered before they began. Longer training is examined through a twelve-round Goal extension (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}). The self-repair study compares selection and program adaptation from the failing BC configuration (\cref{sec:rq2,sec:rq3}).
+% The Spatial study repeats \texttt{fixed}, \texttt{nonrec}, \texttt{shuffled} and \texttt{onebig} with four seeds: sixteen runs under the Goal thresholds, registered before they began. Longer training is examined through a twelve-round Goal extension (\texttt{fixed12}, \texttt{nonrec12}, \texttt{onebig12}). The self-repair study compares selection and program adaptation from the failing BC configuration (\cref{sec:rq2,sec:rq3}).
+Detailed results and analyses of these comparisons
+are presented in \cref{sec:results}.
 
 \subsection{Evaluation protocol}
 \label{sec:protocol}
 The preregistrations and dated amendments are released with the code.
 
-\paragraph{Evaluation sets.} Gate and audit instances use seeds that do not overlap the official benchmark states. An audit of 200 additional episodes measures gate overfitting without influencing decisions. The official test contains 50 initial states per task, for 500 episodes. These states are excluded from training, sampling and selection; test results are accessed once after all study decisions are complete. A second test uses 1{,}000 fresh configurations excluded from training, gating and auditing. It was registered before evaluation and measures performance beyond the benchmark's fixed placements.
+\paragraph{Evaluation sets.} We evaluate on two held-out test sets. \textbf{Official} uses the benchmark's 50 fixed initial states per task, giving 500 episodes per evaluation. \textbf{Fresh} uses 1,000 newly sampled initial configurations from the same task suite, excluded from training, gating, and auditing. Official measures performance on the standard benchmark states, while Fresh tests whether performance extends to new configurations of the same tasks.
+Gate and audit evaluations use separate initial configurations that do not overlap the test sets. An additional 200-episode audit measures performance outside the gate set without influencing policy selection. Neither Official nor Fresh results are used to select policies or update training recipes.
 
-\paragraph{Final policies and reference.} Evaluations of the same initial policy range from 57.2\% to 60.0\% across runs, and about 40\% of episode outcomes change between nearby policies. We evaluate each retained policy three times and average the outcomes for each episode. The initial reference averages all in-run evaluations of the initial policy on the same platform: 36 on the cloud pool and 21 on the A800. A noise check applies the same statistic to two halves of these initial-policy evaluations.
+\paragraph{Final policies and evaluation repeats.} We report the final retained policy from each run. For the component comparisons, Official results average three evaluations per seed, while Fresh results use the
+first 1,000-episode evaluation per seed. For the system-level comparison with tuned RL, we average all available final evaluations within each seed.
+RL-18 seed 1 retains the initial policy and has one Official evaluation.
+We then average success rates equally across seeds 1--3.
 
-\paragraph{Statistical analysis.} We use a seed-averaged, per-episode paired bootstrap with 10{,}000 draws and report 95\% confidence intervals (CIs). ``CI $>0$'' denotes an interval above zero. The supplementary material lists registered claims, comparisons and effect thresholds; \cref{tab:long} gives the thresholds for the reported comparisons. The analysis scripts were fixed before the corresponding results were accessed. The released records contain all registered outputs.
+\paragraph{Statistical analysis.} We report 95\% confidence intervals (CIs) for paired success-rate differences using a seed-averaged, per-episode paired bootstrap with 10,000 draws. Pairing preserves the correspondence between the two methods' outcomes on the same evaluation instances. These intervals quantify evaluation-instance uncertainty conditional on the observed training seeds. They do not fully capture variability across independent training runs.
+An interval entirely above zero indicates a positive difference under this procedure, whereas an interval containing zero does not establish a clear direction. All differences are reported in percentage points.

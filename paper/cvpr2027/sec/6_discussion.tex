@@ -1,5 +1,26 @@
+
 \section{Discussion}
 \label{sec:discussion}
-The repair study shows how policy selection supports experimentation with the training program. Retained weights provide a common starting point for alternative programs, and selected changes guide later rounds. Binary task feedback thus informs both policy updates and the choice of how future experience will be used for learning.
 
-Program adaptation also changes how compute is spent. The Goal comparison counts RL's pilot runs alongside training. The adapted loop combines policy learning with program search, then continues under the selected program. Its fresh-scene gains at lower recorded GPU cost motivate studying when to evaluate new program candidates and when to continue with the current program.
+Our findings highlight the complementary roles of
+the three RSI components. Program adaptation can
+help recover underperforming policies by repairing
+ineffective training procedures. Data recursion
+improves learning by generating new experience
+with the updated policy rather than a frozen
+data generator. Policy selection protects against
+harmful updates but cannot repair an ineffective
+training program on its own. Together, these
+components allow task feedback to guide both
+policy updates and future training decisions.
+
+Program adaptation also changes how compute is
+spent by combining policy learning with training
+program search. On LIBERO-Goal, RSI achieves
+higher Fresh success at lower total GPU-hours
+when RL's pilot tuning cost is included.
+However, this does not imply that RSI training
+itself is cheaper. Moreover, differences between
+Official and Fresh evaluations highlight the
+importance of measuring improvements on
+independently sampled states.
